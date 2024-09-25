@@ -1,6 +1,6 @@
 # MINI specification
 
-A MINI file is a configuration file for computer software that consists of plain text with a structure and syntax comprising key–value, and/or key–values, pairs organized in sections.
+A MINI file is a configuration file for computer software that consists of plain text with a simple syntax and structure comprising key–value, and/or key–values, pairs organized in sections.
 
 ## Whitespaces
 
