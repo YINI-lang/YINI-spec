@@ -14,6 +14,8 @@ A MINI value MUST be of one of the following native types:
 - List/array (a sequence consisting of strings, numbers, or booleans)
 - NULL
 
+That are all types that are supported by MINI, the host software may cast or convert a value if the host needs another "special" type.
+
 ## Key/Value Pairs
 Comes in two forms:
 1. A single value: a key-value pair that holds only one value.
