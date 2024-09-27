@@ -13,7 +13,7 @@ Newlines can be LF (0x0A) or CRLF (0x0D 0x0A). Tabs and blank spaces are ignored
 ## Section Headers
 A Section header consists of an identifier (unique word/name, phrase without any spaces) surrounded by one or more hash-symbols `#` on each side. There must be an equal number of `#` characters on both sides. The number of hash-symbols indicates the level of the section.
 
-Moreover, the section header must be on its own line, and the beginning and end of the identifier will be cleared automatically of any tabs or spaces.
+In addition, the section heading must be on its own separate line, any tabs or spaces at the beginning or end of the identifier are ignored.
 
 ```
 # SectionLevel1 #
@@ -22,10 +22,10 @@ Moreover, the section header must be on its own line, and the beginning and end 
 ```
 
 Naming identifiers must follow below rules:
-- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`
-- Must begin with a letter or an underscore `_`
-- Identifiers are case-sensitive, uppercase and lowercase letters are distinct
-- Must be unique, there cannot be multiple section headings with the same identifier name
+- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
+- Must begin with a letter or an underscore `_`.
+- Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
+- Must be unique, there cannot be multiple section headings with the same identifier.
 
 ## Title Section
 A MINI document always starts with the Title section, it is a Section header with level 1. There can only be one single Title section in a document.
@@ -46,7 +46,7 @@ That are all types that are supported by MINI, the host software may cast or con
 
 ## Key/Value Pairs
 Comes in two forms:
-1. A single value: a key-value pair that holds only one value.
+1. A single value: a key-value pair that holds only one single value.
 2. A list of values: a key-values pair that holds zero or more values (or elements). Elements are separated by commas.
 
 ### A Key/Value Pair
