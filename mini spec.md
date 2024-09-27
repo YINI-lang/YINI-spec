@@ -45,9 +45,9 @@ After the Title section comes section header with level 2.
 A MINI value MUST be of one of the following 3 groups of native types:
 
 - Simple types:
-    - String
-    - Number
-    - Boolean
+  - String
+  - Number
+  - Boolean
 
 - Compound type:
     - List/array (a sequence consisting of strings, numbers, or booleans)
