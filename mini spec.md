@@ -1,6 +1,6 @@
 # MINI specification
 
-A MINI file is a configuration file for computer software that consists of plain text with a simple syntax and structure comprising key–value, and/or key–values, pairs organized in sections.
+A MINI file is a configuration file for computer software that consists of plain text with a simple syntax and structure comprising of key–value, and/or key–values, pairs organized in sections.
 
 ## Definitions
 - **Host**: The host is the program/software (written by the client user/programmer) that runs the (MINI) decoder or encoder.
