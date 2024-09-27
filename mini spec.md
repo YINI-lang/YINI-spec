@@ -98,6 +98,8 @@ To nest a section under another section, make a section header that is one level
 ### SubSection ###
 ```
 
+---
+
 ```
 # menu #
 id = "file"
