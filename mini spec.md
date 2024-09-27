@@ -100,22 +100,23 @@ To nest a section under another section, make a section header that is one level
 
 ---
 
-```
+A full example:
+```mini
 # menu #
 id = "file"
 value = "File"
 
 ### menuItem ###
 value = "New"
-onclick = "CreateDoc()"
+onClick = "CreateDoc()"
 
 ### menuItem ###
 value = "Open"
-onclick = "OpenDoc()"
+onClick = "OpenDoc()"
 
 ### menuItem ###
 value = "Save"
-onclick = "SaveDoc()"
+onClick = "SaveDoc()"
 
 ```
 
