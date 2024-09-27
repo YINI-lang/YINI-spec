@@ -45,15 +45,15 @@ After the Title section comes section header with level 2.
 A MINI value MUST be of one of the following 3 groups of native types:
 
 - Simple types:
--  String
--  Number
--  Boolean
+    - String
+    - Number
+    - Boolean
 
 - Compound type:
--  List/array (a sequence consisting of strings, numbers, or booleans)
+    - List/array (a sequence consisting of strings, numbers, or booleans)
 
 - Special type:
--  NULL or blank
+    - NULL or blank
 
 That are all types that are supported by MINI, the host software may cast or convert a value if the host needs another "special" type.
 
