@@ -2,6 +2,13 @@
 
 A MINI file is a configuration file for computer software that consists of plain text with a structure and syntax comprising key–value, and/or key–values, pairs organized in sections.
 
+## Definition
+--todo--
+
+## Section Head
+A section head is word or phrase (without any whitespaces) enclosed by one or more hash signs on each side. It must have same number # characters on both sides, and the section head must be on its own line.
+--todo-- legal chars, left and right trim of whitespaces
+
 ## Whitespaces
 
 Tabs and horizontal whitespaces are ignored.
