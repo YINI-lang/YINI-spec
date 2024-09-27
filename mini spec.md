@@ -8,7 +8,7 @@ A MINI file is a configuration file for computer software that consists of plain
 - **Encoder**: A MINI-Encoder takes an object or data structure on the host and converts/saves it to a MINI document.
 
 ## Whitespaces
-Newlines can be LF (0x0A) or CRLF (0x0D 0x0A). Tabs and blank spaces are ignored.
+Newlines are LF (0x0A) or CRLF (0x0D 0x0A). Tabs and blank spaces are ignored.
 
 ## Section Headers
 A Section header consists of an identifier (unique word/name, phrase without any spaces) surrounded by one or more hash-symbols `#` on each side. There must be an equal number of `#` characters on both sides. The number of hash-symbols indicates the level of the section.
