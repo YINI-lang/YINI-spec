@@ -2,16 +2,37 @@
 
 A MINI file is a configuration file for computer software that consists of plain text with a simple syntax and structure comprising key–value, and/or key–values, pairs organized in sections.
 
-## Definition
---todo--
-
-## Section Head
-A section head is word or phrase (without any whitespaces) enclosed by one or more hash signs on each side. It must have same number # characters on both sides, and the section head must be on its own line.
---todo-- legal chars, left and right trim of whitespaces
+## Definitions
+- **Host**: The host is the program written by the client user/programmer that runs the (MINI) decoder and encoder.
+- **Decoder**: A MINI-Decoder converts or reads a MINI document into a meaningful object or data structure in and for a host.
+- **Encoder**: A MINI-Encoder takes an object or data structure on the host and converts/saves it to a MINI document.
 
 ## Whitespaces
+Newlines can be LF (0x0A) or CRLF (0x0D 0x0A). Tabs and blank spaces are ignored.
 
-Tabs and horizontal whitespaces are ignored.
+## Section Headers
+A Section header consists of an identifier (unique word/name, phrase without any spaces) surrounded by one or more hash-symbols `#` on each side. There must be an equal number of `#` characters on both sides. The number of hash-symbols indicates the level of the section.
+
+Moreover, the section header must be on its own line, and the beginning and end of the identifier will be cleared of any tabs and spaces.
+
+```
+# SectionLevel1 #
+## SectionLevel2 ##
+### SectionLevel3 ###
+```
+
+Naming identifiers must follow below rules:
+- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`
+- Must begin with a letter or an underscore `_`
+- Identifiers are case-sensitive, uppercase and lowercase letters are distinct
+- Must be unique, there cannot be multiple section headings with the same identifier name
+
+## Title Section
+A MINI document always starts with the Title section, it is a Section header with level 1. There can only be one single Title section in a document.
+
+```
+# Title #
+```
 
 ## Values & Native Types
 A MINI value MUST be of one of the following native types:
