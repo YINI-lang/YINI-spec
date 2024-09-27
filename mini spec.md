@@ -1,19 +1,38 @@
 # MINI specification
 
-A MINI file is a configuration file for computer software that consists of plain text with a simple syntax and structure comprising of key–value, and/or key–values, pairs organized in sections.
+MINI is a configuration markup language, similar to YINI (Yet another INI format) and other document format languages. It consists of plain text with a simple syntax and structure comprising of key–value(s) pairs organized in sections.
 
-## Definitions
+A short MINI document looks like the following.
+```
+# Prefs
+HomeDir = "C:\Users\John Smith"
+Buffers = 10
+
+###
+```
+
+## Terminoly
 - **Host**: The host is the program/software (written by the client user/programmer) that runs the (MINI) decoder or encoder.
 - **Decoder**: A MINI-Decoder converts or reads a MINI document into a meaningful object or data structure for a host to be used.
 - **Encoder**: A MINI-Encoder takes an object or data structure on the host and converts/saves it to a MINI document.
 
-## Whitespaces
-Newlines are LF (0x0A) or CRLF (0x0D 0x0A). Tabs and blank spaces are ignored.
+## Definitions
+### Whitespaces
+- Newlines <NL> can be either <LF> (0x0A) or <CR><LF> (0x0D 0x0A).
+- All tabs <TAB> (0x09) and blank spaces <SPACE> (0x20) are ignored.
+
+### Identifiers
+Naming identifiers must follow below rules:
+- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
+- Must begin with a letter or an underscore `_`.
+- Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
+- Must be unique, there cannot be multiple section header with the same identifier.
+- An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
 
 ## Section Headers
-A Section header consists of an identifier (unique word/name, phrase without any spaces) surrounded by one or more hash-symbols `#` on each side. There must be an equal number of `#` characters on both sides. The number of hash-symbols indicates the level of the section.
+A section header consists with one or more hash-symbols `#` and then an identifier (unique word/name, phrase without any spaces). The number of hash-symbols indicates the level of the section.
 
-In addition, the section heading must be on its own separate line, any tabs or spaces at the beginning or end of the identifier are ignored.
+In addition, the section header must be on its own separate line, any tabs or spaces at the beginning or end of the identifier are ignored.
 
 ```
 # SectionLevel1 #
@@ -21,14 +40,8 @@ In addition, the section heading must be on its own separate line, any tabs or s
 ### SectionLevel3 ###
 ```
 
-Naming identifiers must follow below rules:
-- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
-- Must begin with a letter or an underscore `_`.
-- Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
-- Must be unique, there cannot be multiple section headings with the same identifier.
-
 ## Title Section
-A MINI document always starts with the Title section, it is a Section header with level 1. There can only be one single Title section in a document.
+A MINI document always starts with a Section header of level 1, the so-called title section header. There can only be one single level 1 section.
 
 ```
 # Title #
@@ -39,6 +52,13 @@ After the Title section comes section header with level 2.
 ```
 # Title #
 ## Section ##
+```
+
+## Terminal token
+A MINI document must always end with three hash-symbols on its own line, after this there may be only whitespaces or possible comments.
+
+```
+###
 ```
 
 ## Values & Native Types
@@ -53,9 +73,9 @@ A MINI value MUST be of one of the following 3 groups of native types:
   - List/array (a sequence consisting of strings, numbers, or booleans)
 
 - Special type:
-  - NULL or blank
+  - NULL
 
-That are all types that are supported by MINI, the host software may cast or convert a value if the host needs another "special" type.
+Note: That are all types that are supported by MINI, any other types are left to the host software to cast or convert to after reading (or before saving) a MINI document.
 
 ## Key/Value Pairs
 Comes in two forms:
