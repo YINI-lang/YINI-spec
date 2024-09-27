@@ -1,10 +1,11 @@
 # MINI specification
 
-MINI is a configuration markup language, similar to YINI (Yet another INI format) and other document format languages. It consists of plain text with a simple syntax and structure comprising of key–value(s) pairs organized in sections.
+MINI is a configuration markup language, is another YINI (Yet another INI) format. It consists of plain text with a simple syntax and structure comprising of key–value(s) pairs organized in sections.
 
 A short MINI document looks like the following.
 ```
 # Prefs
+
 HomeDir = "C:\Users\John Smith"
 Buffers = 10
 
