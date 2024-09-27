@@ -34,13 +34,26 @@ A MINI document always starts with the Title section, it is a Section header wit
 # Title #
 ```
 
+After the Title section comes section header with level 2.
+
+```
+# Title #
+## Section ##
+```
+
 ## Values & Native Types
-A MINI value MUST be of one of the following native types:
-- String
-- Number
-- Boolean
-- List/array (a sequence consisting of strings, numbers, or booleans)
-- NULL
+A MINI value MUST be of one of the following 3 groups of native types:
+
+- Simple types:
+* String
+* Number
+* Boolean
+
+- Compound type:
+* List/array (a sequence consisting of strings, numbers, or booleans)
+
+- Special type:
+* NULL or blank
 
 That are all types that are supported by MINI, the host software may cast or convert a value if the host needs another "special" type.
 
