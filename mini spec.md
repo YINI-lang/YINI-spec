@@ -1,6 +1,6 @@
 # MINI specification
 
-A MINI file is a configuration file for computer software that consists of plain text with a structure and syntax comprising key–value, and/or key–values, pairs organized in sections.
+A MINI file is a configuration file for computer software that consists of plain text with a simple syntax and structure comprising key–value, and/or key–values, pairs organized in sections.
 
 ## Definition
 --todo--
@@ -20,6 +20,8 @@ A MINI value MUST be of one of the following native types:
 - Boolean
 - List/array (a sequence consisting of strings, numbers, or booleans)
 - NULL
+
+That are all types that are supported by MINI, the host software may cast or convert a value if the host needs another "special" type.
 
 ## Key/Value Pairs
 Comes in two forms:
@@ -50,9 +52,11 @@ or
 > ## my section ##
 
 ## Sections in Sections
-To nest a section under another section, add one extra hash sign at the front and back more than the number of hash signs in the section you want to nest.
->## section ##
->### subsection ###
+To nest a section under another section, add one extra hash sign on each side than the number of enclosed hash signs that is wanted to be nested.
+```
+## section ##
+### subsection ###
+```
 
 ## String ##
 --todo--
