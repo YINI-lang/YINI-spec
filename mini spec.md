@@ -3,8 +3,8 @@
 A MINI file is a configuration file for computer software that consists of plain text with a simple syntax and structure comprising key–value, and/or key–values, pairs organized in sections.
 
 ## Definitions
-- **Host**: The host is the program written by the client user/programmer that runs the (MINI) decoder and encoder.
-- **Decoder**: A MINI-Decoder converts or reads a MINI document into a meaningful object or data structure in and for a host.
+- **Host**: The host is the program/software (written by the client user/programmer) that runs the (MINI) decoder or encoder.
+- **Decoder**: A MINI-Decoder converts or reads a MINI document into a meaningful object or data structure for a host to be used.
 - **Encoder**: A MINI-Encoder takes an object or data structure on the host and converts/saves it to a MINI document.
 
 ## Whitespaces
@@ -13,7 +13,7 @@ Newlines can be LF (0x0A) or CRLF (0x0D 0x0A). Tabs and blank spaces are ignored
 ## Section Headers
 A Section header consists of an identifier (unique word/name, phrase without any spaces) surrounded by one or more hash-symbols `#` on each side. There must be an equal number of `#` characters on both sides. The number of hash-symbols indicates the level of the section.
 
-Moreover, the section header must be on its own line, and the beginning and end of the identifier will be cleared of any tabs and spaces.
+Moreover, the section header must be on its own line, and the beginning and end of the identifier will be cleared automatically of any tabs or spaces.
 
 ```
 # SectionLevel1 #
