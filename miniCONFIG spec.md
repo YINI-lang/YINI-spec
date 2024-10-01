@@ -21,8 +21,8 @@ Buffers = 10
 
 ## Definitions
 ### Whitespaces
-- Newlines <NL> can be either <LF> (0x0A) or <CR><LF> (0x0D 0x0A).
-- All tabs <TAB> (0x09) and blank spaces <SPACE> (0x20) are ignored.
+- Newlines `<NL>` can be either `<LF>` (0x0A) or `<CR><LF>` (0x0D 0x0A).
+- All tabs `<TAB>` (0x09) and blank spaces `<SPACE>` (0x20) are ignored.
 
 ### Identifiers
 Naming identifiers must follow below rules:
@@ -105,7 +105,7 @@ or
 A string in `miniCONFIG` can be of two forms:
 
 ### Double quoted strings
-Surrounded by double quotation `"` marks: All escape codes are ignored except `\"`, the text becomes how it looks. Any <NL> will be converted into <SPACE>.
+Surrounded by double quotation `"` marks: All escape codes are ignored except `\"`, the text becomes how it looks. Any `<NL>` will be converted into `<SPACE>`.
 Double quoted strings are ideal for file directory paths and the like.
 >"C:\Users\John Smith"
 
