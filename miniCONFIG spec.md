@@ -7,8 +7,8 @@ A short MINI document looks like the following.
 # Prefs
 
 HomeDir = "C:\Users\John Smith"
-Buffers = 10
 KeyWords: "oranges", "bananas", "peaches"
+Buffers = 10
 
 ###
 ```
@@ -21,8 +21,8 @@ KeyWords: "oranges", "bananas", "peaches"
 
 ## Definitions
 ### Whitespaces
-- Newlines <NL> can be either <LF> (0x0A) or <CR><LF> (0x0D 0x0A).
-- All tabs <TAB> (0x09) and blank spaces <SPACE> (0x20) are ignored.
+- Newlines `<NL>` can be either `<LF>` (0x0A) or `<CR><LF>` (0x0D 0x0A).
+- All tabs `<TAB>` (0x09) and blank spaces `<SPACE>` (0x20) are ignored.
 
 ### Identifiers
 Naming identifiers must follow below rules:
@@ -83,7 +83,7 @@ A `miniCONFIG` value MUST be of one of the following 3 groups of native/built-in
 Note: Above are all types that are supported by `miniCONFIG`, any other types are left to the host software to cast or convert to after reading (or before saving) a `miniCONFIG` document.
 
 ## Members
-Members are Key/Value Pairs, they come in two forms:
+Each member must start on its own line, they come in two forms:
 1. A single value: a key-value pair that holds only one single value.
 2. A list of values: a key-values pair that holds zero or more values (or elements). Elements are separated by commas.
 
@@ -105,7 +105,7 @@ or
 A string in `miniCONFIG` can be of two forms:
 
 ### Double quoted strings
-Surrounded by double quotation `"` marks: All escape codes are ignored except `\"`, the text becomes how it looks. Any <NL> will be converted into <SPACE>.
+Surrounded by double quotation `"` marks: All escape codes are ignored except `\"`, the text becomes how it looks. Any `<NL>` will be converted into `<SPACE>`.
 Double quoted strings are ideal for file directory paths and the like.
 >"C:\Users\John Smith"
 
