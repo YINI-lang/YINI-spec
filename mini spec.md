@@ -1,6 +1,6 @@
-# MINI specification
+# MINI-CONFIG specification
 
-MINI is a configuration markup language, is another YINI (Yet another INI) format. It consists of plain text with a simple syntax and structure comprising of key–value(s) pairs organized in sections.
+`MINI-CONFIG` or `miniCONFIG` is a configuration markup language, is another YINI (Yet another INI) format. It consists of plain text with a simple syntax and structure comprising of key–value(s) pairs organized in sections.
 
 A short MINI document looks like the following.
 ```
@@ -8,14 +8,16 @@ A short MINI document looks like the following.
 
 HomeDir = "C:\Users\John Smith"
 Buffers = 10
+KeyWords: "oranges", "bananas", "peaches"
 
 ###
 ```
 
 ## Terminoly
-- **Host**: The host is the program/software (written by the client user/programmer) that runs the (MINI) decoder or encoder.
-- **Decoder**: A MINI-Decoder converts or reads a MINI document into a meaningful object or data structure for a host to be used.
-- **Encoder**: A MINI-Encoder takes an object or data structure on the host and converts/saves it to a MINI document.
+- **Engine**: Is the program/software that reads and writes `miniCONFIG` documents.
+- **Host**: The host is the program/software (written by the user/developer/programmer) that runs the `miniCONFIG`-engine (decoder or encoder).
+- **Decoder**: A `miniCONFIG` converts or reads a MINI document into a meaningful object or data structure for a host to be used.
+- **Encoder**: A `miniCONFIG` takes an object or data structure on the host and converts/saves it to a `miniCONFIG` document.
 
 ## Definitions
 ### Whitespaces
@@ -31,9 +33,9 @@ Naming identifiers must follow below rules:
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
 
 ## Section Headers
-A section header consists with one or more hash-symbols `#` and then an identifier (unique word/name, phrase without any spaces). The number of hash-symbols indicates the level of the section.
+A section header consists with one or more hash-symbols `#` and then an identifier (unique word/name, phrase without any spaces). The number of hash-symbols indicates the level of the section, there shall not be any whitespaces between multiple hash-symbols.
 
-In addition, the section header must be on its own separate line, any tabs or spaces at the beginning or end of the identifier are ignored.
+In addition, the section header must be on its own separate line, any tabs or spaces at the beginning and end of the identifier are ignored.
 
 ```
 # SectionLevel1 #
@@ -56,14 +58,14 @@ After the Title section comes section header with level 2.
 ```
 
 ## Terminal token
-A MINI document must always end with three hash-symbols on its own line, after this there may be only whitespaces or possible comments.
+A `miniCONFIG` document must always end with three hash-symbols (without any whitespaces in between) on its own line, after this there may be only whitespaces or possible comments.
 
 ```
 ###
 ```
 
 ## Values & Native Types
-A MINI value MUST be of one of the following 3 groups of native types:
+A `miniCONFIG` value MUST be of one of the following 3 groups of native/built-in types:
 
 - Simple types:
   - String
@@ -76,7 +78,7 @@ A MINI value MUST be of one of the following 3 groups of native types:
 - Special type:
   - NULL
 
-Note: That are all types that are supported by MINI, any other types are left to the host software to cast or convert to after reading (or before saving) a MINI document.
+Note: Above are all types that are supported by `miniCONFIG`, any other types are left to the host software to cast or convert to after reading (or before saving) a `miniCONFIG` document.
 
 ## Key/Value Pairs
 Comes in two forms:
@@ -95,10 +97,33 @@ The key is on the left of a colon sign `:` and the values are on the right, each
 
 or
 
-> fruits: "pear", "orange", "banana"
+> fruits: "oranges", "bananas", "peaches"
 
 ## String ##
---todo--
+A string in `miniCONFIG` can be of two forms:
+
+### Double quoted strings
+Surrounded by double quotation `"` marks: All escape codes are ignored except `\"`, the text becomes how it looks. Any <NL> will be converted into <SPACE>.
+Double quoted strings are ideal for file directory paths and the like.
+>"C:\Users\John Smith"
+
+### Single quoted strings
+Surrounded by single quotation `'` marks, are similarat to strings in C, JSON and the like. Any special characters are done with backslash `\` followed by a character that is wanted:
+
+Either in lower or uppercase.
+```
+    '"'
+    '\'
+    '/'
+    'b'
+    'f'
+    'n'
+    'r'
+    't'
+    'u' hex hex hex hex
+```
+
+Where hex is 0-9, or a-f, or A-F.
 
 ## Number ##
 --todo--
