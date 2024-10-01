@@ -83,7 +83,7 @@ A `miniCONFIG` value MUST be of one of the following 3 groups of native/built-in
 Note: Above are all types that are supported by `miniCONFIG`, any other types are left to the host software to cast or convert to after reading (or before saving) a `miniCONFIG` document.
 
 ## Members
-Members are Key/Value Pairs, they come in two forms:
+Each member must start on its own line, they come in two forms:
 1. A single value: a key-value pair that holds only one single value.
 2. A list of values: a key-values pair that holds zero or more values (or elements). Elements are separated by commas.
 
