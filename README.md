@@ -20,7 +20,7 @@ It aims to be even more simple and lightweight than similar formats (no specific
 MINI-CONFIG stands for Minimalistic INI Configuration Object Notation File. Actually in the beginning M stood for Marko's (after the author) but was changed to stand for minimalistic.
 
 ## Specification
-There exists a draft (work in progress) of the *[miniCONFIG spec]("./miniCONFIG spec.md")*.
+There exists a draft (work in progress) of the **[miniCONFIG spec](./miniCONFIG spec.md)**.
 
 ## Example
 ```
