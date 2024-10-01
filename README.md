@@ -25,8 +25,8 @@ MINI-CONFIG stands for Minimalistic INI Configuration Object Notation File. Actu
 # Prefs
 
 HomeDir = "C:\Users\John Smith"
-Buffers = 10
 KeyWords: "pear", "orange", "banana"
+Buffers = 10
 
 ###
 ```
