@@ -33,7 +33,7 @@ Naming identifiers must follow below rules:
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
 
 ## Section Headers
-A section header consists with one or more hash-symbols `#` and then an identifier (unique word/name, phrase without any spaces). The number of hash-symbols indicates the level of the section, there shall not be any whitespaces between multiple hash-symbols.
+A section header consists with one or more hash-symbols `#` and then an identifier (unique word/name, phrase without any spaces). The number of hash-symbols indicates the level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
 
 In addition, the section header must be on its own separate line, any tabs or spaces at the beginning and end of the identifier are ignored.
 
@@ -44,7 +44,7 @@ In addition, the section header must be on its own separate line, any tabs or sp
 ```
 
 ## Title Section
-A MINI document always starts with a Section header of level 1, the so-called title section header. There can only be one single level 1 section.
+A `miniCONFIG` document always starts * with a Section header of level 1, the so-called title section header. There can only be one single level 1 section.
 
 ```
 # Title #
@@ -52,12 +52,14 @@ A MINI document always starts with a Section header of level 1, the so-called ti
 
 After the Title section comes section header with level 2.
 
+*) The very first line may start with a shebang `#!`, then this line is ignored.
+
 ```
 # Title #
 ## Section ##
 ```
 
-## Terminal token
+## Terminal Token
 A `miniCONFIG` document must always end with three hash-symbols (without any whitespaces in between) on its own line, after this there may be only whitespaces or possible comments.
 
 ```
@@ -80,19 +82,19 @@ A `miniCONFIG` value MUST be of one of the following 3 groups of native/built-in
 
 Note: Above are all types that are supported by `miniCONFIG`, any other types are left to the host software to cast or convert to after reading (or before saving) a `miniCONFIG` document.
 
-## Key/Value Pairs
-Comes in two forms:
+## Members
+Members are Key/Value Pairs, they come in two forms:
 1. A single value: a key-value pair that holds only one single value.
 2. A list of values: a key-values pair that holds zero or more values (or elements). Elements are separated by commas.
 
-### A Key/Value Pair
-The key is on the left of a equals sign `=` and the value is on the right.
+### Member with a Value
+A member with one value is a Key/Value pair using the a equals sign `=`. The key is on the left of a equals sign and the value is on the right.
 > key = "value"
 or
 > lives = 3
 
-### A Key/Value-list Pair
-The key is on the left of a colon sign `:` and the values are on the right, each value separated by comma. (A final comma `,` may be accepted so parsing is not broken.)
+### Member with a List
+A member with a list, is a Key/List pair using the colon sign `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
 > key: "value1", "value2", "value3"
 
 or
@@ -126,16 +128,26 @@ Either in lower or uppercase.
 Where hex is 0-9, or a-f, or A-F.
 
 ## Number ##
---todo--
+Number can be an integer or a real number with `.` similar as a number in JavaScript. It can include a sign - or +. Can be of exponent form, 'e' or 'E' sign digits, where:
+-sign is either +, -, or blank
+- digits is a number 0 or larger
   
 ## Boolean ##
---todo--
+Booleans in a `miniCONFIG` document can be following literals (NON CASE-SENSITIVE):
+- true
+- false
+- yes
+- no
+- on
+- off
+
+The engine should convert the literal value to the corresponding Boolean value in the host language.
   
 ## List (array) ##
---todo--
+A list with zero or more values, each value separated by a comma, whitespaces between values/commas are OK.
   
 ## NULL ##
---todo--
+Value/literal `NULL` (NON CASE-SENSITIVE). Also if value/list is missing in member, then that member is treated as NULL.
 
 ## Sections in Sections
 To nest a section under another section, make a section header that is one level higher, add one extra hash symbol on each side than the number of enclosed hash signs that is wanted to be nested.
@@ -147,7 +159,7 @@ To nest a section under another section, make a section header that is one level
 ---
 
 A full example:
-```mini
+```miniconfig
 # menu #
 id = "file"
 value = "File"
