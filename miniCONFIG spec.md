@@ -7,8 +7,8 @@ A short MINI document looks like the following.
 # Prefs
 
 HomeDir = "C:\Users\John Smith"
-Buffers = 10
 KeyWords: "oranges", "bananas", "peaches"
+Buffers = 10
 
 ###
 ```
