@@ -8,6 +8,9 @@ Minimalistic initialization configuration markup language format.
 
 It aims to be even more simple and lightweight than similar formats (no specific names mentioned). No unnecessary extra niceties (due to keeping the format simple and lightweight) with regards to types (this can be taken care of by the host language if desired or needed). Yet expressive enough to store the most important data types like strings, numbers, booleans and lists in sections or nested sections.
 
+## Motivation
+--TODO--
+
 ## Design Goals
 1. miniCONFIG should be simple and (relatively) lightweight.
 2. miniCONFIG should be easy to implement and use.
