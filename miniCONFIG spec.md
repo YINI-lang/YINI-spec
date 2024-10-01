@@ -24,6 +24,11 @@ Buffers = 10
 - Newlines `<NL>` can be either `<LF>` (0x0A) or `<CR><LF>` (0x0D 0x0A).
 - All tabs `<TAB>` (0x09) and blank spaces `<SPACE>` (0x20) are ignored.
 
+### Comments and Ignore Line
+- Single line comments start with a double slash `//`. Everything after `//` to the end of the line `<NL>` is ignored.
+- Ignore line start with a double minus `--`. Everything after `--` to the end of the line `<NL>` is ignored.
+- Multi line comments start with `/*` and ends with `*/`. Multi line comments can span over multiple lines.
+
 ### Identifiers
 Naming identifiers must follow below rules:
 - Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
