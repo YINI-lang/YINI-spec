@@ -156,6 +156,10 @@ The engine should convert the literal value to the corresponding Boolean value i
   
 ## List (array) ##
 A list with zero or more values, each value separated by a comma, whitespaces between values/commas are OK.
+
+Optionally a list can be enclosed in [ ], but it is not mandatory.
+
+--TO BE EXPANDED about types and mode--
   
 ## NULL ##
 Value/literal `NULL` (NON CASE-SENSITIVE). Also if value/list is missing in member, then that member is treated as NULL.
