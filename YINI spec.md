@@ -1,0 +1,202 @@
+# YINI specification
+
+`YINI` is a configuration file format, it stands for **Y**et another **INI** markup language. It consists of plain text with a simple syntax and structure comprising of key–value(s) pairs organized in sections.
+
+A short YINI document looks like the following.
+```yini
+# Prefs
+
+HomeDir = "C:\Users\John Smith"
+KeyWords: "oranges", "bananas", "peaches"
+Buffers = 10
+
+### // End of YINI doc.
+```
+
+## Terminoly
+- **Engine**: Is the program/software that reads and writes `YINI` documents.
+- **Host**: The host is the program/software (written by the user/developer/programmer) that runs the `YINI`-engine (decoder or encoder).
+- **Decoder**: A `YINI` converts or reads a YINI document into a meaningful object or data structure for a host to be used.
+- **Encoder**: A `YINI` takes an object or data structure on the host and converts/saves it to a `YINI` document.
+
+## Definitions
+### Whitespaces
+- Newlines `<NL>` can be either `<LF>` (0x0A) or `<CR><LF>` (0x0D 0x0A).
+- All tabs `<TAB>` (0x09) and blank spaces `<SPACE>` (0x20) are ignored.
+
+### Comments and Ignore Line
+- Single line comments start with a double slash `//`. Everything after `//` to the end of the line `<NL>` is ignored.
+- Ignore line start with a double minus `--`. Everything after `--` to the end of the line `<NL>` is ignored.
+- Multi line comments start with `/*` and ends with `*/`. Multi line comments can span over multiple lines.
+
+### Identifiers
+Naming identifiers must follow below rules:
+- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
+- Must begin with a letter or an underscore `_`.
+- Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
+- Must be unique, there cannot be multiple section header with the same identifier.
+- An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
+
+## Section Headers
+A section header consists with one or more hash-symbols `#` and then an identifier (must be a unique identifier (within the same section level)). The number of hash-symbols indicates the level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
+
+In addition, the section header must be on its own separate line, any tabs or spaces at the beginning and end of the identifier are ignored.
+
+```
+# SectionLevel1 #
+## SectionLevel2 ##
+### SectionLevel3 ###
+```
+
+## Title Section
+A `YINI` document always (with one exception mentioned later) starts with a Section header of level 1, the so-called title section header. There can only be one single level 1 section, each document must have this title-section.
+
+```
+# Title
+```
+
+After the Title section comes section header with level 2.
+
+*) The very first line may start with a shebang `#!`, then this line is ignored.
+
+```
+# Title
+## Section
+```
+
+## Terminal Token
+A `YINI` document must always end with three hash-symbols (without any whitespaces in between) on its own line, after this there may be only whitespaces or possible comments.
+
+```
+###
+```
+
+## Values & Native Types
+A `YINI` value MUST be of one of the following 3 groups of native/built-in types:
+
+- Simple types:
+  - String
+  - Number
+  - Boolean
+
+- Compound type:
+  - List/array (a sequence consisting of strings, numbers, or booleans)
+
+- Special type:
+  - NULL
+
+Note: Above are all types that are supported by `YINI`, any other types are left to the host software to cast or convert to after reading (or before saving) a `YINI` document.
+
+## Members
+Each member must start on its own line, the name is called key in members, must be a unique identifier within the section (on the same section level).
+They come in two forms:
+1. **A single value**: a key-value pair that holds only one single value.
+2. **A list of values**: a key-values pair that holds zero or more values (or elements). Elements are separated by commas.
+
+### Member with a Value
+A member with one value is a Key/Value pair using the a equals sign `=`. The key is on the left of a equals sign and the value is on the right.
+> key = "value"
+or
+> lives = 3
+
+### Member with a List
+A member with a list, is a Key/List pair using the colon sign `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
+
+Optionally a list can be enclosed in `[` `]`, but it is not mandatory.
+> key: ["value1", "value2", "value3"]
+
+or just
+
+> fruits: "oranges", "bananas", "peaches"
+
+## String Literals ##
+### Strings (Raw) ###
+Strings can either be enclosed in single quotes `'` or double quotes `"`. In `YINI` strings are **raw string literals by defalt**, meaning these strings can span over multiple lines. And backslash **`\` is "just a backslash"** character. They do not support different escape sequences like newline or tabs, except:
+- String enclosed in single quotes `'`, support only `\'` for `'`
+- String enclosed in double quotes `"`, support only `\"` for `"`
+
+YINI strings are ideal for file directory paths and the like.
+>myPath = "C:\Users\John Smith"
+
+### Escaped Strings ###
+Alternatively YINI support also "normal" strings literals, called C-Strings. These strings are prefixed with either `c` or `C` (for classic string). All the usual escape sequences" that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
+
+>myText = c"This is a newline \n and this is a tab \t character."
+
+Escape codes in C-strings (in lower or uppercase):
+- `\n` for Newline
+- `\r` for Carriage Return
+- `\t` for Tab
+- `\'` for Single Quote
+- `\"` for Double Quote
+- `\\` for backslash
+- `\/` for normal Slash
+- `\b` for Backspace
+- `\f` for Form Feed
+- `\u hex hex hex hex` for hex value
+
+Where hex is 0-9, or a-f, or A-F.
+
+## Number Literals ##
+--TO BE EXPANDED with number formats--
+Number can be an integer or a real number with `.` similar as a number in JavaScript. It can include a sign - or +. Can be of exponent form, 'e' or 'E' sign digits, where:
+-sign is either +, -, or blank
+- digits is any number 0 or larger
+  
+## Boolean Literals ##
+Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
+- true
+- false
+- yes
+- no
+- on
+- off
+
+The engine should convert the literal value to the corresponding Boolean value in the host language.
+  
+## List (array) ##
+A list with zero or more values, each value separated by a comma, whitespaces between values/commas are OK.
+  
+## NULL ##
+Value/literal `NULL` (NON CASE-SENSITIVE). Also if value/list is missing in member, then that member is treated as NULL.
+
+## Sections in Sections
+If you want to put a section under another section, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
+```
+## Section ##
+### SubSection ###
+```
+
+---
+
+A full example of a `YINI` document:
+```yini
+# MyPrefs
+
+# General
+IsDarkMode = YES
+Dirs: "C:\Users", "D:\Temp"
+
+## Menu 
+Id = "FILE"
+Value = "File"
+
+### MenuItem
+Value = "New"
+OnClick = "CreateDoc()"
+
+### MenuItem
+Value = "Open"
+OnClick = "OpenDoc()"
+
+### MenuItem
+Value = "Save"
+OnClick = "SaveDoc()"
+
+### // End of YINI doc.
+```
+
+
+---
+
+Author: 2024 Gothenburg, Marko K. Seppänen (Sweden via Finland).
