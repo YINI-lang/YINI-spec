@@ -1,0 +1,59 @@
+/*
+	YINI Grammar
+	Apache License, Version 2.0, January 2004, http://www.apache.org/licenses/
+	Copyright 2024 Gothenburg, Marko K. Seppänen (Sweden via Finland).
+*/
+
+grammar YINI;
+options { caseInsensitive=false; }
+
+yini
+    : OPT_SHEBANG NL* rule NL* TERMINAL_TOKEN NL* EOF
+    ;
+
+
+rule
+    : section_head section_members
+    ;
+
+section_head
+	: '#'+ IDENT NL+
+	;
+
+section_members
+    : member+
+    ;
+
+member
+    : IDENT '=' STRING
+    ;
+
+OPT_SHEBANG
+    : '#!' .*? (NL) -> skip
+    ;
+
+TERMINAL_TOKEN
+	: '###'
+	;
+
+IDENT  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')* ;
+
+STRING
+    : '"' ( ESC_SEQ_BASE | ~('\\' | '"') )* '"'
+    ;
+
+// Note: Do not forget to include seq. for " or ' when matching for esq_seq
+ESC_SEQ_BASE
+    : '\\' [nrt/bf\\]	// TODO: add \u hex hex hex hex
+    ;
+    
+MULTI_LINE_COMMENT
+    : '/*' .*? '*/' -> skip
+    ;
+
+SINGLE_LINE_COMMENT
+    : '//' .*? (NL | EOF) -> skip
+    ;
+
+WS: [ \t]+ -> skip;
+NL: ('\r' '\n'? | '\n') /*-> channel(HIDDEN)*/ ;
