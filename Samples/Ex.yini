@@ -1,0 +1,23 @@
+# MyPrefs
+
+# General
+IsDarkMode = YES
+Dirs: "C:\Users", "D:\Temp"
+
+## Menu 
+Id = "FILE"
+Value = "File"
+
+### MenuItem
+Value = "New"
+OnClick = "CreateDoc()"
+
+### MenuItem
+Value = "Open"
+OnClick = "OpenDoc()"
+
+### MenuItem
+Value = "Save"
+OnClick = "SaveDoc()"
+
+### // End of YINI doc.
