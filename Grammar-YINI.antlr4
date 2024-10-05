@@ -4,6 +4,9 @@
 	Copyright 2024 Gothenburg, Marko K. Seppänen (Sweden via Finland).
 */
 
+// This grammar should follow YINI specification version 1.0 Alpha.
+// Please note, they might be smaller or bigger unknown bugs or issues.
+
 grammar YINI;
 options { caseInsensitive=false; }
 

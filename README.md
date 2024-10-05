@@ -27,6 +27,9 @@ In the beginning, `YINI` started with the working name `MINI`, and then `MINI-CO
 ## Specification
 First public test relase of the **[YINI spec](<./YINI spec.md>)**.
 
+## Grammar
+There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./Grammar-YINI.antlr4>)**.
+
 ## Examples
 Examples of how `YINI` document files look like:
 
