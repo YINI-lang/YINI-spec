@@ -1,7 +1,7 @@
 # MyPrefs
 
 HomeDir = "C:\Users\John Smith"
-KeyWords: "oranges", "bananas", "peaches"
 Buffers = 10
+KeyWords: "oranges", "bananas", "peaches"
 
 ### // End of YINI doc.
