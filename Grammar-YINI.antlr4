@@ -8,7 +8,7 @@ grammar YINI;
 options { caseInsensitive=false; }
 
 yini
-    : OPT_SHEBANG NL* rule NL* TERMINAL_TOKEN NL* EOF
+    : SHEBANG? NL* rule NL* TERMINAL_TOKEN NL* EOF
     ;
 
 
@@ -25,11 +25,11 @@ section_members
     ;
 
 member
-    : IDENT '=' STRING
+    : IDENT '=' STRING NL+
     ;
 
-OPT_SHEBANG
-    : '#!' .*? (NL) -> skip
+SHEBANG
+    : '#!' ~[\n\r]* NL
     ;
 
 TERMINAL_TOKEN
