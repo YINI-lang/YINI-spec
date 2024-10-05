@@ -50,7 +50,8 @@ Buffers = 10
 
 # General
 IsDarkMode = YES
-Dirs: "C:\Users", "D:\Temp"
+Buffers = 10
+Dirs: "C:\Users", "D:\Work\Temp", "E:\Data\Temp"
 
 ## Menu 
 Id = "FILE"
