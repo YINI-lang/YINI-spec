@@ -38,8 +38,8 @@ Examples of how `YINI` document files look like:
 # Prefs
 
 HomeDir = "C:\Users\John Smith"
-KeyWords: "pear", "orange", "banana"
 Buffers = 10
+KeyWords: "pear", "orange", "banana"
 
 ###
 ```
