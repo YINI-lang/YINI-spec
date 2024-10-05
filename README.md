@@ -25,7 +25,7 @@ It aims to be even more simple and lightweight than similar formats (no specific
 In the beginning, `YINI` started with the working name `MINI`, and then `MINI-CONFIG` / `miniCONFIG` which stood for Minimalistic INI Configuration Object Notation File. Also M stood for Marko's (after the author) at the start but was changed to stand for minimalistic. Finally, as the specification began to mature away from the draft stage, the name was renamed to just `YINI`.
 
 ## Specification
-There exists a draft (work in progress) of the **[YINI spec](<./YINI spec.md>)**.
+First public test relase of the **[YINI spec](<./YINI spec.md>)**.
 
 ## Examples
 Examples of how `YINI` document files look like:

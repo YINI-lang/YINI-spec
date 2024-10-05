@@ -1,4 +1,5 @@
-# YINI specification
+# YINI specification version 1.0 Alpha
+## Revision 1.0.0
 
 `YINI` is a configuration file format, it stands for **Y**et another **INI** markup language. It consists of plain text with a simple syntax and structure comprising of key–value(s) pairs organized in sections.
 
