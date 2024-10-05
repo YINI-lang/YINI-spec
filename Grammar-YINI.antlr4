@@ -8,7 +8,7 @@ grammar YINI;
 options { caseInsensitive=false; }
 
 yini
-    : SHEBANG? NL* rule+ NL* TERMINAL_TOKEN NL* EOF
+    : SHEBANG? NL* rule NL* TERMINAL_TOKEN NL* EOF
     ;
 
 
@@ -22,10 +22,12 @@ section_head
 
 section_members
     : member+
+    | member* rule+
     ;
 
 member
     : IDENT '=' value NL+
+    | IDENT ':' NL* list NL+
     ;
 
 value
@@ -65,7 +67,7 @@ fragment DIGIT
 
 fragment BIN_DIGIT       : '0' | '1';
 fragment OCT_DIGIT       : [0-7];
-fragment DUO_DIGIT       : DIGIT | [xe] | [XE]; // x =10, e = 11
+fragment DUO_DIGIT       : DIGIT | [xe] | [XE]; // x = 10, e = 11.
 fragment HEX_DIGIT       : DIGIT | [a-f] | [A-F];
 
 fragment FRACTION
@@ -85,8 +87,23 @@ BOOLEAN options { caseInsensitive=true; }
     | ('false'|'no'|'off')
     ;
 
+list
+    : elements	
+	| '[' elements ']'
+	;
+
+elements
+    : element
+	| element ',' elements
+	;
+	
+element
+    : NL* value NL*
+//	| value NL
+	;
+		
 SHEBANG
-    : '#!' ~[\n\r]* NL
+    : '#!' ~[\b\f\n\r\t]* NL
     ;
 
 TERMINAL_TOKEN
@@ -96,12 +113,35 @@ TERMINAL_TOKEN
 IDENT  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')* ;
 
 STRING
-    : '"' ( ESC_SEQ_BASE | ~('\\' | '"') )* '"'
+    : P_STRING
+    | C_STRING
     ;
 
-// Note: Do not forget to include seq. for " or ' when matching for esq_seq
+// Pure string literal.
+P_STRING
+    : '\'' ( '\\\'' | ~[\b\f\n\r\t] )* '\''
+    | '"' ( '\\"' | ~[\b\f\n\r\t] )* '"'
+    ;
+
+// Classic string literal.
+C_STRING
+    : ('c' | 'C') '\'' ( ESC_SEQ | ~('\'') )* '\''
+    | ('c' | 'C') '"' ( ESC_SEQ | ~('"') )* '"'
+    ;
+
+// Note: Like 8.2 in specification.
+ESC_SEQ
+    : '\\' (["'])
+    | ESC_SEQ_BASE
+    ;
+
+// Note: Except does'n not include quotes `"`, `'`.
 ESC_SEQ_BASE
-    : '\\' [nrt/bf\\]	// TODO: add \u hex hex hex hex
+    : '\\' ([bfnrt\\/] | UNICODE)
+    ;
+	
+fragment UNICODE
+    : 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
     ;
     
 MULTI_LINE_COMMENT

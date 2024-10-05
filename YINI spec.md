@@ -26,8 +26,9 @@ Buffers = 10
 
 ### Comments and Ignore Line
 - Single line comments start with a double slash `//`. Everything after `//` to the end of the line `<NL>` is ignored.
-- Ignore line start with a double minus `--`. Everything after `--` to the end of the line `<NL>` is ignored.
 - Multi line comments start with `/*` and ends with `*/`. Multi line comments can span over multiple lines.
+#### Ignore / Disable Line
+- Ignore/disable line start with a double minus `--`. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
 
 ### Identifiers
 Naming identifiers must follow below rules:
@@ -81,7 +82,7 @@ A `YINI` value MUST be of one of the following 3 groups of native/built-in types
 
 - Compound type:
   - List/array (a sequence consisting of strings, numbers, or booleans)
-  - Tuple
+  - Tuple (--NOT IMPLEMENTED YET--)
 
 - Special type:
   - NULL
@@ -111,15 +112,15 @@ or just
 > fruits: "oranges", "bananas", "peaches"
 
 ## 8. String Literals ##
-### Strings (Pure) ###
-Strings can either be enclosed in single quotes `'` or double quotes `"`. In `YINI` strings are **raw string literals by defalt**, meaning these strings can span over multiple lines. And backslash **`\` is "just a backslash"** character. They do not support different escape sequences like newline or tabs, except:
+### 8.1 Strings (Pure) ###
+Strings can either be enclosed in single quotes `'` or double quotes `"`. In `YINI` strings are **pure string literals by defalt**, meaning that these strings cannot span over multiple lines, include any whitespaces except blank space <SPACE>, and backslash **`\` is "just a backslash"** character. Also they do not support different escape sequences like newline or tabs, except:
 - String enclosed in single quotes `'`, support only `\'` for `'`
 - String enclosed in double quotes `"`, support only `\"` for `"`
 
 YINI strings are ideal for file directory paths and the like.
 >myPath = "C:\Users\John Smith"
 
-### Escaped Strings ###
+### 8.2 Escaped Strings ###
 Alternatively YINI support also "normal" strings literals, called C-Strings. These strings are prefixed with either `c` or `C` (for classic string). All the usual escape sequences" that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
 >myText = c"This is a newline \n and this is a tab \t character."
@@ -127,13 +128,13 @@ Alternatively YINI support also "normal" strings literals, called C-Strings. The
 Escape codes in C-strings (in lower or uppercase):
 - `\n` for Newline
 - `\r` for Carriage Return
+- `\b` for Backspace
+- `\f` for Form Feed
 - `\t` for Tab
 - `\'` for Single Quote
 - `\"` for Double Quote
 - `\\` for backslash
 - `\/` for normal Slash
-- `\b` for Backspace
-- `\f` for Form Feed
 - `\u hex hex hex hex` for hex value
 
 Where hex is 0-9, or a-f, or A-F.
@@ -147,7 +148,7 @@ Number can be an integer or a real number with `.` similar as a number in JavaSc
 
 In addition to normal (10-base) decimal literals, YINI supports other number base literals as well.
 
---TODO: Not sure about the alt. notation like `#`, `=`, `%` and so on--
+--MAYBE IN NEXT SPEC: Not sure about the alt. notation like `#`, `=`, `%` and so on--
 
 | Number format | Alt. number format | Description | Number base | Note
 |----------|--|---|---|---|
@@ -171,14 +172,14 @@ Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 The engine should convert the literal value to the corresponding Boolean value in the host language.
   
 ## 11. List (array) ##
-A list with zero or more values, each value separated by a comma, whitespaces between values/commas are OK.
+A list with zero or more values, each value separated by a comma, whitespaces between values/commas are OK. However, a line cannot start with a comma `,`.
 
 Optionally a list can be enclosed in [ ], but it is not mandatory.
 
---TO BE EXPANDED about types and mode--
+--MAYBE IN NEXT SPEC: TO BE EXPANDED about types and mode--
 
 ## 12. Tuple ##
---TODO--
+--NOT IMPLEMENTED YET: MAYBE IN NEXT SPEC--
 
 ## 13. NULL ##
 Value/literal `NULL` (NON CASE-SENSITIVE). 
@@ -202,7 +203,8 @@ A full example of a `YINI` document:
 
 # General
 IsDarkMode = YES
-Dirs: "C:\Users", "D:\Temp"
+Buffers = 10
+Dirs: "C:\Users", "D:\Work\Temp", "E:\Data\Temp"
 
 ## Menu 
 Id = "FILE"
