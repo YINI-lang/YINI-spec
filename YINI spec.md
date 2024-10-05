@@ -13,13 +13,13 @@ Buffers = 10
 ### // End of YINI doc.
 ```
 
-## Terminoly
+## 1. Terminoly
 - **Engine**: Is the program/software that reads and writes `YINI` documents.
 - **Host**: The host is the program/software (written by the user/developer/programmer) that runs the `YINI`-engine (decoder or encoder).
 - **Decoder**: A `YINI` converts or reads a YINI document into a meaningful object or data structure for a host to be used.
 - **Encoder**: A `YINI` takes an object or data structure on the host and converts/saves it to a `YINI` document.
 
-## Definitions
+## 2. Definitions
 ### Whitespaces
 - Newlines `<NL>` can be either `<LF>` (0x0A) or `<CR><LF>` (0x0D 0x0A).
 - All tabs `<TAB>` (0x09) and blank spaces `<SPACE>` (0x20) are ignored.
@@ -37,7 +37,7 @@ Naming identifiers must follow below rules:
 - Must be unique, there cannot be multiple section header with the same identifier.
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
 
-## Section Headers
+## 3. Section Headers
 A section header consists with one or more hash-symbols `#` and then an identifier (must be a unique identifier (within the same section level)). The number of hash-symbols indicates the level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
 
 In addition, the section header must be on its own separate line, any tabs or spaces at the beginning and end of the identifier are ignored.
@@ -48,7 +48,7 @@ In addition, the section header must be on its own separate line, any tabs or sp
 ### SectionLevel3 ###
 ```
 
-## Title Section
+## 4. Title Section
 A `YINI` document always (with one exception mentioned later) starts with a Section header of level 1, the so-called title section header. There can only be one single level 1 section, each document must have this title-section.
 
 ```
@@ -64,14 +64,14 @@ After the Title section comes section header with level 2.
 ## Section
 ```
 
-## Terminal Token
+## 5. Terminal Token
 A `YINI` document must always end with three hash-symbols (without any whitespaces in between) on its own line, after this there may be only whitespaces or possible comments.
 
 ```
 ###
 ```
 
-## Values & Native Types
+## 6. Values & Native Types
 A `YINI` value MUST be of one of the following 3 groups of native/built-in types:
 
 - Simple types:
@@ -81,13 +81,14 @@ A `YINI` value MUST be of one of the following 3 groups of native/built-in types
 
 - Compound type:
   - List/array (a sequence consisting of strings, numbers, or booleans)
+  - Tuple
 
 - Special type:
   - NULL
 
 Note: Above are all types that are supported by `YINI`, any other types are left to the host software to cast or convert to after reading (or before saving) a `YINI` document.
 
-## Members
+## 7. Members
 Each member must start on its own line, the name is called key in members, must be a unique identifier within the section (on the same section level).
 They come in two forms:
 1. **A single value**: a key-value pair that holds only one single value.
@@ -109,8 +110,8 @@ or just
 
 > fruits: "oranges", "bananas", "peaches"
 
-## String Literals ##
-### Strings (Raw) ###
+## 8. String Literals ##
+### Strings (Pure) ###
 Strings can either be enclosed in single quotes `'` or double quotes `"`. In `YINI` strings are **raw string literals by defalt**, meaning these strings can span over multiple lines. And backslash **`\` is "just a backslash"** character. They do not support different escape sequences like newline or tabs, except:
 - String enclosed in single quotes `'`, support only `\'` for `'`
 - String enclosed in double quotes `"`, support only `\"` for `"`
@@ -137,13 +138,28 @@ Escape codes in C-strings (in lower or uppercase):
 
 Where hex is 0-9, or a-f, or A-F.
 
-## Number Literals ##
---TO BE EXPANDED with number formats--
+## 9. Number Literals ##
 Number can be an integer or a real number with `.` similar as a number in JavaScript. It can include a sign - or +. Can be of exponent form, 'e' or 'E' sign digits, where:
 -sign is either +, -, or blank
 - digits is any number 0 or larger
+
+### Number Formats ###
+
+In addition to normal (10-base) decimal literals, YINI supports other number base literals as well.
+
+--TODO: Not sure about the alt. notation like `#`, `=`, `%` and so on--
+
+| Number format | Alt. number format | Description | Number base | Note
+|----------|--|---|---|---|
+| `3e4` | - | Exponent notation number | 10-base | Result: 3×4^10
+| `0d1209` | `=1209` | 10-base decimal number | 10-base |
+| `0b1010` | `%1010` | Binary number | 2-base |
+| `0o7477` | `&7477` | Octal number | 8-base |
+| `0z2ex9` | `€2ex9` | Duodecimal (dozenal) number | 12-base | `x` is 10, `e` is 11
+| `0xf390` | <strike>`#f390`</strike> | Hexadecimal number | 16-base | `a`, `b`, `c`, `d`, `e`, `f` are 10 to 15
+
   
-## Boolean Literals ##
+## 10. Boolean Literals ##
 Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 - true
 - false
@@ -154,17 +170,22 @@ Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 
 The engine should convert the literal value to the corresponding Boolean value in the host language.
   
-## List (array) ##
+## 11. List (array) ##
 A list with zero or more values, each value separated by a comma, whitespaces between values/commas are OK.
 
 Optionally a list can be enclosed in [ ], but it is not mandatory.
 
 --TO BE EXPANDED about types and mode--
-  
-## NULL ##
-Value/literal `NULL` (NON CASE-SENSITIVE). Also if value/list is missing in member, then that member is treated as NULL.
 
-## Sections in Sections
+## 12. Tuple ##
+--TODO--
+
+## 13. NULL ##
+Value/literal `NULL` (NON CASE-SENSITIVE). 
+
+Also if value/list is missing in member, then that member is treated as NULL.
+
+## 14. Sections in Sections
 If you want to put a section under another section, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
 ```
 ## Section ##
@@ -172,6 +193,8 @@ If you want to put a section under another section, make a section header that i
 ```
 
 ---
+
+## 15. Example
 
 A full example of a `YINI` document:
 ```yini
