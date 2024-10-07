@@ -40,7 +40,7 @@ section_members
     ;
 
 member
-    : IDENT '=' NL+	// Missing value is implicit NULL.
+    : IDENT '=' NL+
     | IDENT '=' value NL+
     | IDENT ':' NL* list NL+
     ;
@@ -104,7 +104,11 @@ BOOLEAN options { caseInsensitive=true; }
 
 list
     : elements	
-	| '[' elements ']'
+	| list_in_brackets
+	;
+
+list_in_brackets
+	: '[' NL* elements NL* ']'
 	;
 
 elements
@@ -114,9 +118,9 @@ elements
 	
 element
     : NL* value NL*
-//	| value NL
+	| NL* list_in_brackets NL*
 	;
-		
+	
 SHEBANG
     : '#!' ~[\b\f\n\r\t]* NL
     ;

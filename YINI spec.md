@@ -16,9 +16,7 @@ Buffers = 10
 
 ## 1. Terminoly
 - **Engine**: Is the program/software that reads and writes `YINI` documents.
-- **Host**: The host is the program/software (written by the user/developer/programmer) that runs the `YINI`-engine (decoder or encoder).
-- **Decoder**: A `YINI` converts or reads a YINI document into a meaningful object or data structure for a host to be used.
-- **Encoder**: A `YINI` takes an object or data structure on the host and converts/saves it to a `YINI` document.
+- **Host**: The host is the program/software (written by the user/developer/programmer) that runs the `YINI`-engine (decoder and/or encoder).
 
 ## 2. Definitions
 ### 2.1 Whitespaces
@@ -29,7 +27,9 @@ Buffers = 10
 - Single line comments start with a double slash `//`. Everything after `//` to the end of the line `<NL>` is ignored.
 - Multi line comments start with `/*` and ends with `*/`. Multi line comments can span over multiple lines.
 ### 2.3 Ignore / Disable Line
-- Ignore/disable line start with a double minus `--` as first characters in a line. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
+--This space is reserved--<br/>
+--Ignore / Disable Line: This may or may not be implemented in the future.--
+>- Ignore/disable line start with a double minus `--` as first characters in a line. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
 
 ### 2.4 Identifiers
 Naming identifiers must follow below rules:
@@ -160,7 +160,6 @@ In addition to normal (10-base) decimal literals, YINI supports other number bas
 | `0z2ex9` | `€2ex9` | Duodecimal (dozenal) number | 12-base | `x` is 10, `e` is 11
 | `0xf390` | <strike>`#f390`</strike> | Hexadecimal number | 16-base | `a`, `b`, `c`, `d`, `e`, `f` are 10 to 15
 
-  
 ## 10. Boolean Literals ##
 Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 - true
@@ -177,9 +176,17 @@ A list with zero or more values, each value separated by a comma, whitespaces be
 
 Optionally a list can be enclosed in [ ], but it is not mandatory.
 
---MAYBE IN NEXT SPEC: TO BE EXPANDED about types and mode--
+A list can be nested with other lists.
+
+```
+linkItems: [
+	["stylesheet", "css/general.css"],
+	["stylesheet", "css/themes.css"]
+]
+```
 
 ## 12. Tuple ##
+--This space is reserved--<br/>
 --NOT IMPLEMENTED YET: MAYBE IN NEXT SPEC--
 
 ## 13. NULL ##
@@ -225,7 +232,6 @@ OnClick = "SaveDoc()"
 
 *** // End of YINI doc.
 ```
-
 
 ---
 
