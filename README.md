@@ -41,7 +41,7 @@ HomeDir = "C:\Users\John Smith"
 Buffers = 10
 KeyWords: "pear", "orange", "banana"
 
-###
+*** // End of YINI doc.
 ```
 
 ### Longer Example
