@@ -11,12 +11,23 @@ grammar YINI;
 options { caseInsensitive=false; }
 
 yini
-    : SHEBANG? NL* rule NL* TERMINAL_TOKEN NL* EOF
+    : SHEBANG? NL* main_section NL* EOF
     ;
 
+main_section
+    : section_head (section_members | section)+ NL* TERMINAL_TOKEN
+    ;
 
-rule
+TERMINAL_TOKEN options { caseInsensitive=true; }
+//    : ('***' | '/END' | 'END')
+    : '***'
+	;
+
+fragment EBD: ('0'|'1') ('0'|'1') ('0'|'1');
+
+section
     : section_head section_members
+	| section_head section NL+
     ;
 
 section_head
@@ -25,11 +36,12 @@ section_head
 
 section_members
     : member+
-    | member* rule+
+//    | rule+
     ;
 
 member
-    : IDENT '=' value NL+
+    : IDENT '=' NL+	// Missing value is implicit NULL.
+    | IDENT '=' value NL+
     | IDENT ':' NL* list NL+
     ;
 
@@ -108,10 +120,6 @@ element
 SHEBANG
     : '#!' ~[\b\f\n\r\t]* NL
     ;
-
-TERMINAL_TOKEN
-	: '###'
-	;
 
 IDENT  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')* ;
 

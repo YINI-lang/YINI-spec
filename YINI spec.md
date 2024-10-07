@@ -11,7 +11,7 @@ HomeDir = "C:\Users\John Smith"
 KeyWords: "oranges", "bananas", "peaches"
 Buffers = 10
 
-### // End of YINI doc.
+*** // End of YINI doc.
 ```
 
 ## 1. Terminoly
@@ -21,17 +21,17 @@ Buffers = 10
 - **Encoder**: A `YINI` takes an object or data structure on the host and converts/saves it to a `YINI` document.
 
 ## 2. Definitions
-### Whitespaces
+### 2.1 Whitespaces
 - Newlines `<NL>` can be either `<LF>` (0x0A) or `<CR><LF>` (0x0D 0x0A).
 - All tabs `<TAB>` (0x09) and blank spaces `<SPACE>` (0x20) are ignored.
 
-### Comments and Ignore Line
+### 2.2 Comments
 - Single line comments start with a double slash `//`. Everything after `//` to the end of the line `<NL>` is ignored.
 - Multi line comments start with `/*` and ends with `*/`. Multi line comments can span over multiple lines.
-#### Ignore / Disable Line
-- Ignore/disable line start with a double minus `--`. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
+### 2.3 Ignore / Disable Line
+- Ignore/disable line start with a double minus `--` as first characters in a line. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
 
-### Identifiers
+### 2.4 Identifiers
 Naming identifiers must follow below rules:
 - Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
 - Must begin with a letter or an underscore `_`.
@@ -70,7 +70,7 @@ After the Title section comes section header with level 2.
 A `YINI` document must always end with three hash-symbols (without any whitespaces in between) on its own line, after this there may be only whitespaces or possible comments.
 
 ```
-###
+***
 ```
 
 ## 6. Values & Native Types
@@ -223,7 +223,7 @@ OnClick = "OpenDoc()"
 Value = "Save"
 OnClick = "SaveDoc()"
 
-### // End of YINI doc.
+*** // End of YINI doc.
 ```
 
 
