@@ -1,4 +1,4 @@
-# YINI
+# YINI specification v1.0.0 Alpha
 **Y**et another **INI** markup language - It is a minimalistic initialization configuration file format.
 
 ---
