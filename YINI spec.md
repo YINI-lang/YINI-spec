@@ -14,6 +14,9 @@ Buffers = 10
 *** // End of YINI doc.
 ```
 
+## Table of Contents
+--TODO--
+
 ## 1. Terminoly
 - **Engine**: Is the program/software that reads and writes `YINI` documents.
 - **Host**: The host is the program/software (written by the user/developer/programmer) that runs the `YINI`-engine (decoder and/or encoder).
