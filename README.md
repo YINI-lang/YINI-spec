@@ -1,5 +1,5 @@
 # YINI specification v1.0.0 Alpha
-**Y**et another **INI** markup language - It is a minimalistic initialization configuration file format.
+**Y**et another **INI** markup language - `YINI` is a configuration file format (similar to INI-files) for computer software that consists of plain text with a structure and syntax comprising key-value pairs organized in sections.
 
 ---
 ## General Objective
