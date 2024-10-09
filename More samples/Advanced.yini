@@ -14,7 +14,7 @@ script: "https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js", "htt
 
 // Three list items inside a list.
 link: [
-    ["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
+	["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
 	["stylesheet", "css/general.css"],
 	["stylesheet", "css/themes.css"]
 ]
@@ -24,6 +24,14 @@ content = "width=device-width, initial-scale=1.0"
 
 ## body
 h1 = "About Pets"
-content = "Pets are animals kept for companionship or entertainment. rather than as a working animal, livestock or laboratory animal. Two of the most popular pets are dogs and cats. Other animals include fish, birds, rabbits, rodents, ferrets, pigs and many other."
+
+// Using a Pure String (default) for content1.
+content1 = "Pets are animals kept for companionship or entertainment. rather than as a working animal, livestock or laboratory animal. Two of the most popular pets are dogs and cats. Other animals include fish, birds, rabbits, rodents, ferrets, pigs and many other."
+
+// Using a Hyper String for content2.
+content2 = h"Pets are animals kept for companionship or entertainment.
+	rather than as a working animal, livestock or laboratory animal. Two
+	of the most popular pets are dogs and cats. Other animals include
+	fish, birds, rabbits, rodents, ferrets, pigs and many other."
 
 ### // End of YINI doc.
