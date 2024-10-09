@@ -29,15 +29,14 @@ It aims to be even more simple and lightweight than similar formats (no specific
 5. YINI should be easy to use, implement and support one-pass processing.
 
 ## Specification
-First public test relase of the **[YINI spec](<./YINI spec.md>)**.
+Specification can be found here: **[YINI spec](<./YINI spec.md>)**.
 
 ## Grammar
 There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./Grammar-YINI.antlr4>)**.
 
-## Examples
-Examples of how `YINI` document files look like:
+## Short Example
+An example of how a `YINI` document file looks like:
 
-### Short Example
 ```
 # Prefs
 
@@ -47,6 +46,10 @@ KeyWords: "pear", "orange", "banana"
 
 ### // End of YINI doc.
 ```
+
+## More Bigger Examples
+### Example 1
+--TODO--
 
 ### Example 2
 ```yini
