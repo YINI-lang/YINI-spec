@@ -36,12 +36,12 @@ POSSIBLE_END_COMMENT: '//' () .*?;
 section_members: member+;
 
 member:
-	IDENT '=' NL+
-	| IDENT '=' value NL+
+	IDENT '=' value NL+
 	| IDENT ':' NL* list NL+
-	| TERMINAL_TOKEN;
+	| TERMINAL_TOKEN
+	| IDENT '=' NL+;
 
-value: STRING | NUMBER | BOOLEAN;
+value: string_ | NUMBER | BOOLEAN;
 
 NUMBER:
 	INTEGER ('.' INTEGER?)? EXPONENT?
@@ -58,7 +58,7 @@ fragment DECIMAL_INTEGER: '0' | SIGN? [1-9] DIGIT*;
 
 fragment INTEGER: DECIMAL_INTEGER;
 fragment BIN_INTEGER: ('b' | 'B') BIN_DIGIT+;
-fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+ | '0' OCT_DIGIT+;
+fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+;
 fragment DUO_INTEGER: ('z' | 'Z') DUO_DIGIT+;
 fragment HEX_INTEGER: ('x' | 'X') HEX_DIGIT+;
 
@@ -89,35 +89,25 @@ elements: element ','? | element ',' elements;
 
 element: NL* value NL* | NL* list_in_brackets NL*;
 
-SHEBANG: '#!' ~[\b\f\n\r\t]* NL;
+SHEBANG: '#!' ~[\b\n\r\t]* NL;
 
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
 		| 'A' ..'Z'
 		| '0' ..'9'
 		| '_'
-		| '-'
 	)*;
 
-STRING: P_STRING | C_STRING;
+//STRING: P_STRING | C_STRING;
 
-/*
- STRING
- : SINGLE_STRING
- | SINGLE_STRING '+' SINGLE_STRING
- ;
- 
- SINGLE_STRING
- : P_STRING
- |
- C_STRING
- ;
- */
+string_:
+	SINGLE_STRING NL* '+' NL* SINGLE_STRING
+	| SINGLE_STRING;
+
+SINGLE_STRING: P_STRING | C_STRING;
 
 // Pure string literal.
-P_STRING:
-	'\'' ('\\\'' | ~[\b\f\n\r\t])* '\''
-	| '"' ( '\\"' | ~[\b\f\n\r\t])* '"';
+P_STRING: '\'' (~['\b\n\r\t])* '\'' | '"' ( ~["\b\n\r\t])* '"';
 
 // Classic string literal.
 C_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
@@ -127,7 +117,7 @@ C_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
 
 // Note: Except does'n not include quotes `"`, `'`.
-ESC_SEQ_BASE: '\\' ([bfnrt\\/] | UNICODE);
+ESC_SEQ_BASE: '\\' ([bnrt\\/] | UNICODE);
 
 fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 
@@ -137,4 +127,4 @@ SINGLE_LINE_COMMENT:
 	'//' .*? NL -> skip; //    : '//' .*? (NL | EOF) -> skip
 
 WS: [ \t]+ -> skip;
-NL: ('\r' '\n'? | '\n') /*-> channel(HIDDEN)*/;
+NL: ('\r' '\n'? | '\n');

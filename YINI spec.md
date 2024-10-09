@@ -37,7 +37,7 @@ Buffers = 10
 
 ### 2.4 Identifiers
 Naming identifiers must follow below rules:
-- Can only contain letters (a-z or A-Z), digits (0-9), dashes `-` (minus characters) and underscores `_`.
+- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
 - Must begin with a letter or an underscore `_`.
 - Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
 - Must be unique, there cannot be multiple section header with the same identifier.
@@ -129,7 +129,7 @@ Strings can either be enclosed in single quotes `'` or double quotes `"`. In `YI
 YINI strings are ideal for file directory paths and the like.
 >myPath = "C:\Users\John Smith"
 
-### 8.1 Hyper Strings ###
+### 8.2 Hyper Strings ###
 --TODO--
 
 ### 8.3 Escaped Strings ###
@@ -141,7 +141,6 @@ Escape codes in C-strings (in lower or uppercase):
 - `\n` for Newline
 - `\r` for Carriage Return
 - `\b` for Backspace
-- `\f` for Form Feed
 - `\t` for Tab
 - `\'` for Single Quote
 - `\"` for Double Quote
@@ -150,6 +149,12 @@ Escape codes in C-strings (in lower or uppercase):
 - `\u hex hex hex hex` for hex value
 
 Where hex is 0-9, or a-f, or A-F.
+
+### 8.4 String Concatenation  ###
+Strings can be concatenated using the plus `+` operator. It adds together strings, you can add as many strings as you want.
+```
+var = "Hi, " + "hello " + "there"
+```
 
 ## 9. Number Literals ##
 Number can be an integer or a real number with `.` similar as a number in JavaScript. It can include a sign - or +. Can be of exponent form, 'e' or 'E' sign digits, where:
