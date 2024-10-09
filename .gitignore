@@ -2,3 +2,6 @@
 *.old
 *.bak
 *.input
+
+# Ignore Eclipse data.
+.metadata
