@@ -1,12 +1,12 @@
 # YINI-spec v1.0.0 Alpha 2
 **Y**et another **INI** markup language - `YINI` is a configuration file format (similar to INI-files) for computer software that consists of plain text with a simple structure, comprising of Key–Value pairs and Key-List pairs, organized in sections.
 
-Key–Value pairs are separated by an equals sign `=`.
-
-Key–List pairs are separated by a colon `:`.
-
-## Table of Contents
---TODO--
+## So, what is special about YINI?
+In YINI:
+- Key–Value pairs are separated by an equals sign `=`.
+- Key–List pairs are separated by a colon `:`.
+  
+--EXPAND--
 
 ---
 ## General Objective
