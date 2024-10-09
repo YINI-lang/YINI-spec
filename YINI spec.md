@@ -1,7 +1,9 @@
 # YINI specification version 1.0 Alpha
 ## Revision 1.0.0
 
-`YINI` is a configuration file format, it stands for **Y**et another **INI** markup language. It consists of plain text with a simple syntax and structure comprising of key–value(s) pairs organized in sections.
+`YINI` is a configuration file format, it stands for **Y**et another **INI** markup language. It consists of plain text with a simple syntax and structure, comprising of Key–Value pairs and Key-List pairs, organized in sections.
+
+Recommended filename extension for a YINI file is `.yini`.
 
 A short YINI document looks like the following.
 ```yini
@@ -102,15 +104,15 @@ They come in two forms:
 2. **A list of values**: a key-values pair that holds zero or more values (or elements). Elements are separated by commas.
 
 ### Member with a Value
-A member with one value is a Key-Value pair using the an equals sign `=`. The key is on the left of a equals sign and the value is on the right.
+A member with one value is a Key-Value pair using the an equals character `=`. The key is on the left of a equals character and the value is on the right.
 > key = "value"
 or
 > lives = 3
 
-NOTE: Key-Value pairs are separated by equals sign `=`, as opposed to key-List pairs.
+NOTE: Key-Value pairs are separated by equals `=` character, as opposed to key-List pairs.
 
 ### Member with a List
-A member with a list, is a Key-List pair using the colon sign `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
+A member with a list, is a Key-List pair using the colon character `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
 
 Optionally a list can be enclosed in `[` `]`, but it is not mandatory.
 > key: ["value1", "value2", "value3"]
