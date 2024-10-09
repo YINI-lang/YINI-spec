@@ -52,7 +52,7 @@ KeyWords: "pear", "orange", "banana"
 ```yini
 # MyPrefs
 
-# General
+## General
 IsDarkMode = YES
 Buffers = 10
 Dirs: "C:\Users", "D:\Work\Temp", "E:\Data\Temp"
