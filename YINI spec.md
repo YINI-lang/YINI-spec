@@ -11,7 +11,7 @@ HomeDir = "C:\Users\John Smith"
 KeyWords: "oranges", "bananas", "peaches"
 Buffers = 10
 
-*** // End of YINI doc.
+### // End of YINI doc.
 ```
 
 ## Table of Contents
@@ -36,7 +36,7 @@ Buffers = 10
 
 ### 2.4 Identifiers
 Naming identifiers must follow below rules:
-- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
+- Can only contain letters (a-z or A-Z), digits (0-9), dashes `-` (minus characters) and underscores `_`.
 - Must begin with a letter or an underscore `_`.
 - Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
 - Must be unique, there cannot be multiple section header with the same identifier.
@@ -53,16 +53,18 @@ In addition, the section header must be on its own separate line, any tabs or sp
 ### SectionLevel3 ###
 ```
 
-## 4. Title Section
-A `YINI` document always (with one exception mentioned later) starts with a Section header of level 1, the so-called title section header. There can only be one single level 1 section, each document must have this title-section.
+## 4. Section Header
+A `YINI` document always starts with a Section Header of level 1. There may be multiple single level 1 sections, each document must have at least one section.
+
+(Note: If there is only one (1) section with level 1, it may be called the so-called title header.)
 
 ```
 # Title
 ```
 
-After the Title section comes section header with level 2.
+After the a section with level 1, comes section header with level 2.
 
-*) The very first line may start with a shebang `#!`, then this line is ignored.
+*) The very first line **may start** with a shebang `#!`, then this line is ignored.
 
 ```
 # Title
@@ -73,7 +75,7 @@ After the Title section comes section header with level 2.
 A `YINI` document must always end with three hash-symbols (without any whitespaces in between) on its own line, after this there may be only whitespaces or possible comments.
 
 ```
-***
+###
 ```
 
 ## 6. Values & Native Types
@@ -100,13 +102,15 @@ They come in two forms:
 2. **A list of values**: a key-values pair that holds zero or more values (or elements). Elements are separated by commas.
 
 ### Member with a Value
-A member with one value is a Key/Value pair using the a equals sign `=`. The key is on the left of a equals sign and the value is on the right.
+A member with one value is a Key-Value pair using the an equals sign `=`. The key is on the left of a equals sign and the value is on the right.
 > key = "value"
 or
 > lives = 3
 
+NOTE: Key-Value pairs are separated by equals sign `=`, as opposed to key-List pairs.
+
 ### Member with a List
-A member with a list, is a Key/List pair using the colon sign `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
+A member with a list, is a Key-List pair using the colon sign `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
 
 Optionally a list can be enclosed in `[` `]`, but it is not mandatory.
 > key: ["value1", "value2", "value3"]
@@ -175,11 +179,13 @@ Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 The engine should convert the literal value to the corresponding Boolean value in the host language.
   
 ## 11. List (array) ##
-A list with zero or more values, each value separated by a comma, whitespaces between values/commas are OK. However, a line cannot start with a comma `,`.
+A list with zero or more values, each value separated by a comma, whitespaces between values/commas are OK, as well as there can be a comma after the last value. However, a line cannot start with a comma `,`.
 
 Optionally a list can be enclosed in [ ], but it is not mandatory.
 
-A list can be nested with other lists.
+A list can also be nested with other lists.
+
+NOTE: Key-List pairs are separated by a colon `:`, as opposed to key-Value pairs.
 
 ```
 linkItems: [
@@ -233,7 +239,7 @@ OnClick = "OpenDoc()"
 Value = "Save"
 OnClick = "SaveDoc()"
 
-*** // End of YINI doc.
+### // End of YINI doc.
 ```
 
 ---

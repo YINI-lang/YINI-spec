@@ -11,17 +11,11 @@ grammar YINI;
 options { caseInsensitive=false; }
 
 yini
-    : SHEBANG? NL* main_section NL* EOF
+    : SHEBANG? NL* section+ NL*
     ;
 
-main_section
-    : section_head (section_members | section)+ NL* TERMINAL_TOKEN
-    ;
-
-TERMINAL_TOKEN options { caseInsensitive=true; }
-//    : ('***' | '/END' | 'END')
-    : '***'
-	;
+//main_section
+//    : section_head (section_members | section)+ NL*;
 
 fragment EBD: ('0'|'1') ('0'|'1') ('0'|'1');
 
@@ -32,17 +26,27 @@ section
 
 section_head
 	: '#'+ IDENT NL+
+//	| TERMINAL_TOKEN
 	;
+
+TERMINAL_TOKEN options { caseInsensitive=true; }
+//    : '***'
+    : '###' WS* POSSIBLE_END_COMMENT? NL* EOF
+	;
+	
+POSSIBLE_END_COMMENT
+    : '//' ().*?
+    ;
 
 section_members
     : member+
-//    | rule+
     ;
 
 member
     : IDENT '=' NL+
     | IDENT '=' value NL+
     | IDENT ':' NL* list NL+
+    | TERMINAL_TOKEN
     ;
 
 value
@@ -76,10 +80,6 @@ fragment DIGIT
     : [0-9]
     ;
 
-//fragment NON_ZERO_DIGIT
-//   : [1-9]
-//   ;
-
 fragment BIN_DIGIT       : '0' | '1';
 fragment OCT_DIGIT       : [0-7];
 fragment DUO_DIGIT       : DIGIT | [xe] | [XE]; // x = 10, e = 11.
@@ -112,7 +112,7 @@ list_in_brackets
 	;
 
 elements
-    : element
+    : element ','?
 	| element ',' elements
 	;
 	
@@ -125,12 +125,24 @@ SHEBANG
     : '#!' ~[\b\f\n\r\t]* NL
     ;
 
-IDENT  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_')* ;
+IDENT  :	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'0'..'9'|'_'|'-')* ;
 
 STRING
     : P_STRING
     | C_STRING
     ;
+
+/*
+STRING
+    : SINGLE_STRING
+    | SINGLE_STRING '+' SINGLE_STRING
+    ;
+
+SINGLE_STRING
+    : P_STRING
+    | C_STRING
+    ;
+*/
 
 // Pure string literal.
 P_STRING
@@ -164,7 +176,8 @@ MULTI_LINE_COMMENT
     ;
 
 SINGLE_LINE_COMMENT
-    : '//' .*? (NL | EOF) -> skip
+//    : '//' .*? (NL | EOF) -> skip
+    : '//' .*? NL -> skip
     ;
 
 WS: [ \t]+ -> skip;
