@@ -5,14 +5,9 @@
 	### general
 	protocol = "ftp"
 	host = "mysite.com"
-	port = 21
+	//port = 21
 
-		#### login
-		type = "normal"
-		username = "usern"
-		password = "0000"
-
-	### advanced
+/*	### advanced
 	serverType = "default"
 	bypassProxy = false
 	localDir = "C:\Users\John Smith\mysite"
@@ -20,7 +15,7 @@
 
 	### transfer
 	maxNumConnections = 1
-
+*/
 ## entry1
 
 	### general
@@ -63,4 +58,4 @@
 	### transfer
 	maxNumConnections = 3
 
-*** // End of YINI doc.
+### // End of YINI doc.
