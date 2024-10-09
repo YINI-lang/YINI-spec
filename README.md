@@ -48,7 +48,7 @@ KeyWords: "pear", "orange", "banana"
 ### // End of YINI doc.
 ```
 
-### Longer Example
+### Example 2
 ```yini
 # MyPrefs
 
@@ -74,6 +74,30 @@ Value = "Save"
 OnClick = "SaveDoc()"
 
 ### // End of YINI doc.
+```
+
+### Example 3
+```yini
+# package
+name = "SomeName"
+description = "Some description of something."
+version = "1.8.4"
+authors: [
+    "skljsdalf",
+    "Sss sdfsdf <sdfsf@jlewr.com>",
+    "sdfalf",
+]
+exclude: [
+    "build",
+    "docs",
+    "examples",
+    "packages",
+]
+
+# dev-dependencies
+tester = "bin/tester@1.1.4"
+
+### // End of doc.
 ```
 
 ## Trivia
