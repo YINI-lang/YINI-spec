@@ -122,15 +122,18 @@ or just
 
 ## 8. String Literals ##
 ### 8.1 Strings (Pure) ###
-Strings can either be enclosed in single quotes `'` or double quotes `"`. In `YINI` strings are **pure string literals by defalt**, meaning that these strings cannot span over multiple lines, include any whitespaces except blank space <SPACE>, and backslash **`\` is "just a backslash"** character. Also they do not support different escape sequences like newline or tabs, except:
+Strings can either be enclosed in single quotes `'` or double quotes `"`. In `YINI` strings are **pure string literals by defalt**, meaning that these strings cannot span over multiple lines, or include any whitespaces except blank space <SPACE>, and backslash **`\` is "just a backslash"** character. Also they do not support different escape sequences like newline or tabs, except:
 - String enclosed in single quotes `'`, support only `\'` for `'`
 - String enclosed in double quotes `"`, support only `\"` for `"`
 
 YINI strings are ideal for file directory paths and the like.
 >myPath = "C:\Users\John Smith"
 
-### 8.2 Escaped Strings ###
-Alternatively YINI support also "normal" strings literals, called C-Strings. These strings are prefixed with either `c` or `C` (for classic string). All the usual escape sequences" that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
+### 8.1 Hyper Strings ###
+--TODO--
+
+### 8.3 Escaped Strings ###
+Alternatively YINI support also normal ("Classic") string literals, called C-Strings. These strings are prefixed with either `c` or `C`. All the usual escape sequences" that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
 >myText = c"This is a newline \n and this is a tab \t character."
 
