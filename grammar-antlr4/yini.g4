@@ -36,7 +36,29 @@ member:
 	| IDENT '=' value NL+
 	| IDENT ':' NL* list NL+;
 
-value: string_ | NUMBER | BOOLEAN;
+value: string | NUMBER | BOOLEAN;
+
+list: elements | list_in_brackets;
+
+list_in_brackets: '[' NL* elements NL* ']';
+
+elements: element ','? | element ',' elements;
+
+element: NL* value NL* | NL* list_in_brackets NL*;
+
+//STRING: P_STRING | C_STRING;
+
+string: SINGLE_STRING NL* '+' NL* SINGLE_STRING | SINGLE_STRING;
+
+SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
+
+IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
+		'a' ..'z'
+		| 'A' ..'Z'
+		| '0' ..'9'
+		| '_'
+		| '-'
+	)*;
 
 NUMBER:
 	INTEGER ('.' INTEGER?)? EXPONENT?
@@ -47,6 +69,29 @@ NUMBER:
 		| DUO_INTEGER
 		| HEX_INTEGER
 	);
+
+BOOLEAN options {
+	caseInsensitive = true;
+}: ('true' | 'yes' | 'on') | ('false' | 'no' | 'off');
+
+SINGLE_STRING: P_STRING | C_STRING;
+
+// Pure string literal.
+P_STRING:
+	'\'' (~['\n\r\b\f\t])* '\''
+	| '"' ( ~["\n\r\b\f\t])* '"';
+
+// Classic string literal.
+C_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
+	| ('c' | 'C') '"' ( ESC_SEQ | ~('"'))* '"';
+
+// Note: Like 8.2 in specification.
+ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
+
+// Note: Except does'n not include quotes `"`, `'`.
+ESC_SEQ_BASE: '\\' ([nrbft\\/] | UNICODE);
+
+fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 
 // Note: 0 or higher than 1, no leading 0s allowed (for ex: `01`)
 fragment DECIMAL_INTEGER: '0' | SIGN? [1-9] DIGIT*;
@@ -69,53 +114,6 @@ fragment FRACTION: '.' DIGIT+;
 fragment EXPONENT: ('e' | 'E') SIGN? DIGIT+;
 
 fragment SIGN: ('+' | '-');
-
-BOOLEAN options {
-	caseInsensitive = true;
-}: ('true' | 'yes' | 'on') | ('false' | 'no' | 'off');
-
-list: elements | list_in_brackets;
-
-list_in_brackets: '[' NL* elements NL* ']';
-
-elements: element ','? | element ',' elements;
-
-element: NL* value NL* | NL* list_in_brackets NL*;
-
-SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
-
-IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
-		'a' ..'z'
-		| 'A' ..'Z'
-		| '0' ..'9'
-		| '_'
-		| '-'
-	)*;
-
-//STRING: P_STRING | C_STRING;
-
-string_:
-	SINGLE_STRING NL* '+' NL* SINGLE_STRING
-	| SINGLE_STRING;
-
-SINGLE_STRING: P_STRING | C_STRING;
-
-// Pure string literal.
-P_STRING:
-	'\'' (~['\n\r\b\f\t])* '\''
-	| '"' ( ~["\n\r\b\f\t])* '"';
-
-// Classic string literal.
-C_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
-	| ('c' | 'C') '"' ( ESC_SEQ | ~('"'))* '"';
-
-// Note: Like 8.2 in specification.
-ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
-
-// Note: Except does'n not include quotes `"`, `'`.
-ESC_SEQ_BASE: '\\' ([nrbft\\/] | UNICODE);
-
-fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 
 NL: ('\r' '\n'? | '\n');
 
