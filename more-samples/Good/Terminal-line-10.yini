@@ -1,0 +1,8 @@
+# MyPrefs
+
+HomeDir = "C:\Users\John Smith\"
+Buffers = 10
+IsNight = OFF
+KeyWords: "Orange", "Banana", "Pear", "Peach"
+
+### // Line comment after terminal token.

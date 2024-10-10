@@ -1,0 +1,11 @@
+# Prefs
+
+## Entry
+
+### General
+size = 1024
+
+### Advanced
+cache = OFF
+
+### // End of YINI doc.

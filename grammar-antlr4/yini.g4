@@ -24,12 +24,9 @@ section:
 	section_head section_members
 	| section_head section NL+;
 
-section_head: '#'+ IDENT NL+; //	| terminal_token
+section_head: '#'+ IDENT NL+;
 
-// terminal_token: '###' WS* POSSIBLE_END_COMMENT? NL*;
 terminal_token: '###' comment? NL*;
-
-POSSIBLE_END_COMMENT: '//' () .*?;
 
 section_members: member+;
 
@@ -59,8 +56,6 @@ fragment BIN_INTEGER: ('b' | 'B') BIN_DIGIT+;
 fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+;
 fragment DUO_INTEGER: ('z' | 'Z') DUO_DIGIT+;
 fragment HEX_INTEGER: ('x' | 'X') HEX_DIGIT+;
-
-//fragment FLOAT : DECIMAL_INTEGER '.' DECIMAL_INTEGER;
 
 fragment DIGIT: [0-9];
 

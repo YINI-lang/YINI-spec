@@ -1,0 +1,19 @@
+#!/bin/python
+
+# prefs
+## entry
+### general
+nightMode = false
+
+### advanced
+isUseCache = true
+factor = 1.5
+maxCacheSize = 2048e6
+
+### cacheDirs
+dirs: 
+	"/tmp",
+	"/media/work/tmp",
+	"/media/data/tmp",
+
+### // End of YINI doc.
