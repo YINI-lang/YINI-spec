@@ -22,17 +22,21 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 section:
 	section_head section_members
-	| section_head section NL+;
+	| section_head section NL+
+	| terminal_line;
 
 section_head: '#'+ IDENT NL+;
 
-terminal_token: '###' comment? NL*;
+terminal_line: TERMINAL_TOKEN NL+ | TERMINAL_TOKEN comment? NL*;
+
+TERMINAL_TOKEN options {
+	caseInsensitive = true;
+}: '/END';
 
 section_members: member+;
 
 member:
-	terminal_token
-	| IDENT '=' NL+ // Empty value is treated as NULL.
+	IDENT '=' NL+ // Empty value is treated as NULL.
 	| IDENT '=' value NL+
 	| IDENT ':' NL* list NL+;
 
