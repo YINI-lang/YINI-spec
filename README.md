@@ -9,6 +9,7 @@ A short example of how a `YINI` document file looks like:
 
 HomeDir = "C:\Users\John Smith\"
 Buffers = 10
+IsNight = OFF
 KeyWords: "Orange", "Banana", "Pear", "Peach"
 
 ### // End of YINI doc.
@@ -65,8 +66,8 @@ There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./Grammar-YINI.an
 ## So, what is special about YINI?
 In YINI:
 - Strings are enclosed by either single quotes `'` or double quotes `"`, use what you prefer.
-- Key-Value pairs are separated by an equals sign `=`.
-- While, Key-List pairs are separated by a colon `:`.
+- Key-**Value** pairs are separated by an equals sign `=`.
+- While, Key-**List** pairs are separated by a colon `:`.
   
 --EXPAND--
 

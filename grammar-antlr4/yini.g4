@@ -14,10 +14,9 @@ options {
 	caseInsensitive = false;
 }
 
-yini: SHEBANG? NL* section+ NL*;
+comment: BLOCK_COMMENT | LINE_COMMENT;
 
-//main_section
-// : section_head (section_members | section)+ NL*;
+yini: SHEBANG? NL* section+ NL* EOF;
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
@@ -25,21 +24,20 @@ section:
 	section_head section_members
 	| section_head section NL+;
 
-section_head: '#'+ IDENT NL+; //	| TERMINAL_TOKEN
+section_head: '#'+ IDENT NL+; //	| terminal_token
 
-TERMINAL_TOKEN options {
-	caseInsensitive = true;
-}: '###' WS* POSSIBLE_END_COMMENT? NL* EOF; //    : '***'
+// terminal_token: '###' WS* POSSIBLE_END_COMMENT? NL*;
+terminal_token: '###' comment? NL*;
 
 POSSIBLE_END_COMMENT: '//' () .*?;
 
 section_members: member+;
 
 member:
-	IDENT '=' value NL+
-	| IDENT ':' NL* list NL+
-	| TERMINAL_TOKEN
-	| IDENT '=' NL+;
+	terminal_token
+	| IDENT '=' NL+ // Empty value is treated as NULL.
+	| IDENT '=' value NL+
+	| IDENT ':' NL* list NL+;
 
 value: string_ | NUMBER | BOOLEAN;
 
