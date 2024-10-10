@@ -1,0 +1,17 @@
+# window
+title = "Sample Window"
+id = "window_main"
+
+# image
+src = "gfx/bg.png"
+id = "bg1"
+isCentered = true
+
+# text
+content = "Click here!"
+id = "text1"
+isCentered = true
+url = "images/"
+styles: ["font-weight", "bold"], ["size", 36], ["font", "arial"]
+
+### // End of YINI doc.

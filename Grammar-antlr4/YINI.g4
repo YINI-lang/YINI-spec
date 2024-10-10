@@ -89,7 +89,7 @@ elements: element ','? | element ',' elements;
 
 element: NL* value NL* | NL* list_in_brackets NL*;
 
-SHEBANG: '#!' ~[\b\n\r\t]* NL;
+SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
@@ -108,7 +108,9 @@ string_:
 SINGLE_STRING: P_STRING | C_STRING;
 
 // Pure string literal.
-P_STRING: '\'' (~['\b\n\r\t])* '\'' | '"' ( ~["\b\n\r\t])* '"';
+P_STRING:
+	'\'' (~['\n\r\b\f\t])* '\''
+	| '"' ( ~["\n\r\b\f\t])* '"';
 
 // Classic string literal.
 C_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
@@ -118,14 +120,15 @@ C_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
 
 // Note: Except does'n not include quotes `"`, `'`.
-ESC_SEQ_BASE: '\\' ([bnrt\\/] | UNICODE);
+ESC_SEQ_BASE: '\\' ([nrbft\\/] | UNICODE);
 
 fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 
-MULTI_LINE_COMMENT: '/*' .*? '*/' -> skip;
-
-SINGLE_LINE_COMMENT:
-	'//' .*? NL -> skip; //    : '//' .*? (NL | EOF) -> skip
+NL: ('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
-NL: ('\r' '\n'? | '\n');
+
+BLOCK_COMMENT:
+	'/*' .*? '*/' -> skip; // Block AKA Multi-line comment.
+
+LINE_COMMENT: '//' ~[\r\n]* -> skip;

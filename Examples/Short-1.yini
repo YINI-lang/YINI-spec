@@ -1,7 +1,8 @@
 # MyPrefs
 
-HomeDir = "C:\Users\John Smith"
+HomeDir = "C:\Users\John Smith\"
 Buffers = 10
-KeyWords: "oranges", "bananas", "peaches"
+IsNight = OFF
+KeyWords: "Orange", "Banana", "Pear", "Peach"
 
 ### // End of YINI doc.

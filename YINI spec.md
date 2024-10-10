@@ -141,6 +141,7 @@ Escape codes in C-strings (in lower or uppercase):
 - `\n` for Newline
 - `\r` for Carriage Return
 - `\b` for Backspace
+- `\f` for Form Feed
 - `\t` for Tab
 - `\'` for Single Quote
 - `\"` for Double Quote

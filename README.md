@@ -1,12 +1,40 @@
 # YINI-spec v1.0.0 Alpha 2
 **Y**et another **INI** markup language - `YINI` is a configuration file format (similar to INI-files) for computer software that consists of plain text with a simple structure, comprising of Key–Value pairs and Key-List pairs, organized in sections.
 
-## So, what is special about YINI?
-In YINI:
-- Key–Value pairs are separated by an equals sign `=`.
-- Key–List pairs are separated by a colon `:`.
-  
---EXPAND--
+## Short Examples
+A short example of how a `YINI` document file looks like:
+
+```
+# MyPrefs
+
+HomeDir = "C:\Users\John Smith\"
+Buffers = 10
+KeyWords: "Orange", "Banana", "Pear", "Peach"
+
+### // End of YINI doc.
+```
+
+
+A `YINI` document file can look like this too:
+```
+# window
+title = "Sample Window"
+id = "window_main"
+
+# image
+src = "gfx/bg.png"
+id = "bg1"
+isCentered = true
+
+# text
+content = "Click here!"
+id = "text1"
+isCentered = true
+url = "images/"
+styles: ["font-weight", "bold"], ["size", 36], ["font", "arial"]
+
+### // End of YINI doc.
+```
 
 ---
 ## General Objective
@@ -34,25 +62,16 @@ Specification can be found here: **[YINI spec](<./YINI spec.md>)**.
 ## Grammar
 There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./Grammar-YINI.antlr4>)**.
 
-## Short Example
-An example of how a `YINI` document file looks like:
+## So, what is special about YINI?
+In YINI:
+- Key–Value pairs are separated by an equals sign `=`.
+- Key–List pairs are separated by a colon `:`.
+  
+--EXPAND--
 
+## More Examples
+### Bigger Example 1
 ```
-# Prefs
-
-HomeDir = "C:\Users\John Smith"
-Buffers = 10
-KeyWords: "pear", "orange", "banana"
-
-### // End of YINI doc.
-```
-
-## More Bigger Examples
-### Example 1
---TODO--
-
-### Example 2
-```yini
 # MyPrefs
 
 ## General
@@ -79,8 +98,8 @@ OnClick = "SaveDoc()"
 ### // End of YINI doc.
 ```
 
-### Example 3
-```yini
+### Bigger Example 2
+```
 # package
 name = "SomeName"
 description = "Some description of something."
