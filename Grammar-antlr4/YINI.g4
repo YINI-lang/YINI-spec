@@ -96,6 +96,7 @@ IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		| 'A' ..'Z'
 		| '0' ..'9'
 		| '_'
+		| '-'
 	)*;
 
 //STRING: P_STRING | C_STRING;
