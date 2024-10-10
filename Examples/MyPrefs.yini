@@ -21,4 +21,4 @@ OnClick = "OpenDoc()"
 Value = "Save"
 OnClick = "SaveDoc()"
 
-### // End of YINI doc.
+/END // End of YINI doc.

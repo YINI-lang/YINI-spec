@@ -5,4 +5,4 @@ Buffers = 10
 IsNight = OFF
 KeyWords: "Orange", "Banana", "Pear", "Peach"
 
-### /* Block comment after terminal token. */
+/END /* Block comment after terminal token. */

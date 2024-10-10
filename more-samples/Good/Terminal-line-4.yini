@@ -6,4 +6,4 @@ IsNight = OFF
 KeyWords: "Orange", "Banana", "Pear", "Peach"
 
 // No newline (NL) after terminal token.
-###
+/END

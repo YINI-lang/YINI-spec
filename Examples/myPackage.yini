@@ -17,4 +17,4 @@ exclude: [
 # dev-dependencies
 tester = "bin/tester@1.1.4"
 
-### // End of doc.
+/END // End of doc.

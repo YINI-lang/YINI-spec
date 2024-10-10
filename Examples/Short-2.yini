@@ -14,4 +14,4 @@ isCentered = true
 url = 'images/'
 styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 
-### // End of YINI doc.
+/END // End of YINI doc.

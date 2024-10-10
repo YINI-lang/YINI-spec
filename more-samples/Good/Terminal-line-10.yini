@@ -5,4 +5,4 @@ Buffers = 10
 IsNight = OFF
 KeyWords: "Orange", "Banana", "Pear", "Peach"
 
-### // Line comment after terminal token.
+/END // Line comment after terminal token.

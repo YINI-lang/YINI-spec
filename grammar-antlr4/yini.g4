@@ -40,7 +40,7 @@ member:
 	| IDENT '=' value NL+
 	| IDENT ':' NL* list NL+;
 
-value: string | NUMBER | BOOLEAN;
+value: string | NUMBER | boolean_literal;
 
 list: elements | list_in_brackets;
 
@@ -53,6 +53,8 @@ element: NL* value NL* | NL* list_in_brackets NL*;
 //STRING: P_STRING | C_STRING;
 
 string: SINGLE_STRING NL* '+' NL* SINGLE_STRING | SINGLE_STRING;
+
+boolean_literal: BOOLEAN NL+;
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 

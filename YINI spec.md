@@ -12,7 +12,7 @@ HomeDir = "C:\Users\John Smith"
 KeyWords: "oranges", "bananas", "peaches"
 Buffers = 10
 
-### // End of YINI doc.
+/END // End of YINI doc.
 ```
 
 ## Table of Contents
@@ -249,7 +249,7 @@ OnClick = "OpenDoc()"
 Value = "Save"
 OnClick = "SaveDoc()"
 
-### // End of YINI doc.
+/END // End of YINI doc.
 ```
 
 ---

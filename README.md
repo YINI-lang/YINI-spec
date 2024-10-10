@@ -12,7 +12,7 @@ Buffers = 10
 IsNight = OFF
 KeyWords: "Orange", "Banana", "Pear", "Peach"
 
-### // End of YINI doc.
+/END // End of YINI doc.
 ```
 
 
@@ -34,7 +34,7 @@ isCentered = true
 url = 'images/'
 styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 
-### // End of YINI doc.
+/END // End of YINI doc.
 ```
 
 ---
@@ -97,7 +97,7 @@ OnClick = "OpenDoc()"
 Value = "Save"
 OnClick = "SaveDoc()"
 
-### // End of YINI doc.
+/END // End of YINI doc.
 ```
 
 ### Bigger Example 2
@@ -121,7 +121,7 @@ exclude: [
 # dev-dependencies
 tester = "bin/tester@1.1.4"
 
-### // End of doc.
+/END // End of doc.
 ```
 
 ## Trivia
