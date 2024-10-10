@@ -18,20 +18,20 @@ KeyWords: "Orange", "Banana", "Pear", "Peach"
 A `YINI` document file can look like this too:
 ```
 # window
-title = "Sample Window"
-id = "window_main"
+title = 'Sample Window'
+id = 'window_main'
 
 # image
-src = "gfx/bg.png"
-id = "bg1"
+src = 'gfx/bg.png'
+id = 'bg1'
 isCentered = true
 
 # text
-content = "Click here!"
-id = "text1"
+content = 'Click here!'
+id = 'text1'
 isCentered = true
-url = "images/"
-styles: ["font-weight", "bold"], ["size", 36], ["font", "arial"]
+url = 'images/'
+styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 
 ### // End of YINI doc.
 ```
@@ -64,8 +64,9 @@ There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./Grammar-YINI.an
 
 ## So, what is special about YINI?
 In YINI:
-- Key–Value pairs are separated by an equals sign `=`.
-- Key–List pairs are separated by a colon `:`.
+- Strings are enclosed by either single quotes `'` or double quotes `"`, use what you prefer.
+- Key-Value pairs are separated by an equals sign `=`.
+- While, Key-List pairs are separated by a colon `:`.
   
 --EXPAND--
 
