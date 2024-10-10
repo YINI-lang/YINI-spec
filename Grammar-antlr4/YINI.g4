@@ -6,7 +6,7 @@
  Finland).
  */
 
-// This grammar should follow YINI specification version 1.0 Alpha. Please note, they might be
+// This grammar should follow YINI specification version 1.0 Alpha 2. Please note, they might be
 // smaller or bigger unknown bugs or issues.
 
 grammar yini;

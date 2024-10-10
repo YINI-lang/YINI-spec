@@ -1,4 +1,4 @@
-# package
+# myPackage
 name = "SomeName"
 description = "Some description of something."
 version = "1.8.4"
