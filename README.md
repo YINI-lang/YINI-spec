@@ -69,7 +69,7 @@ The latest and most stable version can be found here --TODO--
 Specification can be found here: **[YINI spec](<./YINI spec.md>)**.
 
 ## Grammar
-There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./grammar-antlr4YINI/yini.g4>)**.
+There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./grammar-antlr4/yini.g4>)**.
 
 ## So, what is special about YINI?
 In YINI:
