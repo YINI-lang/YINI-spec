@@ -2,4 +2,4 @@
 
 ## Published Versions / Releases
 
-In sub-dirs you will find published Versions / Releases
+Here in you will find published specifications.
