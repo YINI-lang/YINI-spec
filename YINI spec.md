@@ -59,7 +59,7 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 
 ### 2.4 Identifiers
 Naming identifiers must follow below rules:
-- Can only contain letters (a-z or A-Z), digits (0-9), dashes `-` (minus characters) and underscores `_`.
+- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
 - Must begin with a letter or an underscore `_`.
 - Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
 - Must be unique, there cannot be multiple section header with the same identifier.
