@@ -1,9 +1,0 @@
-# MyPrefs
-
-HomeDir = "C:\Users\John Smith\"
-Buffers = 10
-IsNight = OFF
-KeyWords: "Orange", "Banana", "Pear", "Peach"
-
-/END
-// Line comment after terminal token.
