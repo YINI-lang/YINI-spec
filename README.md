@@ -4,21 +4,23 @@
 ## Short Examples
 A short example of how a `YINI` document file looks like:
 
-```
+```ts
 # MyPrefs
 
 HomeDir = "C:\Users\John Smith\"
 Buffers = 10
-IsNight = OFF
-KeyWords: "Orange", "Banana", "Pear", "Peach"
+IsNight = OFF  // Boolean false, YINI understands also OFF, YES, ON etc.
 
-/END // End of YINI doc.
+// Following is a list (array) with strings as elements.
+KeyWords: [ "Orange", "Banana", "Pear", "Peach" ]
+
+/END  // All YINI files must end with this line.
 ```
 
 A `YINI` document file can look like this as well:
-```
+```ts
 # window
-title = 'Sample Window'
+title = 'Sample Window'  // Strings can be enclosed in either ' or ".
 id = 'window_main'
 
 # image
@@ -31,9 +33,13 @@ content = 'Click here!'
 id = 'text1'
 isCentered = true
 url = 'images/'
-styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 
-/END // End of YINI doc.
+// Following is a list with other lists as elements.
+styles: [
+    ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
+]
+
+/END  // End of YINI doc.
 ```
 
 ---
@@ -53,8 +59,8 @@ It aims to be even more simple and lightweight than similar formats (no specific
 1. YINI should be simple and (relatively) lightweight.
 2. YINI should be easily readable (to some extent) by humans.
 3. YINI should be non-verbose, not use excessive or unnecessary words.
-4. YINI data/document should be portable between platforms and programming languages.
-5. YINI should be easy to use, implement and support one-pass processing.
+4. YINI files/documents should be platform agnostic, portable between platforms and programming languages as far as possible.
+5. The YINI format should be easy to use, implement and support one-pass processing.
 
 ## Specification
 Specification can be found here: **[YINI spec](<./YINI spec.md>)**.
