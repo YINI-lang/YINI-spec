@@ -63,10 +63,13 @@ It aims to be even more simple and lightweight than similar formats (no specific
 5. The YINI format should be easy to use, implement and support one-pass processing.
 
 ## Specification
+The latest and most stable version can be found here --TODO--
+
+## Specification
 Specification can be found here: **[YINI spec](<./YINI spec.md>)**.
 
 ## Grammar
-There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./Grammar-YINI.antlr4>)**.
+There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./grammar-antlr4YINI/yini.g4>)**.
 
 ## So, what is special about YINI?
 In YINI:
