@@ -140,9 +140,10 @@ In the beginning, `YINI` started with the working name `MINI`, and then `MINI-CO
 
 ## Versions / Releases
 
-| Version                | Date     | Description |
-|------------------------|----------|-------------|
-| YINI-spec v1.0.0 Alpha | 2024 Oct | Initial release.
+| Version                  | Date     | Description |
+|--------------------------|----------|-------------|
+| YINI-spec v1.0.0 Alpha 2 | 2024 Oct | 
+| YINI-spec v1.0.0 Alpha   | 2024 Oct | Initial release.
 
 ## Changes
 --TODO--
