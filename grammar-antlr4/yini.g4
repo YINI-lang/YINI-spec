@@ -40,7 +40,7 @@ member:
 	| IDENT '=' value NL+
 	| IDENT ':' NL* list NL+;
 
-value: string | NUMBER | boolean_literal;
+value: string_literal | number_literal | boolean_literal;
 
 list: elements | list_in_brackets;
 
@@ -52,9 +52,17 @@ element: NL* value NL* | NL* list_in_brackets NL*;
 
 //STRING: P_STRING | C_STRING;
 
-string: SINGLE_STRING NL* '+' NL* SINGLE_STRING | SINGLE_STRING;
+number_literal: NUMBER;
 
-boolean_literal: BOOLEAN NL+;
+string_literal: STRING NL* '+' NL* STRING | STRING;
+
+boolean_literal:
+	('false' | 'False' | 'FALSE')
+	| ('true' | 'True' | 'TRUE')
+	| ('yes' | 'Yes' | 'YES')
+	| ('no' | 'No' | 'NO')
+	| ('on' | 'On' | 'ON')
+	| ('off' | 'Off' | 'OFF');
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
@@ -71,16 +79,22 @@ NUMBER:
 	| SIGN? '.' DIGIT+ EXPONENT?
 	| SIGN? '0' (
 		BIN_INTEGER
-		| OCT_INTEGER
+		// | OCT_INTEGER // TODO: Fix clash with boolean ON | OFF.
 		| DUO_INTEGER
 		| HEX_INTEGER
 	);
 
+// BOOLEAN: BOOLEAN_FALSE | BOOLEAN_TRUE;
+
+// fragment BOOLEAN_FALSE options { caseInsensitive = true; }: 'false' | 'no' | 'off';
+
+// fragment BOOLEAN_TRUE options { caseInsensitive = true; }: 'true' | 'yes' | 'on';
+
 BOOLEAN options {
 	caseInsensitive = true;
-}: ('true' | 'yes' | 'on') | ('false' | 'no' | 'off');
+}: ('false' | 'no' | 'off' | 'true' | 'yes' | 'on');
 
-SINGLE_STRING: P_STRING | C_STRING;
+STRING: P_STRING | C_STRING;
 
 // Pure string literal.
 P_STRING:
@@ -104,7 +118,7 @@ fragment DECIMAL_INTEGER: '0' | SIGN? [1-9] DIGIT*;
 
 fragment INTEGER: DECIMAL_INTEGER;
 fragment BIN_INTEGER: ('b' | 'B') BIN_DIGIT+;
-fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+;
+// fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+; NOTE: (!) Fix clash with boolean 'ON' | 'OFF'.
 fragment DUO_INTEGER: ('z' | 'Z') DUO_DIGIT+;
 fragment HEX_INTEGER: ('x' | 'X') HEX_DIGIT+;
 
