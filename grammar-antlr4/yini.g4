@@ -79,7 +79,7 @@ NUMBER:
 	| SIGN? '.' DIGIT+ EXPONENT?
 	| SIGN? '0' (
 		BIN_INTEGER
-		// | OCT_INTEGER // TODO: Fix clash with boolean ON | OFF.
+		| OCT_INTEGER // Make sure to not clash with boolean ON | OFF.
 		| DUO_INTEGER
 		| HEX_INTEGER
 	);
@@ -118,7 +118,7 @@ fragment DECIMAL_INTEGER: '0' | SIGN? [1-9] DIGIT*;
 
 fragment INTEGER: DECIMAL_INTEGER;
 fragment BIN_INTEGER: ('b' | 'B') BIN_DIGIT+;
-// fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+; NOTE: (!) Fix clash with boolean 'ON' | 'OFF'.
+fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+; // Make sure to not clash with boolean ON | OFF.
 fragment DUO_INTEGER: ('z' | 'Z') DUO_DIGIT+;
 fragment HEX_INTEGER: ('x' | 'X') HEX_DIGIT+;
 

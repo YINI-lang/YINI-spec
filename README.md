@@ -15,8 +15,7 @@ KeyWords: "Orange", "Banana", "Pear", "Peach"
 /END // End of YINI doc.
 ```
 
-
-A `YINI` document file can look like this too:
+A `YINI` document file can look like this as well:
 ```
 # window
 title = 'Sample Window'

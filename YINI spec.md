@@ -5,12 +5,34 @@
 Recommended filename extension for a YINI file is `.yini`.
 
 A short YINI document looks like the following.
-```yini
-# Prefs
+```
+# MyPrefs
 
-HomeDir = "C:\Users\John Smith"
-KeyWords: "oranges", "bananas", "peaches"
+HomeDir = "C:\Users\John Smith\"
 Buffers = 10
+IsNight = OFF
+KeyWords: "Orange", "Banana", "Pear", "Peach"
+
+/END // End of YINI doc.
+```
+
+A `YINI` document file can look like this as well:
+```
+# window
+title = 'Sample Window'
+id = 'window_main'
+
+# image
+src = 'gfx/bg.png'
+id = 'bg1'
+isCentered = true
+
+# text
+content = 'Click here!'
+id = 'text1'
+isCentered = true
+url = 'images/'
+styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 
 /END // End of YINI doc.
 ```
@@ -72,11 +94,11 @@ After the a section with level 1, comes section header with level 2.
 ## Section
 ```
 
-## 5. Terminal Token
-A `YINI` document must always end with three hash-symbols (without any whitespaces in between) on its own line, after this there may be only whitespaces or possible comments.
+## 5. Terminal Line
+A `YINI` document must always end with `/END` (NON CASE-SENSITIVE)on its own line. After this there may be only whitespaces or possible comments.
 
 ```
-###
+/END
 ```
 
 ## 6. Values & Native Types
@@ -89,7 +111,6 @@ A `YINI` value MUST be of one of the following 3 groups of native/built-in types
 
 - Compound type:
   - List/array (a sequence consisting of strings, numbers, or booleans)
-  - Tuple (--NOT IMPLEMENTED YET--)
 
 - Special type:
   - NULL
@@ -225,7 +246,7 @@ If you want to put a section under another section, make a section header that i
 ## 15. Example
 
 A full example of a `YINI` document:
-```yini
+```
 # MyPrefs
 
 # General
