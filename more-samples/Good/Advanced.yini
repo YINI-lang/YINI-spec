@@ -26,12 +26,18 @@ content = "width=device-width, initial-scale=1.0"
 h1 = "About Pets"
 
 // Using a Pure String (default) for content1.
-content1 = "Pets are animals kept for companionship or entertainment. rather than as a working animal, livestock or laboratory animal. Two of the most popular pets are dogs and cats. Other animals include fish, birds, rabbits, rodents, ferrets, pigs and many other."
+content1 = "Pets are animals kept for companionship or entertainment, rather than as a working animal, livestock or laboratory animal. Two of the most popular pets are dogs and cats. Other animals include fish, birds, rabbits, rodents, ferrets, pigs and many other."
 
 // Using a Hyper String for content2.
-content2 = h"Pets are animals kept for companionship or entertainment.
+content2 = h"Pets are animals kept for companionship or entertainment,
 	rather than as a working animal, livestock or laboratory animal. Two
 	of the most popular pets are dogs and cats. Other animals include
 	fish, birds, rabbits, rodents, ferrets, pigs and many other."
+
+// Using a Classic String for content3.
+content3 = c"Pets are animals kept for companionship or entertainment,\n" +
+	"\trather than as a working animal, livestock or laboratory animal. Two\n" +
+	"\tof the most popular pets are dogs and cats.\n" +
+	"\tOther animals include fish, birds, rabbits, rodents, ferrets, pigs and many other.\n"
 
 /END // End of YINI doc.

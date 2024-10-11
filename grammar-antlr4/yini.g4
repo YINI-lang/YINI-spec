@@ -50,8 +50,6 @@ elements: element ','? | element ',' elements;
 
 element: NL* value NL* | NL* list_in_brackets NL*;
 
-//STRING: P_STRING | C_STRING;
-
 number_literal: NUMBER;
 
 string_literal: STRING NL* '+' NL* STRING | STRING;
@@ -93,15 +91,19 @@ BOOLEAN options {
 	caseInsensitive = true;
 }: ('false' | 'no' | 'off' | 'true' | 'yes' | 'on');
 
-STRING: P_STRING | C_STRING;
+STRING: PURE_STRING | HYPER_STRING | CLASSIC_STRING;
 
-// Pure string literal.
-P_STRING:
-	'\'' (~['\n\r\b\f\t])* '\''
-	| '"' ( ~["\n\r\b\f\t])* '"';
+// Pure string literal, treats the backslash character (\) as a literal.
+PURE_STRING:
+	('p' | 'P')? '\'' (~['\n\r\b\f\t])* '\''
+	| ('p' | 'P')? '"' ( ~["\n\r\b\f\t])* '"';
+
+// Hyper string literal.
+HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''
+	| ('h' | 'H') '"' ( ~["])* '"';
 
 // Classic string literal.
-C_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
+CLASSIC_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
 	| ('c' | 'C') '"' ( ESC_SEQ | ~('"'))* '"';
 
 // Note: Like 8.2 in specification.

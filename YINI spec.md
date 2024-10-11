@@ -142,19 +142,37 @@ or just
 > fruits: "oranges", "bananas", "peaches"
 
 ## 8. String Literals ##
-### 8.1 Strings (Pure) ###
-Strings can either be enclosed in single quotes `'` or double quotes `"`. In `YINI` strings are **pure string literals by defalt**, meaning that these strings cannot span over multiple lines, or include any whitespaces except blank space <SPACE>, and backslash **`\` is "just a backslash"** character. Also they do not support different escape sequences like newline or tabs, except:
-- String enclosed in single quotes `'`, support only `\'` for `'`
-- String enclosed in double quotes `"`, support only `\"` for `"`
+Strings in YINI can either be enclosed in single quotes `'` or double quotes `"`, use whichever you prefer or whatever is appropriate for the situation.
+
+There are also different types of strings, these can be made by prefixing a string (before the first quote) with a specific letter. YINI support three kinds of strings.
+
+By default all strings are **pure string literals by defalt**
+
+All string literals must end and start on the same line, meaning they cannot span over multiple lines, except H-Strings (8.2). Multiple strings on can be concatenated together to archive longer string literals (8.4).
+
+### 8.1 Pure Strings (Default) ###
+In (pure) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (pure) strings must be on same line.
 
 YINI strings are ideal for file directory paths and the like.
->myPath = "C:\Users\John Smith"
+>myPath = "C:\Users\John Smith\"
+or
+>myPath = '/home/Leila Häkkinen'
+or
+>myPath = '/Users/kim-lee'
 
-### 8.2 Hyper Strings ###
---TODO--
+### 8.2 Hyper or H-Strings ###
+There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `c` or `C`.
 
-### 8.3 Escaped Strings ###
-Alternatively YINI support also normal ("Classic") string literals, called C-Strings. These strings are prefixed with either `c` or `C`. All the usual escape sequences" that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
+Hyper Strings, as Pure Strings, treat the backslash exactly as seen (escape sequences are not supported).
+
+- Hower, Hyper strings are special in that they can span over multiple lines with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
+- Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted to one single blank space ` `. 
+- Also, leading and trailing `<NL>` and/or `<WS>` are trimmed away.
+
+Hyper Strings behaves similar to plain text in HTML documents.
+
+### 8.3 Classic or C-Strings (Escaped) ###
+Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `c` or `C`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
 >myText = c"This is a newline \n and this is a tab \t character."
 
