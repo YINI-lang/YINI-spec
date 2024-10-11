@@ -1,5 +1,5 @@
 # window
-title = 'Sample Window'
+title = 'Sample Window'  // Strings can be enclosed in either ' or ".
 id = 'window_main'
 
 # image
@@ -12,6 +12,10 @@ content = 'Click here!'
 id = 'text1'
 isCentered = true
 url = 'images/'
-styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 
-/END // End of YINI doc.
+// Following is a list with other lists as elements.
+styles: [
+    ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
+]
+
+/END  // End of YINI doc.
