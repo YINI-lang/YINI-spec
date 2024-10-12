@@ -42,6 +42,9 @@ styles: [
 /END  // End of YINI doc.
 ```
 
+## More Examples
+More examples can be found here: **[Examples](<./Examples>)**.
+
 ---
 ## General Objective
 Compared with other markup languages:
