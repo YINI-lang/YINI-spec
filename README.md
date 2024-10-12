@@ -85,4 +85,4 @@ Published YINI specifications can be found here: **[Published YINI Specs](<https
 See the file [CONTRIBUTING.md](<./CONTRIBUTING.md>)
 
 ## License
-This project is licensed under the Apache-2.0 license - see the [LICENSE.md](<./LICENSE.md>) file for details.
+This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LICENSE>) file for details.
