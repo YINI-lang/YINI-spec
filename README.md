@@ -64,14 +64,17 @@ Yet, the YINI format should be easy and simple enough to express structure, nota
 4. YINI should be non-verbose, avoid to use excessive or unnecessary words or characters. And at the same time be (relatively) light-weight, yet be (relatively) high-level.
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
-## Specification
-The latest and most stable version can be found here --TODO--
+## Latest Release
+The latest (and most stable) release can be found here: **[YINI spec](<https://github.com/YINI-lang/YINI-spec/tree/staging>)**.
 
-## Specification
-Specification can be found here: **[YINI spec](<./YINI spec.md>)**.
+## Current Spec
+The current specification in this branch can be found here: **[YINI spec](<./YINI spec.md>)**.
 
 ## Grammar
-There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./grammar-antlr4/yini.g4>)**.
+There exists a YINI grammar (in ANTLR 4 ) in this branch here: **[YINI grammar](<./grammar-antlr4/yini.g4>)**.
+
+## Published Specs
+Published YINI specifications can be found here: **[YINI spec](<https://github.com/YINI-lang/YINI-spec/tree/published-specs>)**.
 
 ## So, what is special about YINI?
 In YINI:
