@@ -84,59 +84,6 @@ In YINI:
   
 --EXPAND--
 
-## More Examples
-### Bigger Example 1
-```
-# MyPrefs
-
-## General
-IsDarkMode = YES
-Buffers = 10
-Dirs: "C:\Users", "D:\Work\Temp", "E:\Data\Temp"
-
-## Menu 
-Id = "FILE"
-Value = "File"
-
-### MenuItem
-Value = "New"
-OnClick = "CreateDoc()"
-
-### MenuItem
-Value = "Open"
-OnClick = "OpenDoc()"
-
-### MenuItem
-Value = "Save"
-OnClick = "SaveDoc()"
-
-/END // End of YINI doc.
-```
-
-### Bigger Example 2
-```
-# package
-name = "SomeName"
-description = "Some description of something."
-version = "1.8.4"
-authors: [
-    "skljsdalf",
-    "Sss sdfsdf <sdfsf@jlewr.com>",
-    "sdfalf",
-]
-exclude: [
-    "build",
-    "docs",
-    "examples",
-    "packages",
-]
-
-# dev-dependencies
-tester = "bin/tester@1.1.4"
-
-/END // End of doc.
-```
-
 ## Trivia
 ### The Name
 In the beginning, `YINI` started with the working name `MINI`, and then `MINI-CONFIG` / `miniCONFIG` which stood for Minimalistic INI Configuration Object Notation File. Also M stood for Marko's (after the author) at the start but was changed to stand for minimalistic. Finally, as the specification began to mature away from the draft stage, the name was renamed to just `YINI`.
