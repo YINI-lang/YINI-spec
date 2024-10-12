@@ -68,36 +68,21 @@ Yet, the YINI format should be easy and simple enough to express structure, nota
 4. YINI should be non-verbose, avoid to use excessive or unnecessary words or characters. And at the same time be (relatively) light-weight, yet be (relatively) high-level.
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
-## Latest Release
+## Links
+### Latest Release
 The latest (and most stable) release can be found here (in staging): **[Latest YINI Release](<https://github.com/YINI-lang/YINI-spec/tree/staging>)**.
 
-## Current Spec
+### Current Spec
 The current specification in this branch can be found here: **[YINI spec](<./YINI spec.md>)**.
 
-## Grammar
+### Grammar
 There exists a YINI grammar (in ANTLR 4 ) in this branch here: **[YINI grammar](<./Grammar-antlr4/yini.g4>)**.
 
-## Published Specs
+### Published Specs
 Published YINI specifications can be found here: **[Published YINI Specs](<https://github.com/YINI-lang/YINI-spec/tree/published-specs>)**.
 
-## So, what is special about YINI?
-In YINI:
-- Strings are enclosed by either single quotes `'` or double quotes `"`, use what you prefer.
-- Key-**Value** pairs are separated by an equals sign `=`.
-- While, Key-**List** pairs are separated by a colon `:`.
-  
---EXPAND--
+## Contributing
+See the file [CONTRIBUTING.md](<./CONTRIBUTING.md>)
 
-## Trivia
-### The Name
-In the beginning, `YINI` started with the working name `MINI`, and then `MINI-CONFIG` / `miniCONFIG` which stood for Minimalistic INI Configuration Object Notation File. Also M stood for Marko's (after the author) at the start but was changed to stand for minimalistic. Finally, as the specification began to mature away from the draft stage, the name was renamed to just `YINI`.
-
-## Versions / Releases
-
-| Version                  | Date     | Description |
-|--------------------------|----------|-------------|
-| YINI-spec v1.0.0 Alpha 2 | 2024 Oct | 
-| YINI-spec v1.0.0 Alpha   | 2024 Oct | Initial release.
-
-## Changes
---TODO--
+## License
+This project is licensed under the Apache-2.0 license - see the [LICENSE.md](<./LICENSE.md>) file for details.
