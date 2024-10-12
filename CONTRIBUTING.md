@@ -14,7 +14,7 @@ Did you write a patch that fixes a bug or other issue?
 
 Thank you!
 
-- Open a pull request (PR) against the `development` branch (this is where all new code goes).
+- Open a pull request (PR) against the `develop` branch (this is where all new code goes).
 - Name the branch using one of the following prefixes:
   * `fix/` if branch is to make any fixe(s).
   * `update/` if branch is to update info or data.
