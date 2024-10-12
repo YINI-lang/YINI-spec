@@ -1,6 +1,5 @@
 # Contributing
 
-* This project is pretty new still, so much are still in a state of flux, thank you.
 * Bug reports, suggestions, and code contributions are welcome!
 
 ---
@@ -15,7 +14,7 @@ Did you write a patch that fixes a bug or other issue?
 
 Thank you!
 
-- Open a pull request (PR) against the `main` branch (this acts as the development environment currently).
+- Open a pull request (PR) against the `development` branch (this is where all new code goes).
 - Name the branch using one of the following prefixes:
   * `fix/` if branch is to make any fixe(s).
   * `update/` if branch is to update info or data.

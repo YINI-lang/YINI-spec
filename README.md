@@ -43,7 +43,8 @@ styles: [
 ```
 
 ## More Examples
-More examples can be found here: **[Examples](<./Examples>)**.
+* All examples can be found here: **[Examples](<./Examples>)**.
+* Also more samples can be found here: **[More-samples](<./More-samples>)**
 
 ---
 ## General Objective
