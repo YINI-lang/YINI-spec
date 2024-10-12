@@ -71,7 +71,7 @@ The latest (and most stable) release can be found here (in staging): **[Latest Y
 The current specification in this branch can be found here: **[YINI spec](<./YINI spec.md>)**.
 
 ## Grammar
-There exists a YINI grammar (in ANTLR 4 ) in this branch here: **[YINI grammar](<./grammar-antlr4/yini.g4>)**.
+There exists a YINI grammar (in ANTLR 4 ) in this branch here: **[YINI grammar](<./Grammar-antlr4/yini.g4>)**.
 
 ## Published Specs
 Published YINI specifications can be found here: **[Published YINI Specs](<https://github.com/YINI-lang/YINI-spec/tree/published-specs>)**.
