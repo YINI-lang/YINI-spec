@@ -65,7 +65,7 @@ Yet, the YINI format should be easy and simple enough to express structure, nota
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
 ## Latest Release
-The latest (and most stable) release can be found here: **[YINI spec](<https://github.com/YINI-lang/YINI-spec/tree/staging>)**.
+The latest (and most stable) release can be found here (in staging): **[YINI spec](<https://github.com/YINI-lang/YINI-spec/tree/staging>)**.
 
 ## Current Spec
 The current specification in this branch can be found here: **[YINI spec](<./YINI spec.md>)**.
