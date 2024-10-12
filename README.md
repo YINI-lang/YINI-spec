@@ -65,7 +65,7 @@ Yet, the YINI format should be easy and simple enough to express structure, nota
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
 ## Latest Release
-The latest (and most stable) release can be found here (in staging): **[YINI spec](<https://github.com/YINI-lang/YINI-spec/tree/staging>)**.
+The latest (and most stable) release can be found here (in staging): **[Latest YINI Release](<https://github.com/YINI-lang/YINI-spec/tree/staging>)**.
 
 ## Current Spec
 The current specification in this branch can be found here: **[YINI spec](<./YINI spec.md>)**.
@@ -74,7 +74,7 @@ The current specification in this branch can be found here: **[YINI spec](<./YIN
 There exists a YINI grammar (in ANTLR 4 ) in this branch here: **[YINI grammar](<./grammar-antlr4/yini.g4>)**.
 
 ## Published Specs
-Published YINI specifications can be found here: **[YINI spec](<https://github.com/YINI-lang/YINI-spec/tree/published-specs>)**.
+Published YINI specifications can be found here: **[Published YINI Specs](<https://github.com/YINI-lang/YINI-spec/tree/published-specs>)**.
 
 ## So, what is special about YINI?
 In YINI:
