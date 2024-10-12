@@ -7,7 +7,9 @@
  */
 
 // This grammar should follow YINI specification version 1.0 Alpha 2. Please note, they might be
-// smaller or bigger unknown bugs or issues.
+// smaller or bigger unknown bugs or issues. Bug repports are welcomed!
+// 
+// http://yini-lang.org
 
 grammar yini;
 options {
