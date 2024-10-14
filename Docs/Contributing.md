@@ -1,7 +1,7 @@
 # Contributing
 
-* First, thank you!
-* Bug reports, suggestions, and code contributions are welcome!
+* First thing first, welcome!
+* Feedback, bug reports, suggestions, and code contributions are welcome!
 
 ---
 

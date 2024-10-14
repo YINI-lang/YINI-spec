@@ -1,4 +1,4 @@
-# YINI spec
+# YINI Specification v1.0.0 Alpha 3
 
 ## So, what is special about YINI?
 In YINI:

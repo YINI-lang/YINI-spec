@@ -1,4 +1,6 @@
-# YINI-spec v1.0.0 Alpha 2
+# YINI Specification
+This repository deals with the specification for the YINI markup language.
+
 **Y**et another **INI** markup language - `YINI` is a config and settings file format (similar to INI-files) for computer software that consists of plain text with a simple structure, comprising of Key–Value pairs and Key-List pairs, grouped in sections.
 
 ## Short Examples
@@ -52,7 +54,7 @@ Compared with other markup languages:
 - YINI should have simpler structure and more lightweight than YAML and TOML.
 - YINI should be more human-readable than (nested) JSON and YAML.
 - YINI should be less verbose (verbal) than XML.
-- YINI's syntax shall be more high level than JSON (but also less than YAML's).
+- YINI's syntax shall be more high level than JSON.
 
 ## Motivation
 `YINI` aims to be a simple and (relatively) lightweight text-based markup language format, for storing configurations, settings and preferences in software. It should be language-independent and platform-independent as far as possible.
@@ -68,21 +70,16 @@ Yet, the YINI format should be easy and simple enough to express structure, nota
 4. YINI should be non-verbose, avoid to use excessive or unnecessary words or characters. And at the same time be (relatively) light-weight, yet be (relatively) high-level.
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
-## Links
-### Latest Release
-The latest (and most stable) release can be found here (in staging): **[Latest YINI Release](<https://github.com/YINI-lang/YINI-spec/tree/staging>)**.
+## Current Spec
+The YINI Specification can be found here: **[YINI spec](<././Source/YINI-Specification.md>)**.
 
-### Current Spec
-The current specification in this branch can be found here: **[YINI spec](<./YINI spec.md>)**.
-
-### Grammar
-There exists a YINI grammar (in ANTLR 4 ) in this branch here: **[YINI grammar](<./Grammar-antlr4/yini.g4>)**.
-
-### Published Specs
-Published YINI specifications can be found here: **[Published YINI Specs](<https://github.com/YINI-lang/YINI-spec/tree/published-specs>)**.
+## Grammar
+There exists a YINI grammar (in ANTLR 4 ) in this branch here: **[YINI grammar](<./Source/Grammar-ANTLR4/yini.g4>)**.
 
 ## Contributing
-See the file [CONTRIBUTING.md](<./CONTRIBUTING.md>)
+Feedback, bug reports, suggestions, and code contributions are welcome!
+
+Head over to **[Docs/Contributing.md](<./Docs/Contributing.md>)**
 
 ## License
 This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LICENSE>) file for details.
