@@ -1,7 +1,7 @@
 # YINI Specification
 
 - INI-file the right way, both for software and humans 🙈
-- Strings enclosed in single or double quotes. Pure, Classic or Hyper strings, use whatever you like 😉
+- Strings enclosed in single or double quotes. Pure, Classic or Hyper strings, use whatever you like and need 😉
 - Need another section or nested section? No need to hazzle with brackets or dots or whatnot, just add an extra hash sign, ala Markdown header, and be done with it 😁
 
 ---
