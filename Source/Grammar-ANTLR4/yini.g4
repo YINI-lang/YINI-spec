@@ -1,15 +1,19 @@
 /*
  YINI grammar in ANTLR 4.
+ 
  Apache License, Version 2.0, January 2004,
  http://www.apache.org/licenses/
- Copyright 2024 Gothenburg, Marko K. Seppänen (Sweden via
+ Copyright 2024 Gothenburg, Marko K. S. (Sweden via
  Finland).
  */
 
-// This grammar should follow YINI specification version 1.0 Alpha 2. Please note, they might be
-// smaller or bigger unknown bugs or issues. Bug repports are welcomed!
-// 
-// http://yini-lang.org
+/* 
+ This grammar aims to follow, as closely as possible, the YINI specification v1.0.0 Alpha 3.
+ 
+ Feedback, bug reports and improvements are welcomed here https://github.com/YINI-lang/YINI-spec
+ 
+ http://yini-lang.org
+ */
 
 grammar yini;
 options {

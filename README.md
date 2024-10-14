@@ -1,7 +1,7 @@
 # YINI Specification
 This repository deals with the specification for the YINI markup language.
 
-**Y**et another **INI** markup language - `YINI` is a config and settings file format (similar to INI-files) for computer software that consists of plain text with a simple structure, comprising of Key–Value pairs and Key-List pairs, grouped in sections.
+**Y**et another **INI** markup language - `YINI` is a config and settings file format (similar (but not same) to INI-files) for computer software that consists of plain text with a very simple structure and notation, comprising of Key–Value pairs and Key-List pairs, grouped in sections.
 
 ## Short Examples
 A short example of how a `YINI` document file looks like:
@@ -45,8 +45,7 @@ styles: [
 ```
 
 ## More Examples
-* All examples can be found here: **[Examples](<./Examples>)**.
-* Also more samples can be found here: **[More-samples](<./More-samples>)**
+More examples can be found here: **[Examples](<./Examples>)** and there are some YINI document files here: **[More-samples](<./Source/Grammar-ANTLR4/Samples>)**
 
 ---
 ## General Objective
@@ -61,20 +60,20 @@ Compared with other markup languages:
 
 YINI should have built-in types of the most general data types (to keep the format more simple and more lightweight). Custom types, advanced typechecking and type specialization are left to the user/client and host/language ​​to handle/process if further specialization is desired by the user/client using a YINI file/document.
 
-Yet, the YINI format should be easy and simple enough to express structure, notation and groupings of data to be stored on a medium for later use.
+YINI format should be very simple and minimal to express the structure, notation and grouping of data to be stored on a medium for later use. But still simple and legible enough to be read by .
 
 ## Design Goals
 1. YINI files/documents should be platform agnostic, portable between platforms and programming languages as far as possible.
-2. YINI should have a simple structure and notation, and easy to group data. 
+2. YINI should have a simple structure and notation, be easy to group data, yet be unambiguous. 
 3. YINI should be easily readable (to some extent) by humans.
 4. YINI should be non-verbose, avoid to use excessive or unnecessary words or characters. And at the same time be (relatively) light-weight, yet be (relatively) high-level.
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
-## Current Spec
-The YINI Specification can be found here: **[YINI spec](<././Source/YINI-Specification.md>)**.
+## Specification
+The actual YINI Specification can be found here: **[YINI spec](<././Source/YINI-Specification.md>)**.
 
 ## Grammar
-There exists a YINI grammar (in ANTLR 4 ) in this branch here: **[YINI grammar](<./Source/Grammar-ANTLR4/yini.g4>)**.
+This repo also includes a YINI grammar (in ANTLR 4 ). It aims to follow the specification as closely as possible. You find it here: **[YINI grammar](<./Source/Grammar-ANTLR4/yini.g4>)**.
 
 ## Contributing
 Feedback, bug reports, suggestions, and code contributions are welcome!

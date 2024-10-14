@@ -1,5 +1,8 @@
 # YINI Specification v1.0.0 Alpha 3
 
+is a config and settings file format (similar (but not same) to INI-files) for computer software that consists of plain text with a very simple structure and notation, comprising of Key–Value pairs and Key-List pairs, grouped in sections.
+
+`YINI` (also `yINI` or `yini`)
 ## So, what is special about YINI?
 In YINI:
 - Strings are enclosed by either single quotes `'` or double quotes `"`, use what you prefer.

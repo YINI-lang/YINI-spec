@@ -293,4 +293,4 @@ OnClick = "SaveDoc()"
 
 ---
 
-Author: 2024 Gothenburg, Marko K. Seppänen (Sweden via Finland).
+Author: 2024 Gothenburg, Marko K. S. (Sweden via Finland).
