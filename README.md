@@ -2,7 +2,7 @@
 
 - INI-file the right way, both for software and humans 🙈
 - You can use strings enclosed in single or double quotes. Pure, Classic or Hyper strings, use whatever you like and need 😉
-- Need another section or nested section? Sure no problem, no need to fuss with brackets or dots or whatever! Just add an extra hash character, ala Markdown header, and be done with it 😁
+- Need another section or nested section? Sure no problem, no need to fuss with brackets or dots or whatever! Just add an extra hash character, ala Markdown header, and be done with it 🚀
 
 ---
 
@@ -51,7 +51,7 @@ styles = [
 /END  // End of YINI doc.
 ```
 
-## More Examples
+## More Examples 🥳
 More examples can be found here: **[Examples](<./Examples>)** and there are some YINI document files here: **[More-samples](<./Source/Grammar-ANTLR4/Samples>)**
 
 ---
