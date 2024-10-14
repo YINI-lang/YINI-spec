@@ -20,7 +20,7 @@ Buffers = 10
 IsNight = OFF  // Boolean false, YINI understands also OFF, YES, ON etc.
 
 // Following is a list (array) with strings as elements.
-KeyWords: [ "Orange", "Banana", "Pear", "Peach" ]
+KeyWords = [ "Orange", "Banana", "Pear", "Peach" ]
 
 /END  // All YINI files must end with this line.
 ```
@@ -43,7 +43,7 @@ isCentered = true
 url = 'images/'
 
 // Following is a list with other lists as elements.
-styles: [
+styles = [
     ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 ]
 
