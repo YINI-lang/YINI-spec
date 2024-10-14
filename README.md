@@ -60,7 +60,9 @@ Compared with other markup languages:
 
 YINI should have built-in types of the most general data types (to keep the format more simple and more lightweight). Custom types, advanced typechecking and type specialization are left to the user/client and host/language ​​to handle/process if further specialization is desired by the user/client using a YINI file/document.
 
-YINI format should be very simple and minimal to express the structure, notation and grouping of data to be stored on a medium for later use. But still simple and legible enough to be read by .
+YINI format should be very simple and minimal to express the structure, notation and grouping of data to be stored on a medium for later use. But still simple and legible enough to be read by humans.
+
+Although there does not exists any YINI readers yet, a sister project **[YINI-Reader-TS](https://github.com/YINI-lang/YINI-Reader-TS)** is planned when this spec matures more (when YINI goes into beta?).
 
 ## Design Goals
 1. YINI files/documents should be platform agnostic, portable between platforms and programming languages as far as possible.
@@ -70,7 +72,7 @@ YINI format should be very simple and minimal to express the structure, notation
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
 ## Specification
-The actual YINI Specification can be found here: **[YINI spec](<././Source/YINI-Specification.md>)**.
+The actual YINI Specification can be found here: **[YINI spec](<./Source/YINI-Specification.md>)**.
 
 ## Grammar
 This repo also includes a YINI grammar (in ANTLR 4 ). It aims to follow the specification as closely as possible. You find it here: **[YINI grammar](<./Source/Grammar-ANTLR4/yini.g4>)**.
