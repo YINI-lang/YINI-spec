@@ -44,13 +44,19 @@ section_members: member+;
 member:
 	IDENT '=' NL+ // Empty value is treated as NULL.
 	| IDENT '=' value NL+
-	| IDENT ':' NL* list NL+;
+	| IDENT ':' elements? NL+;
 
-value: string_literal | number_literal | boolean_literal;
+value:
+	list_in_brackets
+	| string_literal
+	| number_literal
+	| boolean_literal
+	| ('null' | 'Null' | 'NULL'); // NOTE: In specs NULL should be case-insensitive.
 
 list: elements | list_in_brackets;
 
-list_in_brackets: '[' NL* elements NL* ']';
+list_in_brackets: '[' NL* elements NL* ']' | EMPTY_LIST;
+EMPTY_LIST: '[' ']';
 
 elements: element ','? | element ',' elements;
 
@@ -60,6 +66,7 @@ number_literal: NUMBER;
 
 string_literal: STRING NL* '+' NL* STRING | STRING;
 
+// NOTE: In specs boolean literals should be case-insensitive.
 boolean_literal:
 	('false' | 'False' | 'FALSE')
 	| ('true' | 'True' | 'TRUE')
@@ -86,12 +93,6 @@ NUMBER:
 		| DUO_INTEGER
 		| HEX_INTEGER
 	);
-
-// BOOLEAN: BOOLEAN_FALSE | BOOLEAN_TRUE;
-
-// fragment BOOLEAN_FALSE options { caseInsensitive = true; }: 'false' | 'no' | 'off';
-
-// fragment BOOLEAN_TRUE options { caseInsensitive = true; }: 'true' | 'yes' | 'on';
 
 BOOLEAN options {
 	caseInsensitive = true;

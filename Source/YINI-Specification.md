@@ -64,11 +64,16 @@ Naming identifiers must follow below rules:
 - Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
 - Must be unique, there cannot be multiple section header with the same identifier.
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
+- Also identifiers must follow the engine's or host's (program/software that reads and writes `YINI` documents) naming conventions.
 
 ## 3. Section Headers
-A section header consists with one or more hash-symbols `#` and then an identifier (must be a unique identifier (within the same section level)). The number of hash-symbols indicates the level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
+A section header consists with one or more hash-symbols `#` and then an identifier (must be a unique identifier (within the same section level)). The number of hash-symbols indicates the nesting level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
 
 In addition, the section header must be on its own separate line, any tabs or spaces at the beginning and end of the identifier are ignored.
+
+Nesting sections must be attached to a existing section. If doing a section with level three, then there must be a section level 2 before.
+
+A special case is YINI documents with multiple level 1 sections, the the client's library reading the document must attach these level 1 section into one implicit section automatically. The name of this "implicit section" is left for the library to decide.
 
 ```
 # SectionLevel1 #
@@ -129,17 +134,23 @@ A member with one value is a Key-Value pair using the an equals character `=`. T
 or
 > lives = 3
 
-NOTE: Key-Value pairs are separated by equals `=` character, as opposed to key-List pairs.
-
 ### Member with a List
-A member with a list, is a Key-List pair using the colon character `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
+#### List Literal
+A member with a list, is a Key-List pair using the equals `=` character. After that follows zero or more values separated by a comma, and all values enclosed in brackets `[` `]`. (A final comma `,` may be accepted so parsing is not broken.)
 
-Optionally a list can be enclosed in `[` `]`, but it is not mandatory.
-> key: ["value1", "value2", "value3"]
+> list1 = ["value1", "value2", "value3"]
+>
+> list2 = []  // An empty list.
 
-or just
+NOTE: There may not be a <NL> after the equals `=` character and the list itself. Due to in that case the member notes a value with null.
 
-> fruits: "oranges", "bananas", "peaches"
+#### List without Brackets
+An alternative list notation for Key-List is using the colon character `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
+
+When using a colon `:` then `[` `]` are left out.
+
+> // Alternative list notation (with :).
+> list: "oranges", "bananas", "peaches"
 
 ## 8. String Literals ##
 Strings in YINI can either be enclosed in single quotes `'` or double quotes `"`, use whichever you prefer or whatever is appropriate for the situation.
@@ -205,16 +216,15 @@ Number can be an integer or a real number with `.` similar as a number in JavaSc
 
 In addition to normal (10-base) decimal literals, YINI supports other number base literals as well.
 
---MAYBE IN NEXT SPEC: Not sure about the alt. notation like `#`, `=`, `%` and so on--
+Note, due to relatively high usage binary and hexadecimal numbers can be given in two different notation.
 
 | Number format | Alt. number format | Description | Number base | Note
 |----------|--|---|---|---|
-| `3e4` | - | Exponent notation number | 10-base | Result: 3×4^10
-| `0d1209` | `=1209` | 10-base decimal number | 10-base |
+| `3e4` |   | Exponent notation number | 10-base | Result: 3×4^10
 | `0b1010` | `%1010` | Binary number | 2-base |
-| `0o7477` | `&7477` | Octal number | 8-base |
-| `0z2ex9` | `€2ex9` | Duodecimal (dozenal) number | 12-base | `x` is 10, `e` is 11
-| `0xf390` | <strike>`#f390`</strike> | Hexadecimal number | 16-base | `a`, `b`, `c`, `d`, `e`, `f` are 10 to 15
+| `0o7477` |   | Octal number | 8-base |
+| `0z2ex9` |   | Duodecimal (dozenal) number | 12-base | `x` is 10, `e` is 11
+| `0xf390` | `#f390` | Hexadecimal number | 16-base | `a`, `b`, `c`, `d`, `e`, `f` are 10 to 15
 
 ## 10. Boolean Literals ##
 Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
