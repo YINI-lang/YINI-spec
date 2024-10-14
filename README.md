@@ -2,9 +2,10 @@
 
 - INI-file the right way, both for software and humans 🙈
 - Strings enclosed in single or double quotes. Pure, Classic or Hyper strings, use whatever you like and need 😉
-- Need another section or nested section? Sure no problem, no need to hazzle with brackets or dots or whatnot! Just add an extra hash sign, ala Markdown header, and be done with it 😁
+- Need another section or nested section? Sure no problem, no need to fuss with brackets or dots or whatever! Just add an extra hash character, ala Markdown header, and be done with it 😁
 
 ---
+
 **Y**et another **INI** markup language - `YINI` is a config and settings file format (similar (but not same) to INI-files) for computer software that consists of plain text with a very simple structure and notation, comprising of Key–Value pairs and Key-List pairs, grouped in sections. YINI uses conventions that are familiar to programmers of the C-family of languages.
 
 This project and repository deals with the specification for the YINI markup language.
