@@ -94,4 +94,4 @@ This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LIC
 ## Author 🤓
 This project and repository is created and maintaned by Marko K. S.
 
-Marko has been programming and developing software during spare time since the 80s in multiple programming languages. In education he read Computer Science's Engineering and a Master's degree in Software Development with a specialization in Programming Languages. He has been working professionally for many years in software development from PHP to TypeScript and fullstack web development.
+Marko has been programming and developing software in his spare time since the mid 80s in several different programming languages, from Basic to C and Assembler. In education he read Computer Science's Engineering and a Master's degree in Software Development with a specialization in Programming Languages. He has been working professionally for many years in software development from PHP to TypeScript and fullstack web development.
