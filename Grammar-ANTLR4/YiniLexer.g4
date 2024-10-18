@@ -21,9 +21,11 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
+SECTION_HEAD: HASH+ WS* IDENT NL+;
+
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
-}: '/END';
+}: '###' | '/END';
 
 EQ: '=';
 HASH: '#';

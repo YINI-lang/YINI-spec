@@ -26,11 +26,9 @@ comment: BLOCK_COMMENT | LINE_COMMENT;
 yini: SHEBANG? NL* section+ NL* EOF;
 
 section:
-	section_head section_members
-	| section_head section NL+
+	SECTION_HEAD section_members
+	| SECTION_HEAD section
 	| terminal_line;
-
-section_head: HASH+ IDENT NL+;
 
 terminal_line: TERMINAL_TOKEN (NL+ | COMMENT? NL*);
 
