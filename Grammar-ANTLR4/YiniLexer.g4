@@ -19,6 +19,8 @@ lexer grammar YiniLexer;
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
+COMMENT: BLOCK_COMMENT | LINE_COMMENT;
+
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
 }: '/END';

@@ -32,7 +32,7 @@ section:
 
 section_head: HASH+ IDENT NL+;
 
-terminal_line: TERMINAL_TOKEN NL+ | TERMINAL_TOKEN comment? NL*;
+terminal_line: TERMINAL_TOKEN (NL+ | COMMENT? NL*);
 
 section_members: member+;
 
