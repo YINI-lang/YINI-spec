@@ -21,11 +21,12 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
-SECTION_HEAD: ASTERIX+ WS* IDENT NL+;
+SECTION_HEAD: ASTERIX+ WS* KEY NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
-}: '***' | '/END';
+	//}: '***' | '/END';
+}: '/END';
 
 EQ: '=';
 HASH: '#';
@@ -57,6 +58,8 @@ EMPTY_LIST: '[' ']';
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
 //KEY: (PURE_STRING | IDENT) -> more;
+KEY: IDENT;
+//KEY: (STRING | IDENT) -> more;
 
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
@@ -79,8 +82,8 @@ STRING: PURE_STRING | HYPER_STRING | CLASSIC_STRING;
 
 // Pure string literal, treats the backslash character (\) as a literal.
 PURE_STRING:
-	('p' | 'P')? '\'' ~['\n\r\b\f\t]* '\''
-	| ('p' | 'P')? '"' ~["\n\r\b\f\t]* '"';
+	('p' | 'P')? '\'' ~(['\n\r\b\f\t])* '\''
+	| ('p' | 'P')? '"' ~(["\n\r\b\f\t])* '"';
 
 // Hyper string literal.
 HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''
