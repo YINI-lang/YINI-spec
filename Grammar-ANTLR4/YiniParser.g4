@@ -35,9 +35,12 @@ terminal_line: TERMINAL_TOKEN (NL+ | COMMENT? NL*);
 section_members: member+;
 
 member:
-	IDENT EQ NL+ // Empty value is treated as NULL.
+	explicit_boolean_member
+	| IDENT EQ NL+ // Empty value is treated as NULL.
 	| IDENT EQ value NL+
 	| IDENT COLON elements? NL+;
+
+explicit_boolean_member: PC IDENT EQ boolean_literal? NL+;
 
 value:
 	list_in_brackets
