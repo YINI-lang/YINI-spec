@@ -1,13 +1,19 @@
 /*
  YINI grammar in ANTLR 4.
+ 
  Apache License, Version 2.0, January 2004,
  http://www.apache.org/licenses/
- Copyright 2024 Gothenburg, Marko K. Seppänen (Sweden via
+ Copyright 2024 Gothenburg, Marko K. S. (Sweden via
  Finland).
  */
 
-// This grammar should follow YINI specification version 1.0 Alpha 2. Please note, they might be
-// smaller or bigger unknown bugs or issues.
+/* 
+ This grammar aims to follow, as closely as possible, the YINI specification v1.0.0 Alpha 3.
+ 
+ Feedback, bug reports and improvements are welcomed here https://github.com/YINI-lang/YINI-spec
+ 
+ http://yini-lang.org
+ */
 
 grammar yini;
 options {
@@ -38,13 +44,19 @@ section_members: member+;
 member:
 	IDENT '=' NL+ // Empty value is treated as NULL.
 	| IDENT '=' value NL+
-	| IDENT ':' NL* list NL+;
+	| IDENT ':' elements? NL+;
 
-value: string_literal | number_literal | boolean_literal;
+value:
+	list_in_brackets
+	| string_literal
+	| number_literal
+	| boolean_literal
+	| ('null' | 'Null' | 'NULL'); // NOTE: In specs NULL should be case-insensitive.
 
 list: elements | list_in_brackets;
 
-list_in_brackets: '[' NL* elements NL* ']';
+list_in_brackets: '[' NL* elements NL* ']' | EMPTY_LIST;
+EMPTY_LIST: '[' ']';
 
 elements: element ','? | element ',' elements;
 
@@ -54,6 +66,7 @@ number_literal: NUMBER;
 
 string_literal: STRING NL* '+' NL* STRING | STRING;
 
+// NOTE: In specs boolean literals should be case-insensitive.
 boolean_literal:
 	('false' | 'False' | 'FALSE')
 	| ('true' | 'True' | 'TRUE')
@@ -80,12 +93,6 @@ NUMBER:
 		| DUO_INTEGER
 		| HEX_INTEGER
 	);
-
-// BOOLEAN: BOOLEAN_FALSE | BOOLEAN_TRUE;
-
-// fragment BOOLEAN_FALSE options { caseInsensitive = true; }: 'false' | 'no' | 'off';
-
-// fragment BOOLEAN_TRUE options { caseInsensitive = true; }: 'true' | 'yes' | 'on';
 
 BOOLEAN options {
 	caseInsensitive = true;

@@ -10,7 +10,7 @@
 	### advanced
 	serverType = "default"
 	bypassProxy = false
-	localDir = "C:\Users\John Smith\mysite"
+	localDir = "C:\Users\John Smith\mysite\"
 	remoteDir = "/public_html"
 
 	### transfer
@@ -31,7 +31,7 @@
 	### advanced
 	serverType = "default"
 	bypassProxy = false
-	localDir = "C:\Users\John Smith\mysecondsite"
+	localDir = "C:\Users\John Smith\mysecondsite\"
 	remoteDir = "/public_html"
 
 	### transfer

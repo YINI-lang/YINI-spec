@@ -1,5 +1,14 @@
-# YINI-spec v1.0.0 Alpha 2
-**Y**et another **INI** markup language - `YINI` is a config and settings file format (similar to INI-files) for computer software that consists of plain text with a simple structure, comprising of Key–Value pairs and Key-List pairs, grouped in sections.
+# YINI Specification
+
+- INI-file the right way, both for software and humans 🙈
+- You can use strings enclosed in single or double quotes. Pure, Classic or Hyper strings, use whatever you like and need 😉
+- Need another section or nested section? Sure no problem, no need to fuss with brackets or dots or whatever! Just add an extra hash character, ala Markdown header, and be done with it 🚀
+
+---
+
+**Y**et another **INI** markup language - `YINI` is a config and settings file format (similar (but not same) to INI-files) for computer software that consists of plain text with a very simple structure and notation, comprising of Key–Value pairs and Key-List pairs, grouped in sections. YINI uses conventions that are familiar to programmers of the C-family of languages.
+
+This project and repository deals with the specification for the YINI markup language.
 
 ## Short Examples
 A short example of how a `YINI` document file looks like:
@@ -12,7 +21,7 @@ Buffers = 10
 IsNight = OFF  // Boolean false, YINI understands also OFF, YES, ON etc.
 
 // Following is a list (array) with strings as elements.
-KeyWords: [ "Orange", "Banana", "Pear", "Peach" ]
+KeyWords = [ "Orange", "Banana", "Pear", "Peach" ]
 
 /END  // All YINI files must end with this line.
 ```
@@ -35,12 +44,15 @@ isCentered = true
 url = 'images/'
 
 // Following is a list with other lists as elements.
-styles: [
+styles = [
     ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 ]
 
 /END  // End of YINI doc.
 ```
+
+## More Examples 🥳
+More examples can be found here: **[Examples](<./Examples>)** and there are some YINI document files here: **[More-samples](<./Source/Grammar-ANTLR4/Samples>)**
 
 ---
 ## General Objective
@@ -48,102 +60,41 @@ Compared with other markup languages:
 - YINI should have simpler structure and more lightweight than YAML and TOML.
 - YINI should be more human-readable than (nested) JSON and YAML.
 - YINI should be less verbose (verbal) than XML.
-- YINI's syntax shall be more high level than JSON (but also less than YAML's).
+- YINI's syntax shall be more high level than JSON.
 
 ## Motivation
 `YINI` aims to be a simple and (relatively) lightweight text-based markup language format, for storing configurations, settings and preferences in software. It should be language-independent and platform-independent as far as possible.
 
 YINI should have built-in types of the most general data types (to keep the format more simple and more lightweight). Custom types, advanced typechecking and type specialization are left to the user/client and host/language ​​to handle/process if further specialization is desired by the user/client using a YINI file/document.
 
-Yet, the YINI format should be easy and simple enough to express structure, notation and groupings of data to be stored on a medium for later use.
+YINI format should be very simple and minimal to express the structure, notation and grouping of data to be stored on a medium for later use. But still simple and legible enough to be read by humans.
+
+Although there does not exists any YINI readers yet, a sister project **[YINI-Reader-TS](https://github.com/YINI-lang/YINI-Reader-TS)** is planned when this spec matures more (when YINI goes into beta?).
 
 ## Design Goals
 1. YINI files/documents should be platform agnostic, portable between platforms and programming languages as far as possible.
-2. YINI should have a simple structure and notation, and easy to group data. 
+2. YINI should have a simple structure and notation, be easy to group data, yet be unambiguous. 
 3. YINI should be easily readable (to some extent) by humans.
 4. YINI should be non-verbose, avoid to use excessive or unnecessary words or characters. And at the same time be (relatively) light-weight, yet be (relatively) high-level.
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
 ## Specification
-The latest and most stable version can be found here --TODO--
-
-## Specification
-Specification can be found here: **[YINI spec](<./YINI spec.md>)**.
+The actual YINI Specification can be found here: **[YINI spec](<./Source/YINI-Specification.md>)**.
 
 ## Grammar
-There exists a YINI grammar in ANTLR 4 here: **[YINI grammar](<./grammar-antlr4/yini.g4>)**.
+This repo also includes a YINI grammar (in ANTLR 4 ). It aims to follow the specification as closely as possible. You find it here: **[YINI grammar](<./Source/Grammar-ANTLR4/yini.g4>)**.
 
-## So, what is special about YINI?
-In YINI:
-- Strings are enclosed by either single quotes `'` or double quotes `"`, use what you prefer.
-- Key-**Value** pairs are separated by an equals sign `=`.
-- While, Key-**List** pairs are separated by a colon `:`.
-  
---EXPAND--
+## Contributing
+Feedback, bug reports, suggestions, and code contributions are welcome!
 
-## More Examples
-### Bigger Example 1
-```
-# MyPrefs
+Head over to **[Docs/Contributing.md](<./Docs/Contributing.md>)**
 
-## General
-IsDarkMode = YES
-Buffers = 10
-Dirs: "C:\Users", "D:\Work\Temp", "E:\Data\Temp"
+## License
+This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LICENSE>) file for details.
 
-## Menu 
-Id = "FILE"
-Value = "File"
+`Libs` directory contains third party software and each is licensed under its own license which is described in its own license file under the respective directory under `Libs`.
 
-### MenuItem
-Value = "New"
-OnClick = "CreateDoc()"
+## Author 🤓
+This project and repository is created and maintaned by Marko K. S.
 
-### MenuItem
-Value = "Open"
-OnClick = "OpenDoc()"
-
-### MenuItem
-Value = "Save"
-OnClick = "SaveDoc()"
-
-/END // End of YINI doc.
-```
-
-### Bigger Example 2
-```
-# package
-name = "SomeName"
-description = "Some description of something."
-version = "1.8.4"
-authors: [
-    "skljsdalf",
-    "Sss sdfsdf <sdfsf@jlewr.com>",
-    "sdfalf",
-]
-exclude: [
-    "build",
-    "docs",
-    "examples",
-    "packages",
-]
-
-# dev-dependencies
-tester = "bin/tester@1.1.4"
-
-/END // End of doc.
-```
-
-## Trivia
-### The Name
-In the beginning, `YINI` started with the working name `MINI`, and then `MINI-CONFIG` / `miniCONFIG` which stood for Minimalistic INI Configuration Object Notation File. Also M stood for Marko's (after the author) at the start but was changed to stand for minimalistic. Finally, as the specification began to mature away from the draft stage, the name was renamed to just `YINI`.
-
-## Versions / Releases
-
-| Version                  | Date     | Description |
-|--------------------------|----------|-------------|
-| YINI-spec v1.0.0 Alpha 2 | 2024 Oct | 
-| YINI-spec v1.0.0 Alpha   | 2024 Oct | Initial release.
-
-## Changes
---TODO--
+Marko has been programming and developing software in his spare time since the mid 80s in several different programming languages, from Basic to C and Assembler. In education he read Computer Science's Engineering and a Master's degree in Software Development with a specialization in Programming Languages. He has been working professionally for many years in software development from PHP to TypeScript and fullstack web development.
