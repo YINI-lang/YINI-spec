@@ -92,6 +92,8 @@ Head over to **[Docs/Contributing.md](<./Docs/Contributing.md>)**
 ## License
 This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LICENSE>) file for details.
 
+`Libs` directory contains third party software and each is licensed under its own license which is described in its own license file under the respective directory under `Libs`.
+
 ## Author 🤓
 This project and repository is created and maintaned by Marko K. S.
 
