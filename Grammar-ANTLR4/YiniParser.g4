@@ -35,12 +35,14 @@ terminal_line: TERMINAL_TOKEN (NL+ | COMMENT? NL*);
 section_members: member+;
 
 member:
-	explicit_boolean_member
+	member_explicit_string
+	| member_explicit_boolean
 	| IDENT EQ NL+ // Empty value is treated as NULL.
 	| IDENT EQ value NL+
 	| IDENT COLON elements? NL+;
 
-explicit_boolean_member: PC IDENT EQ boolean_literal? NL+;
+member_explicit_string: DOLLAR IDENT EQ string_literal? NL+;
+member_explicit_boolean: PC IDENT EQ boolean_literal? NL+;
 
 value:
 	list_in_brackets

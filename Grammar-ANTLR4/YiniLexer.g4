@@ -34,6 +34,7 @@ COLON: ':';
 OB: '['; // Opening Bracket.
 CB: ']'; // Closing Bracket.
 PLUS: '+';
+DOLLAR: '$';
 PC: '%'; // PerCent sign.
 
 BOOLEAN_FALSE options {
