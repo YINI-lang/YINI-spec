@@ -1,61 +1,61 @@
-# sites
+* sites
 
-## entry0
+** entry0
 
-	### general
+	*** general
 	protocol = "ftp"
 	host = "mysite.com"
 	port = 21
 
-	### advanced
+	*** advanced
 	serverType = "default"
 	bypassProxy = false
 	localDir = "C:\Users\John Smith\mysite\"
 	remoteDir = "/public_html"
 
-	### transfer
+	*** transfer
 	maxNumConnections = 1
 
-## entry1
+** entry1
 
-	### general
+	*** general
 	protocol = "ftp"
 	host = "mysecondsite.com"
 	port = 21
 
-		#### login
+		**** login
 		type = "normal"
 		username = "usern"
 		password = "0000"
 
-	### advanced
+	*** advanced
 	serverType = "default"
 	bypassProxy = false
 	localDir = "C:\Users\John Smith\mysecondsite\"
 	remoteDir = "/public_html"
 
-	### transfer
+	*** transfer
 	maxNumConnections = 1
 
-## entry2
+** entry2
 
-	### general
+	*** general
 	protocol = "ftp"
 	host = "mywork.com"
 	port = 21
 
-		#### login
+		**** login
 		type = "ask"
 		username = ""
 		password = ""
 
-	### advanced
+	*** advanced
 	serverType = "default"
 	bypassProxy = true
 	localDir = ""
 	remoteDir = ""
 
-	### transfer
+	*** transfer
 	maxNumConnections = 3
 
 /END // End of YINI doc.

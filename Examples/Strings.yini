@@ -1,6 +1,6 @@
-# Strings
+* Strings
 
-## String_Concatenation
+** String_Concatenation
 	/*
 		All below should result in the following string literal:
 		The boat's name is "Mare Stella"
@@ -17,7 +17,7 @@
 	text5 = C'The boat\'s name is "Mare Stella"'
 	text6 = C"The boat's name is \"Mare Stella\""
 
-## Different kind of strings
+** Different kind of strings
 
 	// Using a Pure String (default) for content1.
 	pureString = "Pets are animals kept for companionship or entertainment, rather than as a working animal, livestock or laboratory animal. Two of the most popular pets are dogs and cats. Other animals include fish, birds, rabbits, rodents, ferrets, pigs and many other."

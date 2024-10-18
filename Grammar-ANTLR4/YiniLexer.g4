@@ -21,11 +21,11 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
-SECTION_HEAD: HASH+ WS* IDENT NL+;
+SECTION_HEAD: ASTERIX+ WS* IDENT NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
-}: '###' | '/END';
+}: '***' | '/END';
 
 EQ: '=';
 HASH: '#';
@@ -35,7 +35,10 @@ OB: '['; // Opening Bracket.
 CB: ']'; // Closing Bracket.
 PLUS: '+';
 DOLLAR: '$';
+ASTERIX: '*';
 PC: '%'; // PerCent sign.
+SS: '§'; // Section Sign.
+AT: '@';
 
 BOOLEAN_FALSE options {
 	caseInsensitive = true;
@@ -93,10 +96,11 @@ ESC_SEQ_BASE: '\\' ([nrbft\\/] | UNICODE);
 
 fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 
+fragment INTEGER: DECIMAL_INTEGER;
+
 // Note: 0 or higher than 1, no leading 0s allowed (for ex: `01`)
 fragment DECIMAL_INTEGER: '0' | SIGN? [1-9] DIGIT*;
 
-fragment INTEGER: DECIMAL_INTEGER;
 fragment BIN_INTEGER: ('b' | 'B') BIN_DIGIT+;
 fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+; // Make sure to not clash with boolean ON | OFF.
 fragment DUO_INTEGER: ('z' | 'Z') DUO_DIGIT+;

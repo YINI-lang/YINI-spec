@@ -1,16 +1,16 @@
 #!/bin/vim
 
-# prefs
-## entry
-### general
+* prefs
+** entry
+*** general
 nightMode = false
 
-### advanced
+*** advanced
 isUseCache = true
 factor = 1.5
 maxCacheSize = 2048e6
 
-### cacheDirs
+*** cacheDirs
 dirs: 
 	"/tmp",
 	"/media/work/tmp",

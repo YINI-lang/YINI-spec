@@ -21,9 +21,9 @@ options {
 	caseInsensitive = false;
 }
 
-comment: BLOCK_COMMENT | LINE_COMMENT;
+//comment: BLOCK_COMMENT | LINE_COMMENT;
 
-yini: SHEBANG? NL* section+ NL* EOF;
+yini: SHEBANG? COMMENT* NL* section+ NL* EOF;
 
 section:
 	SECTION_HEAD section_members
@@ -36,13 +36,22 @@ section_members: member+;
 
 member:
 	member_explicit_string
+	| member_explicit_real_number
+	| member_explicit_integer_number
 	| member_explicit_boolean
+	| member_explicit_array
 	| IDENT EQ NL+ // Empty value is treated as NULL.
 	| IDENT EQ value NL+
 	| IDENT COLON elements? NL+;
 
 member_explicit_string: DOLLAR IDENT EQ string_literal? NL+;
+member_explicit_real_number: SS IDENT EQ number_literal? NL+;
+member_explicit_integer_number:
+	HASH IDENT EQ number_literal? NL+;
 member_explicit_boolean: PC IDENT EQ boolean_literal? NL+;
+member_explicit_array:
+	AT IDENT EQ list_in_brackets? NL+
+	| AT IDENT COLON elements? NL+;
 
 value:
 	list_in_brackets

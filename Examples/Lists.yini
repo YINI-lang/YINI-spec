@@ -1,6 +1,6 @@
-# Lists
+* Lists
 
-## ListWithBrackets
+** ListWithBrackets
 
 	// A list with four strings.
 	list1 = [ "Orange", "Banana", "Pear", "Peach" ]
@@ -17,7 +17,7 @@
 	]
 
 
-## ListWithoutBrackets
+** ListWithoutBrackets
 
 	// Alternative notation for a list without brackets,
 	// note the colon : instead of the equals character =.

@@ -2,10 +2,10 @@
 	Example of settings for a page.
 */
 
-# html
+* html
 lang = "en"
 
-## head
+** head
 title = ""
 description = "About pets"
 keywords = "pet, pets, dogs, cats, fish, birds, rabbits, rodents"
@@ -19,10 +19,10 @@ link: [
 	["stylesheet", "css/themes.css"]
 ]
 
-### viewport
+*** viewport
 content = "width=device-width, initial-scale=1.0"
 
-## body
+** body
 h1 = "About Pets"
 
 // Using a Pure String (default) for content1.
