@@ -15,65 +15,35 @@
  http://yini-lang.org
  */
 
-grammar yini;
-options {
-	caseInsensitive = false;
-}
-
-comment: BLOCK_COMMENT | LINE_COMMENT;
-
-yini: SHEBANG? NL* section+ NL* EOF;
+lexer grammar YiniLexer;
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
-
-section:
-	section_head section_members
-	| section_head section NL+
-	| terminal_line;
-
-section_head: '#'+ IDENT NL+;
-
-terminal_line: TERMINAL_TOKEN NL+ | TERMINAL_TOKEN comment? NL*;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
 }: '/END';
 
-section_members: member+;
+EQ: '=';
+HASH: '#';
+COMMA: ',';
+COLON: ':';
+OB: '['; // Opening Bracket.
+CB: ']'; // Closing Bracket.
+PLUS: '+';
 
-member:
-	IDENT '=' NL+ // Empty value is treated as NULL.
-	| IDENT '=' value NL+
-	| IDENT ':' elements? NL+;
+BOOLEAN_FALSE options {
+	caseInsensitive = true;
+}: 'false' | 'off' | 'no';
 
-value:
-	list_in_brackets
-	| string_literal
-	| number_literal
-	| boolean_literal
-	| ('null' | 'Null' | 'NULL'); // NOTE: In specs NULL should be case-insensitive.
+BOOLEAN_TRUE options {
+	caseInsensitive = true;
+}: 'true' | 'on' | 'yes';
 
-list: elements | list_in_brackets;
+NULL options {
+	caseInsensitive = true;
+}: 'null';
 
-list_in_brackets: '[' NL* elements NL* ']' | EMPTY_LIST;
 EMPTY_LIST: '[' ']';
-
-elements: element ','? | element ',' elements;
-
-element: NL* value NL* | NL* list_in_brackets NL*;
-
-number_literal: NUMBER;
-
-string_literal: STRING NL* '+' NL* STRING | STRING;
-
-// NOTE: In specs boolean literals should be case-insensitive.
-boolean_literal:
-	('false' | 'False' | 'FALSE')
-	| ('true' | 'True' | 'TRUE')
-	| ('yes' | 'Yes' | 'YES')
-	| ('no' | 'No' | 'NO')
-	| ('on' | 'On' | 'ON')
-	| ('off' | 'Off' | 'OFF');
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
@@ -93,10 +63,6 @@ NUMBER:
 		| DUO_INTEGER
 		| HEX_INTEGER
 	);
-
-BOOLEAN options {
-	caseInsensitive = true;
-}: ('false' | 'no' | 'off' | 'true' | 'yes' | 'on');
 
 STRING: PURE_STRING | HYPER_STRING | CLASSIC_STRING;
 
