@@ -56,6 +56,8 @@ EMPTY_LIST: '[' ']';
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
+//KEY: (PURE_STRING | IDENT) -> more;
+
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
 		| 'A' ..'Z'
@@ -77,8 +79,8 @@ STRING: PURE_STRING | HYPER_STRING | CLASSIC_STRING;
 
 // Pure string literal, treats the backslash character (\) as a literal.
 PURE_STRING:
-	('p' | 'P')? '\'' (~['\n\r\b\f\t])* '\''
-	| ('p' | 'P')? '"' ( ~["\n\r\b\f\t])* '"';
+	('p' | 'P')? '\'' ~['\n\r\b\f\t]* '\''
+	| ('p' | 'P')? '"' ~["\n\r\b\f\t]* '"';
 
 // Hyper string literal.
 HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''

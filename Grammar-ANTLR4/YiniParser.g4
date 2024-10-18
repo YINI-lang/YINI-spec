@@ -40,9 +40,9 @@ member:
 	| member_explicit_integer_number
 	| member_explicit_boolean
 	| member_explicit_array
-	| IDENT EQ NL+ // Empty value is treated as NULL.
-	| IDENT EQ value NL+
-	| IDENT COLON elements? NL+;
+	| key EQ NL+ // Empty value is treated as NULL.
+	| key EQ value NL+
+	| key COLON elements? NL+;
 
 member_explicit_string: DOLLAR IDENT EQ string_literal? NL+;
 member_explicit_real_number: SS IDENT EQ number_literal? NL+;
@@ -52,6 +52,9 @@ member_explicit_boolean: PC IDENT EQ boolean_literal? NL+;
 member_explicit_array:
 	AT IDENT EQ list_in_brackets? NL+
 	| AT IDENT COLON elements? NL+;
+
+//key: (IDENT | PURE_STRING);
+key: IDENT;
 
 value:
 	list_in_brackets
@@ -70,7 +73,8 @@ element: NL* value NL* | NL* list_in_brackets NL*;
 
 number_literal: NUMBER;
 
-string_literal: STRING NL* PLUS NL* STRING | STRING;
+string_literal: STRING string_concat*;
+string_concat: NL* PLUS NL* STRING;
 
 // NOTE: In specs boolean literals should be case-insensitive.
 boolean_literal: BOOLEAN_FALSE | BOOLEAN_TRUE;
