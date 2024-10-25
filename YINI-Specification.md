@@ -120,7 +120,7 @@ After the a section with level 1, comes section header with level 2.
 ```
 
 ## 6. Terminal Line
-A `YINI` document must always end with `/END` (NON CASE-SENSITIVE)on its own line. After this there may be only whitespaces or possible comments.
+A `YINI` document must always end with `/END` (NON CASE-SENSITIVE) or `###` (three hashes) on its own line. After this there may be only whitespaces or possible comments.
 
 ```
 /END
