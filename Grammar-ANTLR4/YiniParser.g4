@@ -21,7 +21,7 @@ options {
 	caseInsensitive = false;
 }
 
-//comment: BLOCK_COMMENT | LINE_COMMENT;
+//comment: BLOCK_COMMENT | LINE_COMMENT; NL: LINE_COMMENT+ | NL+;
 
 yini: SHEBANG? COMMENT* NL* section+ NL* EOF;
 
@@ -46,8 +46,7 @@ member:
 
 member_explicit_string: DOLLAR IDENT EQ string_literal? NL+;
 member_explicit_real_number: SS IDENT EQ number_literal? NL+;
-member_explicit_integer_number:
-	HASH IDENT EQ number_literal? NL+;
+member_explicit_integer_number: SS IDENT EQ number_literal? NL+;
 member_explicit_boolean: PC IDENT EQ boolean_literal? NL+;
 member_explicit_array:
 	AT IDENT EQ list_in_brackets? NL+
