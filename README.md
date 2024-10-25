@@ -82,7 +82,7 @@ Although there does not exists any YINI readers yet, a sister project **[YINI-Re
 The actual YINI Specification can be found here: **[YINI spec](<./YINI-Specification.md>)**.
 
 ## Grammar
-This repo also includes a YINI grammar (in ANTLR 4 ). It aims to follow the specification as closely as possible. You find it here: **[YINI grammar](<./Grammar-ANTLR4/yini.g4>)**.
+This repo also includes a YINI grammar (in ANTLR 4 ). It aims to follow the specification as closely as possible. You find it here: **[Lexer](<./Grammar-ANTLR4/YiniLexer.g4>)** and **[Parser](<./Grammar-ANTLR4/YiniParser.g4>)**.
 
 ## Contributing
 Feedback, bug reports, suggestions, and code contributions are welcome!
