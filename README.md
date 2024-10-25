@@ -6,7 +6,7 @@
 
 ---
 
-**Y**et another **INI** markup language - `YINI` is a config and settings file format (similar (but not same) to INI-files) for computer software that consists of plain text with a very simple structure and notation, comprising of Key–Value pairs and Key-List pairs, grouped in sections. YINI uses conventions that are familiar to programmers of the C-family of languages.
+**Y**et another **INI** markup language - `YINI` is a config and settings file format (similar (but not same) to INI-files) for computer software that consists of plain text with a very simple structure and notation, comprising of Key–Value pairs and Key-List pairs, grouped in sections. YINI uses conventions that are familiar to programmers mainly of the C-family of languages. **[More about YINI](<./Docs/YINI-About.md>)**
 
 This project and repository deals with the specification for the YINI markup language.
 
