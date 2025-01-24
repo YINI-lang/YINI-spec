@@ -25,7 +25,8 @@ SECTION_HEAD: HASH+ WS* IDENT NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
-}: '###' | '/END';
+}: '/END';
+//}: '###' | '/END';
 
 EQ: '=';
 HASH: '#';
