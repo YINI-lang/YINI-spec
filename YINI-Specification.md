@@ -82,7 +82,7 @@ Naming identifiers must follow below rules:
 - Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
 - Must begin with a letter or an underscore `_`.
 - Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
-- Must be unique, there cannot be multiple section header with the same identifier.
+- Must be unique, there cannot be multiple section headers with the same identifier.
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
 - Also identifiers must follow the engine's or host's (program/software that reads and writes `YINI` documents) naming conventions.
 
