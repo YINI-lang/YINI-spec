@@ -40,13 +40,13 @@ member:
 	| member_explicit_integer_number
 	| member_explicit_boolean
 	| member_explicit_array
-	//| key EQ NL+ // Empty value is treated as NULL.
-	| key EQ value? NL+ // Empty value is treated as NULL.
-	//| key COLON elements? NL+
-	| member_colon_list
-	| STRING COLON value? NL+; // ???
+	//| IDENT EQ NL+ // Empty value is treated as NULL.
+	| (IDENT | KEY) EQ value? NL+ // Empty value is treated as NULL.
+	//| IDENT COLON elements? NL+
+	| member_colon_list;
+//| STRING COLON value? NL+; // ???
 
-member_colon_list: key COLON elements? NL+;
+member_colon_list: (IDENT | KEY) COLON elements? NL+;
 
 member_explicit_string: DOLLAR IDENT EQ string_literal? NL+;
 member_explicit_real_number: SS IDENT EQ number_literal? NL+;
@@ -56,8 +56,9 @@ member_explicit_array:
 	AT IDENT EQ list_in_brackets? NL+
 	| AT IDENT COLON elements? NL+; // ? reactor to colon list
 
-//key: IDENT;
-key: (IDENT | STRING);
+key: IDENT;
+//key: (IDENT | STRING); 
+
 //key: (IDENT | RAW_STRING);
 
 value:
