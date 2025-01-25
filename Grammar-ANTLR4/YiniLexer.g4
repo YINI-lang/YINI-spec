@@ -57,7 +57,7 @@ EMPTY_LIST: '[' ']';
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
-//KEY: (PURE_STRING | IDENT) -> more;
+//KEY: (RAW_STRING | IDENT) -> more;
 KEY: IDENT;
 //KEY: (STRING | IDENT) -> more;
 
@@ -78,10 +78,10 @@ NUMBER:
 		| HEX_INTEGER
 	);
 
-STRING: PURE_STRING | HYPER_STRING | CLASSIC_STRING;
+STRING: RAW_STRING | HYPER_STRING | CLASSIC_STRING;
 
-// Pure string literal, treats the backslash character (\) as a literal.
-PURE_STRING:
+// Raw string literal, treats the backslash character (\) as a literal.
+RAW_STRING:
 	('p' | 'P')? '\'' ~(['\n\r\b\f\t])* '\''
 	| ('p' | 'P')? '"' ~(["\n\r\b\f\t])* '"';
 
@@ -124,9 +124,9 @@ fragment EXPONENT: ('e' | 'E') SIGN? DIGIT+;
 
 fragment SIGN: ('+' | '-');
 
-NL: (WS* COMMENT* NEW_LINE COMMENT*);
+NL: (WS* COMMENT* SINGLE_NL COMMENT*);
 
-NEW_LINE: ('\r' '\n'? | '\n');
+SINGLE_NL: ('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
 
