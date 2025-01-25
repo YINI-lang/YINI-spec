@@ -58,7 +58,7 @@ EMPTY_LIST: '[' ']';
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
 //KEY: (RAW_STRING | IDENT) -> more;
-KEY: IDENT;
+KEY: IDENT; // edit: try update to (RAW_STRING | IDENT)
 //KEY: (STRING | IDENT) -> more;
 
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
