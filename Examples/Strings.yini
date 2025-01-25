@@ -19,11 +19,11 @@
 
 ##  DifferentKindOfStrings
 
-	// Using a Pure String (default).
+	// Using a Raw String (default).
 	string1 = ""
 	string2 = "Pets"
 	string3 = "Pets are animals"
-	pureString = "Pets are animals kept for companionship or entertainment, rather than as a working animal, livestock or laboratory animal. Two of the most popular pets are dogs and cats. Other animals include fish, birds, rabbits, rodents, ferrets, pigs and many other."
+	rawString = "Pets are animals kept for companionship or entertainment, rather than as a working animal, livestock or laboratory animal. Two of the most popular pets are dogs and cats. Other animals include fish, birds, rabbits, rodents, ferrets, pigs and many other."
 
 	// Using a Hyper String.
 	hyperString = h"Pets are animals kept for companionship or entertainment,

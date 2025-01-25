@@ -14,7 +14,7 @@ isCentered = true
 url = 'images/'
 
 // Following is a list with other lists as elements.
-styles: [
+styles = [
     ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 ]
 

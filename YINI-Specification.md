@@ -10,7 +10,7 @@
 7. Values & Native Types
 8.  Members
 9.  String Literals
-    * 9.1 Pure Strings
+    * 9.1 Raw Strings
     * 9.2 Hyper or H-Strings
     * 9.3 Classic or C-Strings
 10. Number Literals
@@ -177,12 +177,12 @@ Strings in YINI can either be enclosed in single quotes `'` or double quotes `"`
 
 There are also different types of strings, these can be made by prefixing a string (before the first quote) with a specific letter. YINI support three kinds of strings.
 
-By default all strings are **pure string literals by defalt**
+By default all strings are **raw string literals by defalt**
 
 All string literals must end and start on the same line, meaning they cannot span over multiple lines, except H-Strings (8.2). Multiple strings on can be concatenated together to archive longer string literals (8.4).
 
-### 9.1 Pure Strings (Default)
-In (pure) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (pure) strings must be on same line.
+### 9.1 Raw Strings (Default)
+In (raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (raw) strings must be on the same line.
 
 YINI strings are ideal for file directory paths and the like.
 >myPath = "C:\Users\John Smith\"
@@ -194,7 +194,7 @@ or
 ### 9.2 Hyper or H-Strings
 There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `c` or `C`.
 
-Hyper Strings, as Pure Strings, treat the backslash exactly as seen (escape sequences are not supported).
+Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape sequences are not supported).
 
 - Hower, Hyper strings are special in that they can span over multiple lines with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
 - Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted to one single blank space ` `. 

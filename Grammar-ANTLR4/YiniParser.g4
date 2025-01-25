@@ -58,7 +58,7 @@ member_explicit_array:
 
 //key: IDENT;
 key: (IDENT | STRING);
-//key: (IDENT | PURE_STRING);
+//key: (IDENT | RAW_STRING);
 
 value:
 	list_in_brackets
