@@ -16,4 +16,4 @@ For this propably need to split the grammar into lexer and parser and use mode f
 
 ## Fix issue with (IDENT | KEY)
 - Fix the issue that (IDENT | KEY) is needed for IDENT,
-  instead of it being a key, and being IDENT | RAW_STRING??
+  instead of it being a key, and key being IDENT | RAW_STRING??
