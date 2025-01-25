@@ -124,9 +124,9 @@ fragment EXPONENT: ('e' | 'E') SIGN? DIGIT+;
 
 fragment SIGN: ('+' | '-');
 
-NL: (WS* COMMENT* NEW_LINE COMMENT*);
+NL: (WS* COMMENT* SINGLE_NL COMMENT*);
 
-NEW_LINE: ('\r' '\n'? | '\n');
+SINGLE_NL: ('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
 
