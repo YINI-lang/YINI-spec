@@ -6,9 +6,9 @@ This project and repository deals with the specification for the YINI markup lan
 
 ## Why Use YINI?
 - ✅ **Simple & Minimal** – YINI is INI-file the right way, both for humans and software. 😉
-- ✅ **Flexible Syntax** – You can use strings enclosed in single or double quotes. Supports **raw strings** (for paths) **, escaped strings (C-Strings), and multi-line Hyper Strings**. 🙈 
+- ✅ **Flexible Syntax** – You can use strings enclosed in single or double quotes. Supports **raw strings** (for paths) **, escaped strings (C-Strings), and multi-line Hyper Strings**. 🥳
 - ✅ **Structured Organization** – Need another section or nested section for data grouping? Sure no problem, no need to fuss with brackets or dots or whatever! Just add an extra hash character, ala Markdown header, and be done with it. 🚀
-- ✅ **Easy & Lightweight Alternative** – Less verbose and more human-readable than XML, YAML, and JSON.
+- ✅ **Easy & Lightweight Alternative** – Less verbose and more human-readable than XML, YAML, and JSON. 🙈
 
 ## Core Features
 - **Sections** – Defined with ```#``` headers (like Markdown).
