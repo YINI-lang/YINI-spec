@@ -20,6 +20,7 @@
 13. NULL Literal
 14. Sections in Sections
 15. Example
+16. Creator
 
 ---
 
@@ -144,51 +145,71 @@ A `YINI` value MUST be of one of the following 3 groups of native/built-in types
 Note: Above are all types that are supported by `YINI`, any other types are left to the host software to cast or convert to after reading (or before saving) a `YINI` document.
 
 ## 8. Members
-Each member must start on its own line, the name is called key in members, must be a unique identifier within the section (on the same section level).
-They come in two forms:
-1. **A single value**: a key-value pair that holds only one single value.
-2. **A list of values**: a key-values pair that holds zero or more values (or elements). Elements are separated by commas.
+Each **member** must start on its own line. The name of the member is called the **key**. Keys must be **unique** (identifier) within the same section (i.e., at the same section level).
 
-### Member with a Value
-A member with one value is a Key-Value pair using the an equals character `=`. The key is on the left of a equals character and the value is on the right.
-> key = "value"
-or
-> lives = 3
+There are two forms of members:
+1. **Single value** - A key-value pair that holds only one single value.
+2. **List of values** - A key-values pair that holds zero or more values (or elements). Elements are separated by commas.
+
+### Member with a Single Value
+A member with a single value is written as a **key-value pair**, using the equals character `=`. The key is on the left, and the value is on the right.
+
+```yini
+key = "value"
+lives = 3
+```
 
 ### Member with a List
-#### List Literal
-A member with a list, is a Key-List pair using the equals `=` character. After that follows zero or more values separated by a comma, and all values enclosed in brackets `[` `]`. (A final comma `,` may be accepted so parsing is not broken.)
+#### List Literal (with Brackets)
+A member with a list uses the equals `=` character (as with other members), followed by zero or more values inside square brackets `[` `]`, separated by commas. An optional final/trailing comma `,` may be accepted for convenience.
 
-> list1 = ["value1", "value2", "value3"]
->
-> list2 = []  // An empty list.
+```yini
+list1 = ["value1", "value2", "value3"]
 
-NOTE: There may not be a <NL> after the equals `=` character and the list itself. Due to in that case the member notes a value with null.
+list2 = [100, 200, 300]
 
-#### List without Brackets
-An alternative list notation for Key-List is using the colon character `:`. The key is on the left of the colon and the values (zero or more values) are on the right, each value separated by a comma. (A final comma `,` may be accepted so parsing is not broken.)
+list3 = []  // An empty list.
+```
 
-When using a colon `:` then `[` `]` are left out.
+NOTE: There must be no newline `<NL>` between the equals sign `=`  and the start of list itself `[`, otherwise the member will be interpreted as having a null value.
 
-> // Alternative list notation (with :).
-> list: "oranges", "bananas", "peaches"
+#### Alternative List Notation (without Brackets)
+An alternative way to define a list is by using the colon character `:` instead of an equals sign. In this form/notation, the key is on the left of the colon, and the values (zero or more values) appear to the right, separated by commas.
+
+Each value may optionally be placed on its own line. A final/trailing comma `,` is accepted so parsing is not broken.
+
+No brackets are used in this list notion.
+
+```yini
+// Alternative list notation (with :).
+
+list1: "oranges", "bananas", "peaches"
+
+list2:
+  "oranges",
+  "bananas",
+  "peaches"
+```
 
 ## 9. String Literals
-Strings in YINI can either be enclosed in single quotes `'` or double quotes `"`, use whichever you prefer or whatever is appropriate for the situation.
+In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`. You may use whichever is preferred or most appropriate for the context.
 
-There are also different types of strings, these can be made by prefixing a string (before the first quote) with a specific letter. YINI support three kinds of strings.
+YINI supports **three types of string literals**, distinguished by a prefix character placed before the opening quote.
 
-By default, all strings are **raw string literals by default**
+By default, all string literals are treated as **raw string literals by default**, unless a specific prefix indicates otherwise.
 
-All string literals must end and start on the same line, meaning they cannot span over multiple lines, except H-Strings (8.2). Multiple strings can be concatenated together to archive longer string literals (8.4).
+### Rules and Behavior for Strings
+
+- All string literals must **begin and end on the same line**. Multi-line strings are not allowed, **except for H-Strings** (see section 9.2).
+- Multiple string literals can be **concatenated** to create longer strings (see section 9.4).
 
 ### Summary
 
-| String Type | Enclosed In | Multi-Line | Escape Sequences | Special Features
-|---|---|---|---|---|
-| Raw Strings                | ```' '``` or ```" "```   | ❌ No | ❌ No | Ideal for file paths and literal text
-| Hyper Strings (H-Strings)  | ```h' '``` or ```h" "``` | ✅ Yes | ❌ No | Trims extra whitespace
-| Classic Strings (C-Strings)| ```c' '``` or ```c" "``` | ❌ No | ✅ Yes | Supports escape sequences
+| String Type | Enclosed In | Multi-Line | Escape Sequences | Trims White-Spaces | Special Features
+|---|---|---|---|---|---|
+| Raw Strings                | ```' '``` or ```" "```   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text
+| Hyper Strings (H-Strings)  | ```h' '``` or ```h" "``` | ✅ Yes | ❌ No | ✅ Yes | Trims extra whitespace
+| Classic Strings (C-Strings)| ```c' '``` or ```c" "``` | ❌ No | ✅ Yes | ❌ No | Supports escape sequences
 
 ### 9.1 Raw Strings (Default)
 In (raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (raw) strings must be on the same line.
@@ -328,4 +349,5 @@ OnClick = "SaveDoc()"
 
 ---
 
-Author: 2024 Gothenburg, Marko K. S. (Sweden via Finland).
+## 16. Creator
+Creator: 2024 Gothenburg, Marko K. Seppänen (Sweden via Finland).
