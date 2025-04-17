@@ -19,8 +19,9 @@
 12. Lists (arrays)
 13. NULL Literal
 14. Sections in Sections
-15. Example
-16. Creator
+15. Conclusion
+16. Example
+17. Creator
 
 ---
 
@@ -160,7 +161,6 @@ lives = 3
 ```
 
 ### Member with a List
-#### List Literal (with Brackets)
 A member with a list uses the equals `=` character (as with other members), followed by zero or more values inside square brackets `[` `]`, separated by commas. An optional final/trailing comma `,` may be accepted for convenience.
 
 ```yini
@@ -169,26 +169,6 @@ list1 = ["value1", "value2", "value3"]
 list2 = [100, 200, 300]
 
 list3 = []  // An empty list.
-```
-
-NOTE: There must be no newline `<NL>` between the equals sign `=`  and the start of list itself `[`, otherwise the member will be interpreted as having a null value.
-
-#### Alternative List Notation (without Brackets)
-An alternative way to define a list is by using the colon character `:` instead of an equals sign. In this form/notation, the key is on the left of the colon, and the values (zero or more values) appear to the right, separated by commas.
-
-Each value may optionally be placed on its own line. A final/trailing comma `,` is accepted so parsing is not broken.
-
-No brackets are used in this list notion.
-
-```yini
-// Alternative list notation (with :).
-
-list1: "oranges", "bananas", "peaches"
-
-list2:
-  "oranges",
-  "bananas",
-  "peaches"
 ```
 
 ## 9. String Literals
@@ -200,7 +180,7 @@ By default, all string literals are treated as **raw string literals by default*
 
 ### Rules and Behavior for Strings
 
-- All string literals must **begin and end on the same line**. Multi-line strings are not allowed, **except for H-Strings** (see section 9.2).
+- All string literals **must start and finish on the same line**, except for **H-Strings**, which can span multiple lines (see section 9.2).
 - Multiple string literals can be **concatenated** to create longer strings (see section 9.4).
 
 ### Summary
@@ -214,7 +194,7 @@ By default, all string literals are treated as **raw string literals by default*
 ### 9.1 Raw Strings (Default)
 In (raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (raw) strings must be on the same line.
 
-YINI strings are ideal for file directory paths and the like.
+Raw strings are particularly suitable for representing file paths and other literal text.
 >myPath = "C:\Users\John Smith\"
 or
 >myPath = '/home/Leila Häkkinen'
@@ -232,12 +212,27 @@ Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape seque
 
 Hyper Strings behaves similar to plain text in HTML documents.
 
+The following:
+
+```yini
+h"My name is
+  John Doe,  
+  and this is a test string."
+```
+
+Will result in:
+```txt
+My name is John Doe, and this is a test string.
+```
+
+
+
 ### 9.3 Classic or C-Strings (Escaped)
 Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `c` or `C`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
 >myText = c"This is a newline \n and this is a tab \t character."
 
-Escape codes in C-strings (in lower or uppercase):
+Escape sequences in C-Strings (in lower or uppercase):
 - `\n` for Newline
 - `\r` for Carriage Return
 - `\b` for Backspace
@@ -288,19 +283,49 @@ Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 The engine should convert the literal value to the corresponding Boolean value in the host language.
   
 ## 12. Lists (arrays) ##
-A list with zero or more values, each value separated by a comma, whitespaces (including newlines) between values/commas are OK, as well as there can be a comma after the last value. However, a line cannot start with a comma `,`.
 
-Optionally a list can be enclosed in [ ], but it is not mandatory.
+Lists can be defined in two different notations:
+- **Lists with Brackets** - Uses a single-line format with square brackets.
+- **Lists without Brackets** - Second notation is an optional multi-line format for better readability.
 
-A list can also be nested with other lists.
+### List Literal (with Brackets)
+A member with a list uses the equals `=` character (as with other members), followed by zero or more values inside square brackets `[` `]`, separated by commas. An optional final/trailing comma `,` may be accepted for convenience.
 
-NOTE: Key-List pairs are separated by a colon `:`, as opposed to key-Value pairs.
+```yini
+list1 = ["value1", "value2", "value3"]
 
+list2 = [100, 200, 300]
+
+list3 = []  // An empty list.
 ```
+
+NOTE: There must be no newline `<NL>` between the equals sign `=`  and the start of list itself `[`, otherwise the member will be interpreted as having a null value.
+
+Lists can be nested, like:
+
+```yini
 linkItems: [
 	["stylesheet", "css/general.css"],
 	["stylesheet", "css/themes.css"]
 ]
+```
+
+#### Alternative List Notation (without Brackets)
+An alternative way to define a list is by using the colon character `:` instead of an equals sign. In this form/notation, the key is on the left of the colon, and the values (zero or more values) appear to the right, separated by commas.
+
+Each value may optionally be placed on its own line. A final/trailing comma `,` is accepted so parsing is not broken.
+
+No brackets are used in this list notion.
+
+```yini
+// Alternative list notation (with :).
+
+list1: "oranges", "bananas", "peaches"
+
+list2:
+  "oranges",
+  "bananas",
+  "peaches"
 ```
 
 ## 13. NULL Literal
@@ -315,9 +340,17 @@ If you want to put a section under another section, nested sections, make a sect
 ### SubSection ###
 ```
 
+## 15. Conclusion
+
+The YINI (Yet another INI) specification aims to offer a flexible, human-readable configuration format that extends traditional INI syntax with enhanced features such as nested sections, list literals, multiple string types, and support for various number formats. Its design balances simplicity and expressiveness, making it well-suited for both small configuration files and more structured data representations.
+
+By providing a clearly defined syntax, consistent parsing rules, and support for modern data types, YINI strives to be both easy to use and powerful for developers and configuration authors alike.
+
+Future updates to the specification may expand functionality or improve clarity, based on community feedback and evolving needs.
+
 ---
 
-## 15. Example
+## 16. Example
 
 A full example of a `YINI` document:
 ```
@@ -349,5 +382,5 @@ OnClick = "SaveDoc()"
 
 ---
 
-## 16. Creator
+## 17. Creator
 Creator: 2024 Gothenburg, Marko K. Seppänen (Sweden via Finland).
