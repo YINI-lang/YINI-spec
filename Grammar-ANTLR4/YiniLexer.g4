@@ -21,7 +21,7 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
-SECTION_HEAD: HASH+ WS* (RAW_STRING | IDENT) NL+;
+SECTION_HEAD: HASH+ WS* KEY NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
