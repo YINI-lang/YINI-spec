@@ -21,7 +21,8 @@
 14. Sections in Sections
 15. Conclusion
 16. Example
-17. Creator
+17. Implementation Notes
+18. Creator
 
 ---
 
@@ -382,5 +383,107 @@ OnClick = "SaveDoc()"
 
 ---
 
-## 17. Creator
+## 17. Implementation Notes
+
+The following notes are intended to support developers building engines and parsers for YINI, ensuring consistent and unambiguous interpretation across different host systems.
+
+### 17.1 Top-Level Sections and Implicit Root
+
+- If a document contains multiple level-1 sections (i.e., multiple `# Section` blocks), these should be **treated as children of an implicit root object**.
+- This implicit root should not have a name (or may be named `root` or similar, as determined by the host system).
+- Do not skip section levels when parsing nested sections - level-3 sections must follow level-2.
+
+### 17.2 Line Handling and Whitespace
+
+- Newlines (`<NL>`) may be either LF (`0x0A`) or CRLF (`0x0D 0x0A`). Normalize them internally.
+- Ignore leading and trailing whitespace on section headers and keys.
+- Allow comments (`//` or `/* */`) after members or values.
+- Whitespace between values in lists is allowed, including newlines.
+- **A line cannot begin with a comma**, even if it's inside a list.
+
+### Value and NULL Handling
+
+- If a member has **no value**, it must be treated as `NULL`.
+```yini
+key =          // NULL
+key:           // NULL
+```
+- If a key appears **more than once in the same section**, this is an **error** (keys must be unique).
+
+### 17.4 Boolean Canonicalization
+
+- Boolean literals are **case-insensitive**.
+- The following values must be interpreted as Booleans:
+  - `true`, `yes`, `on` → `true`
+  - `false`, `no`, `off` → `false`
+- Do not allow Boolean values like `1` or `0` unless explicitly cast by the host software.
+
+### 17.5 Lists
+
+- Lists may be defined using either:
+  - `=` with square brackets:
+    ```yini
+    items = ["a", "b", "c"]
+    ```
+  - `:` with comma-separated items:
+    ```yini
+    items1: "a", "b", "c"
+
+    items2:
+    "a",
+    "b",
+    "c"
+    ```
+- **Bracketed lists must not** have a newline between `=` and `[`.
+    ```yini
+    invalidList = // This is treated as NULL!
+    [1, 2, 3]  // Not a list.
+    ```
+- A trailing comma is allowed, but a line must not start with a comma.
+
+### 17.6 Strings Concatenation
+
+- Strings can be concatenated using the `+` operator:
+    ```yini
+    name = "Hello, " + "world"
+    ```
+- Whitespace between parts is optional, but the whole expression must be on a single line.
+- Concatenation of different string types (e.g., raw + classic) is allowed for ease of use.
+- Escape sequences (e.g., `\n`) are only interpreted in C-strings.
+
+### 17.7 String Literal Types
+
+- Default string type is **raw**: no escape sequences, backslash is literal.
+- C-Strings (`c"..."`) should interpret escape sequences.
+- H-Strings (`h"..."`) must:
+  - Allow multi-line strings.
+  - Collapse sequences of whitespace and newlines into a single space.
+  - Trim leading/trailing whitespace.
+
+### 17.8 Comments
+
+- Support both:
+  - `//` for single-line comments (rest of the line ignored).
+  - `/* ... */` for multi-line comments (may span lines).
+  - **Nested block comments are not supported.**
+
+### 17.9 Error Handling Recommendations
+
+If the parser encounters:
+  - A missing section level (e.g., level 3 without level 2),
+  - A duplicate key in the same section,
+  - A malformed list or string,
+
+It should:
+- **Fail gracefully** and report an error, OR
+- **Use host-defined fallback logic**, if robustness is preferred.
+
+### 17.10 Bonus Tips for Implementation
+
+- Add position info for each token/value in case of errors.
+- Normalize all booleans and nulls internally.
+- Consider strict and lenient modes in the parser (e.g. allow trailing commas or not).
+- (?) Optionally log ignored lines (e.g., with --) for debugging.
+
+## 18. Creator
 Creator: 2024 Gothenburg, Marko K. Seppänen (Sweden via Finland).
