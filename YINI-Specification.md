@@ -82,26 +82,32 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 >- Ignore/disable line start with a double minus `--` as first characters in a line. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
 
 ### 3.4 Identifiers
-Naming identifiers must follow below rules:
-- Form 1:
+Identifiers are names used for keys and sections. They must follow one of the two forms below:
+
+- Form 1: Simple Identifier
   - Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
   - Must begin with a letter or an underscore `_`.
-  - Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
+  - Identifiers are case-sensitive, uppercase and lowercase letters are distinct (`Title` and `title` are different).
   
   Example:
   ```
   name
   ```
-- Form 2:
-  - A **phrase** is a single-line string enclosed in backticks \`. It can contain any characters, including spaces, single quotes `'` and double quotes `"`, but **cannot contain newlines** or another backtick inside.
+
+- Form 2: Phrase Identifier
+  - A phrase is a name wrapped in backticks ``` ` ```.
+  - It can include spaces, special characters, and quotes (single `'` or double `"`).
+  - It must be on a single line and **cannot contain** newlines or another backtick.
+  
   Example:
   ```
   `Description of Project`
   ```
-  
-- Must be unique, there cannot be multiple section headers with the same identifier.
+
+**Additional Rules:**
+- Identifiers must be **unique** within the same level or scope.
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
-- Also identifiers must follow the engine's or host's (program/software that reads and writes `YINI` documents) naming conventions.
+- Identifiers should also follow any naming rules defined by the engine or host program using YINI.
 
 ## 4. Section Headers
 A section header consists with one or more hash-symbols `#` and then an identifier (must be a unique identifier (within the same section level)). The number of hash-symbols indicates the nesting level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
