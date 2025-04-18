@@ -21,7 +21,7 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
-SECTION_HEAD: HASH+ WS* IDENT NL+;
+SECTION_HEAD: HASH+ WS* (RAW_STRING | IDENT) NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
@@ -57,7 +57,7 @@ EMPTY_LIST: '[' ']';
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
-//KEY: (RAW_STRING | IDENT) -> more;
+//KEY: (RAW_STRING | IDENT);
 KEY: IDENT; // edit: try update to (RAW_STRING | IDENT)
 //KEY: (STRING | IDENT) -> more;
 
@@ -82,8 +82,8 @@ STRING: RAW_STRING | HYPER_STRING | CLASSIC_STRING;
 
 // Raw string literal, treats the backslash character (\) as a literal.
 RAW_STRING:
-	('p' | 'P')? '\'' ~(['\n\r\b\f\t])* '\''
-	| ('p' | 'P')? '"' ~(["\n\r\b\f\t])* '"';
+	('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\''
+	| ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
 
 // Hyper string literal.
 HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''
