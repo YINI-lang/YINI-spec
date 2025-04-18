@@ -109,6 +109,21 @@ Identifiers are names used for keys and sections. They must follow one of the tw
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
 - Identifiers should also follow any naming rules defined by the engine or host program using YINI.
 
+#### Simple vs Phrase Identifiers?
+
+Simple identifiers are:
+1. Easier to use, no need for special characters like backticks or quotes.
+2. Fast and convenient when writing configuration files manually.
+3. Keeps the file structure tidy and less visually cluttered.
+4. Better for scripting or parsing, simpler to process in code.
+5. Simple identifiers are commonly supported in other formats like JSON, INI, YAML, C, etc.
+6. Fewer chances of syntax mistakes.
+
+Phrase identifiers are great when you need:
+1. Human-readable section or key names.
+2. Keys with spaces or symbols.
+3. Keys that match UI labels or external data exactly.
+
 ## 4. Section Headers
 A section header consists with one or more hash-symbols `#` and then an identifier (must be a unique identifier (within the same section level)). The number of hash-symbols indicates the nesting level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
 
