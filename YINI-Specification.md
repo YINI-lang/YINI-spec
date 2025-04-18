@@ -83,9 +83,22 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 
 ### 3.4 Identifiers
 Naming identifiers must follow below rules:
-- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
-- Must begin with a letter or an underscore `_`.
-- Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
+- Form 1:
+  - Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
+  - Must begin with a letter or an underscore `_`.
+  - Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
+  
+  Example:
+  ```
+  name
+  ```
+- Form 2:
+  - A **phrase** is a single-line string enclosed in backticks \`. It can contain any characters, including spaces, single quotes `'` and double quotes `"`, but **cannot contain newlines** or another backtick inside.
+  Example:
+  ```
+  `Description of Project`
+  ```
+  
 - Must be unique, there cannot be multiple section headers with the same identifier.
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
 - Also identifiers must follow the engine's or host's (program/software that reads and writes `YINI` documents) naming conventions.
