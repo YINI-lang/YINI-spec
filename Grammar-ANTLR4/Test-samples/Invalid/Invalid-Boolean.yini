@@ -1,3 +1,7 @@
+/*
+  SHOULD FAIL
+*/
+
 #bools
 
 bool1=falsy	// ERROR HERE, no literal falsy!

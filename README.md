@@ -104,4 +104,7 @@ This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LIC
 ## Author 🤓
 This project and repository is created and maintained by Marko K. Seppänen
 
-Marko Seppänen has been programming and developing software in his spare time since the mid 80s in several different programming languages, from Basic to C and Assembler. He studied Computer Science's Engineering and a Master's degree in Software Development with a specialization in Programming Languages. He has been working professionally for many years in software development from PHP to TypeScript and fullstack web development.
+### Creator
+YINI was first created in 2024 Gothenburg, by Marko K. Seppänen (Sweden via Finland).
+
+M. K. Seppänen has been programming and developing software in his spare time since the mid 80s in several different programming languages, from Basic to C and Assembler. He studied Computer Science's Engineering and a Master's degree in Software Development with a specialization in Programming Languages. He has been working professionally for many years in software development from PHP to TypeScript and fullstack web development.

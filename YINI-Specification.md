@@ -267,10 +267,12 @@ Note, due to relatively high usage binary and hexadecimal numbers can be given i
 | Number format | Alt. number format | Description | Number base | Note
 |----------|--|---|---|---|
 | `3e4` |   | Exponent notation number | 10-base | Result: 3×4^10
-| `0b1010` | `%1010` | Binary number | 2-base |
+| `0b1010` | `%1010` * | Binary number | 2-base |
 | `0o7477` |   | Octal number | 8-base |
 | `0z2ex9` |   | Duodecimal (dozenal) number | 12-base | `x` is 10, `e` is 11
-| `0xf390` | `#f390` | Hexadecimal number | 16-base | `a`, `b`, `c`, `d`, `e`, `f` are 10 to 15
+| `0xf390` | `#f390` * | Hexadecimal number | 16-base | `a`, `b`, `c`, `d`, `e`, `f` are 10 to 15
+
+*) Not yet supported.
 
 ## 11. Boolean Literals
 Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
@@ -486,4 +488,4 @@ It should:
 - (?) Optionally log ignored lines (e.g., with --) for debugging.
 
 ## 18. Creator
-Creator: 2024 Gothenburg, Marko K. Seppänen (Sweden via Finland).
+Created in 2024 Gothenburg, by Marko K. Seppänen (Sweden via Finland).
