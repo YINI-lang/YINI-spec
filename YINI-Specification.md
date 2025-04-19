@@ -14,6 +14,7 @@
     * 9.2 Hyper or H-Strings
     * 9.3 Classic or C-Strings
     * 9.4 String Concatenation
+    * 9.5 String Type Mixing (Concatenation)
 10. Number Literals
 11. Boolean Literals
 12. Lists (arrays)
@@ -82,13 +83,47 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 >- Ignore/disable line start with a double minus `--` as first characters in a line. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
 
 ### 3.4 Identifiers
-Naming identifiers must follow below rules:
-- Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
-- Must begin with a letter or an underscore `_`.
-- Identifiers are case-sensitive, uppercase and lowercase letters are distinct.
-- Must be unique, there cannot be multiple section headers with the same identifier.
+Identifiers are names used for keys and sections. They must follow one of the two forms below:
+
+- Form 1: Simple Identifier
+  - Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
+  - Must begin with a letter or an underscore `_`.
+  - Identifiers are case-sensitive, uppercase and lowercase letters are distinct (`Title` and `title` are different).
+  
+  Example:
+  ```
+  name
+  ```
+
+- Form 2: Phrase Identifier
+  - A phrase is a name wrapped in backticks ``` ` ```.
+  - It can include spaces, special characters, and quotes (single `'` or double `"`).
+  - It must be on a single line and **cannot contain** newlines or another backtick.
+  
+  Example:
+  ```
+  `Description of Project`
+  ```
+
+**Additional Rules:**
+- Identifiers must be **unique** within the same level or scope.
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
-- Also identifiers must follow the engine's or host's (program/software that reads and writes `YINI` documents) naming conventions.
+- Identifiers should also follow any naming rules defined by the engine or host program using YINI.
+
+#### Simple vs Phrase Identifiers?
+
+Simple identifiers are:
+1. Easier to use, no need for special characters like backticks or quotes.
+2. Fast and convenient when writing configuration files manually.
+3. Keeps the file structure tidy and less visually cluttered.
+4. Better for scripting or parsing, simpler to process in code.
+5. Simple identifiers are commonly supported in other formats like JSON, INI, YAML, C, etc.
+6. Fewer chances of syntax mistakes.
+
+Phrase identifiers are great when you need:
+1. Human-readable section or key names.
+2. Keys with spaces or symbols.
+3. Keys that match UI labels or external data exactly.
 
 ## 4. Section Headers
 A section header consists with one or more hash-symbols `#` and then an identifier (must be a unique identifier (within the same section level)). The number of hash-symbols indicates the nesting level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
@@ -100,9 +135,9 @@ Nesting sections must be attached to a existing section. If doing a section with
 A special case is YINI documents with multiple level 1 sections, the client's library reading the document must attach these level 1 section into one implicit section automatically. The name of this "implicit section" is left for the library to decide.
 
 ```
-# SectionLevel1 #
-## SectionLevel2 ##
-### SectionLevel3 ###
+# SectionLevel1
+## SectionLevel2
+### SectionLevel3
 ```
 
 ## 5. Top Section Header
@@ -226,8 +261,6 @@ Will result in:
 My name is John Doe, and this is a test string.
 ```
 
-
-
 ### 9.3 Classic or C-Strings (Escaped)
 Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `c` or `C`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
@@ -248,10 +281,24 @@ Escape sequences in C-Strings (in lower or uppercase):
 Where hex is 0-9, or a-f, or A-F.
 
 ### 9.4 String Concatenation
-Strings can be concatenated using the plus `+` operator. It adds together strings, you can add as many strings as you want.
+Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
+
+**Example:**
+```yini
+greeting = "Hi, " + "hello " + "there"
 ```
-var = "Hi, " + "hello " + "there"
+The result of the above will be equivalent to:
+```yini
+greeting = "Hi, hello there"
 ```
+
+Concatenation supports all string types (Raw, Classic, Hyper), though mixing types is generally discouraged (except for special cases (see more in next section)).
+
+### 9.5 String Type Mixing (Concatenation)
+
+Concatenation of string literals of different types (e.g., raw + classic, classic + hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
+
+Engines should handle mixed-type concatenations correctly, but authors are encouraged to use consistent string types within concatenations to ensure clarity and predictable behavior.
 
 ## 10. Number Literals
 Numbers can be integers or real numbers with `.` similar as a number in JavaScript. It can include a sign - or +. Can be of exponent form, 'e' or 'E' sign digits, where:
@@ -450,7 +497,7 @@ key:           // NULL
     name = "Hello, " + "world"
     ```
 - Whitespace between parts is optional, but the whole expression must be on a single line.
-- Concatenation of different string types (e.g., raw + classic) is allowed for ease of use.
+- Concatenating different types of strings (e.g., raw + classic) is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
 - Escape sequences (e.g., `\n`) are only interpreted in C-strings.
 
 ### 17.7 String Literal Types

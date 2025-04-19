@@ -3,7 +3,7 @@
  
  Apache License, Version 2.0, January 2004,
  http://www.apache.org/licenses/
- Copyright 2024 Gothenburg, Marko K. S. (Sweden via
+ Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
  Finland).
  */
 
@@ -21,7 +21,7 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
-SECTION_HEAD: HASH+ WS* (RAW_STRING | IDENT) NL+;
+SECTION_HEAD: HASH+ WS* KEY NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
@@ -57,9 +57,8 @@ EMPTY_LIST: '[' ']';
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
-//KEY: (RAW_STRING | IDENT);
-KEY: IDENT; // edit: try update to (RAW_STRING | IDENT)
-//KEY: (STRING | IDENT) -> more;
+//KEY: IDENT;
+KEY: IDENT | PHRASE;
 
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
@@ -67,6 +66,8 @@ IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		| '0' ..'9'
 		| '_'
 	)*;
+
+PHRASE: '`' ~[\r\n]* '`'; // NOTE: Only for keys!
 
 NUMBER:
 	INTEGER ('.' INTEGER?)? EXPONENT?
@@ -82,8 +83,9 @@ STRING: RAW_STRING | HYPER_STRING | CLASSIC_STRING;
 
 // Raw string literal, treats the backslash character (\) as a literal.
 RAW_STRING:
-	('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\''
-	| ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
+	//('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\'' | ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
+	('r' | 'R')? '\'' ~['\r\n]* '\''
+	| ('r' | 'R')? '"' ~["\r\n]* '"';
 
 // Hyper string literal.
 HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''
