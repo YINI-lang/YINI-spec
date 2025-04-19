@@ -1,8 +1,17 @@
 # YINI Specification
 
+**Version:** 1.0.0 Beta 1  
+**Status:** Beta Release  
+**Format Name:** YINI (YAML/INI Hybrid)
+
+## 🧾 Overview
 **Y**et another **INI** markup language - `YINI` **(Yet Another INI)** is a lightweight and human-readable configuration file format designed for both software and developers. It provides a **simple structure and notation** for storing settings, preferences, and configurations using **Key-Value** and **Key-List pairs** grouped into sections. **[More about YINI](<./Docs/YINI-About.md>)**
 
+YINI is designed to be **easy to write**, **easy to parse**, and **clear to read**, especially for power users and devs working with nested preferences or UI components.
+
 This project and repository deals with the specification for the YINI markup language.
+
+---
 
 ## Why Use YINI?
 - ✅ **Simple & Minimal** – YINI is INI-file the right way, both for humans and software. 😉
@@ -10,19 +19,22 @@ This project and repository deals with the specification for the YINI markup lan
 - ✅ **Structured Organization** – Need another section or nested section for data grouping? Sure no problem, no need to fuss with brackets or dots or whatever! Just add an extra hash character ```#```, ala Markdown header, and be done with it. 🚀
 - ✅ **Easy & Lightweight Alternative** – Less verbose and more human-readable than XML, YAML, and JSON. 🙈
 
-## Core Features
-- **Sections** – Defined with ```#``` headers (like Markdown).
-- **Key-Value Pairs** – Assigned using ```=```.
-- **Lists (Arrays)** – Defined using brackets ```[]```, or colon ```:``` for short hand notation.
-- **Supports Booleans & Null Values** – ```true```, ```false```, ```yes```, ```no```, ```null```.
-- **Number Formats** – Numbers can be written in decimal (10), binary (2), octal (8), hexadecimal (16), and duodecimal (12) formats. You can also use exponent notation (e.g., ```3e4``` for 30000) to represent very large or small numbers easily. 🚀
+---
+
+## ✨ Core Features
+- **Sections** – Hierarchical structure with section depth defined via hash prefixes (`#`, `##`, `###`, etc.).
+- **Key-Value Pairs** – `key = value`.
+- **Lists (Arrays)** – List support using comma-separated values `[ ]`, or colon ```:``` for short hand notation.
+- **Supports Booleans & Null Values** – `true`, `false`, `yes`, `no`, `null`.
+- **Number Formats** – Numbers can be written in decimal (10), binary (2), octal (8), hexadecimal (16), and duodecimal (12) formats. You can also use exponent notation (e.g., `3e4` for 30000) to represent very large or small numbers easily. 🚀
+- **Clear File End** - YINI files are clearly terminated using the `/END` marker.
 
 ---
 
-## Short Examples
+## 🔧 Syntax Overview
 A short example of how a `YINI` document file looks like:
 
-```ts
+```yini
 # MyPrefs
 
 HomeDir = "C:\Users\John Smith\"
@@ -36,7 +48,7 @@ KeyWords = [ "Orange", "Banana", "Pear", "Peach" ]
 ```
 
 A `YINI` document file can look like this as well:
-```ts
+```yini
 # window
 title = 'Sample Window'  // Strings can be enclosed in either ' or ".
 id = 'window_main'
@@ -60,7 +72,7 @@ styles = [
 /END  // End of YINI doc.
 ```
 
-## More Examples 🥳
+## 📦 More Examples
 More examples can be found here: **[Examples](<./Examples>)** and there are some YINI document files here: **[More-samples](<./Grammar-ANTLR4/Samples>)**
 
 ---
@@ -87,7 +99,7 @@ Although there does not exist any YINI readers yet, a sister project **[YINI-Rea
 4. YINI should be non-verbose, avoid to use excessive or unnecessary words or characters. And at the same time be (relatively) light-weight, yet be (relatively) high-level.
 5. YINI files/documents should be easy to create, use, read, write, and support one-pass processing.
 
-## Specification
+## 📚 Specification
 The actual YINI Specification can be found here: **[YINI spec](<./YINI-Specification.md>)**.
 
 ## Grammar
@@ -98,10 +110,10 @@ Feedback, bug reports, suggestions, and code contributions are welcome!
 
 Head over to **[Docs/Contributing.md](<./Docs/Contributing.md>)**
 
-## License
+## 📄 License
 This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LICENSE>) file for details.
 
-## Author 🤓
+## 🤓 Author
 This project and repository is created and maintained by Marko K. Seppänen.
 
 ### Creator
