@@ -1,0 +1,9 @@
+/*
+  Should parse all three members as valid with appropriate native types.
+*/
+
+# Settings
+username = "Alice"
+score = 42
+active = true
+/END

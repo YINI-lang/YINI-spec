@@ -1,0 +1,59 @@
+// Line comment 1.
+/*
+    Lists with 
+		excessive newlines <NL>
+			and comments in between.
+*/
+
+// Line comment 2.
+// Line comment 3.
+
+# Lists4
+
+
+/**	List 
+	with 
+	brackets.
+ */
+## ListWithBrackets
+
+/* List 
+	with 
+		brackets. */
+
+list1 = [ "Orange", "Banana", "Pear", "Peach" ] /* Some
+	comment. */
+list2 = []  /* Empty list. */
+/* List with brackets. */
+listOfLists = [
+		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
+		["stylesheet", "css/general.css"],
+		// Next line is the last element.
+		["stylesheet", "css/themes.css"]    /* Last element. */
+	]
+
+
+/* List
+	without
+		brackets. */
+
+## ListWithoutBrackets
+
+    /**	List
+		without 
+		brackets.
+	 */
+	listOfLists:
+		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
+		/* Ignore this comment. */ ["stylesheet", "css/general.css"],
+		
+		["stylesheet", "css/themes.css"]    /* This is the
+			last element. */
+
+// About to end doc.
+/END  /* End of YINI doc. */
+
+
+
+
+

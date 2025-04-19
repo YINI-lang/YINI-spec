@@ -1,0 +1,9 @@
+/*
+  Accepts trailing commas and empty lists.
+*/
+
+# Fruits
+list1 = ["apple", "banana", "pear"]
+list2 = [1, 2, 3, ]
+list3 = []
+/END

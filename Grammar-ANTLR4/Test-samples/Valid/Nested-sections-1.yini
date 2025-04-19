@@ -1,11 +1,8 @@
 # Prefs
-
+title = "MyProgram"
 ## Entry
-
 ### General
 size = 1024
-
 ### Advanced
 cache = OFF
-
 /END // End of YINI doc.

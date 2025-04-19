@@ -3,7 +3,7 @@
  
  Apache License, Version 2.0, January 2004,
  http://www.apache.org/licenses/
- Copyright 2024 Gothenburg, Marko K. S. (Sweden via
+ Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
  Finland).
  */
 
@@ -15,74 +15,58 @@
  http://yini-lang.org
  */
 
-grammar yini;
-options {
-	caseInsensitive = false;
-}
-
-comment: BLOCK_COMMENT | LINE_COMMENT;
-
-yini: SHEBANG? NL* section+ NL* EOF;
+lexer grammar YiniLexer;
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
-section:
-	section_head section_members
-	| section_head section NL+
-	| terminal_line;
+COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
-section_head: '#'+ IDENT NL+;
-
-terminal_line: TERMINAL_TOKEN NL+ | TERMINAL_TOKEN comment? NL*;
+SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
 }: '/END';
 
-section_members: member+;
+EQ: '=';
+HASH: '#';
+COMMA: ',';
+COLON: ':';
+OB: '['; // Opening Bracket.
+CB: ']'; // Closing Bracket.
+PLUS: '+';
+DOLLAR: '$';
+// ASTERIX: '*';
+PC: '%'; // PerCent sign.
+SS: '§'; // Section Sign.
+AT: '@';
 
-member:
-	IDENT '=' NL+ // Empty value is treated as NULL.
-	| IDENT '=' value NL+
-	| IDENT ':' elements? NL+;
+BOOLEAN_FALSE options {
+	caseInsensitive = true;
+}: 'false' | 'off' | 'no';
 
-value:
-	list_in_brackets
-	| string_literal
-	| number_literal
-	| boolean_literal
-	| ('null' | 'Null' | 'NULL'); // NOTE: In specs NULL should be case-insensitive.
+BOOLEAN_TRUE options {
+	caseInsensitive = true;
+}: 'true' | 'on' | 'yes';
 
-list: elements | list_in_brackets;
+NULL options {
+	caseInsensitive = true;
+}: 'null';
 
-list_in_brackets: '[' NL* elements NL* ']' | EMPTY_LIST;
 EMPTY_LIST: '[' ']';
 
-elements: element ','? | element ',' elements;
-
-element: NL* value NL* | NL* list_in_brackets NL*;
-
-number_literal: NUMBER;
-
-string_literal: STRING NL* '+' NL* STRING | STRING;
-
-// NOTE: In specs boolean literals should be case-insensitive.
-boolean_literal:
-	('false' | 'False' | 'FALSE')
-	| ('true' | 'True' | 'TRUE')
-	| ('yes' | 'Yes' | 'YES')
-	| ('no' | 'No' | 'NO')
-	| ('on' | 'On' | 'ON')
-	| ('off' | 'Off' | 'OFF');
-
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
+
+KEY: IDENT;
 
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
 		| 'A' ..'Z'
 		| '0' ..'9'
 		| '_'
-	)*;
+	)*
+	| PHRASE;
+
+PHRASE: '`' ~[\r\n]* '`'; // NOTE: Only for keys!
 
 NUMBER:
 	INTEGER ('.' INTEGER?)? EXPONENT?
@@ -94,16 +78,13 @@ NUMBER:
 		| HEX_INTEGER
 	);
 
-BOOLEAN options {
-	caseInsensitive = true;
-}: ('false' | 'no' | 'off' | 'true' | 'yes' | 'on');
+STRING: RAW_STRING | HYPER_STRING | CLASSIC_STRING;
 
-STRING: PURE_STRING | HYPER_STRING | CLASSIC_STRING;
-
-// Pure string literal, treats the backslash character (\) as a literal.
-PURE_STRING:
-	('p' | 'P')? '\'' (~['\n\r\b\f\t])* '\''
-	| ('p' | 'P')? '"' ( ~["\n\r\b\f\t])* '"';
+// Raw string literal, treats the backslash character (\) as a literal.
+RAW_STRING:
+	//('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\'' | ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
+	('r' | 'R')? '\'' ~['\r\n]* '\''
+	| ('r' | 'R')? '"' ~["\r\n]* '"';
 
 // Hyper string literal.
 HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''
@@ -117,14 +98,15 @@ CLASSIC_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
 
 // Note: Except does'n not include quotes `"`, `'`.
-ESC_SEQ_BASE: '\\' ([nrbft\\/] | UNICODE);
+ESC_SEQ_BASE: '\\' ([nrbft\\/0] | UNICODE);
 
 fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+
+fragment INTEGER: DECIMAL_INTEGER;
 
 // Note: 0 or higher than 1, no leading 0s allowed (for ex: `01`)
 fragment DECIMAL_INTEGER: '0' | SIGN? [1-9] DIGIT*;
 
-fragment INTEGER: DECIMAL_INTEGER;
 fragment BIN_INTEGER: ('b' | 'B') BIN_DIGIT+;
 fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+; // Make sure to not clash with boolean ON | OFF.
 fragment DUO_INTEGER: ('z' | 'Z') DUO_DIGIT+;
@@ -143,7 +125,9 @@ fragment EXPONENT: ('e' | 'E') SIGN? DIGIT+;
 
 fragment SIGN: ('+' | '-');
 
-NL: ('\r' '\n'? | '\n');
+NL: (WS* COMMENT* SINGLE_NL COMMENT*);
+
+SINGLE_NL: ('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
 

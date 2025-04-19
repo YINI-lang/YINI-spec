@@ -1,0 +1,14 @@
+/*
+  Nesting level respected, no missing intermediary levels.
+*/
+
+# Root
+version = "1.0"
+
+## Settings
+darkMode = yes
+
+### Advanced
+detailLevel = 3
+
+/END
