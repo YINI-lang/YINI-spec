@@ -73,7 +73,7 @@ styles = [
 ```
 
 ## 📦 More Examples
-More examples can be found here: **[Examples](<./Examples>)** and there are some YINI document files here: **[More-samples](<./Grammar-ANTLR4/Test-samples>)**
+More examples can be found here: **[Examples](<./Examples>)** and there are some YINI document files here: **[More-samples](<./Grammar-ANTLR4/Test-samples/Valid>)**
 
 ---
 ## General Objective
