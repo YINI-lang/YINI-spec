@@ -21,12 +21,11 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
-SECTION_HEAD: HASH+ WS* KEY NL+;
+SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
 }: '/END';
-//}: '###' | '/END';
 
 EQ: '=';
 HASH: '#';
@@ -57,15 +56,15 @@ EMPTY_LIST: '[' ']';
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
-//KEY: IDENT;
-KEY: IDENT | PHRASE;
+KEY: IDENT;
 
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
 		| 'A' ..'Z'
 		| '0' ..'9'
 		| '_'
-	)*;
+	)*
+	| PHRASE;
 
 PHRASE: '`' ~[\r\n]* '`'; // NOTE: Only for keys!
 

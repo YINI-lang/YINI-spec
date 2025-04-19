@@ -126,18 +126,32 @@ Phrase identifiers are great when you need:
 3. Keys that match UI labels or external data exactly.
 
 ## 4. Section Headers
-A section header consists with one or more hash-symbols `#` and then an identifier (must be a unique identifier (within the same section level)). The number of hash-symbols indicates the nesting level of the section, there shall not be any whitespaces between multiple hash-symbols. Sections serves as objects.
+A **section header** starts with one or more hash symbols `#`, followed by **at least one space or tab**, and then a valid **identifier**. The number of hash symbols indicates the **nesting level** of the section:
 
-In addition, the section header must be on its own separate line, any tabs or spaces at the beginning and end of the identifier are ignored.
+- `#` is level 1
+- `##` is level 2
+- `###` is level 3
+- and so on.
 
-Nesting sections must be attached to a existing section. If doing a section with level three, then there must be a section level 2 before.
+**Section Rules:**
 
-A special case is YINI documents with multiple level 1 sections, the client's library reading the document must attach these level 1 section into one implicit section automatically. The name of this "implicit section" is left for the library to decide.
+1. There must be **no spaces** between the hash symbols themselves.
+2. There must be **at least one space or tab** after the last hash symbol before the identifier.
+3. Section headers must be on their **own line**. Any spaces or tabs at the **start or end** of the identifier are ignored.
+4. Each section must have a **unique identifier** at its level.
 
-```
-# SectionLevel1
-## SectionLevel2
-### SectionLevel3
+Sections function as containers, similar to objects in programming languages. They can contain nested sub-sections and members (key-value pairs). This structure allows for organized and hierarchical data representation.
+
+**Nesting Rules:**
+
+5. A nested section (e.g. level 3) must come **after** and be inside a higher-level section (e.g. level 2).
+6. You **cannot** skip levels. For example, a level 3 section must follow a level 2 section.
+
+**Example:**
+```yini
+# General
+## Settings
+### Advanced
 ```
 
 ## 5. Top Section Header
