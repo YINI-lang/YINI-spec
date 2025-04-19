@@ -1,4 +1,6 @@
-# YINI specification version 1.0.0 Alpha 3
+# YINI specification version 1.0.0 Beta 1
+
+> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 18. Versioning).
 
 ## Table of Contents
 1. Intro 
@@ -23,7 +25,8 @@
 15. Conclusion
 16. Example
 17. Implementation Notes
-18. Creator
+18. Versioning
+19. Author(s)
 
 ---
 
@@ -173,7 +176,7 @@ After a section with level 1, comes section header with level 2.
 ```
 
 ## 6. Terminal Line
-A `YINI` document must always end with `/END` (NON CASE-SENSITIVE) or `###` (three hashes) on its own line. After this there may be only whitespaces or possible comments.
+A `YINI` document must always end with `/END` (NON CASE-SENSITIVE) on its own line. After this there may be only whitespaces or possible comments.
 
 ```
 /END
@@ -211,7 +214,7 @@ lives = 3
 ```
 
 ### Member with a List
-A member with a list uses the equals `=` character (as with other members), followed by zero or more values inside square brackets `[` `]`, separated by commas. An optional final/trailing comma `,` may be accepted for convenience.
+A member that contains a list is defined using the equals (`=`) character, followed by zero or more values enclosed in square brackets (`[ ]`), separated by commas. For convenience, an optional trailing comma (`,`) is also allowed (to not bread parsing).
 
 ```yini
 list1 = ["value1", "value2", "value3"]
@@ -290,6 +293,7 @@ Escape sequences in C-Strings (in lower or uppercase):
 - `\"` for Double Quote
 - `\\` for backslash
 - `\/` for normal Slash
+- `\0` for null byte control character
 - `\u hex hex hex hex` for hex value
 
 Where hex is 0-9, or a-f, or A-F.
@@ -337,12 +341,14 @@ Note, due to relatively high usage binary and hexadecimal numbers can be given i
 
 ## 11. Boolean Literals
 Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
-- true
-- false
-- yes
-- no
-- on
-- off
+- Boolean **True**:
+  - `true`
+  - `yes`
+  - `on`
+- Boolean **False**:
+  - `false`
+  - `no`
+  - `off`
 
 The engine should convert the literal value to the corresponding Boolean value in the host language.
   
@@ -353,7 +359,9 @@ Lists can be defined in two different notations:
 - **Lists without Brackets** - Second notation is an optional multi-line format for better readability.
 
 ### List Literal (with Brackets)
-A member with a list uses the equals `=` character (as with other members), followed by zero or more values inside square brackets `[` `]`, separated by commas. An optional final/trailing comma `,` may be accepted for convenience.
+A member with a list is written using the equals sign `=`, followed by square brackets `[ ]` containing zero or more values separated by commas.
+
+Spaces, tabs, and new lines are allowed between the values.
 
 ```yini
 list1 = ["value1", "value2", "value3"]
@@ -363,12 +371,22 @@ list2 = [100, 200, 300]
 list3 = []  // An empty list.
 ```
 
+For convenience, a trailing comma (`,`) may be optionally included.
+
+```yini
+// A list with three elements
+list = ["a", "b", "c", ]  // Trailing
+```
+The above example with a trailing comma is valid.
+
+However, the parser may support both strict and lenient modes, where trailing commas may either be allowed or disallowed, depending on the mode.
+
 NOTE: There must be no newline `<NL>` between the equals sign `=`  and the start of list itself `[`, otherwise the member will be interpreted as having a null value.
 
 Lists can be nested, like:
 
 ```yini
-linkItems: [
+linkItems = [
 	["stylesheet", "css/general.css"],
 	["stylesheet", "css/themes.css"]
 ]
@@ -390,6 +408,14 @@ list2:
   "oranges",
   "bananas",
   "peaches"
+```
+
+Lists can be nested, like:
+
+```yini
+linkItems:
+	["stylesheet", "css/general.css"],
+	["stylesheet", "css/themes.css"]
 ```
 
 ## 13. NULL Literal
@@ -417,32 +443,68 @@ Future updates to the specification may expand functionality or improve clarity,
 ## 16. Example
 
 A full example of a `YINI` document:
-```
-# MyPrefs
+
+```yini
+# AppConfig
 
 # General
-IsDarkMode = YES
-Buffers = 10
-Dirs: "C:\Users", "D:\Work\Temp", "E:\Data\Temp"
+AppName = "YINI Editor"
+Version = 1.0
+IsPortable = YES
+DefaultPaths: "C:\Program Files", "D:\Apps", "E:\Tools"
+MaxRecentFiles = 15
 
-## Menu 
-Id = "FILE"
-Value = "File"
+# UI
+Theme = "Dark"
+FontSize = 14
+Languages: "en-US", "fr-FR", "de-DE"
 
-### MenuItem
-Value = "New"
-OnClick = "CreateDoc()"
+## Toolbar
+Visible = YES
+Position = "Top"
 
-### MenuItem
-Value = "Open"
-OnClick = "OpenDoc()"
+### ToolButton
+Id = "btnNew"
+Label = "New"
+Icon = "icons/new.png"
+OnClick = "NewFile()"
 
-### MenuItem
-Value = "Save"
-OnClick = "SaveDoc()"
+### ToolButton
+Id = "btnOpen"
+Label = "Open"
+Icon = "icons/open.png"
+OnClick = "OpenFile()"
 
-/END // End of YINI doc.
+### ToolButton
+Id = "btnSave"
+Label = "Save"
+Icon = "icons/save.png"
+OnClick = "SaveFile()"
+
+## Sidebar
+Visible = NO
+Tabs: "Explorer", "Search", "Extensions"
+
+# Network
+UseProxy = YES
+ProxyAddress = "192.168.0.100"
+ProxyPort = 8080
+TimeoutSeconds = 30
+
+# Advanced
+EnableLogs = YES
+LogLevel = "DEBUG"
+IgnoredWarnings: 1001, 1002, 1050, 1100
+
+/END // End of YINI config
 ```
+
+Above example includes:
+- Top-level and nested sections via `#`, `##`, and `###`.
+- Booleans via `YES` / `NO`.
+- Strings with quotes.
+- Lists via `:` and comma-separated values.
+- `/END` line with a comment.
 
 ---
 
@@ -548,5 +610,13 @@ It should:
 - Consider strict and lenient modes in the parser (e.g. allow trailing commas or not).
 - (?) Optionally log ignored lines (e.g., with --) for debugging.
 
-## 18. Creator
-Created in 2024 Gothenburg, by Marko K. Seppänen (Sweden via Finland).
+## 18. Versioning
+
+### Backward Compatibility
+This version of the specification is considered **Alpha/Beta**, and as such, future versions may introduce changes that are not backward-compatible. Implementers should be aware that the format is still evolving, and features or syntax may change without deprecation.
+
+## 19. Author(s)
+Author: Marko K. Seppänen, Gotherburg (Sweden), 2025.
+
+### Creator
+First created in 2024 Gothenburg, by Marko K. Seppänen (Sweden via Finland).

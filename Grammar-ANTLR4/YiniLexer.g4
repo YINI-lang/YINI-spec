@@ -98,7 +98,7 @@ CLASSIC_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
 
 // Note: Except does'n not include quotes `"`, `'`.
-ESC_SEQ_BASE: '\\' ([nrbft\\/] | UNICODE);
+ESC_SEQ_BASE: '\\' ([nrbft\\/0] | UNICODE);
 
 fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 

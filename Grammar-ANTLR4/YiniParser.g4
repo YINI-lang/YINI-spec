@@ -35,26 +35,13 @@ terminal_line: TERMINAL_TOKEN (NL+ | COMMENT? NL*);
 section_members: member+;
 
 member:
-	member_explicit_string
-	| member_explicit_real_number
-	| member_explicit_integer_number
-	| member_explicit_boolean
-	| member_explicit_array
 	//| KEY EQ NL+ // Empty value is treated as NULL.
-	| KEY EQ value? NL+ // Empty value is treated as NULL.
+	KEY EQ value? NL+ // Empty value is treated as NULL.
 	//| KEY COLON elements? NL+
 	| member_colon_list;
 //| STRING COLON value? NL+; // ???
 
 member_colon_list: KEY COLON elements? NL+;
-
-member_explicit_string: DOLLAR KEY EQ string_literal? NL+;
-member_explicit_real_number: SS KEY EQ number_literal? NL+;
-member_explicit_integer_number: SS KEY EQ number_literal? NL+;
-member_explicit_boolean: PC KEY EQ boolean_literal? NL+;
-member_explicit_array:
-	AT KEY EQ list_in_brackets? NL+
-	| AT KEY COLON elements? NL+; // ? reactor to colon list
 
 value:
 	list_in_brackets
