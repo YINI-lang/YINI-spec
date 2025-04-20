@@ -105,13 +105,17 @@ The actual YINI Specification can be found here: **[YINI spec](<./YINI-Specifica
 ## Grammar
 This repo also includes a YINI grammar (in ANTLR 4). It aims to follow the specification as closely as possible. You find it here: **[Lexer](<./Grammar-ANTLR4/YiniLexer.g4>)** and **[Parser](<./Grammar-ANTLR4/YiniParser.g4>)**.
 
-## Contributing
+## 📄 License
+This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LICENSE>) file for details.
+
+## 💬 Feedback
+
+Have ideas, questions, or feedback? Open an **[issue](<./issues>)**.
+
+### Contributing 🤝
 Feedback, bug reports, suggestions, and code contributions are welcome!
 
 Head over to **[Docs/Contributing.md](<./Docs/Contributing.md>)**
-
-## 📄 License
-This project is licensed under the Apache-2.0 license - see the [LICENSE](<./LICENSE>) file for details.
 
 ## 🤓 Author
 This project and repository is created and maintained by Marko K. Seppänen.
