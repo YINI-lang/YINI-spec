@@ -1,7 +1,7 @@
 # YINI Specification
 
-**Version:** 1.0.0 Beta 1  
-**Status:** Beta Release  
+**Version:** 1.0.0 Beta 1 + [updates]
+**Status:** Beta Release
 **Format Name:** YINI (YAML/INI Hybrid)
 
 ## 🧾 Overview
