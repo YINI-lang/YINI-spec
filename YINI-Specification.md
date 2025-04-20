@@ -8,15 +8,16 @@
 3. Definitions
 4. Section Headers
 5. Top Section Header
-6. Terminal Line
+6. Document Terminator
 7. Values & Native Types
 8.  Members
 9.  String Literals
     * 9.1 Raw Strings
     * 9.2 Hyper or H-Strings
     * 9.3 Classic or C-Strings
-    * 9.4 String Concatenation
-    * 9.5 String Type Mixing (Concatenation)
+    * 9.4 Triple-Quoted String
+    * 9.5 String Concatenation
+    * 9.6 String Type Mixing (Concatenation)
 10. Number Literals
 11. Boolean Literals
 12. Lists (arrays)
@@ -175,12 +176,22 @@ After a section with level 1, comes section header with level 2.
 ## Section
 ```
 
-## 6. Terminal Line
-A `YINI` document must always end with `/END` (NON CASE-SENSITIVE) on its own line. After this there may be only whitespaces or possible comments.
+## 6. Document Terminator
+A YINI document must always end with a **terminator line**. The **default and recommended** terminator is::
 
-```
+```yini
 /END
 ```
+
+This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
+Only **whitespace or comments** may appear after the terminator.
+
+Alternatively, a shorter form may be used::
+```
+###
+```
+
+While `###` is valid, `/END` is the standard and should be preferred for clarity in most cases.
 
 ## 7. Values & Native Types
 A `YINI` value MUST be of one of the following 3 groups of native/built-in types:
@@ -225,24 +236,27 @@ list3 = []  // An empty list.
 ```
 
 ## 9. String Literals
-In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`. You may use whichever is preferred or most appropriate for the context.
+In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
-YINI supports **three types of string literals**, distinguished by a prefix character placed before the opening quote.
+YINI supports **four types of string literals**, distinguished by an optional **prefix character** placed before the opening quote (`'` or `"`).
 
-By default, all string literals are treated as **raw string literals by default**, unless a specific prefix indicates otherwise.
+If no prefix is used, the string is treated as a **raw string literal** by default.
+
+Triple-quoted strings (`"""`) do not support any prefix character. Therefore, the prefix is only applicable to single-line Hyper-strings (`h`), Classic-strings (`c`), and optionally Raw-strings (`r`).
 
 ### Rules and Behavior for Strings
 
 - All string literals **must start and finish on the same line**, except for **H-Strings**, which can span multiple lines (see section 9.2).
-- Multiple string literals can be **concatenated** to create longer strings (see section 9.4).
+- Multiple string literals can be **concatenated** to create longer strings (see section 9.5).
 
 ### Summary
 
-| String Type | Enclosed In | Multi-Line | Escape Sequences | Trims White-Spaces | Special Features
+| String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes
 |---|---|---|---|---|---|
-| Raw Strings                | ```' '``` or ```" "```   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text
-| Hyper Strings (H-Strings)  | ```h' '``` or ```h" "``` | ✅ Yes | ❌ No | ✅ Yes | Trims extra whitespace
-| Classic Strings (C-Strings)| ```c' '``` or ```c" "``` | ❌ No | ✅ Yes | ❌ No | Supports escape sequences
+| Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text
+| Triple-Quoted Strings | `' '` or `" "`   | ✅ Yes | ❌ No | ❌ No | Large multi-line blocks of literal text
+| Hyper Strings (H-Strings)  | `""" """` | ✅ Yes | ❌ No | ✅ Yes | Whitespace is normalized and trimmed
+| Classic Strings (C-Strings)| `c' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Supports standard escape sequences
 
 ### 9.1 Raw Strings (Default)
 In (raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (raw) strings must be on the same line.
@@ -259,7 +273,7 @@ There is also another kind of strings, ("Hyper") string literals, called H-Strin
 
 Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape sequences are not supported).
 
-- Hower, Hyper strings are special in that they can span over multiple lines with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
+- Hower, Hyper strings are special in that they **can span over multiple lines** with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
 - Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted to one single blank space ` `. 
 - Also, leading and trailing `<NL>` and/or `<WS>` are trimmed away.
 
@@ -281,6 +295,8 @@ My name is John Doe, and this is a test string.
 ### 9.3 Classic or C-Strings (Escaped)
 Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `c` or `C`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
+Classic strings must start and end on the same line.
+
 >myText = c"This is a newline \n and this is a tab \t character."
 
 Escape sequences in C-Strings (in lower or uppercase):
@@ -298,7 +314,28 @@ Escape sequences in C-Strings (in lower or uppercase):
 
 Where hex is 0-9, or a-f, or A-F.
 
-### 9.4 String Concatenation
+### 9.4 Triple-Quoted String
+A **Triple-Quoted String** is a string literal that:
+- **Begins and ends** with three double-quote characters: `"""`.
+- **May span multiple lines** (i.e., includes newline characters).
+- **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string.
+- The first unescaped `"""` after the start is interpreted as the **end** of the string.
+- Does not support any prefix character, triple quoted strings are by design raw.
+
+Example of Triple-Quoted strings:
+```
+"""This is a multiline
+string that spans
+three lines."""
+
+"""He said, "hello" and left."""
+
+"""You can use "" double quotes inside."""
+```
+
+Note: All content between the opening and closing triple quotes is preserved as-is, including whitespace and line breaks.
+
+### 9.5 String Concatenation
 Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
 
 **Example:**
@@ -312,32 +349,44 @@ greeting = "Hi, hello there"
 
 Concatenation supports all string types (Raw, Classic, Hyper), though mixing types is generally discouraged (except for special cases (see more in next section)).
 
-### 9.5 String Type Mixing (Concatenation)
+### 9.6 String Type Mixing (Concatenation)
 
 Concatenation of string literals of different types (e.g., raw + classic, classic + hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
 
 Engines should handle mixed-type concatenations correctly, but authors are encouraged to use consistent string types within concatenations to ensure clarity and predictable behavior.
 
 ## 10. Number Literals
-Numbers can be integers or real numbers with `.` similar as a number in JavaScript. It can include a sign - or +. Can be of exponent form, 'e' or 'E' sign digits, where:
--sign is either +, -, or blank
-- digits is any number 0 or larger
+Number literals in YINI can be **integers** or **real numbers** (with `.`), similar to JavaScript and the like. They may include an optional sign (`+` or `-`) and support **exponential notation** using `e` or `E`.
+
+### Exponent Format
+Exponent notation uses the format:
+```
+<base>e<sign><exponent>
+```
+
+Where:
+- `<base>` is any integer number.
+- `<sign>` can be `+`, `-`, or blank (positive).
+- `<exponent>` is any non-negative number.
+
+Example:
+```
+3e4 // Is same as 3 × 10⁴ = 30000
+```
 
 ### Number Formats
 
-In addition to normal (10-base) decimal literals, YINI supports other number base literals as well.
+In addition to standard decimal numbers (base-10), YINI supports other number base literals as well.
 
-Note, due to relatively high usage binary and hexadecimal numbers can be given in two different notation.
+Note, binary and hexadecimal values also allow **alternative notations** for convenience and readability.
 
-| Number format | Alt. number format | Description | Number base | Note
+| Number Format | Alternative Format | Description | Base | Notes
 |----------|--|---|---|---|
-| `3e4` |   | Exponent notation number | 10-base | Result: 3×4^10
-| `0b1010` | `%1010` * | Binary number | 2-base |
-| `0o7477` |   | Octal number | 8-base |
-| `0z2ex9` |   | Duodecimal (dozenal) number | 12-base | `x` is 10, `e` is 11
-| `0xf390` | `#f390` * | Hexadecimal number | 16-base | `a`, `b`, `c`, `d`, `e`, `f` are 10 to 15
-
-*) Not yet supported.
+| `3e4` |   | Exponent notation number | 10-base | Result: `3 × 10⁴`
+| `0b1010` | `%1010` | Binary number | 2-base | `0` and `1` only
+| `0o7477` |   | Octal number | 8-base | Digits from `0` to `7`
+| `0z2ex9` |   | Duodecimal (dozenal) | 12-base | `x` is 10, `e` is 11
+| `0xf390` | `#f390` | Hexadecimal number | 16-base | `a–f`, `A-F` represent `10–15`
 
 ## 11. Boolean Literals
 Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
