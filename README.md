@@ -27,7 +27,7 @@ This project and repository deals with the specification for the YINI markup lan
 - **Sections** – Hierarchical structure with section depth defined via hash prefixes (`#`, `##`, `###`, etc.).
 - **Key-Value Pairs** – `key = value`.
 - **Lists (Arrays)** – List support using comma-separated values `[ ]`, or colon ```:``` for short hand notation.
-- **Supports Booleans & Null Values** – `true`, `false`, `yes`, `no`, `null`.
+- **Supports Booleans & Null Values** – `true`, `false`, `on`, `off`, `yes`, `no`, `null`.
 - **Number Formats** – Numbers can be written in decimal (10), binary (2), octal (8), hexadecimal (16), and duodecimal (12) formats. You can also use exponent notation (e.g., `3e4` for 30000) to represent very large or small numbers easily.
 - **Clear File End** - YINI document files are clearly terminated using the `/END` marker.
 
