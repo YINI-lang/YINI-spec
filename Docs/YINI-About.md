@@ -6,8 +6,11 @@ YINI is a configuration and settings file format (similar but not identical to I
 ## So, what is special about YINI?
 In YINI:
 - Strings are enclosed by either single quotes `'` or double quotes `"`, depending on your preference.
+- Triple-quoted strings (enclosed in `"""`) are supported. For example:
+  ```yini
+  description = """This is a multi-line
+  string in YINI format."""
 - Key-**Value** pairs are separated by an equals sign `=`.
-- While, Key-**List** pairs are separated by a colon `:`.
   
 --EXPAND--
 
@@ -16,17 +19,17 @@ In YINI:
 The actual YINI Specification can be found here: **[YINI spec](<../YINI-Specification.md>)**.
 
 * **Grammar:**
-This repo also includes a YINI grammar (in ANTLR 4). It aims to follow the specification as closely as possible. You can find it here: **[Lexer](<../Grammar-ANTLR4/YiniLexer.g4>)** and **[Parser](<../Grammar-ANTLR4/YiniParser.g4>)**.
+This repository includes a YINI grammar defined using ANTLR 4, which closely follows the YINI specification. You can find the lexer and parser here: **[Lexer](<../Grammar-ANTLR4/YiniLexer.g4>)** and **[Parser](<../Grammar-ANTLR4/YiniParser.g4>)**.
 
 * **Contributing:**
 Feedback, bug reports, suggestions, and code contributions are welcome! Head over to **[Docs/Contributing](https://github.com/YINI-lang/YINI-spec/blob/develop/Docs/Contributing.md)**
 
 ## Author 🤓
-Marko has been programming and developing software in his spare time since the mid 80s in several different programming languages, from Basic to C and Assembler. He studied Computer Science's Engineering and a Master's degree in Software Development with a specialization in Programming Languages. He has been working professionally for many years in software development from PHP to TypeScript and fullstack web development.
+Mr. Seppänen has been programming since the mid-80s, working in languages like Basic, C, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages, at Chalmers University of Technology. Professionally, he has worked many years in software development across PHP, TypeScript, and full-stack web development.
 
 ## Trivia
 ### The Name
-In the beginning, `YINI` started with the working name `MINI`, and then `MINI-CONFIG` / `miniCONFIG` which stood for Minimalistic INI Configuration Object Notation File. Also M stood for Marko's (after the author) at the start but was changed to stand for minimalistic. Finally, as the specification matured beyond the draft stage, it was renamed to just `YINI`.
+In the beginning, `YINI` was known by its working name `MINI`, which later evolved into `MINI-CONFIG` / `miniCONFIG` standing for Minimalistic INI Configuration Object Notation File. Initially, the "M" in `MINI` represented Marko (after the author), but this was later changed to represent **Minimalistic**. As the specification matured beyond the draft stage, it was renamed to simply `YINI`, which stands for **Yet another INI**.
 
 ---
 
@@ -35,11 +38,15 @@ In the beginning, `YINI` started with the working name `MINI`, and then `MINI-CO
 | Version                  | Date     | Description |
 |--------------------------|----------|-------------|
 | YINI-spec v1.0.0 Beta 1  | 2025 Apr | First Beta
-| YINI-spec v1.0.0 Alpha 2 | 2024 Oct | 
-| YINI-spec v1.0.0 Alpha   | 2024 Oct | Initial release.
+| YINI-spec v1.0.0 Alpha 2 | 2024 Oct | Pre-Beta
+| YINI-spec v1.0.0 Alpha   | 2024 Oct | Initial release
 
 ## Changes
---TODO--
+1.0.0 Beta 1 + [updates]:
+- Added (new) support for triple-quoted strings (`"""`).
+- Fixed support for alternative hexadecimal literals using `#`.
+- Fixed support for binary literals using `%`.
+- Reintroduced support for the alternative terminal marker `###`.
 
 ---
 

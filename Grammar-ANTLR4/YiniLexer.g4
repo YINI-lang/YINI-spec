@@ -25,11 +25,13 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
 SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
+//SECTION_HEAD: GT+ WS* IDENT NL+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
-}: '/END';
+}: '/END' | '###';
 
+GT: '>'; // Greater Than.
 EQ: '=';
 HASH: '#';
 COMMA: ',';
@@ -40,7 +42,7 @@ PLUS: '+';
 DOLLAR: '$';
 // ASTERIX: '*';
 PC: '%'; // PerCent sign.
-SS: '§'; // Section Sign.
+//SS: '§'; // Section Sign.
 AT: '@';
 
 BOOLEAN_FALSE options {
@@ -74,14 +76,18 @@ PHRASE: '`' ~[\r\n]* '`'; // NOTE: Only for keys!
 NUMBER:
 	INTEGER ('.' INTEGER?)? EXPONENT?
 	| SIGN? '.' DIGIT+ EXPONENT?
-	| SIGN? '0' (
+	| SIGN? (
 		BIN_INTEGER
 		| OCT_INTEGER // Make sure to not clash with boolean ON | OFF.
 		| DUO_INTEGER
 		| HEX_INTEGER
 	);
 
-STRING: RAW_STRING | HYPER_STRING | CLASSIC_STRING;
+STRING:
+	RAW_STRING
+	| HYPER_STRING
+	| CLASSIC_STRING
+	| TRIPLE_QUOTED_STRING;
 
 // Raw string literal, treats the backslash character (\) as a literal.
 RAW_STRING:
@@ -97,6 +103,9 @@ HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''
 CLASSIC_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
 	| ('c' | 'C') '"' ( ESC_SEQ | ~('"'))* '"';
 
+TRIPLE_QUOTED_STRING:
+	'"""' (~["] | '"' ~["] | '""' ~["])* '"""';
+
 // Note: Like 8.2 in specification.
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
 
@@ -110,10 +119,13 @@ fragment INTEGER: DECIMAL_INTEGER;
 // Note: 0 or higher than 1, no leading 0s allowed (for ex: `01`)
 fragment DECIMAL_INTEGER: '0' | SIGN? [1-9] DIGIT*;
 
-fragment BIN_INTEGER: ('b' | 'B') BIN_DIGIT+;
-fragment OCT_INTEGER: ('o' | 'O') OCT_DIGIT+; // Make sure to not clash with boolean ON | OFF.
-fragment DUO_INTEGER: ('z' | 'Z') DUO_DIGIT+;
-fragment HEX_INTEGER: ('x' | 'X') HEX_DIGIT+;
+fragment BIN_INTEGER: ('0' ('b' | 'B') BIN_DIGIT+)
+	| ('%' BIN_DIGIT+);
+fragment OCT_INTEGER:
+	'0' ('o' | 'O') OCT_DIGIT+; // Make sure to not clash with boolean ON | OFF.
+fragment DUO_INTEGER: '0' ('z' | 'Z') DUO_DIGIT+;
+fragment HEX_INTEGER: ('0' ('x' | 'X') HEX_DIGIT+)
+	| ('#' HEX_DIGIT+);
 
 fragment DIGIT: [0-9];
 
