@@ -46,7 +46,7 @@
 Recommended filename extension for a YINI file is `.yini`.
 
 A short YINI document looks like the following.
-```
+```yini
 # MyPrefs
 
 HomeDir = "C:\Users\John Smith\"
@@ -58,7 +58,7 @@ KeyWords: "Orange", "Banana", "Pear", "Peach"
 ```
 
 A `YINI` document file can look like this as well:
-```
+```yini
 # window
 title = 'Sample Window'
 id = 'window_main'
@@ -114,17 +114,17 @@ Identifiers are names used for keys and sections (section headers). They must fo
   - Identifiers are case-sensitive, uppercase and lowercase letters are distinct (`Title` and `title` are different).
   
   Example:
-  ```
+  ```yini
   name
   ```
 
 - Form 2: Phrase Identifier
-  - A phrase is a name wrapped in backticks ``` ` ```.
+  - A phrase is a name wrapped in backticks  ``` ` ```.
   - It can include spaces, special characters, and quotes (single `'` or double `"`).
   - It must be on a single line and **cannot contain** newlines or another backtick.
   
   Example:
-  ```
+  ```yini
   `Description of Project`
   ```
 
@@ -194,12 +194,12 @@ Sections provide hierarchical organization for clean, readable, and structured c
 If there is only one level 1 section, it's often treated as the _"title header"_ of the document.
 
 **A section:**
-```
+```yini
 # Title
 ```
 
 **Section:**
-```
+```yini
 // Identifiers that include spaces can be enclosed in backticks.
 # `My Configuration`
 ```
@@ -239,7 +239,7 @@ This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespace or comments** may appear after the terminator.
 
 Alternatively, a shorter or more clean form may be used (if preferred):
-```
+```yini
 ###
 ```
 
@@ -266,13 +266,13 @@ Each **member** must start on its own line. The name of the member is called the
 
 There are two forms of members:
 1. **Single value** - A key-value pair that holds only one single value.
-    ```
+    ```yini
     key1 = "value"
     key2 = 42
     ```
 
 2. **List of values** - A key-values pair that holds zero or more values (or elements) enclosed in `[ ]`. Elements are separated by commas.
-    ```
+    ```yini
     colors = ["Red", "Blue", "Yellow", "Green"]
     ports = [8080, 3000, 3001, 3003]
     ```
@@ -384,7 +384,7 @@ A **Triple-Quoted String** is a string literal that:
 - Does not support any prefix character, triple quoted strings are by design raw.
 
 Example of Triple-Quoted strings:
-```
+```yini
 """This is a multiline
 string that spans
 three lines."""
@@ -567,7 +567,7 @@ Also if value is missing in member, then that member is treated as NULL.
 
 ## 14. Sections in Sections
 If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
-```
+```yini
 # TitleSection
 ## Section
 ### SubSection
