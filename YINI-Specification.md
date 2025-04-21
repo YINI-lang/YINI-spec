@@ -41,7 +41,7 @@
 ---
 
 ## 1. Intro
-`YINI` is a configuration file format, it stands for **Y**et another **INI** markup language. It consists of plain text with a simple syntax and structure, consisting of Key–Value pairs and Key-List pairs, organized in sections.
+`YINI` is a configuration file format (a formal language), it stands for **Y**et another **INI** markup language. It consists of plain text with a simple syntax and structure, consisting of Key–Value pairs and Key-List pairs, organized in sections.
 
 Recommended filename extension for a YINI file is `.yini`.
 
