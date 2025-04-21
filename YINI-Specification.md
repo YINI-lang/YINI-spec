@@ -25,6 +25,8 @@
 10. Number Literals
 11. Boolean Literals
 12. Lists (arrays)
+    * 12.1 Bracketed List Notation (`=`)
+    * 12.2 Alternative List Notation (`:` without Brackets)
 13. NULL Literal
 14. Sections in Sections
 15. Conclusion
@@ -114,7 +116,7 @@ Identifiers are names used for keys and sections. They must follow one of the tw
   ```
 
 **Additional Rules:**
-- Identifiers must be **unique** within the same level or scope.
+- Identifiers must be **unique** within the same level or scope with a section.
 - An identifier can have a max length of 2047 characters + null character (a total of 2048 bytes).
 - Identifiers should also follow any naming rules defined by the engine or host program using YINI.
 
@@ -418,12 +420,12 @@ The engine should convert the literal value to the corresponding Boolean value i
 
 YINI supports two ways to define lists:
 - **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
-- **Colon-Based List Notation** - An optional, more human-friendly multi-line style using `:` and no brackets.
+- **Colon-Based List Notation** - A more human-friendly, optionally multi-line style using `:` and no brackets.
 
-### List Notation with Brackets (`=`)
+### 12.1 Bracketed List Notation (`=`)
 A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
 
-Spaces, tabs, and newlines are allowed within the brackets.
+Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
 
 ```yini
 list1 = ["value1", "value2", "value3"]
@@ -441,16 +443,16 @@ list1 = ["a", "b", "c", ]  // Trailing comma is valid.
 list2 = ["a", "b", "c", NULL]
 ```
 
-> **Note: ** A parser may optionally support strict and lenient modes where trailing commas may be either disallowed or accepted.
+> **Note: ** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
 
 **Syntax Rule**
 
-There must be no newline between the `=` and the opening bracket `[` - otherwise, the value will be interpreted as `null`.
+There must be **no newline** between the `=` and the opening bracket `[`, otherwise the value will be interpreted as `null`.
 
 ❌ Invalid:
 ```yini
 list =
-["item1", "item2"]  // Not valid list!
+["item1", "item2"]  // Not a valid list!
 ```
 
 ✅ Valid:
@@ -460,7 +462,7 @@ list = ["item1", "item2"]
 
 **Nested Lists**
 
-Lists can contain other lists:
+Lists may contain other lists:
 ```yini
 linkItems = [
 	["stylesheet", "css/general.css"],
@@ -468,16 +470,19 @@ linkItems = [
 ]
 ```
 
-#### Alternative List Notation (`:` without Brackets)
-This format offers a more readable syntax using a colon `:` instead of `=`, and omits square brackets entirely.
+### 12.2 Alternative List Notation (`:` without Brackets)
+This notation offers a more readable syntax using a colon `:` instead of `=`, and omits square brackets entirely.
 
 ```yini
 list1: "oranges", "bananas", "peaches"  // List with three elements.
 
-list2:  // Empty list.
+list2:  // An empty list.
 ```
 
 **Multi-line List Syntax:**
+
+Each item (and its comma) may optionally appear on its own line for better readability.
+
 ```yini
 list1:
   "oranges",
@@ -487,31 +492,22 @@ list1:
 list2:
   "oranges",
   "bananas",
-  "peaches",  // Trailing comma is valid.
+  "peaches",  // Trailing comma is valid here.
 ```
+> **Note:** Commas are required between values. A trailing comma is allowed at last line.
 
 Each item can optionally be placed on its own line for readability. Commas are required between values. A trailing comma is allowed.
 
-The `:` multi-line list ends a newline and an Identifier as either:
-- a new key (with `=` or `:`), or
-- a new Section (simple or phrased)
-- end terminal mark (`/END` or `###`) is encountered
+**Termination Rule**
 
-```yini
-list1:
-  "oranges",
-  "bananas",
-  "peaches"
-
-list2:
-  "oranges",
-  "bananas",
-  "peaches",  // Trailing comma here is ok.
-```
+A multi-line list (using `:`) ends when **any of the following** is encountered:
+- a new key assignment (`key = ...` or `key: ...`)
+- a new section header (simple or phrased)
+- a terminal marker (`/END` or `###`)
 
 **Nested Lists with `:` Notation**
 
-Nested lists are supported and may include inner bracketed lists or arrays:
+Nested lists are supported and may include inner bracketed lists (arrays):
 ```yini
 linkItems:
 	["stylesheet", "css/general.css"],
