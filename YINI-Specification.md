@@ -416,37 +416,51 @@ The engine should convert the literal value to the corresponding Boolean value i
   
 ## 12. Lists (Arrays)
 
-Lists can be defined in two different notations:
-- **Lists with Brackets** - Uses a single-line format using `=` and the list enclosed in square brackets `[ ]`.
-- **Lists without Brackets** - Second notation, optional multi-line format using `:` and then the elements, for better readability.
+YINI supports two ways to define lists:
+- **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
+- **Colon-Based List Notation** - An optional, more human-friendly multi-line style using `:` and no brackets.
 
-### List Literal (`=` and with Brackets)
-A member with a list is written using the equals sign `=`, followed by square brackets `[ ]` containing zero or more values separated by commas.
+### List Notation with Brackets (`=`)
+A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
 
-Spaces, tabs, and new lines are allowed between the values.
+Spaces, tabs, and newlines are allowed within the brackets.
 
 ```yini
 list1 = ["value1", "value2", "value3"]
-
 list2 = [100, 200, 300]
-
 list3 = []  // An empty list.
 ```
 
-For convenience, a trailing comma (`,`) may be optionally included.
+For convenience, a trailing comma (`,`) may be optionally be included.
 
 ```yini
-// A list with three elements
-list = ["a", "b", "c", ]  // Trailing
+// A list with THREE elements.
+list1 = ["a", "b", "c", ]  // Trailing comma is valid.
+
+// A list with FOUR elements.
+list2 = ["a", "b", "c", NULL]
 ```
-The above example with a trailing comma is valid.
 
-However, the parser may support both strict and lenient modes, where trailing commas may either be allowed or disallowed, depending on the mode.
+> **Note: ** A parser may optionally support strict and lenient modes where trailing commas may be either disallowed or accepted.
 
-NOTE: There must be no newline `<NL>` between the equals sign `=`  and the start of list itself `[`, otherwise the member will be interpreted as having a null value.
+**Syntax Rule**
 
-Lists can be nested, like:
+There must be no newline between the `=` and the opening bracket `[` - otherwise, the value will be interpreted as `null`.
 
+❌ Invalid:
+```yini
+list =
+["item1", "item2"]  // Not valid list!
+```
+
+✅ Valid:
+```yini
+list = ["item1", "item2"]
+```
+
+**Nested Lists**
+
+Lists can contain other lists:
 ```yini
 linkItems = [
 	["stylesheet", "css/general.css"],
@@ -455,9 +469,7 @@ linkItems = [
 ```
 
 #### Alternative List Notation (`:` without Brackets)
-An alternative way to define a list is by using the colon character `:` instead of an equals sign. In this form/notation, the key is on the left of the colon, and the values (zero or more values) appear to the right, separated by commas.
-
-No brackets are used in this list notion.
+This format offers a more readable syntax using a colon `:` instead of `=`, and omits square brackets entirely.
 
 ```yini
 list1: "oranges", "bananas", "peaches"  // List with three elements.
@@ -465,7 +477,25 @@ list1: "oranges", "bananas", "peaches"  // List with three elements.
 list2:  // Empty list.
 ```
 
-Each value (and a comma `,`) may optionally be placed on its own line. The multi-line list ends at a newline with a new Identifier (wheather a Key or a Section).
+**Multi-line List Syntax:**
+```yini
+list1:
+  "oranges",
+  "bananas",
+  "peaches"
+
+list2:
+  "oranges",
+  "bananas",
+  "peaches",  // Trailing comma is valid.
+```
+
+Each item can optionally be placed on its own line for readability. Commas are required between values. A trailing comma is allowed.
+
+The `:` multi-line list ends a newline and an Identifier as either:
+- a new key (with `=` or `:`), or
+- a new Section (simple or phrased)
+- end terminal mark (`/END` or `###`) is encountered
 
 ```yini
 list1:
@@ -479,7 +509,9 @@ list2:
   "peaches",  // Trailing comma here is ok.
 ```
 
-Lists can be nested with other lists, like:
+**Nested Lists with `:` Notation**
+
+Nested lists are supported and may include inner bracketed lists or arrays:
 ```yini
 linkItems:
 	["stylesheet", "css/general.css"],
