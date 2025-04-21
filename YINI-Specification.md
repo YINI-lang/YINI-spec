@@ -10,7 +10,7 @@
    * 3.2 Comments
    * 3.3 Ignore / Disable Line
    * 3.4 Identifiers
-4. Section Headers
+4. Sections
 5. Top Section Header
 6. Document Terminator
 7. Values & Native Types
@@ -135,55 +135,86 @@ Phrase identifiers are great when you need:
 2. Keys with spaces or symbols.
 3. Keys that match UI labels or external data exactly.
 
-## 4. Section Headers
-A **section header** starts with one or more hash symbols `#`, followed by **at least one space or tab**, and then a valid **identifier**. The number of hash symbols indicates the **nesting level** of the section:
+## 4. Sections
+A **section** in YINI is a structural unit used to group related configuration entries in a hierarchical manner. Sections are introduced by **section headers*, which are lines starting with one or more hash symbols (`#`) followed by a space or tab and a valid identifier. The number of hash symbols determines the `nesting level` of the section.
 
-- `#` is level 1
-- `##` is level 2
-- `###` is level 3
-- and so on.
+Sections serve as containers, similar to objects in programming languages, and may contain:
 
-**Section Rules:**
+- **Key-value pairs** (members),
+- **Nested sub-sections** of a deeper level.
 
-1. There must be **no spaces** between the hash symbols themselves.
-2. There must be **at least one space or tab** after the last hash symbol before the identifier.
-3. Section headers must be on their **own line**. Any spaces or tabs at the **start or end** of the identifier are ignored.
-4. Each section must have a **unique identifier** at its level.
+**Structure and Rules:**
 
-Sections function as containers, similar to objects in programming languages. They can contain nested sub-sections and members (key-value pairs). This structure allows for organized and hierarchical data representation.
+The identifier is the name of the section (leading/trailing whitespace is ignored).
 
+A section header must:
+1. Begin with one or more `#` symbols.
+2. Have no spaces between the `#` symbols.
+3. There must be **at least one space or tab** after the last hash symbol before the identifier.
+4. Section headers must be on their **own line**.
+   
 **Nesting Rules:**
 
-5. A nested section (e.g. level 3) must come **after** and be inside a higher-level section (e.g. level 2).
-6. You **cannot** skip levels. For example, a level 3 section must follow a level 2 section.
+5. Each section identifier must be **unique within its level**.
+6. A nested section (e.g. level 3) must come **after** and be inside a higher-level section (e.g. level 2).
+7. You **cannot** skip levels. For example, a level 3 section must follow a level 2 section.
 
-**Example:**
+**Nesting Example:**
 ```yini
-# General
-## Settings
+# System
+## Network
 ### Advanced
 ```
 
+In above example:
+- `System` is a level 1 section.
+- `Network` is a level 2 section nested inside `System`.
+- `Advanced` is a level 3 section nested inside `Network`.
+
+Sections provide hierarchical organization for clean, readable, and structured configuration files.
+
 ## 5. Top Section Header
-A `YINI` document always starts with a Section Header of level 1. There may be multiple single level 1 sections, each document must have at least one section.
+**Every YINI file must begin with at least one level 1 section**, indicated by a single `#` followed by a space/tab and an identifier. Multiple level 1 sections are allowed in a document.
 
-(Note: If there is only one (1) section with level 1, it may be called the so-called title header.)
+If there is only one level 1 section, it's often treated as the _"title header"_ of the document.
 
+**A section:**
 ```
 # Title
 ```
 
-After a section with level 1, comes section header with level 2.
-
-*) The very first line **may start** with a shebang `#!`, then this line is ignored.
-
+**Section:**
 ```
-# Title
-## Section
+// Identifiers that include spaces can be enclosed in backticks.
+# `My Configuration`
+```
+
+**Structure Rule**
+
+After a level 1 section, the next nested level must be a level 2 section (i.e., `##`), keeping the hierarchy intact.
+
+```yini
+# Level1
+## Level2
+```
+
+### Shebang Support
+For Unix-based systems, a shebang (#!) is commonly used in script files to specify the interpreter. This feature is supported in YINI files, making it possible to use YINI documents as configuration files for scripts or command-line applications.
+
+**How to Use the Shebang:**
+- The **very first line** of the document may optionally begin with a Unix-style **shebang** (`#!`), which specifies the interpreter for the script.
+- If present, the shebang line will be ignored by the YINI parser.
+
+Here’s an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
+```yini
+#!/usr/bin/env yini
+
+# Config
+key = value
 ```
 
 ## 6. Document Terminator
-A YINI document must always end with a **terminator line**. The **default and recommended** terminator is::
+A YINI document must always end with a **terminator line**. The **standard and recommended** terminator is:
 
 ```yini
 /END
@@ -192,7 +223,7 @@ A YINI document must always end with a **terminator line**. The **default and re
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespace or comments** may appear after the terminator.
 
-Alternatively, a shorter form may be used::
+Alternatively, a shorter or more clean form may be used (if preferred):
 ```
 ###
 ```
