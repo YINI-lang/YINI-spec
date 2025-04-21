@@ -214,11 +214,20 @@ A `YINI` value MUST be of one of the following 3 groups of native/built-in types
 Note: Above are all types that are supported by `YINI`, any other types are left to the host software to cast or convert to after reading (or before saving) a `YINI` document.
 
 ## 8. Members
-Each **member** must start on its own line. The name of the member is called the **key**. Keys must be **unique** (identifier) within the same section (i.e., at the same section level).
+Each **member** must start on its own line. The name of the member is called the **key** (key must be a valid Identifier (section 3.4)). Also, keys must be **unique** (identifier) within the same section (i.e., at the same section level).
 
 There are two forms of members:
 1. **Single value** - A key-value pair that holds only one single value.
-2. **List of values** - A key-values pair that holds zero or more values (or elements). Elements are separated by commas.
+    ```
+    key1 = "value"
+    key2 = 42
+    ```
+
+2. **List of values** - A key-values pair that holds zero or more values (or elements) enclosed in `[ ]`. Elements are separated by commas.
+    ```
+    colors = ["Red", "Blue", "Yellow", "Green"]
+    ports = [8080, 3000, 3001, 3003]
+    ```
 
 ### Member with a Single Value
 A member with a single value is written as a **key-value pair**, using the equals character `=`. The key is on the left, and the value is on the right.
@@ -229,7 +238,7 @@ lives = 3
 ```
 
 ### Member with a List
-A member that contains a list is defined using the equals (`=`) character, followed by zero or more values enclosed in square brackets (`[ ]`), separated by commas. For convenience, an optional trailing comma (`,`) is also allowed (to not bread parsing).
+A member that contains a list is defined using the equals (`=`) character, followed by zero or more values enclosed in square brackets (`[ ]`), separated by commas. For convenience, an optional trailing comma (`,`) is also allowed (to not break parsing).
 
 ```yini
 list1 = ["value1", "value2", "value3"]
@@ -405,13 +414,13 @@ Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 
 The engine should convert the literal value to the corresponding Boolean value in the host language.
   
-## 12. Lists (arrays) ##
+## 12. Lists (Arrays)
 
 Lists can be defined in two different notations:
-- **Lists with Brackets** - Uses a single-line format with square brackets.
-- **Lists without Brackets** - Second notation is an optional multi-line format for better readability.
+- **Lists with Brackets** - Uses a single-line format using `=` and the list enclosed in square brackets `[ ]`.
+- **Lists without Brackets** - Second notation, optional multi-line format using `:` and then the elements, for better readability.
 
-### List Literal (with Brackets)
+### List Literal (`=` and with Brackets)
 A member with a list is written using the equals sign `=`, followed by square brackets `[ ]` containing zero or more values separated by commas.
 
 Spaces, tabs, and new lines are allowed between the values.
@@ -445,26 +454,32 @@ linkItems = [
 ]
 ```
 
-#### Alternative List Notation (without Brackets)
+#### Alternative List Notation (`:` without Brackets)
 An alternative way to define a list is by using the colon character `:` instead of an equals sign. In this form/notation, the key is on the left of the colon, and the values (zero or more values) appear to the right, separated by commas.
-
-Each value may optionally be placed on its own line. A final/trailing comma `,` is accepted so parsing is not broken.
 
 No brackets are used in this list notion.
 
 ```yini
-// Alternative list notation (with :).
+list1: "oranges", "bananas", "peaches"  // List with three elements.
 
-list1: "oranges", "bananas", "peaches"
+list2:  // Empty list.
+```
+
+Each value (and a comma `,`) may optionally be placed on its own line. The multi-line list ends at a newline with a new Identifier (wheather a Key or a Section).
+
+```yini
+list1:
+  "oranges",
+  "bananas",
+  "peaches"
 
 list2:
   "oranges",
   "bananas",
-  "peaches"
+  "peaches",  // Trailing comma here is ok.
 ```
 
-Lists can be nested, like:
-
+Lists can be nested with other lists, like:
 ```yini
 linkItems:
 	["stylesheet", "css/general.css"],
@@ -596,7 +611,7 @@ key:           // NULL
   - `false`, `no`, `off` → `false`
 - Do not allow Boolean values like `1` or `0` unless explicitly cast by the host software.
 
-### 17.5 Lists
+### 17.5 Lists (Arrays)
 
 - Lists may be defined using either:
   - `=` with square brackets:
@@ -617,7 +632,7 @@ key:           // NULL
     invalidList = // This is treated as NULL!
     [1, 2, 3]  // Not a list.
     ```
-- A trailing comma is allowed, but a line must not start with a comma.
+- A trailing comma is allowed within `[ ]`, but a line must not start with a comma.
 
 ### 17.6 Strings Concatenation
 
