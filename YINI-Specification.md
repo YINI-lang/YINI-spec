@@ -1,10 +1,13 @@
-# YINI specification version 1.0.0 Beta 1 + [updates]
+# YINI specification version 1.0.0 Beta 1 + Updates
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 18. Versioning).
 
 ## Table of Contents
 1. Intro 
+   * 1.1 YINI Syntax
 2. Terminology
+   * 2.1 Engine & Host
+   * 2.2 Items & Elements in Lists
 3. Definitions
    * 3.1 Whitespaces
    * 3.2 Comments
@@ -75,9 +78,19 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 /END // End of YINI doc.
 ```
 
+### 1.1 YINI Syntax
+YINI defines its own syntax rules. While some of these rules may resemble those found in other formats such as INI, YAML, TOML, or JSON, it must not be assumed that YINI behaves the same way. Unless explicitly stated in this specification (or elsewhere in this document), YINI does not inherit or conform to the syntax or semantics of any other format.
+
 ## 2. Terminology
+
+### 2.1 Engine & Host
 - **Engine**: Is the program/software that reads and writes `YINI` documents.
 - **Host**: The host is the program/software (written by the user/developer/programmer) that runs the `YINI`-engine (decoder and/or encoder).
+
+### 2.2 Items & Elements in Lists
+In the context of lists, a list may contain zero or more **items**. The term **element** is also commonly used, depending on the context. Both **item** and **element** refer to a **value** within a list. Therefore, the terms _item_, _element_, and _value_ are used interchangeably when discussing lists - they all denote the same concept: a single value within the list.
+
+A single value may be of any type - _Single_, _Compound_, or _Special_ - as described in Section 7.
 
 ## 3. Definitions
 ### 3.1 Whitespaces
@@ -93,7 +106,7 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 >- Ignore/disable line start with a double minus `--` as first characters in a line. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
 
 ### 3.4 Identifiers
-Identifiers are names used for keys and sections. They must follow one of the two forms below:
+Identifiers are names used for keys and sections (section headers). They must follow one of the two forms below:
 
 - Form 1: Simple Identifier
   - Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
@@ -233,15 +246,15 @@ While `###` is valid, `/END` is the standard and should be preferred for clarity
 ## 7. Values & Native Types
 A `YINI` value MUST be of one of the following 3 groups of native/built-in types:
 
-- Simple types:
+- Value of **Simple-types**:
   - String
   - Number
   - Boolean
 
-- Compound type:
+- Value of **Compound-type**:
   - List/array (a sequence consisting of strings, numbers, or booleans)
 
-- Special type:
+- Value of **Special-type**:
   - NULL
 
 Note: Above are all types that are supported by `YINI`, any other types are left to the host software to cast or convert to after reading (or before saving) a `YINI` document.
