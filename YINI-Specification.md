@@ -136,7 +136,7 @@ Phrase identifiers are great when you need:
 3. Keys that match UI labels or external data exactly.
 
 ## 4. Sections
-A **section** in YINI is a structural unit used to group related configuration entries in a hierarchical manner. Sections are introduced by **section headers*, which are lines starting with one or more hash symbols (`#`) followed by a space or tab and a valid identifier. The number of hash symbols determines the `nesting level` of the section.
+A **section** in YINI is a structural unit used to group related configuration entries in a hierarchical manner. Sections are introduced by **section headers**, which are lines starting with one or more hash symbols (`#`) followed by a space or tab and a valid identifier. The number of hash symbols determines the `nesting level` of the section.
 
 Sections serve as containers, similar to objects in programming languages, and may contain:
 
