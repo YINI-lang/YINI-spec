@@ -6,6 +6,10 @@
 1. Intro 
 2. Terminology
 3. Definitions
+   * 3.1 Whitespaces
+   * 3.2 Comments
+   * 3.3 Ignore / Disable Line
+   * 3.4 Identifiers
 4. Section Headers
 5. Top Section Header
 6. Document Terminator
