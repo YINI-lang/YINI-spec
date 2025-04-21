@@ -1,10 +1,13 @@
-# YINI specification version 1.0.0 Beta 1 + [updates]
+# YINI specification version 1.0.0 Beta 1 + Updates
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 18. Versioning).
 
 ## Table of Contents
 1. Intro 
+   * 1.1 YINI Syntax
 2. Terminology
+   * 2.1 Engine & Host
+   * 2.2 Items & Elements in Lists
 3. Definitions
    * 3.1 Whitespaces
    * 3.2 Comments
@@ -43,7 +46,7 @@
 Recommended filename extension for a YINI file is `.yini`.
 
 A short YINI document looks like the following.
-```
+```yini
 # MyPrefs
 
 HomeDir = "C:\Users\John Smith\"
@@ -55,7 +58,7 @@ KeyWords: "Orange", "Banana", "Pear", "Peach"
 ```
 
 A `YINI` document file can look like this as well:
-```
+```yini
 # window
 title = 'Sample Window'
 id = 'window_main'
@@ -75,9 +78,19 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 /END // End of YINI doc.
 ```
 
+### 1.1 YINI Syntax
+YINI defines its own syntax rules, it's its own formal language. While some of these rules may resemble those found in other formats such as INI, YAML, TOML, or JSON, it MUST NOT be assumed that YINI behaves the same way. Unless explicitly stated in this specification (or elsewhere in this document), YINI does not inherit or conform to the syntax or semantics of any other format.
+
 ## 2. Terminology
+
+### 2.1 Engine & Host
 - **Engine**: Is the program/software that reads and writes `YINI` documents.
 - **Host**: The host is the program/software (written by the user/developer/programmer) that runs the `YINI`-engine (decoder and/or encoder).
+
+### 2.2 Items & Elements in Lists
+In the context of lists, a list may contain zero or more **items**. The term **element** is also commonly used, depending on the context. Both **item** and **element** refer to a **value** within a list. Therefore, the terms _item_, _element_, and _value_ are used interchangeably when discussing lists - they all denote the same concept: a single value within the list.
+
+A single value may be of any type - _Single_, _Compound_, or _Special_ - as described in Section 7.
 
 ## 3. Definitions
 ### 3.1 Whitespaces
@@ -93,7 +106,7 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 >- Ignore/disable line start with a double minus `--` as first characters in a line. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
 
 ### 3.4 Identifiers
-Identifiers are names used for keys and sections. They must follow one of the two forms below:
+Identifiers are names used for keys and sections (section headers). They must follow one of the two forms below:
 
 - Form 1: Simple Identifier
   - Can only contain letters (a-z or A-Z), digits (0-9) and underscores `_`.
@@ -101,17 +114,17 @@ Identifiers are names used for keys and sections. They must follow one of the tw
   - Identifiers are case-sensitive, uppercase and lowercase letters are distinct (`Title` and `title` are different).
   
   Example:
-  ```
+  ```yini
   name
   ```
 
 - Form 2: Phrase Identifier
-  - A phrase is a name wrapped in backticks ``` ` ```.
+  - A phrase is a name wrapped in backticks  ``` ` ```.
   - It can include spaces, special characters, and quotes (single `'` or double `"`).
   - It must be on a single line and **cannot contain** newlines or another backtick.
   
   Example:
-  ```
+  ```yini
   `Description of Project`
   ```
 
@@ -173,18 +186,20 @@ In above example:
 
 Sections provide hierarchical organization for clean, readable, and structured configuration files.
 
+**NOTE:** No YAML indentation is required (but allowed), no `[section]`, no JSON-style `{}`. Just **hash-prefixed lines** (`#`) to declare section headers and control structure.
+
 ## 5. Top Section Header
 **Every YINI file must begin with at least one level 1 section**, indicated by a single `#` followed by a space/tab and an identifier. Multiple level 1 sections are allowed in a document.
 
 If there is only one level 1 section, it's often treated as the _"title header"_ of the document.
 
 **A section:**
-```
+```yini
 # Title
 ```
 
 **Section:**
-```
+```yini
 // Identifiers that include spaces can be enclosed in backticks.
 # `My Configuration`
 ```
@@ -224,7 +239,7 @@ This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespace or comments** may appear after the terminator.
 
 Alternatively, a shorter or more clean form may be used (if preferred):
-```
+```yini
 ###
 ```
 
@@ -233,15 +248,15 @@ While `###` is valid, `/END` is the standard and should be preferred for clarity
 ## 7. Values & Native Types
 A `YINI` value MUST be of one of the following 3 groups of native/built-in types:
 
-- Simple types:
+- Value of **Simple-types**:
   - String
   - Number
   - Boolean
 
-- Compound type:
+- Value of **Compound-type**:
   - List/array (a sequence consisting of strings, numbers, or booleans)
 
-- Special type:
+- Value of **Special-type**:
   - NULL
 
 Note: Above are all types that are supported by `YINI`, any other types are left to the host software to cast or convert to after reading (or before saving) a `YINI` document.
@@ -251,13 +266,13 @@ Each **member** must start on its own line. The name of the member is called the
 
 There are two forms of members:
 1. **Single value** - A key-value pair that holds only one single value.
-    ```
+    ```yini
     key1 = "value"
     key2 = 42
     ```
 
 2. **List of values** - A key-values pair that holds zero or more values (or elements) enclosed in `[ ]`. Elements are separated by commas.
-    ```
+    ```yini
     colors = ["Red", "Blue", "Yellow", "Green"]
     ports = [8080, 3000, 3001, 3003]
     ```
@@ -369,7 +384,7 @@ A **Triple-Quoted String** is a string literal that:
 - Does not support any prefix character, triple quoted strings are by design raw.
 
 Example of Triple-Quoted strings:
-```
+```yini
 """This is a multiline
 string that spans
 three lines."""
@@ -552,9 +567,10 @@ Also if value is missing in member, then that member is treated as NULL.
 
 ## 14. Sections in Sections
 If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
-```
-## Section ##
-### SubSection ###
+```yini
+# TitleSection
+## Section
+### SubSection
 ```
 
 ## 15. Conclusion
