@@ -79,7 +79,7 @@ styles: ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 ```
 
 ### 1.1 YINI Syntax
-YINI defines its own syntax rules. While some of these rules may resemble those found in other formats such as INI, YAML, TOML, or JSON, it must not be assumed that YINI behaves the same way. Unless explicitly stated in this specification (or elsewhere in this document), YINI does not inherit or conform to the syntax or semantics of any other format.
+YINI defines its own syntax rules, it's its own formal language. While some of these rules may resemble those found in other formats such as INI, YAML, TOML, or JSON, it MUST NOT be assumed that YINI behaves the same way. Unless explicitly stated in this specification (or elsewhere in this document), YINI does not inherit or conform to the syntax or semantics of any other format.
 
 ## 2. Terminology
 
@@ -185,6 +185,8 @@ In above example:
 - `Advanced` is a level 3 section nested inside `Network`.
 
 Sections provide hierarchical organization for clean, readable, and structured configuration files.
+
+**NOTE:** No YAML indentation is required (but allowed), no `[section]`, no JSON-style `{}`. Just **hash-prefixed lines** (`#`) to declare section headers and control structure.
 
 ## 5. Top Section Header
 **Every YINI file must begin with at least one level 1 section**, indicated by a single `#` followed by a space/tab and an identifier. Multiple level 1 sections are allowed in a document.
@@ -566,8 +568,9 @@ Also if value is missing in member, then that member is treated as NULL.
 ## 14. Sections in Sections
 If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
 ```
-## Section ##
-### SubSection ###
+# TitleSection
+## Section
+### SubSection
 ```
 
 ## 15. Conclusion
