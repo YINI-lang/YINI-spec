@@ -19,7 +19,7 @@
     * 9.1 Raw Strings
     * 9.2 Hyper or H-Strings
     * 9.3 Classic or C-Strings
-    * 9.4 Triple-Quoted String
+    * 9.4 Triple-Quoted Strings
     * 9.5 String Concatenation
     * 9.6 String Type Mixing (Concatenation)
 10. Number Literals
@@ -360,7 +360,7 @@ Escape sequences in C-Strings (in lower or uppercase):
 
 Where hex is 0-9, or a-f, or A-F.
 
-### 9.4 Triple-Quoted String
+### 9.4 Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines** (i.e., includes newline characters).
@@ -436,11 +436,11 @@ Note, binary and hexadecimal values also allow **alternative notations** for con
 
 ## 11. Boolean Literals
 Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
-- Boolean **True**:
+- Treated as **TRUE** (by the engine):
   - `true`
   - `yes`
   - `on`
-- Boolean **False**:
+- Treated as **FALSE** (by the engine):
   - `false`
   - `no`
   - `off`
