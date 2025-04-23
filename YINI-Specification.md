@@ -19,9 +19,9 @@
 7. Values & Native Types
 8.  Members
 9.  String Literals
-    * 9.1 Raw Strings
-    * 9.2 Hyper or H-Strings
-    * 9.3 Classic or C-Strings
+    * 9.1 Raw Strings (R-Strings)
+    * 9.2 Hyper Strings (H-Strings)
+    * 9.3 Classic Strings (C-Strings)
     * 9.4 Triple-Quoted Strings
     * 9.5 String Concatenation
     * 9.6 String Type Mixing (Concatenation)
@@ -47,7 +47,7 @@ Recommended filename extension for a YINI file is `.yini`.
 
 A short YINI document looks like the following.
 ```yini
-# MyPrefs
+§ MyPrefs
 
 HomeDir = "C:\Users\John Smith\"
 Buffers = 10
@@ -59,16 +59,16 @@ KeyWords: "Orange", "Banana", "Pear", "Peach"
 
 A `YINI` document file can look like this as well:
 ```yini
-# window
+§ window
 title = 'Sample Window'
 id = 'window_main'
 
-# image
+§ image
 src = 'gfx/bg.png'
 id = 'bg1'
 isCentered = true
 
-# text
+§ text
 content = 'Click here!'
 id = 'text1'
 isCentered = true
@@ -149,34 +149,59 @@ Phrase identifiers are great when you need:
 3. Keys that match UI labels or external data exactly.
 
 ## 4. Sections
-A **section** in YINI is a structural unit used to group related configuration entries in a hierarchical manner. Sections are introduced by **section headers**, which are lines starting with one or more hash symbols (`#`) followed by a space or tab and a valid identifier. The number of hash symbols determines the `nesting level` of the section.
+A section header introduces a group of related key-value pairs within a YINI file.
 
-Sections serve as containers, similar to objects in programming languages, and may contain:
+The `§` character (U+00A7) is the preferred marker for section headers, clearly indicating the start of a new section.
+
+A section’s nesting level is determined by the number of consecutive section marker characters.
+
+**Example:**
+```yini
+§ ApplicationSettings
+```
+
+Sections act as containers, similar to objects in programming languages, and may include:
 
 - **Key-value pairs** (members),
 - **Nested sub-sections** of a deeper level.
+
+For improved accessibility, an alternative marker is allowed:
+
+`€` (U+20AC): Recommended alternative for environments with limited support for `§`.
+**Example:**
+```yini
+€ ApplicationSettings
+```
+
+`>` (U+003E): A fallback marker intended for legacy or limited-input systems.
+**Example:**
+```yini
+> ApplicationSettings
+```
+
+While all three markers are valid, use of the `§` character is encouraged, especially for computer-generated YINI files.
 
 **Structure and Rules:**
 
 The identifier is the name of the section (leading/trailing whitespace is ignored).
 
-A section header must:
-1. Begin with one or more `#` symbols.
-2. Have no spaces between the `#` symbols.
-3. There must be **at least one space or tab** after the last hash symbol before the identifier.
-4. Section headers must be on their **own line**.
+A **section header** must:
+1. Begin with one or more identical section markers (`§`, `€`, or `>`).
+2. There must be no spaces between the section markers.
+3. There must be **at least one space or tab** after the final section marker and before the section identifier.
+4. Section headers must appear on their **own line**.
    
 **Nesting Rules:**
 
 5. Each section identifier must be **unique within its level**.
-6. A nested section (e.g. level 3) must come **after** and be inside a higher-level section (e.g. level 2).
+6. A nested section (e.g. level 3) must be **contained within** a directly higher-level section (e.g. level 2), and must follow it in the file.
 7. You **cannot** skip levels. For example, a level 3 section must follow a level 2 section.
 
 **Nesting Example:**
 ```yini
-# System
-## Network
-### Advanced
+§ System
+§§ Network
+§§§ Advanced
 ```
 
 In above example:
@@ -186,7 +211,7 @@ In above example:
 
 Sections provide hierarchical organization for clean, readable, and structured configuration files.
 
-**NOTE:** No YAML indentation is required (but allowed), no `[section]`, no JSON-style `{}`. Just **hash-prefixed lines** (`#`) to declare section headers and control structure.
+**NOTE:** Section headers are declared using prefixed section markers (`§`, `€`, or `>`), not YAML-style `[section]` blocks or JSON-style `{}` objects. Indentation is optional but permitted.
 
 ## 5. Top Section Header
 **Every YINI file must begin with at least one level 1 section**, indicated by a single `#` followed by a space/tab and an identifier. Multiple level 1 sections are allowed in a document.
@@ -195,13 +220,13 @@ If there is only one level 1 section, it's often treated as the _"title header"_
 
 **A section:**
 ```yini
-# Title
+§ Title
 ```
 
 **Section:**
 ```yini
 // Identifiers that include spaces can be enclosed in backticks.
-# `My Configuration`
+§ `My Configuration`
 ```
 
 **Structure Rule**
@@ -209,8 +234,8 @@ If there is only one level 1 section, it's often treated as the _"title header"_
 After a level 1 section, the next nested level must be a level 2 section (i.e., `##`), keeping the hierarchy intact.
 
 ```yini
-# Level1
-## Level2
+§ Level1
+§§ Level2
 ```
 
 ### Shebang Support
@@ -224,7 +249,7 @@ Here’s an example of a YINI document with a shebang that could be used in a Un
 ```yini
 #!/usr/bin/env yini
 
-# Config
+§ Config
 key = value
 ```
 
@@ -237,13 +262,6 @@ A YINI document must always end with a **terminator line**. The **standard and r
 
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespace or comments** may appear after the terminator.
-
-Alternatively, a shorter or more clean form may be used (if preferred):
-```yini
-###
-```
-
-While `###` is valid, `/END` is the standard and should be preferred for clarity in most cases.
 
 ## 7. Values & Native Types
 A `YINI` value MUST be of one of the following 3 groups of native/built-in types:
@@ -319,7 +337,7 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 | Classic Strings (C-Strings)| `c' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Supports standard escape sequences
 | Triple-Quoted Strings | `' '` or `" "`   | ✅ Yes | ❌ No | ❌ No | Large multi-line blocks of literal text
 
-### 9.1 Raw Strings (Default)
+### 9.1 Raw Strings (R-Strings)
 In (raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (raw) strings must be on the same line.
 
 Raw strings are particularly suitable for representing file paths and other literal text.
@@ -329,7 +347,7 @@ or
 or
 >myPath = '/Users/kim-lee'
 
-### 9.2 Hyper or H-Strings
+### 9.2 Hyper Strings (H-Strings)
 There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `c` or `C`.
 
 Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape sequences are not supported).
@@ -343,7 +361,7 @@ Hyper Strings behaves similar to plain text in HTML documents.
 The following:
 
 ```yini
-h"My name is
+H"My name is
   John Doe,  
   and this is a test string."
 ```
@@ -353,7 +371,7 @@ Will result in:
 My name is John Doe, and this is a test string.
 ```
 
-### 9.3 Classic or C-Strings (Escaped)
+### 9.3 Classic Strings (C-Strings)
 Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `c` or `C`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
 Classic strings must start and end on the same line.
@@ -549,7 +567,7 @@ Each item can optionally be placed on its own line for readability. Commas are r
 A multi-line list (using `:`) ends when **any of the following** is encountered:
 - a new key assignment (`key = ...` or `key: ...`)
 - a new section header (simple or phrased)
-- a terminal marker (`/END` or `###`)
+- a terminal marker (`/END`)
 
 **Nested Lists with `:` Notation**
 
@@ -568,9 +586,9 @@ Also if value is missing in member, then that member is treated as NULL.
 ## 14. Sections in Sections
 If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
 ```yini
-# TitleSection
-## Section
-### SubSection
+§ TitleSection
+§§ Section
+§§§ SubSection
 ```
 
 ## 15. Conclusion
@@ -588,53 +606,53 @@ Future updates to the specification may expand functionality or improve clarity,
 A full example of a `YINI` document:
 
 ```yini
-# AppConfig
+§ AppConfig
 
-# General
+§ General
 AppName = "YINI Editor"
 Version = 1.0
 IsPortable = YES
 DefaultPaths: "C:\Program Files", "D:\Apps", "E:\Tools"
 MaxRecentFiles = 15
 
-# UI
+§ UI
 Theme = "Dark"
 FontSize = 14
 Languages: "en-US", "fr-FR", "de-DE"
 
-## Toolbar
+§§ Toolbar
 Visible = YES
 Position = "Top"
 
-### ToolButton
+§§§ ToolButton
 Id = "btnNew"
 Label = "New"
 Icon = "icons/new.png"
 OnClick = "NewFile()"
 
-### ToolButton
+§§§ ToolButton
 Id = "btnOpen"
 Label = "Open"
 Icon = "icons/open.png"
 OnClick = "OpenFile()"
 
-### ToolButton
+§§§ ToolButton
 Id = "btnSave"
 Label = "Save"
 Icon = "icons/save.png"
 OnClick = "SaveFile()"
 
-## Sidebar
+§§ Sidebar
 Visible = NO
 Tabs: "Explorer", "Search", "Extensions"
 
-# Network
+§ Network
 UseProxy = YES
 ProxyAddress = "192.168.0.100"
 ProxyPort = 8080
 TimeoutSeconds = 30
 
-# Advanced
+§ Advanced
 EnableLogs = YES
 LogLevel = "DEBUG"
 IgnoredWarnings: 1001, 1002, 1050, 1100
@@ -643,7 +661,7 @@ IgnoredWarnings: 1001, 1002, 1050, 1100
 ```
 
 Above example includes:
-- Top-level and nested sections via `#`, `##`, and `###`.
+- Top-level and nested sections via `§`, `§§`, and `§§§`.
 - Booleans via `YES` / `NO`.
 - Strings with quotes.
 - Lists via `:` and comma-separated values.
@@ -657,7 +675,7 @@ The following notes are intended to support developers building engines and pars
 
 ### 17.1 Top-Level Sections and Implicit Root
 
-- If a document contains multiple level-1 sections (i.e., multiple `# Section` blocks), these should be **treated as children of an implicit root object**.
+- If a document contains multiple level-1 sections (i.e., multiple `§ Section` blocks), these should be **treated as children of an implicit root object**.
 - This implicit root should not have a name (or may be named `root` or similar, as determined by the host system).
 - Do not skip section levels when parsing nested sections - level-3 sections must follow level-2.
 
