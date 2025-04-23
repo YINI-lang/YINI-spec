@@ -11,7 +11,8 @@ Introduction
 - 2. File Structure
   - 2.1. File Encoding
   - 2.2. File Extension
-  - 2.3. Optional Header (@yini)
+  - 2.3. Optional Shebang (#!)
+  - 2.4. Reserved: Optional Header (@yini)
 - 3. Syntax Overview
   - 3.1. General Syntax Rules
   - 3.2. Whitespace and Indentation
@@ -48,7 +49,7 @@ Introduction
   - 11.2. Changelog
   - 11.3. License (if open-sourcing)
 - 12. Implementation Notes
-  
+- 
 ---
 
 ## 12. Implementation Notes
