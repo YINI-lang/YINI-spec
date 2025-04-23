@@ -24,14 +24,22 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
-SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
-//SECTION_HEAD: GT+ WS* IDENT NL+;
+//SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
+SECTION_HEAD: SECTION_MARKER [ \t]+ WS* IDENT NL+;
+
+//SECTION_MARKER: SS+ | EUR+ | GT+; SECTION_MARKER : [\u00A7\u20AC\u003E]+; // §, €, >
+fragment SECTION_MARKER: HASH+ | SS+ | EUR+ | TILDE+ | GT+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
+	//}: '/END' | (SS SS SS) | (EUR EUR EUR) | '\u003E\u003E\u003E';
 }: '/END' | '###';
 
+SS: '\u00A7'; // Section sign §.
+EUR: '\u20AC'; // Euro sign €.
 GT: '>'; // Greater Than.
+TILDE: '~';
+
 EQ: '=';
 HASH: '#';
 COMMA: ',';
@@ -42,7 +50,6 @@ PLUS: '+';
 DOLLAR: '$';
 // ASTERIX: '*';
 PC: '%'; // PerCent sign.
-//SS: '§'; // Section Sign.
 AT: '@';
 
 BOOLEAN_FALSE options {
