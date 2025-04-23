@@ -5,9 +5,9 @@
 # Numbers
 dec = 42
 hex1 = 0xf3
-// hex2 = #de00	// Not yet supported.
+hex2 = #3FA9C7
 bin1 = 0b1010
-// bin2 = %1111	// Not yet supported.
+bin2 = %1111
 oct = 0o755
 dozen = 0z3e5x
 exp = 2e4
