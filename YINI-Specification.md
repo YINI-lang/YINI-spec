@@ -8,7 +8,7 @@
 2. Terminology
    * 2.1 Engine & Host
    * 2.2 Items & Elements in Lists
-3. Definitions
+3. Syntax Basics
    * 3.1 Whitespaces
    * 3.2 Comments
    * 3.3 Ignore / Disable Line
@@ -18,7 +18,7 @@
 5. Top Section Header
 6. Document Terminator
 7. Values & Native Types
-8.  Members
+8.  Members (Key-Value Pairs)
 9.  String Literals
     * 9.1 Raw Strings (R-Strings)
     * 9.2 Hyper Strings (H-Strings)
@@ -28,7 +28,7 @@
     * 9.6 String Type Mixing (Concatenation)
 10. Number Literals
 11. Boolean Literals
-12. Lists (arrays)
+12. Lists
     * 12.1 Bracketed List Notation (`=`)
     * 12.2 Alternative List Notation (`:` without Brackets)
 13. NULL Literal
@@ -92,7 +92,9 @@ In the context of lists, a list may contain zero or more **items**. The term **e
 
 A single value may be of any type - _Single_, _Compound_, or _Special_ - as described in Section 7.
 
-## 3. Definitions
+## 3. Syntax Basics
+Here follows definitions core syntax elements.
+
 ### 3.1 Whitespaces
 - Newlines `<NL>` can be either `<LF>` (0x0A) or `<CR><LF>` (0x0D 0x0A).
 - All tabs `<TAB>` (0x09) and blank spaces `<SPACE>` (0x20) are ignored.
@@ -294,7 +296,7 @@ A `YINI` value MUST be of one of the following 3 groups of native/built-in types
 
 Note: Above are all types that are supported by `YINI`, any other types are left to the host software to cast or convert to after reading (or before saving) a `YINI` document.
 
-## 8. Members
+## 8. Members (Key-Value Pairs)
 Each **member** must start on its own line. The name of the member is called the **key** (key must be a valid Identifier (section 3.4)). Also, keys must be **unique** (identifier) within the same section (i.e., at the same section level).
 
 There are two forms of members:
@@ -495,7 +497,7 @@ Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 
 The engine should convert the literal value to the corresponding Boolean value in the host language.
   
-## 12. Lists (Arrays)
+## 12. Lists
 
 YINI supports two ways to define lists:
 - **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
@@ -586,7 +588,7 @@ A multi-line list (using `:`) ends when **any of the following** is encountered:
 
 **Nested Lists with `:` Notation**
 
-Nested lists are supported and may include inner bracketed lists (arrays):
+Nested lists are supported and may include inner bracketed Lists:
 ```yini
 linkItems:
 	["stylesheet", "css/general.css"],
@@ -712,7 +714,7 @@ key:           // NULL
   - `false`, `no`, `off` → `false`
 - Do not allow Boolean values like `1` or `0` unless explicitly cast by the host software.
 
-### 16.5 Lists (Arrays)
+### 16.5 Lists
 
 - Lists may be defined using either:
   - `=` with square brackets:
