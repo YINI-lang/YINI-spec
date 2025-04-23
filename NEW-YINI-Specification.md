@@ -1,6 +1,7 @@
-# YINI specification version 1.0.0 Beta 2 + Updates
+# Specification for YINI formal grammar
+Version: v1.0.0 Beta 2 + Updates
 
-> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 18. Versioning).
+> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 9.2. Versioning).
 
 ## Table of Contents
 ### 1. Introduction
@@ -11,7 +12,7 @@
   * 2.1. File Encoding
   * 2.2. File Extension
   * 2.3. Optional Shebang (#!)
-  * 2.4. Reserved: Optional Header (@yini)
+  * 2.4. Reserved: Optional Header (@yini) (for Future Use)
 ### 3. Syntax Overview
   * 3.1. General Syntax Rules
   * 3.2. Whitespace and Indentation
@@ -31,13 +32,13 @@
     - 6.1.3 Classic Strings (C-Strings)
     - 6.1.4 Triple-Quoted Strings
     - 6.1.5 String Concatenation
-    - 6.1.6 String Type Mixing (Concatenation)
+    - 6.1.6 String Type Mixing
   * 6.2. Numbers
   * 6.3. Booleans and Null
   * 6.4. Lists
-  * 6.5. Multiline Support (if any)
+  * 6.5. Reserved: Multiline Support (Future or Conditional Implementation)
 ### 7. Special Syntax
-  * 7.1 Aliases, Anchors, or Includes (if applicable)
+  * 7.1 Reserved: Anchors, or Includes (for Future Use)
   * 7.2 Escape Characters
 ### 8. Validation Rules
   * 8.1 Well-formedness
@@ -50,9 +51,9 @@
   * 10.1. Minimal Example
   * 10.2. Realistic Config Use Cases
 ### 11. Appendices
-  * 11.1. Grammar (Optional EBNF or Regex-like Syntax Summary)
-  * 11.2. Changelog
-  * 11.3. License (if open-sourcing)
+  * 11.1. Reserved: Grammar
+  * 11.2. Reserved: Changelog
+  * 11.3. License
 ### 12. Implementation Notes
 
 ---
