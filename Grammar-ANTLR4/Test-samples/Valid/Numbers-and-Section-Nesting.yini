@@ -1,0 +1,33 @@
+/*
+  Each number should parse to its correct numeric value.
+  And each txt parsed into correct levels.
+*/
+
+  # Numbers
+    dec = 42
+    hex1 = 0xf3
+    hex2 = #3FA9C7
+
+    bin1 = 0b1010
+    bin2 = %1111
+
+    oct = 0o755
+    dozen = 0z3e5x
+    exp = 2e4
+
+  ## Level2
+    txt = "Text at level 2"
+
+  ### Level3
+    txt = "Text at level 3"
+
+  #### Level4
+    txt = "Text at level 4"
+
+  ##### Level5
+    txt = """
+"Text at level 5"
+"""
+
+  // Alternative terminal.
+  ###
