@@ -1,4 +1,4 @@
-# YINI Specification v1.0.0 Beta 2
+# YINI Specification v1.0.0 Beta 2 + Updates
 
 YINI is a configuration and settings file format (similar but not identical to INI-files) for computer software that consists of plain text with a very simple structure and notation, consisting of Key–Value pairs and Key-List pairs, grouped into sections.
 
@@ -43,6 +43,8 @@ In the beginning, `YINI` was known by its working name `MINI`, which later evolv
 | YINI-spec v1.0.0 Alpha   | 2024 Oct       | Initial release
 
 ## Changes
+v1.0.0 Beta 2 + Updates
+- None yet
 v1.0.0 Beta 2:
 - Added (new) support for triple-quoted strings (`"""`).
 - Fixed support for alternative hexadecimal literals using `#`.

@@ -1,4 +1,4 @@
-# YINI specification version 1.0.0 Beta 2
+# YINI specification version 1.0.0 Beta 2 + Updates
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 18. Versioning).
 
