@@ -14,6 +14,7 @@
    * 3.3 Ignore / Disable Line
    * 3.4 Identifiers
 4. Sections
+  * 4.1 Sections in Sections
 5. Top Section Header
 6. Document Terminator
 7. Values & Native Types
@@ -31,12 +32,11 @@
     * 12.1 Bracketed List Notation (`=`)
     * 12.2 Alternative List Notation (`:` without Brackets)
 13. NULL Literal
-14. Sections in Sections
-15. Conclusion
-16. Example
-17. Implementation Notes
-18. Versioning
-19. Author(s)
+14. Conclusion
+15. Example
+16. Implementation Notes
+17. Versioning
+18. Author(s)
 
 ---
 
@@ -212,6 +212,14 @@ In above example:
 Sections provide hierarchical organization for clean, readable, and structured configuration files.
 
 **NOTE:** Section headers are declared using prefixed section markers (`#`, `~`, or `>`), not YAML-style `[section]` blocks or JSON-style `{}` objects. Indentation is optional but permitted.
+
+### 4.1 Sections in Sections
+If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
+```yini
+# TitleSection
+## Section
+### SubSection
+```
 
 ## 5. Top Section Header
 **Every YINI file must begin with at least one level 1 section**, indicated by a single `#` followed by a space/tab and an identifier. Multiple level 1 sections are allowed in a document.
@@ -590,15 +598,8 @@ Value/literal `NULL` (NON CASE-SENSITIVE).
 
 Also if value is missing in member, then that member is treated as NULL.
 
-## 14. Sections in Sections
-If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
-```yini
-# TitleSection
-## Section
-### SubSection
-```
 
-## 15. Conclusion
+## 14. Conclusion
 
 The YINI (Yet another INI) specification aims to offer a flexible, human-readable configuration format that extends traditional INI syntax with enhanced features such as nested sections, list literals, multiple string types, and support for various number formats. Its design balances simplicity and expressiveness, making it well-suited for both small configuration files and more structured data representations.
 
@@ -608,7 +609,7 @@ Future updates to the specification may expand functionality or improve clarity,
 
 ---
 
-## 16. Example
+## 15. Example
 
 A full example of a `YINI` document:
 
@@ -676,17 +677,17 @@ Above example includes:
 
 ---
 
-## 17. Implementation Notes
+## 16. Implementation Notes
 
 The following notes are intended to support developers building engines and parsers for YINI, ensuring consistent and unambiguous interpretation across different host systems.
 
-### 17.1 Top-Level Sections and Implicit Root
+### 16.1 Top-Level Sections and Implicit Root
 
 - If a document contains multiple level-1 sections (i.e., multiple `§ Section` blocks), these should be **treated as children of an implicit root object**.
 - This implicit root should not have a name (or may be named `root` or similar, as determined by the host system).
 - Do not skip section levels when parsing nested sections - level-3 sections must follow level-2.
 
-### 17.2 Line Handling and Whitespace
+### 16.2 Line Handling and Whitespace
 
 - Newlines (`<NL>`) may be either LF (`0x0A`) or CRLF (`0x0D 0x0A`). Normalize them internally.
 - Ignore leading and trailing whitespace on section headers and keys.
@@ -703,7 +704,7 @@ key:           // NULL
 ```
 - If a key appears **more than once in the same section**, this is an **error** (keys must be unique).
 
-### 17.4 Boolean Canonicalization
+### 16.4 Boolean Canonicalization
 
 - Boolean literals are **case-insensitive**.
 - The following values must be interpreted as Booleans:
@@ -711,7 +712,7 @@ key:           // NULL
   - `false`, `no`, `off` → `false`
 - Do not allow Boolean values like `1` or `0` unless explicitly cast by the host software.
 
-### 17.5 Lists (Arrays)
+### 16.5 Lists (Arrays)
 
 - Lists may be defined using either:
   - `=` with square brackets:
@@ -734,7 +735,7 @@ key:           // NULL
     ```
 - A trailing comma is allowed within `[ ]`, but a line must not start with a comma.
 
-### 17.6 Strings Concatenation
+### 16.6 Strings Concatenation
 
 - Strings can be concatenated using the `+` operator:
     ```yini
@@ -744,7 +745,7 @@ key:           // NULL
 - Concatenating different types of strings (e.g., raw + classic) is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
 - Escape sequences (e.g., `\n`) are only interpreted in C-strings.
 
-### 17.7 String Literal Types
+### 16.7 String Literal Types
 
 - Default string type is **raw**: no escape sequences, backslash is literal.
 - C-Strings (`c"..."`) should interpret escape sequences.
@@ -753,14 +754,14 @@ key:           // NULL
   - Collapse sequences of whitespace and newlines into a single space.
   - Trim leading/trailing whitespace.
 
-### 17.8 Comments
+### 16.8 Comments
 
 - Support both:
   - `//` for single-line comments (rest of the line ignored).
   - `/* ... */` for multi-line comments (may span lines).
   - **Nested block comments are not supported.**
 
-### 17.9 Error Handling Recommendations
+### 16.9 Error Handling Recommendations
 
 If the parser encounters:
   - A missing section level (e.g., level 3 without level 2),
@@ -771,19 +772,19 @@ It should:
 - **Fail gracefully** and report an error, OR
 - **Use host-defined fallback logic**, if robustness is preferred.
 
-### 17.10 Bonus Tips for Implementation
+### 16.10 Bonus Tips for Implementation
 
 - Add position info for each token/value in case of errors.
 - Normalize all booleans and nulls internally.
 - Consider strict and lenient modes in the parser (e.g. allow trailing commas or not).
 - (?) Optionally log ignored lines (e.g., with --) for debugging.
 
-## 18. Versioning
+## 17. Versioning
 
 ### Backward Compatibility
 This version of the specification is considered **Alpha/Beta**, and as such, future versions may introduce changes that are not backward-compatible. Implementers should be aware that the format is still evolving, and features or syntax may change without deprecation.
 
-## 19. Author(s)
+## 18. Author(s)
 Author: Marko K. Seppänen, Gotherburg (Sweden), 2025.
 
 ### Creator
