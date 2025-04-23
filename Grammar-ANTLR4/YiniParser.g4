@@ -9,8 +9,7 @@
 
 /* 
  This grammar aims to follow, as closely as possible,
- the YINI specification v1.0.0 Beta 1 +
- Updates.
+ the YINI specification v1.0.0 Beta 2
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
