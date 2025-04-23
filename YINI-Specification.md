@@ -47,7 +47,7 @@ Recommended filename extension for a YINI file is `.yini`.
 
 A short YINI document looks like the following.
 ```yini
-§ MyPrefs
+# MyPrefs
 
 HomeDir = "C:\Users\John Smith\"
 Buffers = 10
@@ -59,7 +59,7 @@ KeyWords: "Orange", "Banana", "Pear", "Peach"
 
 A `YINI` document file can look like this as well:
 ```yini
-§ window
+# window
 title = 'Sample Window'
 id = 'window_main'
 
@@ -151,13 +151,13 @@ Phrase identifiers are great when you need:
 ## 4. Sections
 A section header introduces a group of related key-value pairs within a YINI file.
 
-The `§` character (U+00A7) is the preferred marker for section headers, clearly indicating the start of a new section.
+The `#` character (U+00A7) is the preferred marker for section headers followed by a space or tab, clearly indicating the start of a new section.
 
 A section’s nesting level is determined by the number of consecutive section marker characters.
 
 **Example:**
 ```yini
-§ ApplicationSettings
+# ApplicationSettings
 ```
 
 Sections act as containers, similar to objects in programming languages, and may include:
@@ -165,12 +165,12 @@ Sections act as containers, similar to objects in programming languages, and may
 - **Key-value pairs** (members),
 - **Nested sub-sections** of a deeper level.
 
-For improved accessibility, an alternative marker is allowed:
+For improved accessibility and clarity (for UNIX users e.g.), an alternative marker is allowed:
 
-`€` (U+20AC): Recommended alternative for environments with limited support for `§`.
+`~` : Recommended alternative instead of `#`.
 **Example:**
 ```yini
-€ ApplicationSettings
+~ ApplicationSettings
 ```
 
 `>` (U+003E): A fallback marker intended for legacy or limited-input systems.
@@ -179,14 +179,14 @@ For improved accessibility, an alternative marker is allowed:
 > ApplicationSettings
 ```
 
-While all three markers are valid, use of the `§` character is encouraged, especially for computer-generated YINI files.
+While all three markers are valid, use of the `#` character is encouraged, especially for computer-generated YINI files.
 
 **Structure and Rules:**
 
 The identifier is the name of the section (leading/trailing whitespace is ignored).
 
 A **section header** must:
-1. Begin with one or more identical section markers (`§`, `€`, or `>`).
+1. Begin with one or more identical section markers (`#`, `~`, or `>`).
 2. There must be no spaces between the section markers.
 3. There must be **at least one space or tab** after the final section marker and before the section identifier.
 4. Section headers must appear on their **own line**.
@@ -199,9 +199,9 @@ A **section header** must:
 
 **Nesting Example:**
 ```yini
-§ System
-§§ Network
-§§§ Advanced
+# System
+## Network
+### Advanced
 ```
 
 In above example:
@@ -211,7 +211,7 @@ In above example:
 
 Sections provide hierarchical organization for clean, readable, and structured configuration files.
 
-**NOTE:** Section headers are declared using prefixed section markers (`§`, `€`, or `>`), not YAML-style `[section]` blocks or JSON-style `{}` objects. Indentation is optional but permitted.
+**NOTE:** Section headers are declared using prefixed section markers (`#`, `~`, or `>`), not YAML-style `[section]` blocks or JSON-style `{}` objects. Indentation is optional but permitted.
 
 ## 5. Top Section Header
 **Every YINI file must begin with at least one level 1 section**, indicated by a single `#` followed by a space/tab and an identifier. Multiple level 1 sections are allowed in a document.
@@ -220,13 +220,13 @@ If there is only one level 1 section, it's often treated as the _"title header"_
 
 **A section:**
 ```yini
-§ Title
+# Title
 ```
 
 **Section:**
 ```yini
 // Identifiers that include spaces can be enclosed in backticks.
-§ `My Configuration`
+# `My Configuration`
 ```
 
 **Structure Rule**
@@ -234,8 +234,8 @@ If there is only one level 1 section, it's often treated as the _"title header"_
 After a level 1 section, the next nested level must be a level 2 section (i.e., `##`), keeping the hierarchy intact.
 
 ```yini
-§ Level1
-§§ Level2
+# Level1
+## Level2
 ```
 
 ### Shebang Support
@@ -249,12 +249,12 @@ Here’s an example of a YINI document with a shebang that could be used in a Un
 ```yini
 #!/usr/bin/env yini
 
-§ Config
+# Config
 key = value
 ```
 
 ## 6. Document Terminator
-A YINI document must always end with a **terminator line**. The **standard and recommended** terminator is:
+A YINI document must always end with a **terminator line**. The **default and recommended** terminator is::
 
 ```yini
 /END
@@ -262,6 +262,13 @@ A YINI document must always end with a **terminator line**. The **standard and r
 
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespace or comments** may appear after the terminator.
+
+Alternatively, a shorter form may be used::
+```
+###
+```
+
+While `###` is valid, `/END` is the standard and should be preferred for clarity in most cases.
 
 ## 7. Values & Native Types
 A `YINI` value MUST be of one of the following 3 groups of native/built-in types:
@@ -586,9 +593,9 @@ Also if value is missing in member, then that member is treated as NULL.
 ## 14. Sections in Sections
 If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
 ```yini
-§ TitleSection
-§§ Section
-§§§ SubSection
+# TitleSection
+## Section
+### SubSection
 ```
 
 ## 15. Conclusion
@@ -606,53 +613,53 @@ Future updates to the specification may expand functionality or improve clarity,
 A full example of a `YINI` document:
 
 ```yini
-§ AppConfig
+# AppConfig
 
-§ General
+# General
 AppName = "YINI Editor"
 Version = 1.0
 IsPortable = YES
 DefaultPaths: "C:\Program Files", "D:\Apps", "E:\Tools"
 MaxRecentFiles = 15
 
-§ UI
+# UI
 Theme = "Dark"
 FontSize = 14
 Languages: "en-US", "fr-FR", "de-DE"
 
-§§ Toolbar
+## Toolbar
 Visible = YES
 Position = "Top"
 
-§§§ ToolButton
+### ToolButton
 Id = "btnNew"
 Label = "New"
 Icon = "icons/new.png"
 OnClick = "NewFile()"
 
-§§§ ToolButton
+### ToolButton
 Id = "btnOpen"
 Label = "Open"
 Icon = "icons/open.png"
 OnClick = "OpenFile()"
 
-§§§ ToolButton
+### ToolButton
 Id = "btnSave"
 Label = "Save"
 Icon = "icons/save.png"
 OnClick = "SaveFile()"
 
-§§ Sidebar
+## Sidebar
 Visible = NO
 Tabs: "Explorer", "Search", "Extensions"
 
-§ Network
+# Network
 UseProxy = YES
 ProxyAddress = "192.168.0.100"
 ProxyPort = 8080
 TimeoutSeconds = 30
 
-§ Advanced
+# Advanced
 EnableLogs = YES
 LogLevel = "DEBUG"
 IgnoredWarnings: 1001, 1002, 1050, 1100
@@ -661,7 +668,7 @@ IgnoredWarnings: 1001, 1002, 1050, 1100
 ```
 
 Above example includes:
-- Top-level and nested sections via `§`, `§§`, and `§§§`.
+- Top-level and nested sections via `#`, `##`, and `###`.
 - Booleans via `YES` / `NO`.
 - Strings with quotes.
 - Lists via `:` and comma-separated values.
