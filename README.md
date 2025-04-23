@@ -4,7 +4,7 @@
 
 **Status:** Beta Release
 
-**Format Name:** YINI (inspired by INI/YAML)
+**Format Name:** `YINI` (influenced by `INI`, `JSON`, `C`, `Python`)
 
 ## 🧾 Overview
 **Y**et another **INI** markup language - `YINI` **(Yet Another INI)** is a lightweight and human-readable configuration file format designed for both software and developers. It provides a **simple structure and notation** for storing settings, preferences, and configurations using **Key-Value** and **Key-List pairs** grouped into sections. **[More about YINI](<./Docs/YINI-About.md>)**
