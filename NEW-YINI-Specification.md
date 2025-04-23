@@ -11,7 +11,7 @@ Version: v1.0.0 Beta 2 + Updates
 ### 2. File Structure
   * 2.1. File Encoding
   * 2.2. File Extension
-  * 2.3. Optional Shebang (#!)
+  * 2.3. Optional Shebang (`#!`)
   * 2.4. Reserved: Optional Header (@yini) (for Future Use)
 ### 3. Syntax Overview
   * 3.1. General Syntax Rules
@@ -57,6 +57,111 @@ Version: v1.0.0 Beta 2 + Updates
 ### 12. Implementation Notes
 
 ---
+
+## 1. Introduction
+### 1.1. What is YINI?
+**YINI (Yet another INI)** is a lightweight, human-readable configuration file format designed to provide simplicity, flexibility, and clear separation of concerns in configuration data. Its syntax is inspired by widely-used configuration file formats like INI and YAML, but also by JSON, C, and Python. It aims to offer a more consistent and intuitive structure, allowing for easy parsing and editing by both humans and machines.
+
+YINI is primarily targeted at users who require a straightforward format for storing and organizing configuration information, where human readability and ease of use are paramount. YINI is flexible enough to handle various use cases, from simple key-value pairs to more complex data structures, making it a suitable choice for a variety of applications ranging from web development to system configuration.
+
+### 1.2. Purpose and Design Goals
+The YINI format was created with the following key design goals in mind:
+
+- **Simplicity:** YINI is designed to be as simple and intuitive as possible. The syntax is minimalistic yet expressive, with clear conventions for defining sections, keys, and values.
+
+- **Human Readability:** One of the core principles of YINI is its focus on human readability. The format prioritizes clarity in its structure and aims to minimize complexity, ensuring that configuration files remain easy to read, write, and modify.
+
+- **Flexibility:** While simple, YINI is designed to accommodate a variety of data structures, including primitive values (strings, numbers, booleans, nulls) and more complex ones like lists and nested sections.
+ 
+- **Compatibility:** YINI is meant to be compatible with a variety of tools and libraries, ensuring that it can be easily integrated into different programming languages and ecosystems.
+     
+The following is WIP:
+> It also allows for optional extensions, enabling future enhancements without breaking backward compatibility.
+
+- **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
+
+### 1.3. Key Features
+- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers can be marked with a variety of symbols (e.g., `#`, `~`, `>`), depending on user preference.
+
+- **Clear End of Document:** YINI supports clear document terminator markers (`/END` or `###`).
+
+- **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
+
+- **Commenting and Documentation:** YINI allows for inline comments, enabling users to document their configuration files directly. This enhances the human-readable nature of the format and makes it easier for teams to collaborate on configuration management.
+
+- **Multi-line and Nested Data:** The format supports multi-line strings and nested sections, providing the ability to express more complex configurations while maintaining readability.
+
+## 2. File Structure
+The structure of a YINI file is designed to be simple, clear, and highly readable. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
+
+### 2.1. File Encoding
+YINI files must be encoded in **UTF-8**. This encoding ensures compatibility with most systems and applications, providing a consistent method for interpreting characters.
+
+- **Mandatory Encoding:** All YINI files should be encoded using UTF-8 without a Byte Order Mark (BOM). This guarantees that the file content is universally readable across different platforms.
+
+- **Character Set:** Only Unicode characters are allowed. Special or non-printable characters, such as control characters (except spaces, tabs, and newlines are allowed), should not be used unless specifically required for escape sequences.
+
+### 2.2. File Extension
+YINI files should use the `.yini` file extension. This extension helps clearly identify the file type and ensures proper handling by tools and parsers designed for the YINI format.
+
+### 2.3. Optional Shebang (`#!`)
+YINI files may optionally begin with a **shebang** (`#!`) line, particularly when the file is used in a script or executable context. This line tells the system what interpreter or application should process the YINI file.
+
+- **Shebang Format:** The shebang line should appear as the very first line in the file, with no leading whitespace. For example:
+
+```txt
+#!/usr/bin/env yini-parser
+```
+
+- **Optional Usage:** Including a shebang is entirely optional.
+
+## 3. Syntax Overview
+The syntax of YINI is designed to be minimalistic and human-readable while offering enough flexibility for structured data representation. This section provides an overview of the key syntax rules for YINI files.
+
+### 3.1. General Syntax Rules
+YINI files consist of a series of sections and members (key-value pairs), and optional comments. The following general rules govern the structure of a YINI file:
+
+**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs does not contribute to the logical structure in any way, except a tab or space in important in section headers. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
+
+**Keys and Values (members):** The basic unit of YINI is a key-value pair, called a Member. A key and its associated value are separated by an equal sign (=), Before or after the =, any number of spaces or tabs can be used.
+
+**Example:**
+```yini
+key = value
+```
+
+**Sections:** YINI files support sections, which group related key-value pairs (members). Sections are denoted by a header, which typically starts with one of the allowed markers (`#` or `>`).
+
+**Example of a section:**
+```yini
+# SectionName
+key = value
+```
+
+**Comments:** YINI allows signle line comments, which start with the `//` symbol (note: `#` does denote sections). And multi line comments `/* */`. These comments are ignored by parsers and are purely for human readability.
+
+**Example:**
+```yini
+// This is a comment
+key = value
+```
+
+### 3.2. Whitespace and Indentation
+YINI files do not require strict indentation, but consistent use of whitespace helps ensure readability. However, the following considerations must be kept in mind:
+
+- Newlines `<NL>` can be either `<LF>` (0x0A) or `<CR><LF>` (0x0D 0x0A).
+- All tabs `<TAB>` (0x09) and blank spaces `<SPACE>` (0x20) are ignored.
+
+### 3.3. Comments
+YINI supports comments, they may be generally placed anywhere in the file. They are ignored during parsing and serve only to provide context or explanations for human readers.
+
+- **Single Line Comments:** Line comments start with a double slash `//`. Everything after `//` to the end of the line `<NL>` is ignored.
+- **Multi Line (Block Comments):** Multi line comments start with `/*` and ends with `*/`. Multi line comments can span over multiple lines.
+
+### 3.4 Ignore / Disable Line
+--This space is reserved--<br/>
+--Ignore / Disable Line: This may or may not be implemented in the future.--
+>- Ignore/disable line start with a double minus `--` as first characters in a line. Everything (including comments) after `--` to the end of the line `<NL>` shall be ignored (by the engine).
 
 ## 12. Implementation Notes
 
