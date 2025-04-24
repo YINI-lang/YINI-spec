@@ -1,75 +1,109 @@
-# Specification for YINI formal grammar
-Version: v1.0.0 Beta 2 + Updates
+# Specification for YINI Formal Grammar  
+**Version:** v1.0.0 Beta 2 + Updates
 
-> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 9.2. Versioning).
+> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 13.2. Versioning Strategy).
+
+---
 
 ## Table of Contents
 
-## Part I – Introduction and Fundamentals
-### 1. Introduction
-  * 1.1. What is YINI?
-  * 1.2. Purpose and Design Goals
-  * 1.3. Key Features
-### 2. File Structure
-  * 2.1. File Encoding
-  * 2.2. File Extension
-  * 2.3. Optional Shebang (`#!`)
-  * 2.4. Reserved: Optional Header (@yini) (for Future Use)
-### 3. Syntax Overview
-  * 3.1. Terminology
-  * 3.2. General Syntax Rules
-  * 3.3. Whitespace and Indentation
-  * 3.4. Comments
-  * 3.5. Identifiers
-  * 3.6. Reserved: Ignore / Disable Line  (for Future Use)
-  
-## Part II – Syntax and Structure
-### 4. Keys and Values
-  * 4.1. Key Naming Rules
-  * 4.2. Value Types (Simple, Compound, Special)
-### 5. Section Headers
-  * 5.1. Syntax
-  * 5.2. Allowed Markers (`#`, `~`, `>`)
-  * 5.3. Sections in Sections (Nested Sections)
-### 6. String Literals
-  * 6.1. Raw Strings (R-Strings)
-  * 6.2. Hyper Strings (H-Strings)
-  * 6.3. Classic Strings (C-Strings)
-    - 6.3.1. Escape Characters
-  * 6.4. Triple-Quoted Strings
-  * 6.5. String Concatenation
-  * 6.6. String Type Mixing
-### 7. Number Literals
-  * 7.1. Numbers
-  * 7.2. Exponent Format
-  * 7.3. Number Formats
-### 8. Booleans and Null Literals
-  * 8.1. Booleans
-  * 8.2. Null Literal
-### 9. List Literals
-  * 9.1. Lists Notation (Bracketed with `=`)
-  * 9.2. Alternative List Notation (`:` without Brackets)
-### 10. Advanced Constructs
-  * 10.1. Reserved: Anchors, Includes, Multiline (for Future Use)
-  
-## Part III – Semantics and Validation
-### 11. Validation Rules
-  * 11.1. Reserved Characters and Keywords
-  * 11.2. Well-formedness
-### 12. Implementation Notes
+---
 
-## Part IV – Practical Usage
-### 13. Compatibility
-  * 13.1. Fallback Rules
-  * 13.2. Versioning
-  * 13.3. Encoding Notes
-### 14. Examples
-  * 14.1. Minimal Example
-  * 14.2. Realistic Config Use Cases
-### 15. Appendices
-  * 15.1. License
-  * 15.2. Reserved: Changelog
-  * 15.3. Reserved: Grammar
+### **Part I – Introduction and Fundamentals**
+
+**1. Introduction**  
+&nbsp;&nbsp;&nbsp;&nbsp;1.1. What is YINI?  
+&nbsp;&nbsp;&nbsp;&nbsp;1.2. Purpose and Design Goals  
+&nbsp;&nbsp;&nbsp;&nbsp;1.3. Key Features
+
+**2. File Structure**  
+&nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
+&nbsp;&nbsp;&nbsp;&nbsp;2.2. File Extension  
+&nbsp;&nbsp;&nbsp;&nbsp;2.3. Optional Shebang (`#!`)  
+&nbsp;&nbsp;&nbsp;&nbsp;2.4. Reserved: Optional Header (`@yini`) *(for future use)*
+
+**3. Syntax Overview**  
+&nbsp;&nbsp;&nbsp;&nbsp;3.1. General Syntax Rules  
+&nbsp;&nbsp;&nbsp;&nbsp;3.2. Whitespace and Indentation  
+&nbsp;&nbsp;&nbsp;&nbsp;3.3. Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;3.4. Identifiers  
+&nbsp;&nbsp;&nbsp;&nbsp;3.5. Reserved: Ignore / Disable Line *(for future use)*
+
+---
+
+### **Part II – Grammar and Literals**
+
+**4. Keys and Values**  
+&nbsp;&nbsp;&nbsp;&nbsp;4.1. Key Naming Rules  
+&nbsp;&nbsp;&nbsp;&nbsp;4.2. Value Types (Simple, Compound, Special)
+
+**5. Section Headers**  
+&nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
+&nbsp;&nbsp;&nbsp;&nbsp;5.2. Allowed Markers (`#`, `~`, `>`)  
+&nbsp;&nbsp;&nbsp;&nbsp;5.3. Sections in Sections (Nested Sections)
+
+**6. String Literals**  
+&nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
+&nbsp;&nbsp;&nbsp;&nbsp;6.2. Hyper Strings (H-Strings)  
+&nbsp;&nbsp;&nbsp;&nbsp;6.3. Classic Strings (C-Strings)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.3.1. Escape Characters  
+&nbsp;&nbsp;&nbsp;&nbsp;6.4. Triple-Quoted Strings  
+&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Type Mixing
+
+**7. Number Literals**  
+&nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
+&nbsp;&nbsp;&nbsp;&nbsp;7.2. Exponent Format  
+&nbsp;&nbsp;&nbsp;&nbsp;7.3. Number Formats
+
+**8. Boolean and Null Literals**  
+&nbsp;&nbsp;&nbsp;&nbsp;8.1. Booleans  
+&nbsp;&nbsp;&nbsp;&nbsp;8.2. Null Literal
+
+**9. List Literals**  
+&nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Notation with `=`  
+&nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based Notation without Brackets (`:`)
+
+**10. Advanced Constructs**  
+&nbsp;&nbsp;&nbsp;&nbsp;10.1. Reserved: Anchors, Includes, Multiline *(for future use)*
+
+---
+
+### **Part III – Validation and Compatibility**
+
+**11. Validation Rules**  
+&nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Characters and Keywords  
+&nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness
+
+**12. Implementation Notes**  
+&nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
+&nbsp;&nbsp;&nbsp;&nbsp;12.2. Line Handling and Whitespace  
+&nbsp;&nbsp;&nbsp;&nbsp;12.3. Value and NULL Handling  
+&nbsp;&nbsp;&nbsp;&nbsp;12.4. Boolean Canonicalization  
+&nbsp;&nbsp;&nbsp;&nbsp;12.5 Lists  
+&nbsp;&nbsp;&nbsp;&nbsp;12.6 Strings Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;12.7 String Literal Types  
+&nbsp;&nbsp;&nbsp;&nbsp;12.8 Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;12.9 Error Handling Recommendations  
+&nbsp;&nbsp;&nbsp;&nbsp;12.10 Bonus Tips for Implementation  
+
+**13. Compatibility and Versioning**  
+&nbsp;&nbsp;&nbsp;&nbsp;13.1. Fallback Rules  
+&nbsp;&nbsp;&nbsp;&nbsp;13.2. Versioning Strategy  
+&nbsp;&nbsp;&nbsp;&nbsp;13.3. Encoding Notes  
+
+---
+
+### **Part IV – Examples and Appendices**
+
+**14. Examples**  
+&nbsp;&nbsp;&nbsp;&nbsp;14.1. Minimal Example  
+&nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases
+
+**15. Appendices and Reserved Areas**  
+&nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
+&nbsp;&nbsp;&nbsp;&nbsp;15.2. Reserved: Changelog  
+&nbsp;&nbsp;&nbsp;&nbsp;15.3. Reserved: Grammar (Formal)
 
 ---
 
@@ -224,7 +258,7 @@ An _**identifier**_ can be one of two forms below:
   `Amanda's Project`
   ```
 
-### 3.5. Ignore / Disable Line
+### 3.5. Reserved: Ignore / Disable Line *(for future use)*
 --This space is reserved--<br/>
 --Ignore / Disable Line: This may or may not be implemented in the future.--
 >- Ignore/Disable Line:
@@ -304,10 +338,7 @@ If you want to put a section under another section, nested sections, make a sect
 ### SubSection
 ```
 
-## 6. Data Types and Literals
-YINI supports a variety of data types for values assigned to keys. These data types are designed to cover common configuration needs while keeping the syntax clear and consistent. This section defines all supported literal types and their syntax.
-
-### 6.1. Strings
+## 6. String Literals
 In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
 YINI supports **four types of string literals**, distinguished by an optional **prefix character** placed before the opening quote (`'` or `"`).
@@ -329,7 +360,7 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 | Classic Strings (C-Strings)| `c' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Supports standard escape sequences
 | Triple-Quoted Strings | `' '` or `" "`   | ✅ Yes | ❌ No | ❌ No | Large multi-line blocks of literal text
 
-#### 6.1.1. Raw Strings (R-Strings)
+### 6.1. Raw Strings (R-Strings)
 In (raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (raw) strings must be on the same line.
 
 Raw strings are particularly suitable for representing file paths and other literal text.
@@ -339,7 +370,7 @@ or
 or
 >myPath = '/Users/kim-lee'
 
-#### 6.1.2. Hyper Strings (H-Strings)
+### 6.2. Hyper Strings (H-Strings)
 There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `c` or `C`.
 
 Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape sequences are not supported).
@@ -363,25 +394,39 @@ Will result in:
 My name is John Doe, and this is a test string.
 ```
 
-#### 6.1.3. Classic Strings (C-Strings)
+### 6.3. Classic Strings (C-Strings)
 Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `c` or `C`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
 Classic strings must start and end on the same line.
 
 >myText = c"This is a newline \n and this is a tab \t character."
 
-Common escape sequences (only in C-Strings):
+#### 6.3.1. Escape Characters
+Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter C. 
+
+**Full List**
+
+**Escape Sequences (lower or uppercase, only in C-Strings):**
 - `\n` for Newline
+- `\r` for Carriage Return
 - `\t` for Tab
+- `\b` for Backspace
+- `\f` for Form Feed
 - `\"` for Double Quote
 - `\'` for Single Quote
 - `\\` for backslash
+- `\/` for normal Slash
+- `\0` for null byte control character
 - `\u hex hex hex hex` Unicode character (4-digit hex)
 - `\x hex hex` Hex byte (2-digit)
 
-For a full list of escape sequences, **see 7.1. Escape Characters**.
+Where hex is 0-9, or a-f, or A-F.
 
-#### 6.1.4. Triple-Quoted Strings
+**Invalid Escapes**
+
+Invalid escape sequences (e.g. `\z`) must result in a parse error unless explicitly allowed by a custom extension or parser configuration.
+
+### 6.4. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines** (i.e., includes newline characters).
@@ -402,7 +447,7 @@ three lines."""
 
 Note: All content between the opening and closing triple quotes is preserved as-is, including whitespace and line breaks.
 
-#### 6.1.5. String Concatenation
+### 6.5. String Concatenation
 Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
 
 **Example:**
@@ -416,12 +461,13 @@ greeting = "Hi, hello there"
 
 Concatenation supports all string types (Raw, Classic, Hyper), though mixing types is generally discouraged (except for special cases (see more in next section)).
 
-#### 6.1.6. String Type Mixing
+### 6.6. String Type Mixing
 Concatenation of string literals of different types (e.g., raw + classic, classic + hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
 
 Engines should handle mixed-type concatenations correctly, but authors are encouraged to use consistent string types within concatenations to ensure clarity and predictable behavior.
 
-### 6.2. Numbers
+## 7. Number Literals
+### 7.1. Numbers
 YINI supports both integer and floating-point literals. Numbers may be signed and written in decimal notation.
 
 - **Integers:** A sequence of digits, optionally prefixed with + or -.
@@ -435,8 +481,7 @@ negative = -12
 scientific = 1.23e4
 ```
 
-### 6.2.1. Exponent Format
-
+### 7.2. Exponent Format
 Exponent notation uses the format:
 ```
 <base>e<sign><exponent>
@@ -452,7 +497,7 @@ Example:
 3e4 // Is same as 3 × 10⁴ = 30000
 ```
 
-### 6.2.2. Number Formats
+### 7.3. Number Formats
 In addition to standard decimal numbers (base-10), YINI supports other number base literals as well.
 
 Note, binary and hexadecimal values also allow **alternative notations** for convenience and readability.
@@ -465,7 +510,9 @@ Note, binary and hexadecimal values also allow **alternative notations** for con
 | `0z2ex9` |   | Duodecimal (dozenal) | 12-base | `x` is 10, `e` is 11
 | `0xf390` | `#f390` | Hexadecimal number | 16-base | `a–f`, `A-F` represent `10–15`
 
-### 6.3. Booleans and Null
+## 8. Boolean and Null Literals
+
+### 8.1. Booleans
 Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 - Treated as **TRUE** (by the engine):
   - `true`
@@ -478,12 +525,17 @@ Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 
 The engine should convert the literal value to the corresponding Boolean value in the host language.
 
-### 6.5. Lists
+### 8.2. Null Literal
+Value/literal `NULL` (NON CASE-SENSITIVE). 
+
+Also if value is missing in member, then that member is treated as NULL.
+
+## 9. List Literals
 YINI supports two ways to define lists:
 - **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
 - **Colon-Based List Notation** - A more human-friendly, optionally multi-line style using `:` and no brackets.
 
-#### 6.5.1. Lists Notation (Bracketed with `=`)
+### 9.1. Bracketed Notation with `=`
 A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
@@ -530,12 +582,8 @@ linkItems = [
 	["stylesheet", "css/themes.css"]
 ]
 ```
-### 6.4. Null Literal
-Value/literal `NULL` (NON CASE-SENSITIVE). 
 
-Also if value is missing in member, then that member is treated as NULL.
-
-#### 6.5.2. Alternative List Notation (`:` without Brackets)
+### 9.2. Colon-Based Notation without Brackets (`:`)
 This notation offers a more readable syntax using a colon `:` instead of `=`, and omits square brackets entirely.
 
 ```yini
@@ -579,45 +627,23 @@ linkItems:
 	["stylesheet", "css/themes.css"]
 ```
 
-### 6.5. Reserved: Multiline Support (Future or Conditional Implementation)
+## 10. Advanced Constructs
+### 10.1. Reserved: Anchors, Includes, Multiline *(for future use)*
+Note: These features are reserved for potential future versions and are currently part of this version of YINI.
 
-### 7. Special Syntax
-#### 7.1. Escape Characters
-Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter C. 
-
-**Full List**
-
-**Escape Sequences (lower or uppercase, only in C-Strings):**
-- `\n` for Newline
-- `\r` for Carriage Return
-- `\t` for Tab
-- `\b` for Backspace
-- `\f` for Form Feed
-- `\"` for Double Quote
-- `\'` for Single Quote
-- `\\` for backslash
-- `\/` for normal Slash
-- `\0` for null byte control character
-- `\u hex hex hex hex` Unicode character (4-digit hex)
-- `\x hex hex` Hex byte (2-digit)
-
-Where hex is 0-9, or a-f, or A-F.
-
-**Invalid Escapes**
-
-Invalid escape sequences (e.g. `\z`) must result in a parse error unless explicitly allowed by a custom extension or parser configuration.
-
-#### 7.2. Reserved: Anchors, or Includes (for Future Use)
-This feature is marked as optional and may be implemented in future YINI versions. 
 - Future version may support:
   - **Anchors (`&`) and `use`:** YINI may support a mechanism similar to YAML for defining anchors and aliases to reuse values or structures. An anchor assigns a name to a key or section, and keyword `use` reference it.
   - **Includes (`@include`):** To modularize configurations, YINI may support a directive to include external files. The @include keyword followed by a file path string is a proposed mechanism.
+
+## 11. Validation Rules
+### 11.1. Reserved Characters and Keywords
+### 11.2. Well-Formedness
 
 ## 12. Implementation Notes
 
 The following notes are intended to support developers building engines and parsers for YINI, ensuring consistent and unambiguous interpretation across different host systems.
 
-See also **8.2. Well-formedness**.
+See also **11.2. Well-formedness**.
 
 ### 12.1. Top-Level Sections and Implicit Root
 
@@ -633,7 +659,7 @@ See also **8.2. Well-formedness**.
 * Whitespace between values in lists is allowed, including newlines.
 * **A line cannot begin with a comma**, even if it's inside a list.
 
-### Value and NULL Handling
+### 12.3. Value and NULL Handling
 
 * If a member has **no value**, it must be treated as `NULL`.
 ```yini
@@ -714,5 +740,5 @@ It should:
 
 * Add position info for each token/value in case of errors.
 * Normalize all booleans and nulls internally.
-* Consider strict and lenient modes in the parser (e.g. allow trailing commas or not).
+* Consider strict and lazy/lenient modes in the parser (e.g. allow trailing commas or not).
 * (?) Optionally log ignored lines (e.g., with --) for debugging.
