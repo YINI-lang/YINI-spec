@@ -42,18 +42,6 @@ In the beginning, `YINI` was known by its working name `MINI`, which later evolv
 | YINI-spec v1.0.0 Alpha 2 | 2024 Oct       | Pre-Beta
 | YINI-spec v1.0.0 Alpha   | 2024 Oct       | Initial release
 
-## Changes
-v1.0.0 Beta 2 + Updates
-- None yet
-v1.0.0 Beta 2:
-- Added (new) support for triple-quoted strings (`"""`).
-- Fixed support for alternative hexadecimal literals using `#`.
-- Fixed support for binary literals using `%`.
-- Reintroduced support for the alternative terminal marker `###`.
-- Clarfied list in section 7. (Values & Native Types).
-- Added section 1.1 with YINI Syntax, to clarfy.
-- Added section 2.2 with Items & Elements in Lists, to clarfy.
-
 ---
 
 ## License

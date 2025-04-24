@@ -70,7 +70,7 @@
 
 ---
 
-### **Part III – Validation and Compatibility**
+### **Part III – Validation, Implementation & Compatibility**
 
 **11. Validation Rules**  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Characters and Keywords  
@@ -104,8 +104,9 @@
 
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
-&nbsp;&nbsp;&nbsp;&nbsp;15.2. Reserved: Changelog  
-&nbsp;&nbsp;&nbsp;&nbsp;15.3. Reserved: Grammar (Formal)
+&nbsp;&nbsp;&nbsp;&nbsp;15.2. Author(s)  
+&nbsp;&nbsp;&nbsp;&nbsp;15.3. Changelog  
+&nbsp;&nbsp;&nbsp;&nbsp;15.4. Reserved: Grammar (Formal)
 
 ---
 
@@ -260,7 +261,7 @@ An _**identifier**_ can be one of two forms below:
   `Amanda's Project`
   ```
 ### 3.5 Document Terminator
-A YINI document must always end with a **terminator line**. The **default and recommended** terminator is::
+A YINI document must always end with a **terminator line**. The document terminator in a YINI file denotes the definitive end of the document content. The **default and recommended** terminator is:
 
 ```yini
 /END
@@ -269,7 +270,9 @@ A YINI document must always end with a **terminator line**. The **default and re
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespace or comments** may appear after the terminator.
 
-Alternatively, a shorter form may be used::
+It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comment after the marker, these whould be ignored.
+
+Alternatively, a shorter form may be used:
 ```
 ###
 ```
@@ -637,7 +640,7 @@ Each item can optionally be placed on its own line for readability. Commas are r
 A multi-line list (using `:`) ends when **any of the following** is encountered:
 - a new key assignment (`key = ...` or `key: ...`)
 - a new section header (simple or phrased)
-- a terminal marker (`/END`)
+- a document terminator marker (`/END`)
 
 **Nested Lists with `:` Notation**
 
@@ -707,7 +710,26 @@ A well-formed YINI file conforms to the syntax rules described in earlier sectio
 - Boolean values must be case-insensitive (`True` / `False`, `On` / `Off`, `Yes` / `No`).
 - Null literal is case-insensitive (`null`, `NULL`, `Null` are all `null`).
 
-#### 11.2.5. Escaping and Quotes
+#### 11.2.5. Document Terminator
+- Valid document terminator markers are any given in section **3.5. Document Terminator**.
+- A valid YINI document must end with a valid document terminator marker (`/END`, `###`).
+- There may only exist on single document terminator marker (`/END`, `###`) per YINI document.
+- If a terminator marker is missing in a YINI document, the parser should at least issue a Warning, if in `strict`-mode then this is considered an Error, and the parsing halted.
+- After the terminator marker, only tabs, spaces, newlines, and comments are allowed.
+
+##### Termination Requirement
+The requirement to include the document terminator is determined by the selected parsing mode:
+| Mode | Terminator Requirement |
+|---|---|
+| Strict | Required |
+| Lazy/Lenient | Optional (*) |
+
+*) In environments or systems where document integrity and clarity are paramount, the terminator should be used even in lenient mode to signal intentional end-of-file.
+
+##### Rationale
+The document terminator improves parser robustness, ensures predictable document structure, and simplifies error detection in multi-file processing contexts.
+
+#### 11.2.6. Escaping and Quotes
 - Escape sequences must be valid and are **only supported in Classic strings** (strings quoted in (`'` or `"`) prefixed with `C` or `c`).
 - Triple-quoted strings must open and close with three matching double quote characters (only `"""`).
 
@@ -874,6 +896,40 @@ enabled = true
 **Explanation:**
   - Begins with a single section `# Prefs`.
   - Three member keys (name, entries, enabled) with string, number, and boolean values.
-  - Ends with the document terminal line `/END`.
+  - Ends with the document terminator line `/END`.
 
 ### 14.2. Realistic Config Use Cases
+--TODO
+
+## 15. Appendices and Reserved Areas
+### 15.1. License
+Apache License, Version 2.0, January 2004,
+http://www.apache.org/licenses/
+Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
+Finland).
+
+### 15.2. Author(s)
+This specification is created and maintained by Marko K. Seppänen.
+
+#### Creator
+First created in 2024 Gothenburg, by Marko K. Seppänen (Sweden via Finland).
+
+Mr. Seppänen has been programming since the mid-80s, working in languages like Basic, C, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages, at Chalmers University of Technology. Professionally, he has worked many years in software development across PHP, TypeScript, and full-stack web development.
+
+### 15.3. Changelog
+A running log of changes and updates to the YINI specification.
+
+v1.0.0 Beta 2 + Updates
+- None yet
+
+v1.0.0 Beta 2, 2025-04-23
+- Added (new) support for triple-quoted strings (`"""`).
+- Fixed support for alternative hexadecimal literals using `#`.
+- Fixed support for binary literals using `%`.
+- Reintroduced support for the alternative terminator marker `###`.
+- Clarfied lists in section (Values & Native Types).
+- Added section with YINI Syntax, to clarfy.
+- Added section with Items & Elements in Lists, to clarfy.
+
+---
+/END
