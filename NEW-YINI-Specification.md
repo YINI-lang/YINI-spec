@@ -4,21 +4,26 @@ Version: v1.0.0 Beta 2 + Updates
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 9.2. Versioning).
 
 ## Table of Contents
+
+## Part I – Introduction and Fundamentals
 ### 1. Introduction
-  - 1.1. What is YINI?
-  - 1.2. Purpose and Design Goals
-  - 1.3. Key Features
+  * 1.1. What is YINI?
+  * 1.2. Purpose and Design Goals
+  * 1.3. Key Features
 ### 2. File Structure
   * 2.1. File Encoding
   * 2.2. File Extension
   * 2.3. Optional Shebang (`#!`)
   * 2.4. Reserved: Optional Header (@yini) (for Future Use)
 ### 3. Syntax Overview
-  * 3.1. General Syntax Rules
-  * 3.2. Whitespace and Indentation
-  * 3.3. Comments
-  * 3.4. Identifiers
-  * 3.5. Reserved: Ignore / Disable Line  (for Future Use)
+  * 3.1. Terminology
+  * 3.2. General Syntax Rules
+  * 3.3. Whitespace and Indentation
+  * 3.4. Comments
+  * 3.5. Identifiers
+  * 3.6. Reserved: Ignore / Disable Line  (for Future Use)
+  
+## Part II – Syntax and Structure
 ### 4. Keys and Values
   * 4.1. Key Naming Rules
   * 4.2. Value Types (Simple, Compound, Special)
@@ -26,41 +31,45 @@ Version: v1.0.0 Beta 2 + Updates
   * 5.1. Syntax
   * 5.2. Allowed Markers (`#`, `~`, `>`)
   * 5.3. Sections in Sections (Nested Sections)
-### 6. Data Types and Literals
-  * 6.1. Strings
-    - 6.1.1. Raw Strings (R-Strings)
-    - 6.1.2. Hyper Strings (H-Strings)
-    - 6.1.3. Classic Strings (C-Strings)
-    - 6.1.4. Triple-Quoted Strings
-    - 6.1.5. String Concatenation
-    - 6.1.6. String Type Mixing
-  * 6.2. Numbers
-    - 6.2.1. Exponent Format
-    - 6.2.2. Number Formats
-  * 6.3. Booleans
-  * 6.4. Null Literal
-  * 6.5. Lists
-    - 6.5.1. Lists Notation (Bracketed with `=`)
-    - 6.5.2. Alternative List Notation (`:` without Brackets)
-  * 6.5. Reserved: Multiline Support (Future or Conditional Implementation)
-### 7. Special Syntax
-  * 7.1. Escape Characters
-  * 7.2. Reserved: Anchors, or Includes (for Future Use)
-### 8. Validation Rules
-  * 8.1. Reserved Characters and Keywords
-  * 8.2. Well-formedness
-### 9. Compatibility
-  * 9.1. Fallback Rules
-  * 9.2. Versioning
-  * 9.3. Encoding Notes
-### 10. Examples
-  * 10.1. Minimal Example
-  * 10.2. Realistic Config Use Cases
-### 11. Appendices
-  * 11.1. License
-  * 11.2. Reserved: Changelog
-  * 11.3. Reserved: Grammar
+### 6. String Literals
+  * 6.1. Raw Strings (R-Strings)
+  * 6.2. Hyper Strings (H-Strings)
+  * 6.3. Classic Strings (C-Strings)
+    - 6.3.1. Escape Characters
+  * 6.4. Triple-Quoted Strings
+  * 6.5. String Concatenation
+  * 6.6. String Type Mixing
+### 7. Number Literals
+  * 7.1. Numbers
+  * 7.2. Exponent Format
+  * 7.3. Number Formats
+### 8. Booleans and Null Literals
+  * 8.1. Booleans
+  * 8.2. Null Literal
+### 9. List Literals
+  * 9.1. Lists Notation (Bracketed with `=`)
+  * 9.2. Alternative List Notation (`:` without Brackets)
+### 10. Advanced Constructs
+  * 10.1. Reserved: Anchors, Includes, Multiline (for Future Use)
+  
+## Part III – Semantics and Validation
+### 11. Validation Rules
+  * 11.1. Reserved Characters and Keywords
+  * 11.2. Well-formedness
 ### 12. Implementation Notes
+
+## Part IV – Practical Usage
+### 13. Compatibility
+  * 13.1. Fallback Rules
+  * 13.2. Versioning
+  * 13.3. Encoding Notes
+### 14. Examples
+  * 14.1. Minimal Example
+  * 14.2. Realistic Config Use Cases
+### 15. Appendices
+  * 15.1. License
+  * 15.2. Reserved: Changelog
+  * 15.3. Reserved: Grammar
 
 ---
 
@@ -607,6 +616,8 @@ This feature is marked as optional and may be implemented in future YINI version
 ## 12. Implementation Notes
 
 The following notes are intended to support developers building engines and parsers for YINI, ensuring consistent and unambiguous interpretation across different host systems.
+
+See also **8.2. Well-formedness**.
 
 ### 12.1. Top-Level Sections and Implicit Root
 
