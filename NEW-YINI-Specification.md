@@ -897,8 +897,8 @@ Developers are encouraged to implement the following features to improve parser 
 ## 13.2. Versioning Strategy
 **Version Format**
 
-- In futere, the YINI Specification will use _Semantic Versioning_ (`v MAJOR.MINOR.PATCH STAGE`) to indicate format evolution.
-- **`STAGE`:** For the time being the version of the specification is `v1.0.0` until all main features are implemented and tested, and the specification evolves out of `Beta` stage. Next stage efter `Beta` will be denoted `RC` (for _Release Candidate_). Each stage may, and will most likely, be affexed by an incremental number, like `Beta 2`, `Beta 3`, `Beta 4` and so on.
+- In the future, the YINI Specification will adopt _Semantic Versioning_ (`MAJOR.MINOR.PATCH STAGE`) to signal format evolution.
+- **`STAGE`:** For the time being, the specification version remains `v1.0.0` until all primary features are implemented, tested, and the specification exits in the `Beta` stage. The next stage after `Beta` will be denoted `RC` (Release Candidate). Each stage may be appended with an incremental number, such as `Beta 2`, `Beta 3`, `Beta 4`, etc.
 
 Semantic Versioning:
 - **MAJOR:** Incompatible changes.
@@ -916,7 +916,7 @@ Semantic Versioning:
 - If present, parsers must detect and ignore the BOM without failing.
 
 #### 13.3.3 Shebang Line (Optional)
-A shebang line may be used at the very top:
+A shebang line may be used at the very of the file:
 ```
 #!/usr/bin/env yini
 ```
@@ -937,8 +937,8 @@ enabled = true
 
 **Explanation:**
   - Begins with a single section `# Prefs`.
-  - Three member keys (name, entries, enabled) with string, number, and boolean values.
-  - Ends with the document terminator line `/END`.
+  - Contains three keys (`name`, `entries`, `enabled`) with string, number, and boolean values, respectively.
+  - Ends with the document terminator `/END`.
 
 ### 14.2. Realistic Config Use Cases
 --TODO
@@ -947,31 +947,34 @@ enabled = true
 ### 15.1. License
 Apache License, Version 2.0, January 2004,
 http://www.apache.org/licenses/
-Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
+Copyright 2024-2025 Gothenburg, Marko K. Seppänen. (Sweden via
 Finland).
 
 ### 15.2. Author(s)
 This specification is created and maintained by Marko K. Seppänen.
 
 #### Creator
-First created in 2024 Gothenburg, by Marko K. Seppänen (Sweden via Finland).
+First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
-Mr. Seppänen has been programming since the mid-80s, working in languages like Basic, C, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages, at Chalmers University of Technology. Professionally, he has worked many years in software development across PHP, TypeScript, and full-stack web development.
+Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
 
 ### 15.3. Changelog
 A running log of changes and updates to the YINI specification.
 
 v1.0.0 Beta 2 + Updates
-- None yet
+- Reworked and reordered large sections, with an updated Table of Contents.
+- Reworded many sections for clarity.
+- Included the Changelog section (moved from About document).
+- Added new sections "Advanced Constructs", "Validation Rules", "Compatibility and Versioning", "Appendices and Reserved Areas"  to enhance specification completeness.
 
 v1.0.0 Beta 2, 2025-04-23
 - Added (new) support for triple-quoted strings (`"""`).
-- Fixed support for alternative hexadecimal literals using `#`.
-- Fixed support for binary literals using `%`.
+- Added support for alternative hexadecimal literals using `#`.
+- Added support for binary literals using `%`.
 - Reintroduced support for the alternative terminator marker `###`.
-- Clarfied lists in section (Values & Native Types).
-- Added section with YINI Syntax, to clarfy.
-- Added section with Items & Elements in Lists, to clarfy.
+- Clarified list handling in the "Values & Native Types" section.
+- Added a syntax summary section to improve clarity.
+- Added a section detailing items and elements in lists.
 
 ---
 /END
