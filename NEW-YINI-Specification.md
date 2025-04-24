@@ -74,8 +74,8 @@
 
 **11. Validation Rules**  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
-&nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness  
-&nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes (_Optional_)  
+&nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness Requirements  
+&nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes _(Optional Feature)_  
 
 **12. Implementation Notes**  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
@@ -699,64 +699,73 @@ The following keywords are restricted and must not be used as bare identifiers (
 
 Use of these keywords outside their defined roles may result in a parse error.
 
-### 11.2. Well-Formedness
-A well-formed YINI file conforms to the syntax rules described in earlier sections. The following conditions must be met for a file to be considered valid:
+### 11.2. Well-Formedness Requirements
+A YINI file is considered **well-formed** if it adheres to the core syntactic and structural rules defined in this specification.
 
 #### 11.2.1. Structural Requirements
-- The file may consist of zero or more sections.
-- The file must consist of one or more key-value pairs (members).
-- Section headers must use a valid marker (e.g., `#`, `~`, `>`, or another allowed symbol).
-- Between the last section header marker, and the first character of section header name (identifier) there must be at least one space or tab.
-- No duplicate keys may exist within the same section and section level (simple Identifiers are case-sensitive, unless using phrased Identifiers (enclosed in backticks)).
-- Files must not contain malformed lines that cannot be interpreted as a member, section header, cocument terminator, or comment.
+- A file may consist of zero or more **sections**.
+- A file must contain at least one valid key-value pair (member).
+- Section headers must begin with a valid marker (`#`, `~`, `>`).
+- At least one space or tab is required between a section marker and the section name.
+- Duplicate keys **within the same section and depth level** are not allowed.
+  - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
+- Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
 
 #### 11.2.2. Character Encoding
-- Files must be encoded using UTF-8 without BOM.
-  
+Files **must** be encoded in **UTF-8 without BOM**.
+
 #### 11.2.3. Line Endings
-- Allowed line endings: Unix-style `<LF>` or Windows-style `<CR><LF>`.
-- Mixed line endings in a single file are discouraged but not strictly invalid unless implementation forbids them.
+- Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>`line endings.
+- Mixed line endings are discouraged but tolerated in lenient mode.
   
-#### 11.2.4. Valid Values
-- Values must conform to one of the supported data types: String, Number, Boolean, Null, or List.
-- Boolean values must be case-insensitive (`True` / `False`, `On` / `Off`, `Yes` / `No`).
-- Null literal is case-insensitive (`null`, `NULL`, `Null` are all `null`).
+#### 11.2.4. Valid Value Types
+- Values must be one of the supported data types: **String**, **Number**, **Boolean**, **Null**, or **List**.
+- Boolean values are **case-insensitive**: `True`, `On`, `Yes`, etc.
+- Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
 
 #### 11.2.5. Document Terminator
-- Valid document terminator markers are any given in section **3.5. Document Terminator**.
-- A valid YINI document must end with a valid document terminator marker (`/END`, `###`).
-- There may only exist on single document terminator marker (`/END`, `###`) per YINI document.
-- If a terminator marker is missing in a YINI document, the parser should at least issue a Warning, if in `strict`-mode then this is considered an Error, and the parsing halted.
-- After the terminator marker, only tabs, spaces, newlines, and comments are allowed.
+- See [Section 3.5: Document Terminator] for terminator syntax.
+- A valid YINI file must end with a terminator (`/END`, `###`).
+- Only one terminator is permitted per file.
+- Missing terminators:
+  - **Strict mode:** Error.
+  - **Lazy/Lenient mode:** Warning.
+- After the terminator, only whitespaces and comments are allowed.
 
-##### Termination Requirement
-The requirement to include the document terminator is determined by the selected parsing mode:
+##### Table: Terminator Requirement by Mode
 | Mode | Terminator Requirement |
 |---|---|
-| Strict | Required |
+| Strict | Yes (mandatory) |
 | Lazy/Lenient | Optional (*) |
 
-*) In environments or systems where document integrity and clarity are paramount, the terminator should be used even in lenient mode to signal intentional end-of-file.
+(*) In systems that value deterministic parsing, even lazy/lenient mode should favor explicit termination.
 
 ##### Rationale
-The document terminator improves parser robustness, ensures predictable document structure, and simplifies error detection in multi-file processing contexts.
+The document terminator ensures robust parsing boundaries, improves multi-file safety, and aids debugging.
 
-#### 11.2.6. Escaping and Quotes
-- Escape sequences must be valid and are **only supported in Classic strings** (strings quoted in (`'` or `"`) prefixed with `C` or `c`).
-- Triple-quoted strings must open and close with three matching double quote characters (only `"""`).
+#### 11.2.6. Escaping and String Literals
+- Escape sequences are **ONLY allowed** in classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
+- Triple-quoted strings must use `"""` for both opening and closing (`'''` is not supported).
 
-### 11.3. Strict vs. Lenient Modes (_Optional_)
-Some YINI implementations (YINI parser/readers) may support multiple validation modes:
-- Strict Mode: Enforces all well-formedness and reserved keyword restrictions, and no trailing commas in lists. Suitable for formal tools, compilers, or production configs.
-- Lazy/Lenient Mode: Ignores certain issues like duplicate keys, allows mixed line endings, and may permit unescaped values. And allows trailing commas in lists. Useful for prototyping or user-editable config files.
+### 11.3. Strict vs. Lenient Modes _(Optional Feature)_
+Some YINI parsers may support multiple **validation modes**:
 
-Implementations must clearly document which mode is used and what rules are relaxed in lenient mode.
+- **Strict Mode:**
+  - Enforces full well-formedness.
+  - Disallows trailing commas.
+  - For production and tool-chain use.
+- **Lazy/Lenient Mode:** 
+  - Permissive with minor errors (e.g., trailing commas, mixed line endings).
+  - May allow unescaped bare values or relaxed typing.
+  - Useful for hand-edited config files.
+
+**Note:** Implementations must clearly document the validation mode in use and detail which rules are relaxed under lenient parsing.
  
 ## 12. Implementation Notes
 
 The following notes are intended to support developers building engines and parsers for YINI, ensuring consistent and unambiguous interpretation across different host systems.
 
-See also **11.2. Well-formedness**.
+See also **11.2. Well-Formedness Requirements**.
 
 ### 12.1. Top-Level Sections and Implicit Root
 
