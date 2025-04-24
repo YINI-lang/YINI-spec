@@ -763,32 +763,42 @@ Some YINI parsers may support multiple **validation modes**:
  
 ## 12. Implementation Notes
 
-The following notes are intended to support developers building engines and parsers for YINI, ensuring consistent and unambiguous interpretation across different host systems.
+The following guidance is intended to assist developers implementing YINI parsers, engines, or tools. These notes aim to promote consistent interpretation of YINI syntax across different platforms and environments.
 
-See also **11.2. Well-Formedness Requirements**.
+See also [Section 11.2: Well-Formedness Requirements] for formal validation criteria.
 
 ### 12.1. Top-Level Sections and Implicit Root
 
-* If a document contains multiple level-1 sections (i.e., multiple `§ Section` blocks), these should be **treated as children of an implicit root object**.
-* This implicit root should not have a name (or may be named `root` or similar, as determined by the host system).
-* Do not skip section levels when parsing nested sections * level-3 sections must follow level-2.
+* If a document contains **multiple top-level sections** (i.e., multiple level-1 sections), they must be considered **children of an implicit root**.
+* The implicit root section:
+  - **Has no name**, or may be labeled "`root`" or similar (implementation-defined).
+* Section hierarchy must be respected:
+  - A level-3 section **must follow** a level-2 section.
+  - Skipping levels (e.g., directly from level-1 to level-3) is invalid.
 
 ### 12.2. Line Handling and Whitespace
 
-* Newlines (`<NL>`) may be either LF (`0x0A`) or CRLF (`0x0D 0x0A`). Normalize them internally.
-* Ignore leading and trailing whitespace on section headers and keys.
-* Allow comments (`//` or `/* */`) after members or values.
-* Whitespace between values in lists is allowed, including newlines.
-* **A line cannot begin with a comma**, even if it's inside a list.
+* Newline normalization is required:
+  * Support both LF (`0x0A`) and CRLF (`0x0D 0x0A`).
+* Leading/trailing whitespaces (tabs or spaces):
+  * Trim from section headers and keys.
+* Hyper Strings (H-Strings):
+  * Leading/trailing whitespaces (tabs or spaces) and newlines are trimmed.
+  * Inside a H-string, whitespaces (tabs or spaces) and newlines are normalized to one signle space character.
+* Comments may follow key-value members or appear on separate lines.
+* Whitespace is permitted within lists, including across lines.
 
 ### 12.3. Value and NULL Handling
 
-* If a member has **no value**, it must be treated as `NULL`.
-```yini
-key =          // NULL
-key:           // NULL
-```
-* If a key appears **more than once in the same section**, this is an **error** (keys must be unique).
+* If a key is assigned without a value::
+  ```yini
+  key =          // NULL
+  key:           // NULL
+  ```
+  it must be interpreted as having a value of `null`.
+* Key uniqueness:
+  - Keys must be **unique within the same section and section level**.
+  - Duplicates in the same section are a **parse error**.
 
 ### 12.4. Boolean Canonicalization
 
@@ -800,12 +810,14 @@ key:           // NULL
 
 ### 12.5 Lists
 
-* Lists may be defined using either:
-  * `=` with square brackets:
+* Two syntaxes are valid for lists:
+  - **(a) Bracketed form (preferred):**
     ```yini
     items = ["a", "b", "c"]
     ```
-  * `:` with comma-separated items:
+      * A bracketed list line must not begin with a comma.
+      * A trailing comma in `[ ]` is treated as a `null` value.
+  - **(b) Unbracketed multiline:**
     ```yini
     items1: "a", "b", "c"
 
@@ -814,12 +826,13 @@ key:           // NULL
     "b",
     "c"
     ```
-* **Bracketed lists must not** have a newline between `=` and `[`.
-    ```yini
-    invalidList = // This is treated as NULL!
-    [1, 2, 3]  // Not a list.
-    ```
-* A trailing comma is allowed within `[ ]`, but a line must not start with a comma.
+    * Trailing commas are allowed in unbracketed lists (form b).
+
+**Bracketed lists must not** have a newline between `=` and the opening bracket `[`:
+  ```yini
+  invalidList = // NULL!
+  [1, 2, 3]     // Not parsed as a list!
+  ```
 
 ### 12.6 Strings Concatenation
 
@@ -827,43 +840,51 @@ key:           // NULL
     ```yini
     name = "Hello, " + "world"
     ```
-* Whitespace between parts is optional, but the whole expression must be on a single line.
-* Concatenating different types of strings (e.g., raw + classic) is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
-* Escape sequences (e.g., `\n`) are only interpreted in C-strings.
+* Concatenation must occur **on a single line**.
+* Concatenating different types of strings (e.g., r"..." + c'...') is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
+* Only Hyper strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
 
 ### 12.7 String Literal Types
 
-* Default string type is **raw**: no escape sequences, backslash is literal.
-* C-Strings (`c"..."`) should interpret escape sequences.
-* H-Strings (`h"..."`) must:
+| Type           | Prefix           | Example    | Behavior |
+|----------------|------------------|------------|----------|
+| (Raw) String   | None, `R`, or `r`| "Some text"| Text is as-is, no escaping; backslash is literal|
+| Classic-String | `C` or `c`       | `C"..."`   | Escape sequences are interpreted|
+| Hyper-String   | `H` or `h`       | `H"..."`   | (*) Multi-line, whitespace-collapsing, trimmed |
+
+(*) Hyper string behavior:
   * Allow multi-line strings.
   * Collapse sequences of whitespace and newlines into a single space.
   * Trim leading/trailing whitespace.
 
 ### 12.8 Comments
 
-* Support both:
-  * `//` for single-line comments (rest of the line ignored).
-  * `/* ... */` for multi-line comments (may span lines).
-  * **Nested block comments are not supported.**
+* YINI supports:
+  - `//` for single-line comments (rest of the line is ignored).
+  - `/* ... */` for multi-line comments (may span lines).
+  - **Nested block comments are not supported.**
 
 ### 12.9 Error Handling Recommendations
 
 If the parser encounters:
-  * A missing section level (e.g., level 3 without level 2),
-  * A duplicate key in the same section,
-  * A malformed list or string,
+  * A **missing intermediate section level** (e.g., level 3 without level 2),
+  * A **duplicate key in the same section and section level**,
+  * A **malformed list or string**
 
 It should:
 * **Fail gracefully** and report an error, OR
 * **Use host-defined fallback logic**, if robustness is preferred.
 
 ### 12.10 Bonus Tips for Implementation
+Developers are encouraged to implement the following features to improve parser robustness and developer experience:
 
-* Add position info for each token/value in case of errors.
-* Normalize all booleans and nulls internally.
-* Consider strict and lazy/lenient modes in the parser (e.g. allow trailing commas or not).
+* Attach **position metadata** (line/column) to tokens for better diagnostics.
+* Normalize internal representations of:
+  - `true` / `false`
+  - `null`
+* Support both `strict` and `lazy`/`lenient` parsing modes.
 * (?) Optionally log ignored lines (e.g., with --) for debugging.
+* Optionally, **log ignored or unknown lines** (e.g., those starting with `--`) to assist debugging or migration.
 
 ## 13.1. Fallback Rules
 ### 13.1.1. Invalid Sections or Keys
