@@ -861,4 +861,19 @@ This line is not interpreted by YINI itself but may affect how the file is proce
 ## 14. Examples
 
 ### 14.1. Minimal Example
+```yini
+# Prefs
+
+name = "Kim"
+entries = 10
+enabled = true
+
+/END
+```
+
+**Explanation:**
+  - Begins with a single section `# Prefs`.
+  - Three member keys (name, entries, enabled) with string, number, and boolean values.
+  - Ends with the document terminal line `/END`.
+
 ### 14.2. Realistic Config Use Cases
