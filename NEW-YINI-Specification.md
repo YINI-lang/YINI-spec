@@ -35,15 +35,20 @@ Version: v1.0.0 Beta 2 + Updates
     - 6.1.5. String Concatenation
     - 6.1.6. String Type Mixing
   * 6.2. Numbers
-  * 6.3. Booleans and Null
-  * 6.4. Lists
+    - 6.2.1. Exponent Format
+    - 6.2.2. Number Formats
+  * 6.3. Booleans
+  * 6.4. Null Literal
+  * 6.5. Lists
+    - 6.5.1. Lists Notation (Bracketed with `=`)
+    - 6.5.2. Alternative List Notation (`:` without Brackets)
   * 6.5. Reserved: Multiline Support (Future or Conditional Implementation)
 ### 7. Special Syntax
-  * 7.1 Reserved: Anchors, or Includes (for Future Use)
-  * 7.2 Escape Characters
+  * 7.1. Escape Characters
+  * 7.2. Reserved: Anchors, or Includes (for Future Use)
 ### 8. Validation Rules
-  * 8.1 Well-formedness
-  * 8.2 Reserved Characters or Keywords
+  * 8.1. Well-formedness
+  * 8.2. Reserved Characters or Keywords
 ### 9. Compatibility
   * 9.1. Fallback Rules
   * 9.2. Versioning
@@ -356,20 +361,16 @@ Classic strings must start and end on the same line.
 
 >myText = c"This is a newline \n and this is a tab \t character."
 
-Escape sequences in C-Strings (in lower or uppercase):
+Common escape sequences (only in C-Strings):
 - `\n` for Newline
-- `\r` for Carriage Return
-- `\b` for Backspace
-- `\f` for Form Feed
 - `\t` for Tab
-- `\'` for Single Quote
 - `\"` for Double Quote
+- `\'` for Single Quote
 - `\\` for backslash
-- `\/` for normal Slash
-- `\0` for null byte control character
-- `\u hex hex hex hex` for hex value
+- `\u hex hex hex hex` Unicode character (4-digit hex)
+- `\x hex hex` Hex byte (2-digit)
 
-Where hex is 0-9, or a-f, or A-F.
+For a full list of escape sequences, **see 7.1. Escape Characters**.
 
 #### 6.1.4. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
@@ -424,7 +425,8 @@ pi = 3.14159
 negative = -12
 scientific = 1.23e4
 ```
-**Exponent Format**
+
+### 6.2.1. Exponent Format
 
 Exponent notation uses the format:
 ```
@@ -441,21 +443,178 @@ Example:
 3e4 // Is same as 3 × 10⁴ = 30000
 ```
 
+### 6.2.2. Number Formats
+In addition to standard decimal numbers (base-10), YINI supports other number base literals as well.
+
+Note, binary and hexadecimal values also allow **alternative notations** for convenience and readability.
+
+| Number Format | Alternative Format | Description | Base | Notes
+|----------|--|---|---|---|
+| `3e4` |   | Exponent notation number | 10-base | Result: `3 × 10⁴`
+| `0b1010` | `%1010` | Binary number | 2-base | `0` and `1` only
+| `0o7477` |   | Octal number | 8-base | Digits from `0` to `7`
+| `0z2ex9` |   | Duodecimal (dozenal) | 12-base | `x` is 10, `e` is 11
+| `0xf390` | `#f390` | Hexadecimal number | 16-base | `a–f`, `A-F` represent `10–15`
+
 ### 6.3. Booleans and Null
-### 6.4. Lists
+Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
+- Treated as **TRUE** (by the engine):
+  - `true`
+  - `yes`
+  - `on`
+- Treated as **FALSE** (by the engine):
+  - `false`
+  - `no`
+  - `off`
+
+The engine should convert the literal value to the corresponding Boolean value in the host language.
+
+### 6.5. Lists
+YINI supports two ways to define lists:
+- **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
+- **Colon-Based List Notation** - A more human-friendly, optionally multi-line style using `:` and no brackets.
+
+#### 6.5.1. Lists Notation (Bracketed with `=`)
+A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
+
+Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
+
+```yini
+list1 = ["value1", "value2", "value3"]
+list2 = [100, 200, 300]
+list3 = []  // An empty list.
+```
+
+For convenience, a trailing comma (`,`) may be optionally be included.
+
+```yini
+// A list with THREE elements.
+list1 = ["a", "b", "c", ]  // Trailing comma is valid.
+
+// A list with FOUR elements.
+list2 = ["a", "b", "c", NULL]
+```
+
+> **Note: ** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
+
+**Syntax Rule**
+
+There must be **no newline** between the `=` and the opening bracket `[`, otherwise the value will be interpreted as `null`.
+
+❌ Invalid:
+```yini
+list =
+["item1", "item2"]  // Not a valid list!
+```
+
+✅ Valid:
+```yini
+list = ["item1", "item2"]
+```
+
+**Nested Lists**
+
+Lists may contain other lists:
+```yini
+linkItems = [
+	["stylesheet", "css/general.css"],
+	["stylesheet", "css/themes.css"]
+]
+```
+### 6.4. Null Literal
+Value/literal `NULL` (NON CASE-SENSITIVE). 
+
+Also if value is missing in member, then that member is treated as NULL.
+
+#### 6.5.2. Alternative List Notation (`:` without Brackets)
+This notation offers a more readable syntax using a colon `:` instead of `=`, and omits square brackets entirely.
+
+```yini
+list1: "oranges", "bananas", "peaches"  // List with three elements.
+
+list2:  // An empty list.
+```
+
+**Multi-line List Syntax:**
+
+Each item (and its comma) may optionally appear on its own line for better readability.
+
+```yini
+list1:
+  "oranges",
+  "bananas",
+  "peaches"
+
+list2:
+  "oranges",
+  "bananas",
+  "peaches",  // Trailing comma is valid here.
+```
+> **Note:** Commas are required between values. A trailing comma is allowed at last line.
+
+Each item can optionally be placed on its own line for readability. Commas are required between values. A trailing comma is allowed.
+
+**Termination Rule**
+
+A multi-line list (using `:`) ends when **any of the following** is encountered:
+- a new key assignment (`key = ...` or `key: ...`)
+- a new section header (simple or phrased)
+- a terminal marker (`/END`)
+
+**Nested Lists with `:` Notation**
+
+Nested lists are supported and may include inner bracketed Lists:
+```yini
+linkItems:
+	["stylesheet", "css/general.css"],
+	["stylesheet", "css/themes.css"]
+```
+
 ### 6.5. Reserved: Multiline Support (Future or Conditional Implementation)
+
+### 7. Special Syntax
+#### 7.1. Escape Characters
+Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter C. 
+
+**Full List**
+
+**Escape Sequences (lower or uppercase, only in C-Strings):**
+- `\n` for Newline
+- `\r` for Carriage Return
+- `\t` for Tab
+- `\b` for Backspace
+- `\f` for Form Feed
+- `\"` for Double Quote
+- `\'` for Single Quote
+- `\\` for backslash
+- `\/` for normal Slash
+- `\0` for null byte control character
+- `\u hex hex hex hex` Unicode character (4-digit hex)
+- `\x hex hex` Hex byte (2-digit)
+
+Where hex is 0-9, or a-f, or A-F.
+
+**Invalid Escapes**
+
+Invalid escape sequences (e.g. `\z`) must result in a parse error unless explicitly allowed by a custom extension or parser configuration.
+
+#### 7.2. Reserved: Anchors, or Includes (for Future Use)
+This feature is marked as optional and may be implemented in future YINI versions. 
+- Future version may support:
+  - **Anchors (`&`) and `use`:** YINI may support a mechanism similar to YAML for defining anchors and aliases to reuse values or structures. An anchor assigns a name to a key or section, and keyword `use` reference it.
+  - **Includes (`@include`):** To modularize configurations, YINI may support a directive to include external files. The @include keyword followed by a file path string is a proposed mechanism.
 
 ## 12. Implementation Notes
 
 The following notes are intended to support developers building engines and parsers for YINI, ensuring consistent and unambiguous interpretation across different host systems.
 
-### 12.1 Top-Level Sections and Implicit Root
+### 12.1. Top-Level Sections and Implicit Root
 
 * If a document contains multiple level-1 sections (i.e., multiple `§ Section` blocks), these should be **treated as children of an implicit root object**.
 * This implicit root should not have a name (or may be named `root` or similar, as determined by the host system).
 * Do not skip section levels when parsing nested sections * level-3 sections must follow level-2.
 
-### 12.2 Line Handling and Whitespace
+### 12.2. Line Handling and Whitespace
 
 * Newlines (`<NL>`) may be either LF (`0x0A`) or CRLF (`0x0D 0x0A`). Normalize them internally.
 * Ignore leading and trailing whitespace on section headers and keys.
@@ -472,7 +631,7 @@ key:           // NULL
 ```
 * If a key appears **more than once in the same section**, this is an **error** (keys must be unique).
 
-### 12.4 Boolean Canonicalization
+### 12.4. Boolean Canonicalization
 
 * Boolean literals are **case-insensitive**.
 * The following values must be interpreted as Booleans:
