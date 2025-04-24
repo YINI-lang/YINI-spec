@@ -47,8 +47,8 @@ Version: v1.0.0 Beta 2 + Updates
   * 7.1. Escape Characters
   * 7.2. Reserved: Anchors, or Includes (for Future Use)
 ### 8. Validation Rules
-  * 8.1. Well-formedness
-  * 8.2. Reserved Characters or Keywords
+  * 8.1. Reserved Characters and Keywords
+  * 8.2. Well-formedness
 ### 9. Compatibility
   * 9.1. Fallback Rules
   * 9.2. Versioning
@@ -57,9 +57,9 @@ Version: v1.0.0 Beta 2 + Updates
   * 10.1. Minimal Example
   * 10.2. Realistic Config Use Cases
 ### 11. Appendices
-  * 11.1. Reserved: Grammar
+  * 11.1. License
   * 11.2. Reserved: Changelog
-  * 11.3. License
+  * 11.3. Reserved: Grammar
 ### 12. Implementation Notes
 
 ---
