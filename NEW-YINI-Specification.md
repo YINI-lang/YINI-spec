@@ -27,7 +27,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;3.2. Whitespace and Indentation  
 &nbsp;&nbsp;&nbsp;&nbsp;3.3. Comments  
 &nbsp;&nbsp;&nbsp;&nbsp;3.4. Identifiers  
-&nbsp;&nbsp;&nbsp;&nbsp;3.5. Reserved: Ignore / Disable Line *(for future use)*
+&nbsp;&nbsp;&nbsp;&nbsp;3.5. Document Terminator  
+&nbsp;&nbsp;&nbsp;&nbsp;3.6. Reserved: Ignore / Disable Line *(for future use)*
 
 ---
 
@@ -73,7 +74,8 @@
 
 **11. Validation Rules**  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Characters and Keywords  
-&nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness
+&nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness  
+&nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes (_Optional_)  
 
 **12. Implementation Notes**  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
@@ -257,8 +259,24 @@ An _**identifier**_ can be one of two forms below:
   `Description of Project`
   `Amanda's Project`
   ```
+### 3.5 Document Terminator
+A YINI document must always end with a **terminator line**. The **default and recommended** terminator is::
 
-### 3.5. Reserved: Ignore / Disable Line *(for future use)*
+```yini
+/END
+```
+
+This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
+Only **whitespace or comments** may appear after the terminator.
+
+Alternatively, a shorter form may be used::
+```
+###
+```
+
+While `###` is valid, `/END` is the standard and should be preferred for clarity in most cases.
+
+### 3.6. Reserved: Ignore / Disable Line *(for future use)*
 --This space is reserved--<br/>
 --Ignore / Disable Line: This may or may not be implemented in the future.--
 >- Ignore/Disable Line:
@@ -325,10 +343,10 @@ YINI allows a limited set of _**section markers**_ to identify section headers. 
 
 Supported markers:
   - `#` (preferred marker, for now)
-  - `~` (alternative marker)
+  - `~` (alternative marker, in case of confusion of using `#`)
   - `>` (for legacy or alternative support)
-  - Reserved: `§` (maybe in future, for enhanced readability)
-  - Reserved: `€` (maybe in future, for enhanced readability)contexts)
+  - Reserved: `§` (exprimental, maybe in future, for enhanced readability)
+  - Reserved: `€` (exprimental, maybe in future, for enhanced readability)
  
 ### 5.3. Sections in Sections (Nested Sections)
 If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
@@ -341,24 +359,24 @@ If you want to put a section under another section, nested sections, make a sect
 ## 6. String Literals
 In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
-YINI supports **four types of string literals**, distinguished by an optional **prefix character** placed before the opening quote (`'` or `"`).
+YINI supports **four types of string literals**, distinguished by an optional **prefix character** placed before the opening quote (`'` or `"`), triple double quotes `"""` does not support any prefix character.
 
 If no prefix is used, the string is treated as a **raw string literal** by default.
 
-Triple-quoted strings (`"""`) do not support any prefix character. Therefore, the prefix is only applicable to single-line Hyper-strings (`h`), Classic-strings (`c`), and optionally Raw-strings (`r`).
+Triple-quoted strings (`"""`) do not support any prefix character. Therefore, the prefix is only applicable to single-line Hyper-strings (`H`), Classic-strings (`C`), and optionally Raw-strings (`R`).
 
 **Rules and Behavior for Strings:**
-- All string literals **must start and finish on the same line**, except for **H-Strings** (see section 6.1.2.) and **Triple-Quoted Strings** (see section 6.1.4.), which can span multiple lines.
-- Multiple string literals can be **concatenated** to create longer strings (see section 9.5).
+- All string literals **must start and finish on the same line**, except for **H-Strings** (see section 6.2.) and **Triple-Quoted Strings** (see section 6.4.), which can span multiple lines.
+- Multiple string literals can be **concatenated** to create longer strings (see section 6.5).
 
 **Summary**
 
 | String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes
 |---|---|---|---|---|---|
 | Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text
-| Hyper Strings (H-Strings)  | `""" """` | ✅ Yes | ❌ No | ✅ Yes | Whitespace is normalized and trimmed
-| Classic Strings (C-Strings)| `c' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Supports standard escape sequences
-| Triple-Quoted Strings | `' '` or `" "`   | ✅ Yes | ❌ No | ❌ No | Large multi-line blocks of literal text
+| Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Whitespace is normalized and trimmed
+| Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Supports standard escape sequences
+| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Large multi-line blocks of literal text
 
 ### 6.1. Raw Strings (R-Strings)
 In (raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (raw) strings must be on the same line.
@@ -370,8 +388,11 @@ or
 or
 >myPath = '/Users/kim-lee'
 
+#### Raw String Prefix
+Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but prefixing Raw string are not required as strings are Raw as standard.
+
 ### 6.2. Hyper Strings (H-Strings)
-There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `c` or `C`.
+There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `H` or `h`.
 
 Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape sequences are not supported).
 
@@ -395,14 +416,14 @@ My name is John Doe, and this is a test string.
 ```
 
 ### 6.3. Classic Strings (C-Strings)
-Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `c` or `C`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
+Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `C` or `c`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
 Classic strings must start and end on the same line.
 
 >myText = c"This is a newline \n and this is a tab \t character."
 
 #### 6.3.1. Escape Characters
-Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter C. 
+Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter `C` (or `c`). 
 
 **Full List**
 
@@ -636,9 +657,67 @@ Note: These features are reserved for potential future versions and are currentl
   - **Includes (`@include`):** To modularize configurations, YINI may support a directive to include external files. The @include keyword followed by a file path string is a proposed mechanism.
 
 ## 11. Validation Rules
-### 11.1. Reserved Characters and Keywords
-### 11.2. Well-Formedness
+YINI enforces a set of validation rules to ensure the structure and content of files are consistent, unambiguous, and semantically correct. These rules fall into two main categories: **reserved syntax protections** and **well-formedness**. Validation ensures compatibility across implementations and minimizes user errors.
 
+### 11.1. Reserved Characters and Keywords
+Certain characters and keywords are **reserved** by the YINI specification for internal syntax or future use. Using them incorrectly may lead to a parse error or undefined behavior.
+
+#### 11.1.1. Reserved Characters
+The following characters are either syntax-critical or disallowed in certain contexts, except in strings (enclosed in either `'` or `"`), triple-quoted strings (enclosed by `"""`), or inside phrase identifiers (enclosed in backticks ``` ` ```).
+
+| Character	| Context	| Usage |
+|-----------|---------|-------|
+| `=` | Assignment operator | Must separate key from value |
+| `~`, `>` | Section markers | Used at the start of section headers |
+| `#` | Section marker and hex number nonator | Used at start of section header and hex number format |
+| `%` | Binary number nonator | Used to write a binary number format |
+| `//` | Single-line comment | Starts a comment |
+| `/* */` | Block comment delimiters | Surrounds multi-line comments |
+| `@` | Directive/Meta prefix | Reserved for includes or future use |
+| `--` | Line ignore/disabling | Reserved/experimental (see section 3.6.) |
+
+#### 11.1.2. Reserved Keywords
+The following keywords must not be used as bare identifiers (e.g., keys, section names) unless quoted or escaped:
+- `/END` (case-insensitive, see **6. Document Terminator**)
+- `###` (alone on its own line, see **6. Document Terminator**)
+- `@yini`
+- `@ver`, `@version`
+- `@include`, `@anchor`, `@alias`
+
+### 11.2. Well-Formedness
+A well-formed YINI file conforms to the syntax rules described in earlier sections. The following conditions must be met for a file to be considered valid:
+
+#### 11.2.1. Structural Requirements
+- The file may consist of zero or more sections.
+- The file must consist of one or more key-value pairs (members).
+- Section headers must use a valid marker (e.g., `#`, `~`, `>`, or another allowed symbol).
+- Between the last section header marker, and the first character of section header name (identifier) there must be at least one space or tab.
+- No duplicate keys may exist within the same section and section level (simple Identifiers are case-sensitive, unless using phrased Identifiers (enclosed in backticks)).
+- Files must not contain malformed lines that cannot be interpreted as a member, section header, cocument terminator, or comment.
+
+#### 11.2.2. Character Encoding
+- Files must be encoded using UTF-8 without BOM.
+  
+#### 11.2.3. Line Endings
+- Allowed line endings: Unix-style `<LF>` or Windows-style `<CR><LF>`.
+- Mixed line endings in a single file are discouraged but not strictly invalid unless implementation forbids them.
+  
+#### 11.2.4. Valid Values
+- Values must conform to one of the supported data types: String, Number, Boolean, Null, or List.
+- Boolean values must be case-insensitive (`True` / `False`, `On` / `Off`, `Yes` / `No`).
+- Null literal is case-insensitive (`null`, `NULL`, `Null` are all `null`).
+
+#### 11.2.5. Escaping and Quotes
+- Escape sequences must be valid and are **only supported in Classic strings** (strings quoted in (`'` or `"`) prefixed with `C` or `c`).
+- Triple-quoted strings must open and close with three matching double quote characters (only `"""`).
+
+### 11.3. Strict vs. Lenient Modes (_Optional_)
+Some YINI implementations (YINI parser/readers) may support multiple validation modes:
+- Strict Mode: Enforces all well-formedness and reserved keyword restrictions, and no trailing commas in lists. Suitable for formal tools, compilers, or production configs.
+- Lazy/Lenient Mode: Ignores certain issues like duplicate keys, allows mixed line endings, and may permit unescaped values. And allows trailing commas in lists. Useful for prototyping or user-editable config files.
+
+Implementations must clearly document which mode is used and what rules are relaxed in lenient mode.
+ 
 ## 12. Implementation Notes
 
 The following notes are intended to support developers building engines and parsers for YINI, ensuring consistent and unambiguous interpretation across different host systems.
@@ -742,3 +821,44 @@ It should:
 * Normalize all booleans and nulls internally.
 * Consider strict and lazy/lenient modes in the parser (e.g. allow trailing commas or not).
 * (?) Optionally log ignored lines (e.g., with --) for debugging.
+
+## 13.1. Fallback Rules
+### 13.1.1. Invalid Sections or Keys
+- Invalid key names or section headers should be retained as-is but ignored if in leniant mode, or issue a warning or error if in strict mode.
+  
+### 13.1.2. Graceful Degradation
+- Parsers may issue warnings instead of errors when encountering unrecognized features (e.g., unknown directives, anchors, or section markers).
+- Implementations should strive to process known-valid content even if advanced features are not supported.
+
+## 13.2. Versioning Strategy
+**Version Format**
+
+- In futere, the YINI Specification will use _Semantic Versioning_ (`v MAJOR.MINOR.PATCH STAGE`) to indicate format evolution.
+- **`STAGE`:** For the time being the version of the specification is `v1.0.0` until all main features are implemented and tested, and the specification evolves out of `Beta` stage. Next stage efter `Beta` will be denoted `RC` (for _Release Candidate_). Each stage may, and will most likely, be affexed by an incremental number, like `Beta 2`, `Beta 3`, `Beta 4` and so on.
+
+Semantic Versioning:
+- **MAJOR:** Incompatible changes.
+- **MINOR:** Backward-compatible additions.
+- **PATCH:** Backward-compatible fixes.
+
+### 13.3. Encoding Notes  
+#### 13.3.1 Required Encoding
+- **UTF-8 without BOM** is the required and default encoding for YINI files.
+- Parsers must support UTF-8 fully.
+- Use of other encodings (e.g., UTF-16, Latin-1) is discouraged and not guaranteed to be portable.
+
+#### 13.3.2 Byte Order Mark (BOM)
+- A UTF-8 BOM (`0xEF 0xBB 0xBF`) is **not required** and **should be avoided**.
+- If present, parsers must detect and ignore the BOM without failing.
+
+#### 13.3.3 Shebang Line (Optional)
+A shebang line may be used at the very top:
+```
+#!/usr/bin/env yini
+```
+This line is not interpreted by YINI itself but may affect how the file is processed in scriptable contexts. It must be ignored by the YINI parser as a comment or metadata line.
+
+## 14. Examples
+
+### 14.1. Minimal Example
+### 14.2. Realistic Config Use Cases
