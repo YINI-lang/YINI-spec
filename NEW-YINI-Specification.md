@@ -66,14 +66,14 @@
 &nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based Notation without Brackets (`:`)
 
 **10. Advanced Constructs**  
-&nbsp;&nbsp;&nbsp;&nbsp;10.1. Reserved: Anchors, Includes, Multiline *(for future use)*
+&nbsp;&nbsp;&nbsp;&nbsp;10.1. Reserved Features _(For Future Use)_  
 
 ---
 
 ### **Part III – Validation, Implementation & Compatibility**
 
 **11. Validation Rules**  
-&nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Characters and Keywords  
+&nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness  
 &nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes (_Optional_)  
 
@@ -652,40 +652,52 @@ linkItems:
 ```
 
 ## 10. Advanced Constructs
-### 10.1. Reserved: Anchors, Includes, Multiline *(for future use)*
-Note: These features are reserved for potential future versions and are currently part of this version of YINI.
+### 10.1. Reserved Features _(For Future Use)_
+The following features are reserved for potential support in future versions of the YINI specification. They are **not currently active** in this version, but their syntax and keywords **are reserved**.
 
-- Future version may support:
-  - **Anchors (`&`) and `use`:** YINI may support a mechanism similar to YAML for defining anchors and aliases to reuse values or structures. An anchor assigns a name to a key or section, and keyword `use` reference it.
-  - **Includes (`@include`):** To modularize configurations, YINI may support a directive to include external files. The @include keyword followed by a file path string is a proposed mechanism.
+#### 10.1.1. Anchors and Aliases
+YINI may introduce a mechanism similar to YAML’s anchors and aliases. These constructs would allow users to define reusable fragments within a configuration.
+
+  - **Anchors (`@`):** Or some other token, to assign a name to a key, section, or structure.
+  - **Aliases (`use`):** Reference a previously defined anchor using the use keyword.
+
+#### 10.1.2. Includes
+YINI may support modular configuration files via external file inclusion.
+  - **Directive:** `@include "<path/to/file>"`
+  - **Description:** Imports the contents of another YINI file into the current one.
+  - **Usage:** Proposed as a preprocessor-style directive.
+
+These features, while not implemented in this version, are reserved and must not be repurposed by user-defined syntax.
 
 ## 11. Validation Rules
 YINI enforces a set of validation rules to ensure the structure and content of files are consistent, unambiguous, and semantically correct. These rules fall into two main categories: **reserved syntax protections** and **well-formedness**. Validation ensures compatibility across implementations and minimizes user errors.
 
-### 11.1. Reserved Characters and Keywords
+### 11.1. Reserved Syntax
 Certain characters and keywords are **reserved** by the YINI specification for internal syntax or future use. Using them incorrectly may lead to a parse error or undefined behavior.
 
 #### 11.1.1. Reserved Characters
-The following characters are either syntax-critical or disallowed in certain contexts, except in strings (enclosed in either `'` or `"`), triple-quoted strings (enclosed by `"""`), or inside phrase identifiers (enclosed in backticks ``` ` ```).
+The following characters are reserved by the YINI syntax and must not be used improperly outside of their defined contexts. They may appear inside quoted strings or phrase identifiers but are otherwise restricted:
 
-| Character	| Context	| Usage |
-|-----------|---------|-------|
-| `=` | Assignment operator | Must separate key from value |
-| `~`, `>` | Section markers | Used at the start of section headers |
-| `#` | Section marker and hex number nonator | Used at start of section header and hex number format |
-| `%` | Binary number nonator | Used to write a binary number format |
-| `//` | Single-line comment | Starts a comment |
-| `/* */` | Block comment delimiters | Surrounds multi-line comments |
-| `@` | Directive/Meta prefix | Reserved for includes or future use |
-| `--` | Line ignore/disabling | Reserved/experimental (see section 3.6.) |
+| Character	| Usage Context	| Description |
+|-----------|---------------|-------------|
+| `=` | Assignment  | Separates key from value |
+| `~`, `>` | Section headers | Used to denote section start |
+| `#` | Header prefix / hex values | Begins section or hex number |
+| `%` | Binary prefix | Begins binary number |
+| `//` | Comment | Starts single-line comment |
+| `/* */` | Comment | Marks multi-line comment block |
+| `@` | Directive prefix | Reserved for future syntax |
+| `--` | Line disabling | Experimental use (see Section 3.6) |
 
 #### 11.1.2. Reserved Keywords
-The following keywords must not be used as bare identifiers (e.g., keys, section names) unless quoted or escaped:
-- `/END` (case-insensitive, see **6. Document Terminator**)
-- `###` (alone on its own line, see **6. Document Terminator**)
+The following keywords are restricted and must not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
+- `/END` _(case-insensitive)_
+- `###` _(alone on its own line)_
 - `@yini`
 - `@ver`, `@version`
 - `@include`, `@anchor`, `@alias`
+
+Use of these keywords outside their defined roles may result in a parse error.
 
 ### 11.2. Well-Formedness
 A well-formed YINI file conforms to the syntax rules described in earlier sections. The following conditions must be met for a file to be considered valid:
