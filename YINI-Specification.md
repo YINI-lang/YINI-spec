@@ -1078,7 +1078,7 @@ v1.0.0 Beta 2 + Updates
 - Included the Changelog section (moved from About document).
 - Added new sections "Advanced Constructs", "Validation Rules", "Compatibility and Versioning", "Appendices and Reserved Areas"  to enhance specification completeness.
 - Readded "Terminology" section.
-- Added a handfull of examples in "Realistic Config Use Cases".
+- Added a handfull of examples into section "Realistic Config Use Cases".
 
 v1.0.0 Beta 2, 2025-04-23
 - Added (new) support for triple-quoted strings (`"""`).
