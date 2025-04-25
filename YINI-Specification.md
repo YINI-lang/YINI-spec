@@ -1,4 +1,4 @@
-# Specification for YINI Formal Grammar  
+# Specification for the YINI Format
 **Version:** v1.0.0 Beta 2 + Updates
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 13.2. Versioning Strategy).
@@ -113,16 +113,16 @@
 
 ## 1. Introduction
 ### 1.1. What is YINI?
-**YINI (Yet another INI)** is a lightweight, human-readable configuration file format designed to provide simplicity, flexibility, and clear separation of concerns in configuration data. Its syntax is inspired by widely-used configuration file formats like INI and YAML, but also by JSON, C, and Python. It aims to offer a more consistent and intuitive structure, allowing for easy parsing and editing by both humans and machines.
+**YINI (Yet another INI)** is a lightweight, human-readable configuration file format—defined by a formal grammar—designed to provide simplicity, flexibility, and clear separation of concerns in configuration data. Its syntax is inspired by widely-used configuration file formats like INI and YAML, but also by JSON, C, and Python. YINI aims to offer a more consistent and intuitive structure, allowing for easy parsing and editing by both humans and machines.
 
-YINI is primarily targeted at users who require a straightforward format for storing and organizing configuration information, where human readability and ease of use are paramount. YINI is flexible enough to handle various use cases, from simple key-value pairs to more complex data structures, making it a suitable choice for a variety of applications ranging from web development to system configuration.
+YINI is particularly targeted at users who need a straightforward format for storing and organizing configuration data, where human readability and ease of use are paramount. YINI is flexible enough to handle a wide range of use cases—from simple key-value pairs to nested and structured data—making it an effective choice for everything from application preferences and program settings to complex system configuration files.
 
 ### 1.2. Purpose and Design Goals
 The YINI format was created with the following key design goals in mind:
 
 - **Simplicity:** YINI is designed to be as simple and intuitive as possible. The syntax is minimalistic yet expressive, with clear conventions for defining sections, keys, and values.
 
-- **Human Readability:** One of the core principles of YINI is its focus on human readability. The format prioritizes clarity in its structure and aims to minimize complexity, ensuring that configuration files remain easy to read, write, and modify.
+- **Human Readability:** A core principle of YINI is that it should feel natural and intuitive for humans to work with. Its structure is designed to be clear and predictable, minimizing unnecessary complexity so that configuration files are easy to read, understand, write, and maintain—even for non-programmers.
 
 - **Flexibility:** While simple, YINI is designed to accommodate a variety of data structures, including primitive values (strings, numbers, booleans, nulls) and more complex ones like lists and nested sections.
  
@@ -726,7 +726,7 @@ Use of these keywords outside their defined roles may result in a parse error.
 A YINI file is considered **well-formed** if it adheres to the core syntactic and structural rules defined in this specification.
 
 #### 11.2.1. Structural Requirements
-- A file may consist of zero or more **sections**.
+- A file must consist of one or more **sections**.
 - A file must contain at least one valid key-value pair (member).
 - Section headers must begin with a valid marker (`#`, `~`, `>`).
 - At least one space or tab is required between a section marker and the section name.
@@ -964,7 +964,95 @@ enabled = true
   - Ends with the document terminator `/END`.
 
 ### 14.2. Realistic Config Use Cases
---TODO
+#### 14.2.1. User Preferences Configuration
+```yini
+# Preferences
+
+theme = "dark"
+language = "en"
+notifications = true
+volume = 85
+recent_files = [
+  "report.yini",
+  "draft_0423.yini",
+  "budget2025.yini"
+]
+
+/END
+```
+
+### 14.2.2. Application Settings with Sections
+```yini
+# Database
+host = "localhost"
+port = 5432
+username = "appuser"
+password = "s3cret"
+
+# Logging
+level = "debug"
+file = "/var/log/myapp.log"
+rotate = true
+
+# Features
+enable_experimental = false
+api_version = "v2.1"
+
+/END
+```
+
+**Notes:**
+- The `#` marker cleanly divides logical domains into sections.
+
+### 14.2.3. Script Metadata
+```yini
+# Metadata
+name = "Data Fetch Script"
+version = "1.3.0"
+author = "Jane Doe"
+schedule = "daily"
+active = true
+
+/END
+```
+
+### 14.2.4. Feature Flags
+```yini
+# FeatureFlags
+debug = true
+experimental_ui = false
+use_cache = true
+cache_expiry = 86400  		// In seconds
+last_purge_date = "2025-05-25"	// YYYY-MM-DD
+
+/END
+```
+
+### 14.2.5. Feature Toggles with Alternative Syntax
+```yini
+/*
+  Feature Toggles with Alternative Syntax
+*/
+
+~ `Feature Toggles`
+`Debug` = ON
+`Experimental UI` = OFF
+`Night Mode` = OFF
+`Use Cache` = ON
+
+~~ `Cache Config`
+`Cache Expiry` = 86400  		// In seconds
+`Last Purge Date (YYYY-MM-DD)` = "2025-05-25"
+
+###
+```
+
+**Notes:**
+- Uses the alternative section marker `~`.
+- Demonstrates alternative boolean literals: `ON` and `OFF`.
+- \`Cache Config\` is a nested subsection of \`Feature Toggles\`.
+- All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
+- Ends with the alternative document terminator `###`.
 
 ## 15. Appendices and Reserved Areas
 ### 15.1. License
@@ -990,6 +1078,7 @@ v1.0.0 Beta 2 + Updates
 - Included the Changelog section (moved from About document).
 - Added new sections "Advanced Constructs", "Validation Rules", "Compatibility and Versioning", "Appendices and Reserved Areas"  to enhance specification completeness.
 - Readded "Terminology" section.
+- Added a handfull of examples in "Realistic Config Use Cases".
 
 v1.0.0 Beta 2, 2025-04-23
 - Added (new) support for triple-quoted strings (`"""`).
