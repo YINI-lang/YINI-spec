@@ -1,5 +1,5 @@
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 3
+**Version:** v1.0.0 Beta 3 + Updates
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 13.2. Versioning Strategy).
 
