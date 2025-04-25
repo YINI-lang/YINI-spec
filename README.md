@@ -1,6 +1,6 @@
 # YINI Specification
 
-**Version:** 1.0.0 Beta 2
+**Version:** 1.0.0 Beta 2 + Updates
 
 **Status:** Beta Release
 
