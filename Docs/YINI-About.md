@@ -1,4 +1,4 @@
-# YINI Specification v1.0.0 Beta 2 + Updates
+# About the YINI Format
 
 YINI is a configuration and settings file format (similar but not identical to INI-files) for computer software that consists of plain text with a very simple structure and notation, consisting of Key–Value pairs and Key-List pairs, grouped into sections.
 
@@ -37,6 +37,7 @@ In the beginning, `YINI` was known by its working name `MINI`, which later evolv
 
 | Version                  | Date YYYY-MM-DD| Description |
 |--------------------------|----------------|-------------|
+| YINI-spec v1.0.0 Beta 3  | 2025-04-25     | Third Beta
 | YINI-spec v1.0.0 Beta 2  | 2025-04-23     | Second Beta
 | YINI-spec v1.0.0 Beta 1  | 2025 Apr       | First Beta
 | YINI-spec v1.0.0 Alpha 2 | 2024 Oct       | Pre-Beta

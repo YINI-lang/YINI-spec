@@ -1,5 +1,5 @@
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 2 + Updates
+**Version:** v1.0.0 Beta 3 + Updates
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 13.2. Versioning Strategy).
 
@@ -1072,7 +1072,7 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 ### 15.3. Changelog
 A running log of changes and updates to the YINI specification.
 
-v1.0.0 Beta 2 + Updates
+v1.0.0 Beta 3, 2025-04-25
 - Reworked and reordered large sections, with an updated Table of Contents.
 - Reworded many sections for clarity.
 - Included the Changelog section (moved from About document).
