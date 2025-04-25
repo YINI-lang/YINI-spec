@@ -14,7 +14,8 @@
 **1. Introduction**  
 &nbsp;&nbsp;&nbsp;&nbsp;1.1. What is YINI?  
 &nbsp;&nbsp;&nbsp;&nbsp;1.2. Purpose and Design Goals  
-&nbsp;&nbsp;&nbsp;&nbsp;1.3. Key Features
+&nbsp;&nbsp;&nbsp;&nbsp;1.3. Key Features  
+&nbsp;&nbsp;&nbsp;&nbsp;1.4. Terminology  
 
 **2. File Structure**  
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
@@ -142,6 +143,27 @@ The following is WIP:
 - **Commenting and Documentation:** YINI allows for inline comments, enabling users to document their configuration files directly. This enhances the human-readable nature of the format and makes it easier for teams to collaborate on configuration management.
 
 - **Multi-line and Nested Data:** The format supports multi-line strings and nested sections, providing the ability to express more complex configurations while maintaining readability.
+
+## 1.4. Terminology
+The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI’s grammar, structure, and semantics.
+
+|Term|Definition|
+|---|---|
+| YINI | Short for "Yet Another INI", a human-readable configuration format blending INI-style sections with modern typing and structure.
+| Member | A key-value pair, such as `key = value`, representing a single entry within a section or root.
+| Key | An identifier on the left side of an assignment (`=` or `:`). Keys must be unique within their section.
+| Value | The data assigned to a key. Can be of type string, number, boolean, null, or list.
+| Identifier | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks).
+| Section | A logical grouping of members, introduced by a header using a section marker like `#`, `~`, or `>`.
+| Section Marker | A special character (`#`, `~`, or `>`) that denotes a new section header.
+| Document Terminator | A special line (`/END` or `###`) that explicitly marks the end of a YINI document.
+| Raw String (R-String) | A string literal that does not interpret escape sequences **(default type)**.
+| Classic String (C-String) |A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc.
+| Hyper String (H-String) | A multi-line string prefixed with `H` that normalizes whitespace and trims edges.
+| Triple-Quoted String | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes.
+| List | A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values).
+| Strict Mode | A parsing mode where all structural and validation rules are enforced.
+| Lazy/Lenient Mode | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input.
 
 ## 2. File Structure
 The structure of a YINI file is designed to be simple, clear, and highly readable. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
@@ -574,10 +596,10 @@ list3 = []  // An empty list.
 For convenience, a trailing comma (`,`) may be optionally be included.
 
 ```yini
-// A list with THREE elements.
-list1 = ["a", "b", "c", ]  // Trailing comma is valid.
+// A list with THREE items.
+list1 = ["a", "b", "c", ]  // Trailing comma here is ignored.
 
-// A list with FOUR elements.
+// A list with FOUR items.
 list2 = ["a", "b", "c", NULL]
 ```
 
@@ -612,7 +634,7 @@ linkItems = [
 This notation offers a more readable syntax using a colon `:` instead of `=`, and omits square brackets entirely.
 
 ```yini
-list1: "oranges", "bananas", "peaches"  // List with three elements.
+list1: "oranges", "bananas", "peaches"  // List with three items.
 
 list2:  // An empty list.
 ```
@@ -967,6 +989,7 @@ v1.0.0 Beta 2 + Updates
 - Reworded many sections for clarity.
 - Included the Changelog section (moved from About document).
 - Added new sections "Advanced Constructs", "Validation Rules", "Compatibility and Versioning", "Appendices and Reserved Areas"  to enhance specification completeness.
+- Readded "Terminology" section.
 
 v1.0.0 Beta 2, 2025-04-23
 - Added (new) support for triple-quoted strings (`"""`).
@@ -975,7 +998,7 @@ v1.0.0 Beta 2, 2025-04-23
 - Reintroduced support for the alternative terminator marker `###`.
 - Clarified list handling in the "Values & Native Types" section.
 - Added a syntax summary section to improve clarity.
-- Added a section detailing items and elements in lists.
+- Added a section detailing items and items in lists.
 
 ---
 /END
