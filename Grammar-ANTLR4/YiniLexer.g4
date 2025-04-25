@@ -51,6 +51,7 @@ DOLLAR: '$';
 // ASTERIX: '*';
 PC: '%'; // PerCent sign.
 AT: '@';
+SEMICOLON: ';';
 
 BOOLEAN_FALSE options {
 	caseInsensitive = true;

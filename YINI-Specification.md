@@ -177,9 +177,9 @@ The syntax of YINI is designed to be minimalistic and human-readable while offer
 ### 3.1. General Syntax Rules
 YINI files consist of a series of **sections, members** (key-value pairs), and optional **comments**. The following rules define the basic structure of a valid YINI file:
 
-**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs does not contribute to the logical structure in any way, except a tab or space in important in section headers. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
+**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure in any way, except a tab or space in important in section headers. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
 
-**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `#`, `~`, or `>`), and then at least one space or tab, followed by the section name. Before a section headers there may exist indentation and spacing for human readability.
+**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `#`, `~`, or `>`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
 
 **Example of a section:**
 ```yini
@@ -281,7 +281,7 @@ While `###` is valid, `/END` is the standard and should be preferred for clarity
 
 ### 3.6. Reserved: Ignore / Disable Line *(for future use)*
 --This space is reserved--<br/>
---Ignore / Disable Line: This may or may not be implemented in the future.--
+--Ignore / Disable Line: This is a reserved feature for future versions.--
 >- Ignore/Disable Line:
 A line that begins with a double minus -- will be completely ignored by the engine. Everything after -- until the end of the line (<NL>) shall be disregarded, including any comments.
 
@@ -333,7 +333,7 @@ A _**section header**_ starts a new logical grouping of members. Section headers
 ```
 
 - A section header begins with a **section marker**, immediately followed by **one or more whitespace (space or tab) characters**, then the section name.
-- The section name must be a valid identifier, either a simple or phrased identifier (text encosed in backticks).
+- The section name must be a valid identifier, either a simple or phrased identifier (text enclosed in backticks).
 - The section header ends at the newline. There may follow a comment, but this will get ignored by the parser.
 ```yini
 # UserSettings
@@ -348,8 +348,9 @@ Supported markers:
   - `#` (preferred marker, for now)
   - `~` (alternative marker, in case of confusion of using `#`)
   - `>` (for legacy or alternative support)
-  - Reserved: `§` (exprimental, maybe in future, for enhanced readability)
-  - Reserved: `€` (exprimental, maybe in future, for enhanced readability)
+  - Reserved: `§` (experimental, maybe in future, for enhanced readability)
+  - Reserved: `€` (experimental, maybe in future, for enhanced readability)
+  - Reserved: `;`
  
 ### 5.3. Sections in Sections (Nested Sections)
 If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
@@ -392,18 +393,18 @@ or
 >myPath = '/Users/kim-lee'
 
 #### Raw String Prefix
-Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but prefixing Raw string are not required as strings are Raw as standard.
+Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing raw strings is not required as strings are Raw as standard.
 
 ### 6.2. Hyper Strings (H-Strings)
 There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `H` or `h`.
 
 Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape sequences are not supported).
 
-- Hower, Hyper strings are special in that they **can span over multiple lines** with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
+- However, Hyper strings are special in that they **can span over multiple lines** with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
 - Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted to one single blank space ` `. 
 - Also, leading and trailing `<NL>` and/or `<WS>` are trimmed away.
 
-Hyper Strings behaves similar to plain text in HTML documents.
+Hyper Strings behave similarly to plain text in HTML documents.
 
 The following:
 
@@ -419,7 +420,7 @@ My name is John Doe, and this is a test string.
 ```
 
 ### 6.3. Classic Strings (C-Strings)
-Alternatively YINI support also normal ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `C` or `c`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
+Alternatively, YINI also supports standard ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `C` or `c`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
 
 Classic strings must start and end on the same line.
 
@@ -629,7 +630,7 @@ list1:
 list2:
   "oranges",
   "bananas",
-  "peaches",  // Trailing comma is valid here.
+  "peaches",  // Trailing comma is valid here, and is ignored.
 ```
 > **Note:** Commas are required between values. A trailing comma is allowed at last line.
 
@@ -728,8 +729,8 @@ Files **must** be encoded in **UTF-8 without BOM**.
 - A valid YINI file must end with a terminator (`/END`, `###`).
 - Only one terminator is permitted per file.
 - Missing terminators:
-  - **Strict mode:** Error.
-  - **Lazy/Lenient mode:** Warning.
+  - **In strict mode:** Treated as an error.
+  - **In lazy/lenient mode:** Treated as a warning.
 - After the terminator, only whitespaces and comments are allowed.
 
 ##### Table: Terminator Requirement by Mode
@@ -784,7 +785,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   * Trim from section headers and keys.
 * Hyper Strings (H-Strings):
   * Leading/trailing whitespaces (tabs or spaces) and newlines are trimmed.
-  * Inside a H-string, whitespaces (tabs or spaces) and newlines are normalized to one signle space character.
+  * Inside a H-string, whitespaces (tabs or spaces) and newlines are normalized to one single space character.
 * Comments may follow key-value members or appear on separate lines.
 * Whitespace is permitted within lists, including across lines.
 
@@ -888,7 +889,7 @@ Developers are encouraged to implement the following features to improve parser 
 
 ## 13.1. Fallback Rules
 ### 13.1.1. Invalid Sections or Keys
-- Invalid key names or section headers should be retained as-is but ignored if in leniant mode, or issue a warning or error if in strict mode.
+- Invalid key names or section headers should be retained as-is but ignored if in lenient mode, or issue a warning or error if in strict mode.
   
 ### 13.1.2. Graceful Degradation
 - Parsers may issue warnings instead of errors when encountering unrecognized features (e.g., unknown directives, anchors, or section markers).
@@ -916,11 +917,11 @@ Semantic Versioning:
 - If present, parsers must detect and ignore the BOM without failing.
 
 #### 13.3.3 Shebang Line (Optional)
-A shebang line may be used at the very of the file:
+A shebang line may be used at the very top of the file:
 ```
 #!/usr/bin/env yini
 ```
-This line is not interpreted by YINI itself but may affect how the file is processed in scriptable contexts. It must be ignored by the YINI parser as a comment or metadata line.
+This line is ignored by YINI parsers but may affect script execution in Unix environments. It must be ignored by the YINI parser as a comment or metadata line.
 
 ## 14. Examples
 
