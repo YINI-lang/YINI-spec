@@ -751,7 +751,7 @@ Files **must** be encoded as **UTF-8 without BOM**.
 - Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
 
 #### 11.2.5. Document Terminator
-- See [Section 3.5: Document Terminator] for terminator syntax.
+- See Section 3.5, "Document Terminator" for terminator syntax.
 - A valid YINI file must end with a terminator (`/END`, `###`).
 - Only one terminator is permitted per file.
 - Missing terminators:
@@ -1122,7 +1122,7 @@ v1.0.0 Beta 3, 2025-04-25
 - Included the Changelog section (moved from About document).
 - Added new sections "Advanced Constructs", "Validation Rules", "Compatibility and Versioning", "Appendices and Reserved Areas"  to enhance specification completeness.
 - Readded "Terminology" section.
-- Added a handfull of examples into section "Realistic Config Use Cases".
+- Added a handful of examples into section "Realistic Config Use Cases".
 
 v1.0.0 Beta 2, 2025-04-23
 - Added (new) support for triple-quoted strings (`"""`).
