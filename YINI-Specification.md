@@ -1,7 +1,20 @@
 # Specification for the YINI Format
 **Version:** v1.0.0 Beta 3 + Updates
 
-> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 13.2. Versioning Strategy).
+> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 13.2. "Versioning Strategy").
+
+---
+
+## Preface
+YINI was designed with a simple idea in mind: configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.
+
+While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces a clean, minimalistic design focused on human readability, structural clarity, and extensibility for the future.  
+One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing complex structures to be expressed in a simple, natural, and visually clear way — without the heavy indentation rules or syntax overhead found in other formats.
+
+YINI embraces simplicity as a strength, offering just enough rules to stay consistent, while staying forgiving enough for real-world use.
+
+This specification defines the YINI format with care and clarity, aiming to serve both casual users and implementers seeking a robust, reliable configuration format.  
+Above all, YINI remains true to its founding goal: **make configuration effortless**.
 
 ---
 
