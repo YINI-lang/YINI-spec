@@ -1175,6 +1175,34 @@ active = true
 }
 ```
 
+#### 14.3.2. Nested Sections (multiple levels) to JSON
+**YINI:**
+```yini
+# Settings
+theme = "dark"
+language = "en"
+
+## Display
+resolution = "1920x1080"
+fullscreen = true
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Settings": {
+    "theme": "dark",
+    "language": "en",
+    "Display": {
+      "resolution": "1920x1080",
+      "fullscreen": true
+    }
+  }
+}
+```
+
 ## 15. Appendices and Reserved Areas
 ### 15.1. License
 Apache License, Version 2.0, January 2004,
