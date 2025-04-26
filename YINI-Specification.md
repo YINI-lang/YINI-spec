@@ -1030,13 +1030,13 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 
 **Table: Correspondence Between YINI and JSON**
 
-| YINI <-> JSON | Notes |
-|---|---|
-| Structure Mapping | ✅ Yes (sections become objects, objects become sections) |
-| Types Mapping | ✅ Yes (string, number, boolean, null, list map 1-to-1) |
-| Identifiers (Keys) | ✅ Yes (if quoted correctly in JSON; if needed, backticked in YINI) |
-| Comments | 🚫 No (comments dropped when converting to JSON) |
-| Terminator | 🚫 No (ignored in JSON, Terminator needs to be appended when converting into YINI) |
+| Entity             | → JSON                         | → YINI                          | Notes |
+|--------------------|---------------------------------|----------------------------------|-------|
+| Structure Mapping  | ✅ Yes (sections become objects) | ✅ Yes (objects become sections)|   |
+| Types Mapping      | ✅ Yes (direct type mapping)     | ✅ Yes (direct type mapping)    |   |
+| Identifiers (Keys) | ✅ Yes (must always be quoted)    | ✅ Yes (backticks if needed)   |   |
+| Comments           | 🚫 No (discarded)                | -                               | Comments are dropped during JSON conversion.|
+| Terminator         | 🚫 No (ignored)                  | -                               | Terminator must be appended when converting to YINI.|
 
 ## 14. Examples
 
