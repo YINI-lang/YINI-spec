@@ -29,7 +29,7 @@ options {
 yini: SHEBANG? COMMENT* NL* section+ NL* EOF;
 
 section:
-	SECTION_HEAD section_members
+	SECTION_HEAD? section_members
 	| SECTION_HEAD section
 	| terminal_line;
 

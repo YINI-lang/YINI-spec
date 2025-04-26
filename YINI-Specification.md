@@ -147,23 +147,26 @@ The following is WIP:
 ## 1.4. Terminology
 The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI’s grammar, structure, and semantics.
 
-|Term|Definition|
-|---|---|
-| YINI | Short for "Yet Another INI", a human-readable configuration format blending INI-style sections with modern typing and structure.
-| Member | A key-value pair, such as `key = value`, representing a single entry within a section or root.
-| Key | An identifier on the left side of an assignment (`=` or `:`). Keys must be unique within their section.
-| Value | The data assigned to a key. Can be of type string, number, boolean, null, or list.
-| Identifier | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks).
-| Section | A logical grouping of members, introduced by a header using a section marker like `#`, `~`, or `>`.
-| Section Marker | A special character (`#`, `~`, or `>`) that denotes a new section header.
-| Document Terminator | A special line (`/END` or `###`) that explicitly marks the end of a YINI document.
-| Raw String (R-String) | A string literal that does not interpret escape sequences **(default type)**.
-| Classic String (C-String) |A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc.
-| Hyper String (H-String) | A multi-line string prefixed with `H` that normalizes whitespace and trims edges.
-| Triple-Quoted String | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes.
-| List | A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values).
-| Strict Mode | A parsing mode where all structural and validation rules are enforced.
-| Lazy/Lenient Mode | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input.
+| Term                     | Definition |
+|---------------------------|------------|
+| Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
+| Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
+| Document Terminator       | A special line (`/END` or `###`) that explicitly marks the end of a YINI document. |
+| Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
+| Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks). |
+| Key                       | An identifier on the left side of an assignment (`=` or `:`). Keys must be unique within their section (and depth/level). |
+| Lazy/Lenient Mode         | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input. |
+| List                      | A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
+| Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
+| Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
+| Section                   | A logical grouping of members, introduced by a header using a section marker like `#`, `~`, or `>`. |
+| Section Marker            | A special character (`#`, `~`, or `>`) that denotes a new section header. |
+| Strict Mode               | A parsing mode where all structural and validation rules are enforced. |
+| Triple-Quoted String      | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes. |
+| Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
+| YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
+| YINI file                 | A complete YINI configuration. In this specification, "file" and "document" mean the same thing. |
+| YINI                      | Short for "Yet Another INI", a human-readable configuration format blending INI-style sections with modern typing and structure. |
 
 ## 2. File Structure
 The structure of a YINI file is designed to be simple, clear, and highly readable. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
@@ -726,19 +729,20 @@ Use of these keywords outside their defined roles may result in a parse error.
 A YINI file is considered **well-formed** if it adheres to the core syntactic and structural rules defined in this specification.
 
 #### 11.2.1. Structural Requirements
-- A file must consist of one or more **sections**.
-- A file must contain at least one valid key-value pair (member).
+- A file may consist of zero or more **sections**.
+- A file may consist of zero or more valid key-value pairs (members).
 - Section headers must begin with a valid marker (`#`, `~`, `>`).
 - At least one space or tab is required between a section marker and the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
+- A YINI file must end with only one single terminator (`/END` or `###`).
 
 #### 11.2.2. Character Encoding
-Files **must** be encoded in **UTF-8 without BOM**.
+Files **must** be encoded as **UTF-8 without BOM**.
 
 #### 11.2.3. Line Endings
-- Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>`line endings.
+- Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>` line endings.
 - Mixed line endings are discouraged but tolerated in lenient mode.
   
 #### 11.2.4. Valid Value Types
@@ -770,6 +774,42 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
 - Escape sequences are **ONLY allowed** in classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-quoted strings must use `"""` for both opening and closing (`'''` is not supported).
 
+#### 11.2.7. Shortest Valid YINI Documents
+- **Valid short documents:**
+  - ✅ The following is the shortest valid YINI document **with a member**:
+    ```yini
+    K=
+    ###
+    ```
+    **Note:** A key named `K`, whose value will be interpreted as `null`.
+
+  - ✅ The following is the shortest valid YINI document **with a section header**:
+    ```yini
+    # S
+    ###
+    ```
+    **Note:** A section header named `S`, containing no members.
+
+  - ✅ Thus, the following **is also a valid** YINI document by this specification:
+    ```yini
+    ###
+    ```
+    **Note:** A YINI document may only contain the document terminator, meaning there are no members or sections in the file.
+- **Invalid short documents:**
+  - ❌ However, the following file is invalid:
+    ```yini
+    // A dangling key is invalid, either = or : is missing.
+    key
+    ###
+    ```
+    **Note:** This is not a proper member, it contains only a key, either `=` or `:` is missing to make it a proper member.
+
+  - ❌ The following empty file (with only a comment) is also invalid:
+    ```yini
+    // Invalid empty YINI document, the required document terminator (`/END` or `###`) is missing.
+    ```
+    **Note:** The document terminator is required in a valid YINI document.
+
 ### 11.3. Strict vs. Lenient Modes _(Optional Feature)_
 Some YINI parsers may support multiple **validation modes**:
 
@@ -780,7 +820,7 @@ Some YINI parsers may support multiple **validation modes**:
 - **Lazy/Lenient Mode:** 
   - Permissive with minor errors (e.g., trailing commas, mixed line endings).
   - May allow unescaped bare values or relaxed typing.
-  - Useful for hand-edited config files.
+  - Useful for hand-edited configuration files.
 
 **Note:** Implementations must clearly document the validation mode in use and detail which rules are relaxed under lenient parsing.
  
@@ -1071,6 +1111,10 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 
 ### 15.3. Changelog
 A running log of changes and updates to the YINI specification.
+
+v1.0.0 Beta 3 + Updates
+- --WIP: In current cycle--
+- Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. Clarified this with new examples in the specification.
 
 v1.0.0 Beta 3, 2025-04-25
 - Reworked and reordered large sections, with an updated Table of Contents.
