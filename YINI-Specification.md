@@ -107,6 +107,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Fallback Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Versioning Strategy  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Encoding Notes  
+&nbsp;&nbsp;&nbsp;&nbsp;13.4. JSON compatibility  
 
 ---
 
@@ -356,6 +357,8 @@ A `YINI` _**value**_ can be of one of the following 3 groups of native/built-in 
 
 - **Value of Special-type:**
   - NULL
+
+**Note:** YINI types maps 1-to-1 to JSON native types.
 
 ## 5. Section Headers
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
@@ -962,15 +965,18 @@ Developers are encouraged to implement the following features to improve parser 
 * (?) Optionally log ignored lines (e.g., with --) for debugging.
 * Optionally, **log ignored or unknown lines** (e.g., those starting with `--`) to assist debugging or migration.
 
-## 13.1. Fallback Rules
-### 13.1.1. Invalid Sections or Keys
+## 13. Compatibility and Versioning
+This section covers YINI's compatibility and interoperability principles.
+
+### 13.1. Fallback Rules
+#### 13.1.1. Invalid Sections or Keys
 - Invalid key names or section headers should be retained as-is but ignored if in lenient mode, or issue a warning or error if in strict mode.
   
-### 13.1.2. Graceful Degradation
+#### 13.1.2. Graceful Degradation
 - Parsers may issue warnings instead of errors when encountering unrecognized features (e.g., unknown directives, anchors, or section markers).
 - Implementations should strive to process known-valid content even if advanced features are not supported.
 
-## 13.2. Versioning Strategy
+### 13.2. Versioning Strategy
 **Version Format**
 
 - In the future, the YINI Specification will adopt _Semantic Versioning_ (`MAJOR.MINOR.PATCH STAGE`) to signal format evolution.
@@ -981,7 +987,7 @@ Semantic Versioning:
 - **MINOR:** Backward-compatible additions.
 - **PATCH:** Backward-compatible fixes.
 
-### 13.3. Encoding Notes  
+### 13.3. Encoding Notes
 #### 13.3.1 Required Encoding
 - **UTF-8 without BOM** is the required and default encoding for YINI files.
 - Parsers must support UTF-8 fully.
@@ -997,6 +1003,40 @@ A shebang line may be used at the very top of the file:
 #!/usr/bin/env yini
 ```
 This line is ignored by YINI parsers but may affect script execution in Unix environments. It must be ignored by the YINI parser as a comment or metadata line.
+
+### 13.4. JSON Compatibility
+
+A valid YINI file can be converted into a valid JSON file (and vice versa) while preserving **data structure, types, and identifier names exactly**.
+
+Although YINI and JSON are distinct formats with different goals, their core data models are closely aligned.
+Strings, numbers, booleans, nulls, and lists in YINI map naturally to their JSON equivalents, and key names (identifiers) maintain structural correspondence when properly quoted.
+
+You can convert a YINI file into JSON (and vice versa) and preserve all real data — structure, types, and names — correctly,  
+but you must ignore or remove YINI-only features like section markers, comments, and terminators when expressing it as JSON.
+
+#### Converting YINI to JSON
+- **Keys (Identifiers):** As long as keys are quoted properly in JSON, and identifiers follow JSON string rules.
+- **Value types (String, Number, Boolean, Null, List):** Direct mapping is possible between YINI and JSON native types.
+- **Lists (Arrays):** Lists `[]` map 1-to-1.
+- **Sections:** YINI sections correspond to nested objects `{}` in JSON.
+- **String types:** ⚠️ All strings become plain JSON strings once parsed, escaping is normalized when serialized.
+
+#### Metadata Limitations
+- 🚫 Metadata (such as comments and the document terminator) will not be carried over to JSON.
+
+#### Summary
+When converted carefully, a well-formed YINI document can be faithfully represented as a valid JSON object, preserving all structure, data types, and identifier names.  
+Conversely, a valid JSON object can be mapped into a YINI document, provided that JSON-specific constructs (such as deeply nested objects) are expressed as sections and that YINI syntax rules are respected.
+
+**Table: Correspondence Between YINI and JSON**
+
+| YINI <-> JSON | Notes |
+|---|---|
+| Structure Mapping | ✅ Yes (sections become objects, objects become sections) |
+| Types Mapping | ✅ Yes (string, number, boolean, null, list map 1-to-1) |
+| Identifiers (Keys) | ✅ Yes (if quoted correctly in JSON; if needed, backticked in YINI) |
+| Comments | 🚫 No (comments dropped when converting to JSON) |
+| Terminator | 🚫 No (ignored in JSON, Terminator needs to be appended when converting into YINI) |
 
 ## 14. Examples
 
