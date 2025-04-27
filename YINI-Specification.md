@@ -1203,6 +1203,27 @@ fullscreen = true
 }
 ```
 
+#### 14.3.3. Lists (Arrays) to JSON
+**YINI:**
+```yini
+# Server
+hosts = ["server1.example.com", "server2.example.com"]
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Server": {
+    "hosts": [
+      "server1.example.com",
+      "server2.example.com"
+    ]
+  }
+}
+```
+
 ## 15. Appendices and Reserved Areas
 ### 15.1. License
 Apache License, Version 2.0, January 2004,
