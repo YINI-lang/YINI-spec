@@ -1207,7 +1207,7 @@ fullscreen = true
 **YINI:**
 ```yini
 # Server
-hosts = ["server1.example.com", "server2.example.com"]
+hosts = ['server1.example.com', 'server2.example.com']
 
 /END
 ```
@@ -1220,6 +1220,28 @@ hosts = ["server1.example.com", "server2.example.com"]
       "server1.example.com",
       "server2.example.com"
     ]
+  }
+}
+```
+
+#### 14.3.4. Nulls and Booleans to JSON
+**YINI:**
+```yini
+# Flags
+enabled = On
+archived = Off
+description = Null
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Flags": {
+    "enabled": true,
+    "archived": false,
+    "description": null
   }
 }
 ```
