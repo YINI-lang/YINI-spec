@@ -5,6 +5,7 @@ Edits and updates **in this repository**.
 - Distinguished between changes to specification and in the repository itself: Changelog section in the spec doc now is exclusive only to the YINI specification itself, and the repository has its own file `CHANGELOG.md` (this file) now.
 - In the spec doc, renamed section 15.3, "Changelog" to "Spec Changelog" to make it more clear in the future.
 - Created new environment named "release" (in addition to "staging", "develop") for the latest published release of the specification and repository. When the env "staging" is updated and patched with final correct version strings, staging should be merged over into "release". So the repo release should always have final version strings (no `+ Updates` etc in version strings). - The idea is to be able to point a web link to the latest published `YINI-Specification.md` and it will always have the final correct version string already in this env.
+- Wrote new and replaced README.md in the repo.
 
 2025-04-26 (v1.0.0 Beta 3 + Updates)
 - Clarified valid very short YINI files with new examples in the specification.
