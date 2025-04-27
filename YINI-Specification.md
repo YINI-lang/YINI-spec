@@ -1,4 +1,5 @@
-`# YINI ≡`
+> \# YINI ≡
+---
 # Specification for the YINI Format
 **Version:** v1.0.0 Beta 3 + Updates
 
