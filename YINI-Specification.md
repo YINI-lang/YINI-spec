@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \# YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 3 + Updates
+**Version:** v1.0.0 Beta 4
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -1345,8 +1345,7 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 ### 15.3. Spec Changelog
 A running log of changes and updates **to the YINI specification**.
 
-v1.0.0 Beta 3 + Updates
-- --WIP: In current cycle--
+v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
 
 v1.0.0 Beta 3, 2025-04-25
