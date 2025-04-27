@@ -116,7 +116,8 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 **14. Examples**  
 &nbsp;&nbsp;&nbsp;&nbsp;14.1. Minimal Example  
 &nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases  
-&nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI ⇆ JSON Mapping
+&nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI  -> JSON Mapping  
+&nbsp;&nbsp;&nbsp;&nbsp;14.4. Examples of JSON  -> YINI Mapping  
 
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
@@ -1151,7 +1152,7 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
 - Ends with the alternative document terminator `###`.
 
-### 14.3. Examples of YINI ⇆ JSON Mapping
+### 14.3. Examples of YINI  -> JSON Mapping
 
 #### 14.3.1. Simple Flat Structure to JSON
 **YINI:**
@@ -1244,6 +1245,74 @@ description = Null
     "description": null
   }
 }
+```
+
+### 14.4. Examples of JSON -> YINI Mapping
+
+#### 14.4.1. Simple JSON Object to YINI
+**JSON:**
+```json
+{
+  "Profile": {
+    "username": "bob",
+    "age": 35,
+    "verified": true
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# Profile
+username = "bob"
+age = 35
+verified = true
+
+/END
+```
+
+#### 14.4.2. Nested JSON Objects to YINI
+**JSON:**
+```json
+{
+  "App": {
+    "version": "2.5",
+    "settings": {
+      "theme": "light",
+      "notifications": true
+    }
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# App
+version = "2.5"
+
+## settings
+theme = "light"
+notifications = true
+
+/END
+```
+
+#### 14.4.3. JSON Array to YINI
+**JSON:**
+```json
+{
+  "Servers": {
+    "hosts": ["alpha.local", "beta.local", "gamma.local"]
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# Servers
+hosts = ["alpha.local", "beta.local", "gamma.local"]
+
+/END
 ```
 
 ## 15. Appendices and Reserved Areas
