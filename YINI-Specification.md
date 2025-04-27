@@ -28,7 +28,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 &nbsp;&nbsp;&nbsp;&nbsp;1.1. What is YINI?  
 &nbsp;&nbsp;&nbsp;&nbsp;1.2. Purpose and Design Goals  
 &nbsp;&nbsp;&nbsp;&nbsp;1.3. Key Features  
-&nbsp;&nbsp;&nbsp;&nbsp;1.4. Terminology  
+&nbsp;&nbsp;&nbsp;&nbsp;1.4. Terminology
 
 **2. File Structure**  
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
@@ -89,7 +89,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 **11. Validation Rules**  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness Requirements  
-&nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes _(Optional Feature)_  
+&nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes _(Optional Feature)_
 
 **12. Implementation Notes**  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
@@ -101,13 +101,13 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 &nbsp;&nbsp;&nbsp;&nbsp;12.7 String Literal Types  
 &nbsp;&nbsp;&nbsp;&nbsp;12.8 Comments  
 &nbsp;&nbsp;&nbsp;&nbsp;12.9 Error Handling Recommendations  
-&nbsp;&nbsp;&nbsp;&nbsp;12.10 Bonus Tips for Implementation  
+&nbsp;&nbsp;&nbsp;&nbsp;12.10 Bonus Tips for Implementation
 
 **13. Compatibility and Versioning**  
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Fallback Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Versioning Strategy  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Encoding Notes  
-&nbsp;&nbsp;&nbsp;&nbsp;13.4. JSON compatibility  
+&nbsp;&nbsp;&nbsp;&nbsp;13.4. JSON Compatibility
 
 ---
 
@@ -115,7 +115,9 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 
 **14. Examples**  
 &nbsp;&nbsp;&nbsp;&nbsp;14.1. Minimal Example  
-&nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases
+&nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases  
+&nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI  -> JSON Mapping  
+&nbsp;&nbsp;&nbsp;&nbsp;14.4. Examples of JSON  -> YINI Mapping  
 
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
@@ -1038,6 +1040,9 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 | Comments           | 🚫 No (discarded)                | -                               | Comments are dropped during JSON conversion.|
 | Terminator         | 🚫 No (ignored)                  | -                               | Terminator must be appended when converting to YINI.|
 
+### See also:
+Section 14.3. for "Examples of YINI ⇆ JSON Mapping".
+
 ## 14. Examples
 
 ### 14.1. Minimal Example
@@ -1074,7 +1079,7 @@ recent_files = [
 /END
 ```
 
-### 14.2.2. Application Settings with Sections
+#### 14.2.2. Application Settings with Sections
 ```yini
 # Database
 host = "localhost"
@@ -1097,7 +1102,7 @@ api_version = "v2.1"
 **Notes:**
 - The `#` marker cleanly divides logical domains into sections.
 
-### 14.2.3. Script Metadata
+#### 14.2.3. Script Metadata
 ```yini
 # Metadata
 name = "Data Fetch Script"
@@ -1109,7 +1114,7 @@ active = true
 /END
 ```
 
-### 14.2.4. Feature Flags
+#### 14.2.4. Feature Flags
 ```yini
 # FeatureFlags
 debug = true
@@ -1121,7 +1126,7 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 /END
 ```
 
-### 14.2.5. Feature Toggles with Alternative Syntax
+#### 14.2.5. Feature Toggles with Alternative Syntax
 ```yini
 /*
   Feature Toggles with Alternative Syntax
@@ -1146,6 +1151,169 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 - \`Cache Config\` is a nested subsection of \`Feature Toggles\`.
 - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
 - Ends with the alternative document terminator `###`.
+
+### 14.3. Examples of YINI  -> JSON Mapping
+
+#### 14.3.1. Simple Flat Structure to JSON
+**YINI:**
+```yini
+# User
+name = "Alice"
+age = 28
+active = true
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "User": {
+    "name": "Alice",
+    "age": 28,
+    "active": true
+  }
+}
+```
+
+#### 14.3.2. Nested Sections (multiple levels) to JSON
+**YINI:**
+```yini
+# Settings
+theme = "dark"
+language = "en"
+
+## Display
+resolution = "1920x1080"
+fullscreen = true
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Settings": {
+    "theme": "dark",
+    "language": "en",
+    "Display": {
+      "resolution": "1920x1080",
+      "fullscreen": true
+    }
+  }
+}
+```
+
+#### 14.3.3. Lists (Arrays) to JSON
+**YINI:**
+```yini
+# Server
+hosts = ['server1.example.com', 'server2.example.com']
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Server": {
+    "hosts": [
+      "server1.example.com",
+      "server2.example.com"
+    ]
+  }
+}
+```
+
+#### 14.3.4. Nulls and Booleans to JSON
+**YINI:**
+```yini
+# Flags
+enabled = On
+archived = Off
+description = Null
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Flags": {
+    "enabled": true,
+    "archived": false,
+    "description": null
+  }
+}
+```
+
+### 14.4. Examples of JSON -> YINI Mapping
+
+#### 14.4.1. Simple JSON Object to YINI
+**JSON:**
+```json
+{
+  "Profile": {
+    "username": "bob",
+    "age": 35,
+    "verified": true
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# Profile
+username = "bob"
+age = 35
+verified = true
+
+/END
+```
+
+#### 14.4.2. Nested JSON Objects to YINI
+**JSON:**
+```json
+{
+  "App": {
+    "version": "2.5",
+    "settings": {
+      "theme": "light",
+      "notifications": true
+    }
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# App
+version = "2.5"
+
+## settings
+theme = "light"
+notifications = true
+
+/END
+```
+
+#### 14.4.3. JSON Array to YINI
+**JSON:**
+```json
+{
+  "Servers": {
+    "hosts": ["alpha.local", "beta.local", "gamma.local"]
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# Servers
+hosts = ["alpha.local", "beta.local", "gamma.local"]
+
+/END
+```
 
 ## 15. Appendices and Reserved Areas
 ### 15.1. License
