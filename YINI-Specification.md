@@ -3,6 +3,11 @@
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
+```yini
+# YINI
+Yet_another = 'INI'
+###
+```
 © 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
 See the full license text at the end of this document.
 
