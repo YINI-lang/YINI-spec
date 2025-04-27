@@ -1,7 +1,32 @@
-# Specification for the YINI Format
-**Version:** v1.0.0 Beta 3
+_YINI: A lightweight configuration file format — clean, readable, structured._
 
-> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 13.2. Versioning Strategy).
+> \# YINI ≡
+---
+# Specification for the YINI Format
+**Version:** v1.0.0 Beta 3 + Updates
+
+> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
+
+```yini
+# YINI
+Yet_another = 'INI'
+###
+```
+© 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
+See the full license text at the end of this document.
+
+---
+
+## Preface
+YINI was designed with a simple idea in mind: configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.
+
+While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces a clean, minimalistic design focused on human readability, structural clarity, and extensibility for the future.  
+One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing complex structures to be expressed in a simple, natural, and visually clear way — without the heavy indentation rules or syntax overhead found in other formats.
+
+YINI embraces simplicity as a strength, offering just enough rules to stay consistent, while staying forgiving enough for real-world use.
+
+This specification defines the YINI format with care and clarity, aiming to serve both casual users and implementers seeking a robust, reliable configuration format.  
+Above all, YINI remains true to its founding goal: **make configuration effortless**.
 
 ---
 
@@ -15,7 +40,7 @@
 &nbsp;&nbsp;&nbsp;&nbsp;1.1. What is YINI?  
 &nbsp;&nbsp;&nbsp;&nbsp;1.2. Purpose and Design Goals  
 &nbsp;&nbsp;&nbsp;&nbsp;1.3. Key Features  
-&nbsp;&nbsp;&nbsp;&nbsp;1.4. Terminology  
+&nbsp;&nbsp;&nbsp;&nbsp;1.4. Terminology
 
 **2. File Structure**  
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
@@ -76,7 +101,7 @@
 **11. Validation Rules**  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness Requirements  
-&nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes _(Optional Feature)_  
+&nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes _(Optional Feature)_
 
 **12. Implementation Notes**  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
@@ -88,12 +113,13 @@
 &nbsp;&nbsp;&nbsp;&nbsp;12.7 String Literal Types  
 &nbsp;&nbsp;&nbsp;&nbsp;12.8 Comments  
 &nbsp;&nbsp;&nbsp;&nbsp;12.9 Error Handling Recommendations  
-&nbsp;&nbsp;&nbsp;&nbsp;12.10 Bonus Tips for Implementation  
+&nbsp;&nbsp;&nbsp;&nbsp;12.10 Bonus Tips for Implementation
 
 **13. Compatibility and Versioning**  
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Fallback Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Versioning Strategy  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Encoding Notes  
+&nbsp;&nbsp;&nbsp;&nbsp;13.4. JSON Compatibility
 
 ---
 
@@ -101,12 +127,14 @@
 
 **14. Examples**  
 &nbsp;&nbsp;&nbsp;&nbsp;14.1. Minimal Example  
-&nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases
+&nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases  
+&nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI → JSON Mapping  
+&nbsp;&nbsp;&nbsp;&nbsp;14.4. Examples of JSON → YINI Mapping  
 
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
 &nbsp;&nbsp;&nbsp;&nbsp;15.2. Author(s)  
-&nbsp;&nbsp;&nbsp;&nbsp;15.3. Changelog  
+&nbsp;&nbsp;&nbsp;&nbsp;15.3. Spec Changelog  
 &nbsp;&nbsp;&nbsp;&nbsp;15.4. Reserved: Grammar (Formal)
 
 ---
@@ -147,23 +175,26 @@ The following is WIP:
 ## 1.4. Terminology
 The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI’s grammar, structure, and semantics.
 
-|Term|Definition|
-|---|---|
-| YINI | Short for "Yet Another INI", a human-readable configuration format blending INI-style sections with modern typing and structure.
-| Member | A key-value pair, such as `key = value`, representing a single entry within a section or root.
-| Key | An identifier on the left side of an assignment (`=` or `:`). Keys must be unique within their section.
-| Value | The data assigned to a key. Can be of type string, number, boolean, null, or list.
-| Identifier | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks).
-| Section | A logical grouping of members, introduced by a header using a section marker like `#`, `~`, or `>`.
-| Section Marker | A special character (`#`, `~`, or `>`) that denotes a new section header.
-| Document Terminator | A special line (`/END` or `###`) that explicitly marks the end of a YINI document.
-| Raw String (R-String) | A string literal that does not interpret escape sequences **(default type)**.
-| Classic String (C-String) |A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc.
-| Hyper String (H-String) | A multi-line string prefixed with `H` that normalizes whitespace and trims edges.
-| Triple-Quoted String | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes.
-| List | A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values).
-| Strict Mode | A parsing mode where all structural and validation rules are enforced.
-| Lazy/Lenient Mode | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input.
+| Term                     | Definition |
+|---------------------------|------------|
+| Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
+| Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
+| Document Terminator       | A special line (`/END` or `###`) that explicitly marks the end of a YINI document. |
+| Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
+| Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks). |
+| Key                       | An identifier on the left side of an assignment (`=` or `:`). Keys must be unique within their section (and depth/level). |
+| Lazy/Lenient Mode         | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input. |
+| List                      | A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
+| Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
+| Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
+| Section                   | A logical grouping of members, introduced by a header using a section marker like `#`, `~`, or `>`. |
+| Section Marker            | A special character (`#`, `~`, or `>`) that denotes a new section header. |
+| Strict Mode               | A parsing mode where all structural and validation rules are enforced. |
+| Triple-Quoted String      | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes. |
+| Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
+| YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
+| YINI file                 | A complete YINI configuration. In this specification, "file" and "document" mean the same thing. |
+| YINI                      | Short for "Yet Another INI", a human-readable configuration format blending INI-style sections with modern typing and structure. |
 
 ## 2. File Structure
 The structure of a YINI file is designed to be simple, clear, and highly readable. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
@@ -292,7 +323,7 @@ A YINI document must always end with a **terminator line**. The document termina
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespace or comments** may appear after the terminator.
 
-It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comment after the marker, these whould be ignored.
+It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comment after the marker, these should be ignored.
 
 Alternatively, a shorter form may be used:
 ```
@@ -340,6 +371,8 @@ A `YINI` _**value**_ can be of one of the following 3 groups of native/built-in 
 
 - **Value of Special-type:**
   - NULL
+
+**Note:** YINI types maps 1-to-1 to JSON native types.
 
 ## 5. Section Headers
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
@@ -726,19 +759,20 @@ Use of these keywords outside their defined roles may result in a parse error.
 A YINI file is considered **well-formed** if it adheres to the core syntactic and structural rules defined in this specification.
 
 #### 11.2.1. Structural Requirements
-- A file must consist of one or more **sections**.
-- A file must contain at least one valid key-value pair (member).
+- A file may consist of zero or more **sections**.
+- A file may consist of zero or more valid key-value pairs (members).
 - Section headers must begin with a valid marker (`#`, `~`, `>`).
 - At least one space or tab is required between a section marker and the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
+- A YINI file must end with only one single terminator (`/END` or `###`).
 
 #### 11.2.2. Character Encoding
-Files **must** be encoded in **UTF-8 without BOM**.
+Files **must** be encoded as **UTF-8 without BOM**.
 
 #### 11.2.3. Line Endings
-- Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>`line endings.
+- Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>` line endings.
 - Mixed line endings are discouraged but tolerated in lenient mode.
   
 #### 11.2.4. Valid Value Types
@@ -747,7 +781,7 @@ Files **must** be encoded in **UTF-8 without BOM**.
 - Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
 
 #### 11.2.5. Document Terminator
-- See [Section 3.5: Document Terminator] for terminator syntax.
+- See Section 3.5, "Document Terminator" for terminator syntax.
 - A valid YINI file must end with a terminator (`/END`, `###`).
 - Only one terminator is permitted per file.
 - Missing terminators:
@@ -770,6 +804,42 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
 - Escape sequences are **ONLY allowed** in classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-quoted strings must use `"""` for both opening and closing (`'''` is not supported).
 
+#### 11.2.7. Shortest Valid YINI Documents
+- **Valid short documents:**
+  - ✅ The following is the shortest valid YINI document **with a member**:
+    ```yini
+    K=
+    ###
+    ```
+    **Note:** A key named `K`, whose value will be interpreted as `null`.
+
+  - ✅ The following is the shortest valid YINI document **with a section header**:
+    ```yini
+    # S
+    ###
+    ```
+    **Note:** A section header named `S`, containing no members.
+
+  - ✅ Thus, the following **is also a valid** YINI document by this specification:
+    ```yini
+    ###
+    ```
+    **Note:** A YINI document may only contain the document terminator, meaning there are no members or sections in the file.
+- **Invalid short documents:**
+  - ❌ However, the following file is invalid:
+    ```yini
+    // A dangling key is invalid, either = or : is missing.
+    key
+    ###
+    ```
+    **Note:** This is not a proper member, it contains only a key, either `=` or `:` is missing to make it a proper member.
+
+  - ❌ The following empty file (with only a comment) is also invalid:
+    ```yini
+    // Invalid empty YINI document, the required document terminator (`/END` or `###`) is missing.
+    ```
+    **Note:** The document terminator is required in a valid YINI document.
+
 ### 11.3. Strict vs. Lenient Modes _(Optional Feature)_
 Some YINI parsers may support multiple **validation modes**:
 
@@ -780,7 +850,7 @@ Some YINI parsers may support multiple **validation modes**:
 - **Lazy/Lenient Mode:** 
   - Permissive with minor errors (e.g., trailing commas, mixed line endings).
   - May allow unescaped bare values or relaxed typing.
-  - Useful for hand-edited config files.
+  - Useful for hand-edited configuration files.
 
 **Note:** Implementations must clearly document the validation mode in use and detail which rules are relaxed under lenient parsing.
  
@@ -909,15 +979,18 @@ Developers are encouraged to implement the following features to improve parser 
 * (?) Optionally log ignored lines (e.g., with --) for debugging.
 * Optionally, **log ignored or unknown lines** (e.g., those starting with `--`) to assist debugging or migration.
 
-## 13.1. Fallback Rules
-### 13.1.1. Invalid Sections or Keys
+## 13. Compatibility and Versioning
+This section covers YINI's compatibility and interoperability principles.
+
+### 13.1. Fallback Rules
+#### 13.1.1. Invalid Sections or Keys
 - Invalid key names or section headers should be retained as-is but ignored if in lenient mode, or issue a warning or error if in strict mode.
   
-### 13.1.2. Graceful Degradation
+#### 13.1.2. Graceful Degradation
 - Parsers may issue warnings instead of errors when encountering unrecognized features (e.g., unknown directives, anchors, or section markers).
 - Implementations should strive to process known-valid content even if advanced features are not supported.
 
-## 13.2. Versioning Strategy
+### 13.2. Versioning Strategy
 **Version Format**
 
 - In the future, the YINI Specification will adopt _Semantic Versioning_ (`MAJOR.MINOR.PATCH STAGE`) to signal format evolution.
@@ -928,7 +1001,7 @@ Semantic Versioning:
 - **MINOR:** Backward-compatible additions.
 - **PATCH:** Backward-compatible fixes.
 
-### 13.3. Encoding Notes  
+### 13.3. Encoding Notes
 #### 13.3.1 Required Encoding
 - **UTF-8 without BOM** is the required and default encoding for YINI files.
 - Parsers must support UTF-8 fully.
@@ -944,6 +1017,43 @@ A shebang line may be used at the very top of the file:
 #!/usr/bin/env yini
 ```
 This line is ignored by YINI parsers but may affect script execution in Unix environments. It must be ignored by the YINI parser as a comment or metadata line.
+
+### 13.4. JSON Compatibility
+
+A valid YINI file can be converted into a valid JSON file (and vice versa) while preserving **data structure, types, and identifier names exactly**.
+
+Although YINI and JSON are distinct formats with different goals, their core data models are closely aligned.
+Strings, numbers, booleans, nulls, and lists in YINI map naturally to their JSON equivalents, and key names (identifiers) maintain structural correspondence when properly quoted.
+
+You can convert a YINI file into JSON (and vice versa) and preserve all real data — structure, types, and names — correctly,  
+but you must ignore or remove YINI-only features like section markers, comments, and terminators when expressing it as JSON.
+
+#### Converting YINI to JSON
+- **Keys (Identifiers):** As long as keys are quoted properly in JSON, and identifiers follow JSON string rules.
+- **Value types (String, Number, Boolean, Null, List):** Direct mapping is possible between YINI and JSON native types.
+- **Lists (Arrays):** Lists `[]` map 1-to-1.
+- **Sections:** YINI sections correspond to nested objects `{}` in JSON.
+- **String types:** ⚠️ All strings become plain JSON strings once parsed, escaping is normalized when serialized.
+
+#### Metadata Limitations
+- 🚫 Metadata (such as comments and the document terminator) will not be carried over to JSON.
+
+#### Summary
+When converted carefully, a well-formed YINI document can be faithfully represented as a valid JSON object, preserving all structure, data types, and identifier names.  
+Conversely, a valid JSON object can be mapped into a YINI document, provided that JSON-specific constructs (such as deeply nested objects) are expressed as sections and that YINI syntax rules are respected.
+
+**Table: Correspondence Between YINI and JSON**
+
+| Entity             | → JSON                         | → YINI                          | Notes |
+|--------------------|---------------------------------|----------------------------------|-------|
+| Structure Mapping  | ✅ Yes (sections become objects) | ✅ Yes (objects become sections)|   |
+| Types Mapping      | ✅ Yes (direct type mapping)     | ✅ Yes (direct type mapping)    |   |
+| Identifiers (Keys) | ✅ Yes (must always be quoted)    | ✅ Yes (backticks if needed)   |   |
+| Comments           | 🚫 No (discarded)                | -                               | Comments are dropped during JSON conversion.|
+| Terminator         | 🚫 No (ignored)                  | -                               | Terminator must be appended when converting to YINI.|
+
+### See also:
+See Sections 14.3 and 14.4 for examples of YINI ⇆ JSON mappings.
 
 ## 14. Examples
 
@@ -981,7 +1091,7 @@ recent_files = [
 /END
 ```
 
-### 14.2.2. Application Settings with Sections
+#### 14.2.2. Application Settings with Sections
 ```yini
 # Database
 host = "localhost"
@@ -1004,7 +1114,7 @@ api_version = "v2.1"
 **Notes:**
 - The `#` marker cleanly divides logical domains into sections.
 
-### 14.2.3. Script Metadata
+#### 14.2.3. Script Metadata
 ```yini
 # Metadata
 name = "Data Fetch Script"
@@ -1016,7 +1126,7 @@ active = true
 /END
 ```
 
-### 14.2.4. Feature Flags
+#### 14.2.4. Feature Flags
 ```yini
 # FeatureFlags
 debug = true
@@ -1028,7 +1138,7 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 /END
 ```
 
-### 14.2.5. Feature Toggles with Alternative Syntax
+#### 14.2.5. Feature Toggles with Alternative Syntax
 ```yini
 /*
   Feature Toggles with Alternative Syntax
@@ -1054,6 +1164,169 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
 - Ends with the alternative document terminator `###`.
 
+### 14.3. Examples of YINI → JSON Mapping
+
+#### 14.3.1. Simple Flat Structure to JSON
+**YINI:**
+```yini
+# User
+name = "Alice"
+age = 28
+active = true
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "User": {
+    "name": "Alice",
+    "age": 28,
+    "active": true
+  }
+}
+```
+
+#### 14.3.2. Nested Sections (multiple levels) to JSON
+**YINI:**
+```yini
+# Settings
+theme = "dark"
+language = "en"
+
+## Display
+resolution = "1920x1080"
+fullscreen = true
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Settings": {
+    "theme": "dark",
+    "language": "en",
+    "Display": {
+      "resolution": "1920x1080",
+      "fullscreen": true
+    }
+  }
+}
+```
+
+#### 14.3.3. Lists (Arrays) to JSON
+**YINI:**
+```yini
+# Server
+hosts = ['server1.example.com', 'server2.example.com']
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Server": {
+    "hosts": [
+      "server1.example.com",
+      "server2.example.com"
+    ]
+  }
+}
+```
+
+#### 14.3.4. Nulls and Booleans to JSON
+**YINI:**
+```yini
+# Flags
+enabled = On
+archived = Off
+description = Null
+
+/END
+```
+
+**JSON Equivalent:**
+```json
+{
+  "Flags": {
+    "enabled": true,
+    "archived": false,
+    "description": null
+  }
+}
+```
+
+### 14.4. Examples of JSON → YINI Mapping
+
+#### 14.4.1. Simple JSON Object to YINI
+**JSON:**
+```json
+{
+  "Profile": {
+    "username": "bob",
+    "age": 35,
+    "verified": true
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# Profile
+username = "bob"
+age = 35
+verified = true
+
+/END
+```
+
+#### 14.4.2. Nested JSON Objects to YINI
+**JSON:**
+```json
+{
+  "App": {
+    "version": "2.5",
+    "settings": {
+      "theme": "light",
+      "notifications": true
+    }
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# App
+version = "2.5"
+
+## settings
+theme = "light"
+notifications = true
+
+/END
+```
+
+#### 14.4.3. JSON Array to YINI
+**JSON:**
+```json
+{
+  "Servers": {
+    "hosts": ["alpha.local", "beta.local", "gamma.local"]
+  }
+}
+```
+
+**YINI Equivalent:**
+```yini
+# Servers
+hosts = ["alpha.local", "beta.local", "gamma.local"]
+
+/END
+```
+
 ## 15. Appendices and Reserved Areas
 ### 15.1. License
 Apache License, Version 2.0, January 2004,
@@ -1069,25 +1342,20 @@ First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
 Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
 
-### 15.3. Changelog
-A running log of changes and updates to the YINI specification.
+### 15.3. Spec Changelog
+A running log of changes and updates **to the YINI specification**.
+
+v1.0.0 Beta 3 + Updates
+- --WIP: In current cycle--
+- Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
 
 v1.0.0 Beta 3, 2025-04-25
-- Reworked and reordered large sections, with an updated Table of Contents.
-- Reworded many sections for clarity.
-- Included the Changelog section (moved from About document).
-- Added new sections "Advanced Constructs", "Validation Rules", "Compatibility and Versioning", "Appendices and Reserved Areas"  to enhance specification completeness.
-- Readded "Terminology" section.
-- Added a handfull of examples into section "Realistic Config Use Cases".
 
 v1.0.0 Beta 2, 2025-04-23
 - Added (new) support for triple-quoted strings (`"""`).
 - Added support for alternative hexadecimal literals using `#`.
 - Added support for binary literals using `%`.
 - Reintroduced support for the alternative terminator marker `###`.
-- Clarified list handling in the "Values & Native Types" section.
-- Added a syntax summary section to improve clarity.
-- Added a section detailing items and items in lists.
 
 ---
 /END
