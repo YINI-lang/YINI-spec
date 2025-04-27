@@ -1,7 +1,10 @@
 # Specification for the YINI Format
 **Version:** v1.0.0 Beta 3 + Updates
 
-> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see section 13.2. "Versioning Strategy").
+> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
+
+© 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
+See the full license text at the end of this document.
 
 ---
 
@@ -116,8 +119,8 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 **14. Examples**  
 &nbsp;&nbsp;&nbsp;&nbsp;14.1. Minimal Example  
 &nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases  
-&nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI  -> JSON Mapping  
-&nbsp;&nbsp;&nbsp;&nbsp;14.4. Examples of JSON  -> YINI Mapping  
+&nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI → JSON Mapping  
+&nbsp;&nbsp;&nbsp;&nbsp;14.4. Examples of JSON → YINI Mapping  
 
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
@@ -311,7 +314,7 @@ A YINI document must always end with a **terminator line**. The document termina
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespace or comments** may appear after the terminator.
 
-It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comment after the marker, these whould be ignored.
+It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comment after the marker, these should be ignored.
 
 Alternatively, a shorter form may be used:
 ```
@@ -1041,7 +1044,7 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 | Terminator         | 🚫 No (ignored)                  | -                               | Terminator must be appended when converting to YINI.|
 
 ### See also:
-Section 14.3. for "Examples of YINI ⇆ JSON Mapping".
+See Sections 14.3 and 14.4 for examples of YINI ⇆ JSON mappings.
 
 ## 14. Examples
 
@@ -1152,7 +1155,7 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
 - Ends with the alternative document terminator `###`.
 
-### 14.3. Examples of YINI  -> JSON Mapping
+### 14.3. Examples of YINI → JSON Mapping
 
 #### 14.3.1. Simple Flat Structure to JSON
 **YINI:**
@@ -1247,7 +1250,7 @@ description = Null
 }
 ```
 
-### 14.4. Examples of JSON -> YINI Mapping
+### 14.4. Examples of JSON → YINI Mapping
 
 #### 14.4.1. Simple JSON Object to YINI
 **JSON:**
