@@ -134,7 +134,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
 &nbsp;&nbsp;&nbsp;&nbsp;15.2. Author(s)  
-&nbsp;&nbsp;&nbsp;&nbsp;15.3. Changelog  
+&nbsp;&nbsp;&nbsp;&nbsp;15.3. Spec Changelog  
 &nbsp;&nbsp;&nbsp;&nbsp;15.4. Reserved: Grammar (Formal)
 
 ---
@@ -1342,29 +1342,20 @@ First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
 Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
 
-### 15.3. Changelog
-A running log of changes and updates to the YINI specification.
+### 15.3. Spec Changelog
+A running log of changes and updates **to the YINI specification**.
 
 v1.0.0 Beta 3 + Updates
 - --WIP: In current cycle--
-- Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. Clarified this with new examples in the specification.
+- Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
 
 v1.0.0 Beta 3, 2025-04-25
-- Reworked and reordered large sections, with an updated Table of Contents.
-- Reworded many sections for clarity.
-- Included the Changelog section (moved from About document).
-- Added new sections "Advanced Constructs", "Validation Rules", "Compatibility and Versioning", "Appendices and Reserved Areas"  to enhance specification completeness.
-- Readded "Terminology" section.
-- Added a handful of examples into section "Realistic Config Use Cases".
 
 v1.0.0 Beta 2, 2025-04-23
 - Added (new) support for triple-quoted strings (`"""`).
 - Added support for alternative hexadecimal literals using `#`.
 - Added support for binary literals using `%`.
 - Reintroduced support for the alternative terminator marker `###`.
-- Clarified list handling in the "Values & Native Types" section.
-- Added a syntax summary section to improve clarity.
-- Added a section detailing items and items in lists.
 
 ---
 /END
