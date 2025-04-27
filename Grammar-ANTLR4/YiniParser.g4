@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- v1.0.0 Beta 3
+ v1.0.0 Beta 3 + Updates
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -29,7 +29,7 @@ options {
 yini: SHEBANG? COMMENT* NL* section+ NL* EOF;
 
 section:
-	SECTION_HEAD section_members
+	SECTION_HEAD? section_members
 	| SECTION_HEAD section
 	| terminal_line;
 
