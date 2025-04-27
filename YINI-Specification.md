@@ -1,3 +1,5 @@
+_YINI: A lightweight configuration file format — clean, readable, structured._
+
 > \# YINI ≡
 ---
 # Specification for the YINI Format
