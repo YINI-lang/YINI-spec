@@ -1,3 +1,11 @@
+**Version:** v1.0.0 Beta 3 + Updates
+
+**Status:** Beta Release
+
+**Format Name:** `YINI` (influenced by `INI`, `JSON`, `C`, `Python`...)
+
+---
+
 # YINI Specification
 
 _Yet Another INI — a lightweight configuration file format: clean, readable, structured._
