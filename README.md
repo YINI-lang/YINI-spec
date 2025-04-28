@@ -97,7 +97,7 @@ caching = true
 ```yini
 String = "D:\folder\file"  // No escapes needed.
 
-ClassicString = C"Escaped line break: Hello\nWorld"  // Supports escape sequences.
+ClassicString = C"Hello\nWorld"  // Supports escape sequences.
 
 HyperString = H"
   This is a hyper string spanning multiple lines,
