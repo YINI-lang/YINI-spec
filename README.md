@@ -8,7 +8,7 @@
 
 # YINI Specification
 
-_Yet Another INI — a lightweight configuration file format: clean, readable, structured._
+_Yet another INI — a lightweight configuration file format: clean, readable, structured._
 
 ---
 

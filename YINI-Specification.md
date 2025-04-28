@@ -194,7 +194,7 @@ The following key terms are used consistently throughout this specification. Und
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
 | YINI file                 | A complete YINI configuration. In this specification, "file" and "document" mean the same thing. |
-| YINI                      | Short for "Yet Another INI", a human-readable configuration format blending INI-style sections with modern typing and structure. |
+| YINI                      | Short for "Yet another INI", a human-readable configuration format blending INI-style sections with modern typing and structure. |
 
 ## 2. File Structure
 The structure of a YINI file is designed to be simple, clear, and highly readable. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
