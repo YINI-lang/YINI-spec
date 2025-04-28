@@ -20,3 +20,4 @@ Checklist for maintainer(s) of this repository.
 
 1. **Backmerge staging into develop:** The env `staging` into `develop` (as develop as the base).
 2. **Patch/mark verstring for new cycle:** Now on develop, patch all version strings (except in Changes and in CHANGELOG.md) with ` + Updates` after each verstring.
+   - E.g. `v1.0.0 Beta 4` to `v1.0.0 Beta 4 + Updates`.
