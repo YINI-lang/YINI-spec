@@ -1,4 +1,4 @@
-**Version:** v1.0.0 Beta 3 + Updates
+**Version:** v1.0.0 Beta 4
 
 **Status:** Beta Release
 
@@ -8,7 +8,7 @@
 
 # YINI Specification
 
-_Yet Another INI — a lightweight configuration file format: clean, readable, structured._
+_Yet another INI — a lightweight configuration file format: clean, readable, structured._
 
 ---
 
