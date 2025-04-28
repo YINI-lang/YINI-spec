@@ -1,6 +1,9 @@
 # CHANGELOG
 Edits and updates **in this repository**.
 
+2025-04-28
+- In spec, renamed section to "Spec Changes" from "Spec Changelog" (to distinguish it more from the CHANGELOG file).
+
 2025-04-27 (spec: v1.0.0 Beta 4)
 - Distinguished between changes to specification and in the repository itself: Changelog section in the spec doc now is exclusive only to the YINI specification itself, and the repository has its own file `CHANGELOG.md` (this file) now.
 - In the spec doc, renamed section 15.3, "Changelog" to "Spec Changelog" to make it more clear in the future.

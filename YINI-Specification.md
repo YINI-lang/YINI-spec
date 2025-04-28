@@ -134,7 +134,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
 &nbsp;&nbsp;&nbsp;&nbsp;15.2. Author(s)  
-&nbsp;&nbsp;&nbsp;&nbsp;15.3. Spec Changelog  
+&nbsp;&nbsp;&nbsp;&nbsp;15.3. Spec Changes  
 &nbsp;&nbsp;&nbsp;&nbsp;15.4. Reserved: Grammar (Formal)
 
 ---
@@ -1342,7 +1342,7 @@ First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
 Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
 
-### 15.3. Spec Changelog
+### 15.3. Spec Changes
 A running log of changes and updates **to the YINI specification**.
 
 v1.0.0 Beta 4
