@@ -28,7 +28,7 @@ YINI is a human-friendly configuration file format that blends the simplicity of
 - ✅ Clean and minimalistic syntax
 - ✅ Typing support: strings, numbers, booleans, nulls, lists
 - ✅ Section nesting using intuitive markers (`#`, `~`, `>`)
-- ✅ `=` for assignment of values to keys (lists has optional `:` assignment styles)
+- ✅ `=` for standard assignment (with optional `:` syntax for list-style values)
 - ✅ Document terminator (`/END` or `###`) for clear file boundaries
 - ✅ Designed for **human readability first**, but machine-friendly
 - ✅ Alternative syntax for booleans, including: `true`, `false`, `on`, `off`, `yes`, `no`
@@ -70,7 +70,7 @@ Notice:
 
 ---
 
-## Another Example: Lists and Nesting
+## Example: Lists, Nesting, and Booleans
 
 ```yini
 # AppInfo
@@ -85,7 +85,30 @@ host = "localhost"
 port = 8080
 
 ## Advanced
-caching = ON
+caching = true
+
+/END
+```
+
+---
+
+## Example: Using Different String Types
+
+```yini
+String = "D:\folder\file"  // No escapes needed.
+
+ClassicString = C"Escaped line break: Hello\nWorld"  // Supports escape sequences.
+
+HyperString = H"
+  This is a hyper string spanning multiple lines,
+  trims edges and normalizes whitespaces.
+"
+
+TripleQuotedString = """
+This is a literal,
+triple-quoted string
+without escapes.
+"""
 
 /END
 ```
