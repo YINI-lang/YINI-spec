@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \# YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 3 + Updates
+**Version:** v1.0.0 Beta 4
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -134,7 +134,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
 &nbsp;&nbsp;&nbsp;&nbsp;15.2. Author(s)  
-&nbsp;&nbsp;&nbsp;&nbsp;15.3. Spec Changelog  
+&nbsp;&nbsp;&nbsp;&nbsp;15.3. Spec Changes  
 &nbsp;&nbsp;&nbsp;&nbsp;15.4. Reserved: Grammar (Formal)
 
 ---
@@ -194,7 +194,7 @@ The following key terms are used consistently throughout this specification. Und
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
 | YINI file                 | A complete YINI configuration. In this specification, "file" and "document" mean the same thing. |
-| YINI                      | Short for "Yet Another INI", a human-readable configuration format blending INI-style sections with modern typing and structure. |
+| YINI                      | Short for "Yet another INI", a human-readable configuration format blending INI-style sections with modern typing and structure. |
 
 ## 2. File Structure
 The structure of a YINI file is designed to be simple, clear, and highly readable. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
@@ -1342,11 +1342,10 @@ First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
 Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
 
-### 15.3. Spec Changelog
+### 15.3. Spec Changes
 A running log of changes and updates **to the YINI specification**.
 
-v1.0.0 Beta 3 + Updates
-- --WIP: In current cycle--
+v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
 
 v1.0.0 Beta 3, 2025-04-25
