@@ -89,8 +89,8 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 &nbsp;&nbsp;&nbsp;&nbsp;8.2. Null Literal
 
 **9. List Literals**  
-&nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Notation with `=`  
-&nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based List Notation without Brackets (`:`)
+&nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Lists (using `=`)  
+&nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based List (using `:`)
 
 **10. Advanced Constructs**  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Reserved Features _(For Future Use)_  
@@ -672,7 +672,7 @@ YINI supports two ways to define lists:
 
 Note: Only lists can use the alternative notation using `:`.
 
-### 9.1. Bracketed Notation with `=`
+### 9.1. Bracketed Lists (using `=`)
 A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
@@ -720,7 +720,7 @@ linkItems = [
 ]
 ```
 
-### 9.2. Colon-Based List Notation without Brackets (`:`)
+### 9.2. Colon-Based List (using `:`)
 Exclusively for lists, YINI allows an alternative syntax using a colon (`:`) instead of `=`. This style omits square brackets and is intended to improve readability in configurations with list-like values.
 
 ```yini
@@ -730,8 +730,9 @@ list2:  // An empty list.
 ```
 
 **Multi-line List Syntax:**
-Each list item may optionally appear on its own line for better readability.
-Commas are required between values, and a trailing comma on the last line is allowed ONLY in this notation.
+Each item in the list may optionally appear on its own line for better readability.
+
+**Commas are required between values**, and a **trailing comma** on the last item is allowed — but ONLY when using colon-based list syntax.
 
 ```yini
 list1:
@@ -744,34 +745,35 @@ list2:
   "bananas",
   "peaches",  // Trailing comma is valid here, and is ignored.
 ```
-**Note:** This colon-based list syntax is only valid for list values.
+**Note:** This colon-based list syntax is only valid for lists.
 It must not be used for single values or key-value assignments.
 The trailing comma is ignored ONLY in `:` based lists.
 
-**Note2:** A trailing comma in bracketed lists (`[ ... ]`) on the other hand, is treated as a empty value (null as last item).
-
-Each item can optionally be placed on its own line for readability. Commas are required between values. A trailing comma is allowed.
-
 ⚠️ **Common Pitfall**
 ```yini
-name: "John"  // ⚠️ This is a list, with one item!
+name: "John"  // ⚠️ Interpreted as a list with one string item!
 ```
-Above has not the same meaning as ```name = "John"```.
+This is **NOT equivalent** to:
+```yini
+name = "John"  // ✅ A single string value.
+```
 
-**Note:** Colon is not a substitute for `=` and must not be used for regular member assignments.
+**Colon (`:`) is not a substitute for `=`** and must not be used for regular member (non list) assignments.
 
-For best simplicity, the colon based list syntax is best only used by advanced users and/or bigger lists with many items, etc.
+**Trailing Comma Behavior**
+- In colon-based lists, a **trailing comma is ignored** (legal, optional).
+- In bracketed lists (`[ ... ]`), a **trailing comma results in an implicit** `null` as the last item.
 
 **Termination Rule**
 
-A multi-line list (using `:`) ends when **any of the following** is encountered:
+A colon-based multi-line list ends when **one of the following** is encountered:
 - a new key assignment (`key = ...` or `key: ...`)
 - a new section header (simple or phrased)
-- a document terminator marker (`/END`)
+- a document terminator marker (`/END`, `###`)
 
 **Nested Lists with `:` Notation**
 
-Nested lists are supported and may include inner bracketed Lists:
+Colon-based lists may contain bracketed sub-lists:
 ```yini
 linkItems:
 	["stylesheet", "css/general.css"],
