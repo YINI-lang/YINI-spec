@@ -363,7 +363,7 @@ user_id = 12345
 > YINI infers the type of each value automatically based on its syntax.
 There is no need to declare types explicitly — the parser determines the value type by how it is written (e.g., quotes, brackets, keywords).
 
-A YINI _**value**_ can be of one of the following 3 groups of native/built-in types:
+A YINI _**value**_ can be of one of the following three groups of native/built-in types:
 
 - **Simple types:**
   - String
@@ -391,7 +391,7 @@ If the value is meant to be a string, it must be quoted — either with single q
 - A sequence of digits **with a period** (`.`) is treated as a **Number** (floating-point / float).
 
 #### Booleans
-If the value matches any of the follwing keywords `true`, `false`, `on`, `off`, `yes`, or `no` (case-insensitive) — it is interpreted as a **Boolean**. 
+If the value matches any of the following keywords `true`, `false`, `on`, `off`, `yes`, or `no` (case-insensitive) — it is interpreted as a **Boolean**. 
 
 #### Lists
 If the value is a **bracketed sequence** (`[ ... ]`) of values (of any supported type), separated by commas — the entire value is treated as a **List**.
@@ -406,9 +406,9 @@ If the value is the keyword `null` (case-insensitive), or if the value is missin
 | `'something'`, `"something"`, or `"""something"""` | **String** |
 | `123` | **Number** (integer) |
 | `3.1415` | **Number** (float) |
-| `true`, `FALSE`, `On`, `off`, `YES`, `No`| **Boolean** |
-| `null`, `NULL`, ` ` (blank) | **Null** |
-| (Unquoted non-number as a value) | This is **ERROR** |
+| `true`, `FALSE`, `On`, `off`, `YES`, `No` _(any casing)_| **Boolean** |
+| `null` _(any casing)_, ` ` _(blank)_ | **Null** |
+| _(Unquoted non-number as a value)_ | **ERROR** |
 
 ## 5. Section Headers
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
