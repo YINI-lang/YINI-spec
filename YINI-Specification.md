@@ -721,7 +721,7 @@ linkItems = [
 ```
 
 ### 9.2. Colon-Based List Notation without Brackets (`:`)
-Exlusevily to lists, this notation offers an alternative syntax using a colon `:` (instead of `=` as is't the praxis for members), and omits square brackets entirely.
+Exclusively for lists, YINI allows an alternative syntax using a colon (`:`) instead of `=`. This style omits square brackets and is intended to improve readability in configurations with list-like values.
 
 ```yini
 list1: "oranges", "bananas", "peaches"  // List with three items.
@@ -730,8 +730,8 @@ list2:  // An empty list.
 ```
 
 **Multi-line List Syntax:**
-
-Each item (and its comma) may optionally appear on its own line for better readability.
+Each list item may optionally appear on its own line for better readability.
+Commas are required between values, and a trailing comma on the last line is allowed ONLY in this notation.
 
 ```yini
 list1:
@@ -744,15 +744,23 @@ list2:
   "bananas",
   "peaches",  // Trailing comma is valid here, and is ignored.
 ```
-> **Note:** Commas are required between values. A trailing comma is allowed at last line (ONLY in the combination when `:` for lists).
+**Note:** This colon-based list syntax is only valid for list values.
+It must not be used for single values or key-value assignments.
+The trailing comma is ignored ONLY in `:` based lists.
+
+**Note2:** A trailing comma in bracketed lists (`[ ... ]`) on the other hand, is treated as a empty value (null as last item).
 
 Each item can optionally be placed on its own line for readability. Commas are required between values. A trailing comma is allowed.
 
-⚠️ **Fitfall:**
+⚠️ **Common Pitfall**
 ```yini
-name: "John"  // ⚠️ Colon cannot be used like '='
+name: "John"  // ⚠️ This is a list, with one item!
 ```
-Above has not the same meaning as ```name = "John"```
+Above has not the same meaning as ```name = "John"```.
+
+**Note:** Colon is not a substitute for `=` and must not be used for regular member assignments.
+
+For best simplicity, the colon based list syntax is best only used by advanced users and/or bigger lists with many items, etc.
 
 **Termination Rule**
 
