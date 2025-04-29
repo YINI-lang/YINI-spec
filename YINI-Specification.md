@@ -410,6 +410,20 @@ If the value is the keyword `null` (case-insensitive), or if the value is missin
 | `null` _(any casing)_, ` ` _(blank)_ | **Null** |
 | _(Unquoted non-number as a value)_ | **ERROR** |
 
+**Example:**
+```txt
+name = 'Sarosh'                // String
+BTW = "BTW means By The Way."  // String
+age = 42                       // Number
+e = 2.718                      // Number
+isActive = True                // Boolean
+nightMode = OFF                // Boolean
+nothing = Null                 // Null
+alsoNothing =                  // Null (blank, not recommended)
+scores = [1, 2, 3]             // List
+mixed = ["Arial", 12, true]    // List (of mixed types)
+```
+
 ## 5. Section Headers
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
 
