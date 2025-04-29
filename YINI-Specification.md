@@ -90,7 +90,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 
 **9. List Literals**  
 &nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Notation with `=`  
-&nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based Notation without Brackets (`:`)
+&nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based List Notation without Brackets (`:`)
 
 **10. Advanced Constructs**  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Reserved Features _(For Future Use)_  
@@ -183,7 +183,7 @@ The following key terms are used consistently throughout this specification. Und
 | Document Terminator       | A special line (`/END` or `###`) that explicitly marks the end of a YINI document. |
 | Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks). |
-| Key                       | An identifier on the left side of an assignment (`=` or `:`). Keys must be unique within their section (and depth/level). |
+| Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys must be unique within their section (and depth/level). |
 | Lazy/Lenient Mode         | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input. |
 | List                      | A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
@@ -315,16 +315,21 @@ An _**identifier**_ can be one of two forms below:
   `Amanda's Project`
   ```
 ### 3.5 Document Terminator
-A YINI document must always end with a **terminator line**. The document terminator in a YINI file denotes the definitive end of the document content. The **default and recommended** terminator is:
+A YINI document **must always end with a terminator line**.
 
+The document terminator explicitly marks the end of the configuration content and prevents ambiguity about whether the document was fully read.
+
+In other words, it acts as a clear, unambiguous signal that the document is complete — without relying on end-of-file (EOF) and leaving parsers **to "guess" whether the final section or member was fully parsed**.
+
+The **default and recommended** terminator is:
 ```yini
 /END
 ```
 
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
-Only **whitespace or comments** may appear after the terminator.
+Only **whitespaces or comments** may appear after the terminator.
 
-It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comment after the marker, these should be ignored.
+It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comments after the marker, these should be ignored.
 
 Alternatively, a shorter form may be used:
 ```
@@ -458,7 +463,7 @@ Supported markers:
   - Reserved: `;`
  
 ### 5.3. Sections in Sections (Nested Sections)
-If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
+If you want to put a section under another section, nested sections, make a section header that is one level deeper than the current level. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
 ```yini
 # Prefs
 ## Section
@@ -665,7 +670,7 @@ YINI supports two ways to define lists:
 - **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
 - **Colon-Based List Notation** - A more human-friendly, optionally multi-line style using `:` and no brackets.
 
-Note: Only lists has the alternative notation using `:`.
+Note: Only lists can use the alternative notation using `:`.
 
 ### 9.1. Bracketed Notation with `=`
 A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
@@ -715,8 +720,8 @@ linkItems = [
 ]
 ```
 
-### 9.2. Colon-Based Notation without Brackets (`:`)
-This notation offers a more readable syntax using a colon `:` instead of `=`, and omits square brackets entirely.
+### 9.2. Colon-Based List Notation without Brackets (`:`)
+Exlusevily to lists, this notation offers an alternative syntax using a colon `:` (instead of `=` as is't the praxis for members), and omits square brackets entirely.
 
 ```yini
 list1: "oranges", "bananas", "peaches"  // List with three items.
@@ -739,9 +744,15 @@ list2:
   "bananas",
   "peaches",  // Trailing comma is valid here, and is ignored.
 ```
-> **Note:** Commas are required between values. A trailing comma is allowed at last line.
+> **Note:** Commas are required between values. A trailing comma is allowed at last line (ONLY in the combination when `:` for lists).
 
 Each item can optionally be placed on its own line for readability. Commas are required between values. A trailing comma is allowed.
+
+⚠️ **Fitfall:**
+```yini
+name: "John"  // ⚠️ Colon cannot be used like '='
+```
+Above has not the same meaning as ```name = "John"```
 
 **Termination Rule**
 
