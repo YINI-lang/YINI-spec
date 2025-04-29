@@ -62,7 +62,8 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 
 **4. Keys and Values**  
 &nbsp;&nbsp;&nbsp;&nbsp;4.1. Key Naming Rules  
-&nbsp;&nbsp;&nbsp;&nbsp;4.2. Value Types (Simple, Compound, Special)
+&nbsp;&nbsp;&nbsp;&nbsp;4.2. Value Types (Simple, Compound, Special)  
+&nbsp;&nbsp;&nbsp;&nbsp;4.3. Type Rules
 
 **5. Section Headers**  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
@@ -373,6 +374,26 @@ A `YINI` _**value**_ can be of one of the following 3 groups of native/built-in 
   - NULL
 
 **Note:** YINI types maps 1-to-1 to JSON native types.
+
+### 4.3. Type Rules
+The types of values (in members, on the right hand side of the `=`) and how they are interpreted are described here.
+
+#### Strings
+If the value is meant to be a string, it must be quoted (enclosed in single quotes ' or double quotes `"`) or triple-quoted (eclosed in `"""`). The it's concidered of type String.
+
+#### Numbers
+A value, such as a sequence of integer digits, without a period - is treated as of type Number (integer).
+
+A value, such as a sequence of integer digits  with period - is treated as of type Number (float).
+
+#### Booleans
+A value in the form of a keyword of `true`, `false`, `on`, `off`, `yes`, `no` (caseinsensitive) is treated as of type Boolean.
+
+#### Lists
+If the "value" is a bracketed sequence of other values, separated by commas. The former "value" is treated as of type List.
+
+#### Null
+If the value is a keyword `null` (caseinsensitive), or if the value is missing (blank), it is treated as of type Null.
 
 ## 5. Section Headers
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
