@@ -360,40 +360,55 @@ user_id = 12345
 ```
 
 ### 4.2. Value Types (Simple, Compound, Special)
-A `YINI` _**value**_ can be of one of the following 3 groups of native/built-in types:
+> YINI infers the type of each value automatically based on its syntax.
+There is no need to declare types explicitly — the parser determines the value type by how it is written (e.g., quotes, brackets, keywords).
 
-- **Value of Simple-type:**
+A YINI _**value**_ can be of one of the following 3 groups of native/built-in types:
+
+- **Simple types:**
   - String
   - Number
   - Boolean
 
-- **Value of Compound-type:**
-  - List (array) (a sequence consisting of other values, separated by comma)
+- **Compound types:**
+  - List (array) — a sequence of values, separated by commas
 
-- **Value of Special-type:**
+- **Special type:**
   - NULL
 
-**Note:** YINI types maps 1-to-1 to JSON native types.
+**Note:** YINI types map 1-to-1 to native JSON types.
 
 ### 4.3. Type Rules
-The types of values (in members, on the right hand side of the `=`) and how they are interpreted are described here.
+This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
 
 #### Strings
-If the value is meant to be a string, it must be quoted (enclosed in single quotes ' or double quotes `"`) or triple-quoted (eclosed in `"""`). The it's concidered of type String.
+If the value is meant to be a string, it must be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`).
+
+**ONLY when quoted**, the value is considered to be of type **String**.
 
 #### Numbers
-A value, such as a sequence of integer digits, without a period - is treated as of type Number (integer).
-
-A value, such as a sequence of integer digits  with period - is treated as of type Number (float).
+- A sequence of digits **without a period** (`.`) is treated as a **Number** (integer).
+- A sequence of digits **with a period** (`.`) is treated as a **Number** (floating-point / float).
 
 #### Booleans
-A value in the form of a keyword of `true`, `false`, `on`, `off`, `yes`, `no` (caseinsensitive) is treated as of type Boolean.
+If the value matches any of the follwing keywords `true`, `false`, `on`, `off`, `yes`, or `no` (case-insensitive) — it is interpreted as a **Boolean**. 
 
 #### Lists
-If the "value" is a bracketed sequence of other values, separated by commas. The former "value" is treated as of type List.
+If the value is a **bracketed sequence** (`[ ... ]`) of values (of any supported type), separated by commas — the entire value is treated as a **List**.
 
 #### Null
-If the value is a keyword `null` (caseinsensitive), or if the value is missing (blank), it is treated as of type Null.
+If the value is the keyword `null` (case-insensitive), or if the value is missing (e.g., blank after `=`, or a blank item within a bracketed sequence) — it is treated as **Null**.
+
+**Summary:**
+
+| Value form examples | Meaning |
+|------------|---------|
+| `'something'`, `"something"`, or `"""something"""` | **String** |
+| `123` | **Number** (integer) |
+| `3.1415` | **Number** (float) |
+| `true`, `FALSE`, `On`, `off`, `YES`, `No`| **Boolean** |
+| `null`, `NULL`, ` ` (blank) | **Null** |
+| (Unquoted non-number as a value) | This is **ERROR** |
 
 ## 5. Section Headers
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
@@ -635,6 +650,8 @@ Also if value is missing in member, then that member is treated as NULL.
 YINI supports two ways to define lists:
 - **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
 - **Colon-Based List Notation** - A more human-friendly, optionally multi-line style using `:` and no brackets.
+
+Note: Only lists has the alternative notation using `:`.
 
 ### 9.1. Bracketed Notation with `=`
 A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
