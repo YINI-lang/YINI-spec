@@ -169,6 +169,8 @@ The following is WIP:
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
 
+- **Type Inference:** There is no need to declare types explicitly — the parser determines the value type by how it is written (e.g., quotes, brackets, keywords).
+
 - **Commenting and Documentation:** YINI allows for inline comments, enabling users to document their configuration files directly. This enhances the human-readable nature of the format and makes it easier for teams to collaborate on configuration management.
 
 - **Multi-line and Nested Data:** The format supports multi-line strings and nested sections, providing the ability to express more complex configurations while maintaining readability.
@@ -370,7 +372,7 @@ There is no need to declare types explicitly — the parser determines the value
 
 A YINI _**value**_ can be of one of the following three groups of native/built-in types:
 
-- **Simple types:**
+- **Simple/scalar types:**
   - String
   - Number
   - Boolean
@@ -385,6 +387,9 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
 
 ### 4.3. Type Rules
 This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
+
+**Note:** In addition to standard `=` assignments, YINI supports a colon-based list syntax where **`:` is used exclusively for defining lists**.
+The colon (`:`) is not a general-purpose assignment operator and must not be used for single-value (of simple type) members.
 
 #### Strings
 If the value is meant to be a string, it must be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`).
@@ -426,7 +431,7 @@ nightMode = OFF                // Boolean
 nothing = Null                 // Null
 alsoNothing =                  // Null (blank, not recommended)
 scores = [1, 2, 3]             // List
-mixed = ["Arial", 12, true]    // List (of mixed types)
+mixed = ["Arial", 12, true]    // List (mixed types)
 ```
 
 ## 5. Section Headers
@@ -508,7 +513,7 @@ Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with e
 ### 6.2. Hyper Strings (H-Strings)
 There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `H` or `h`.
 
-Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape sequences are not supported).
+Like Raw Strings, Hyper Strings treat backslashes as literal characters (escape sequences are not supported).
 
 - However, Hyper strings are special in that they **can span over multiple lines** with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
 - Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted to one single blank space ` `. 
@@ -1008,7 +1013,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
     ```
 * Concatenation must occur **on a single line**.
 * Concatenating different types of strings (e.g., r"..." + c'...') is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
-* Only Hyper strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
+* Only Classic strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
 
 ### 12.7 String Literal Types
 
