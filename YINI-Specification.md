@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \# YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 4
+**Version:** v1.0.0 Beta 4 + Updates
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -355,10 +355,13 @@ A line that begins with a double minus -- will be completely ignored by the engi
 YINI represents configuration and structured data through a series of _**members**_, each of which is a key-value pair. This section defines the syntax and rules for keys and values, including allowed characters, data types, quoting, and related behaviors.
 
 ### 4.1. Key Naming Rules
-A key is an identifier used to reference a specific value within a specific YINI file.
+A **key** is an identifier used to reference a specific value in a member (a `key = value` pair) within a YINI file.
 
-- Keys must be valid identifier, either of a simple form, or a phrased identifier (backticked string)  (see 3.4. Identifiers).
-- Keys must be unique within the same section (in the same level). 
+- Keys must be valid identifiers — either a **simple form** or a **phrased identifier** (a backticked string). (See Section 3.4: Identifiers.)
+- Keys must be **unique** within the same section and nesting level. 
+- Keys are assigned values using `=` operator.
+  
+  **Exception:** In the **alterantive list syntax** (see Section 9.2), the colon (`:`) is used **exclusively for defining list values**. It is not a general-purpose assignment operator.
 
 **Examples:**
 ```yini
@@ -404,7 +407,7 @@ If the value is meant to be a string, it must be quoted — either with single q
 If the value matches any of the following keywords `true`, `false`, `on`, `off`, `yes`, or `no` (case-insensitive) — it is interpreted as a **Boolean**. 
 
 #### Lists
-If the value is a **bracketed sequence** (`[ ... ]`) of values (of any supported type), separated by commas — the entire value is treated as a **List**.
+If the value is a **bracketed sequence** (`[ ... ]`) of values (any of the supported YINI types: Numbers, Strings, Booleans, Lists, Nulls), separated by commas — the entire value is treated as a **List**.
 
 #### Null
 If the value is the keyword `null` (case-insensitive), or if the value is missing (e.g., blank after `=`, or a blank item within a bracketed sequence) — it is treated as **Null**.
@@ -475,6 +478,11 @@ If you want to put a section under another section, nested sections, make a sect
 ### SubSection
 ```
 
+```txt
+# Level1
+### Level3  // ❌ Invalid: cannot skip Level2
+```
+
 ## 6. String Literals
 In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
@@ -516,7 +524,7 @@ There is also another kind of strings, ("Hyper") string literals, called H-Strin
 Like Raw Strings, Hyper Strings treat backslashes as literal characters (escape sequences are not supported).
 
 - However, Hyper strings are special in that they **can span over multiple lines** with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
-- Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted to one single blank space ` `. 
+- Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted (normalized) to a single space character ` `. 
 - Also, leading and trailing `<NL>` and/or `<WS>` are trimmed away.
 
 Hyper Strings behave similarly to plain text in HTML documents.
@@ -571,7 +579,7 @@ A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines** (i.e., includes newline characters).
 - **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string.
-- The first unescaped `"""` after the start is interpreted as the **end** of the string.
+- A triple-quoted string ends at the first unescaped sequence of three double quotes (`"""`).
 - Does not support any prefix character, triple quoted strings are by design raw.
 
 Example of Triple-Quoted strings:
@@ -999,7 +1007,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
     ```
     * Trailing commas are allowed in unbracketed lists (form b).
 
-**Bracketed lists must not** have a newline between `=` and the opening bracket `[`:
+**Bracketed lists must not** have a newline between `=` and the opening bracket `[` (otherwise, the value is interpreted as `null`, not a list):
   ```yini
   invalidList = // NULL!
   [1, 2, 3]     // Not parsed as a list!

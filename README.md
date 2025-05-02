@@ -1,4 +1,4 @@
-**Version:** v1.0.0 Beta 4
+**Version:** v1.0.0 Beta 4 (Latest published release)
 
 **Status:** Beta Release
 

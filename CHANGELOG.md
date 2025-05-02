@@ -1,6 +1,9 @@
 # CHANGELOG
 Edits and updates **in this repository**.
 
+2025-05-02
+- Extensively clarified types and colon usage (colon usage is only alloed in combination with lists).
+
 2025-04-28
 - In spec, renamed section to "Spec Changes" from "Spec Changelog" (to distinguish it more from the CHANGELOG file).
 
