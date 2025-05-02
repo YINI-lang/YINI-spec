@@ -62,7 +62,8 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 
 **4. Keys and Values**  
 &nbsp;&nbsp;&nbsp;&nbsp;4.1. Key Naming Rules  
-&nbsp;&nbsp;&nbsp;&nbsp;4.2. Value Types (Simple, Compound, Special)
+&nbsp;&nbsp;&nbsp;&nbsp;4.2. Value Types (Simple, Compound, Special)  
+&nbsp;&nbsp;&nbsp;&nbsp;4.3. Type Rules
 
 **5. Section Headers**  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
@@ -88,8 +89,8 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 &nbsp;&nbsp;&nbsp;&nbsp;8.2. Null Literal
 
 **9. List Literals**  
-&nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Notation with `=`  
-&nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based Notation without Brackets (`:`)
+&nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Lists (using `=`)  
+&nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based List (using `:`)
 
 **10. Advanced Constructs**  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Reserved Features _(For Future Use)_  
@@ -168,6 +169,8 @@ The following is WIP:
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
 
+- **Type Inference:** There is no need to declare types explicitly — the parser determines the value type by how it is written (e.g., quotes, brackets, keywords).
+
 - **Commenting and Documentation:** YINI allows for inline comments, enabling users to document their configuration files directly. This enhances the human-readable nature of the format and makes it easier for teams to collaborate on configuration management.
 
 - **Multi-line and Nested Data:** The format supports multi-line strings and nested sections, providing the ability to express more complex configurations while maintaining readability.
@@ -182,7 +185,7 @@ The following key terms are used consistently throughout this specification. Und
 | Document Terminator       | A special line (`/END` or `###`) that explicitly marks the end of a YINI document. |
 | Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks). |
-| Key                       | An identifier on the left side of an assignment (`=` or `:`). Keys must be unique within their section (and depth/level). |
+| Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys must be unique within their section (and depth/level). |
 | Lazy/Lenient Mode         | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input. |
 | List                      | A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
@@ -314,16 +317,21 @@ An _**identifier**_ can be one of two forms below:
   `Amanda's Project`
   ```
 ### 3.5 Document Terminator
-A YINI document must always end with a **terminator line**. The document terminator in a YINI file denotes the definitive end of the document content. The **default and recommended** terminator is:
+A YINI document **must always end with a terminator line**.
 
+The document terminator explicitly marks the end of the configuration content and prevents ambiguity about whether the document was fully read.
+
+In other words, it acts as a clear, unambiguous signal that the document is complete — without relying on end-of-file (EOF) and leaving parsers **to "guess" whether the final section or member was fully parsed**.
+
+The **default and recommended** terminator is:
 ```yini
 /END
 ```
 
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
-Only **whitespace or comments** may appear after the terminator.
+Only **whitespaces or comments** may appear after the terminator.
 
-It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comment after the marker, these should be ignored.
+It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comments after the marker, these should be ignored.
 
 Alternatively, a shorter form may be used:
 ```
@@ -359,20 +367,72 @@ user_id = 12345
 ```
 
 ### 4.2. Value Types (Simple, Compound, Special)
-A `YINI` _**value**_ can be of one of the following 3 groups of native/built-in types:
+> YINI infers the type of each value automatically based on its syntax.
+There is no need to declare types explicitly — the parser determines the value type by how it is written (e.g., quotes, brackets, keywords).
 
-- **Value of Simple-type:**
+A YINI _**value**_ can be of one of the following three groups of native/built-in types:
+
+- **Simple/scalar types:**
   - String
   - Number
   - Boolean
 
-- **Value of Compound-type:**
-  - List (array) (a sequence consisting of other values, separated by comma)
+- **Compound types:**
+  - List (array) — a sequence of values, separated by commas
 
-- **Value of Special-type:**
+- **Special type:**
   - NULL
 
-**Note:** YINI types maps 1-to-1 to JSON native types.
+**Note:** YINI types map 1-to-1 to native JSON types.
+
+### 4.3. Type Rules
+This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
+
+**Note:** In addition to standard `=` assignments, YINI supports a colon-based list syntax where **`:` is used exclusively for defining lists**.
+The colon (`:`) is not a general-purpose assignment operator and must not be used for single-value (of simple type) members.
+
+#### Strings
+If the value is meant to be a string, it must be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`).
+
+**ONLY when quoted**, the value is considered to be of type **String**.
+
+#### Numbers
+- A sequence of digits **without a period** (`.`) is treated as a **Number** (integer).
+- A sequence of digits **with a period** (`.`) is treated as a **Number** (floating-point / float).
+
+#### Booleans
+If the value matches any of the following keywords `true`, `false`, `on`, `off`, `yes`, or `no` (case-insensitive) — it is interpreted as a **Boolean**. 
+
+#### Lists
+If the value is a **bracketed sequence** (`[ ... ]`) of values (of any supported type), separated by commas — the entire value is treated as a **List**.
+
+#### Null
+If the value is the keyword `null` (case-insensitive), or if the value is missing (e.g., blank after `=`, or a blank item within a bracketed sequence) — it is treated as **Null**.
+
+**Summary:**
+
+| Value form examples | Meaning |
+|------------|---------|
+| `'something'`, `"something"`, or `"""something"""` | **String** |
+| `123` | **Number** (integer) |
+| `3.1415` | **Number** (float) |
+| `true`, `FALSE`, `On`, `off`, `YES`, `No` _(any casing)_| **Boolean** |
+| `null` _(any casing)_, ` ` _(blank)_ | **Null** |
+| _(Unquoted non-number as a value)_ | **ERROR** |
+
+**Example:**
+```txt
+name = 'Sarosh'                // String
+BTW = "BTW means By The Way."  // String
+age = 42                       // Number
+e = 2.718                      // Number
+isActive = True                // Boolean
+nightMode = OFF                // Boolean
+nothing = Null                 // Null
+alsoNothing =                  // Null (blank, not recommended)
+scores = [1, 2, 3]             // List
+mixed = ["Arial", 12, true]    // List (mixed types)
+```
 
 ## 5. Section Headers
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
@@ -408,7 +468,7 @@ Supported markers:
   - Reserved: `;`
  
 ### 5.3. Sections in Sections (Nested Sections)
-If you want to put a section under another section, nested sections, make a section header that is one level higher than the current level. This means that you add one more hash symbol than the number of hash symbols in the current section. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
+If you want to put a section under another section, nested sections, make a section header that is one level deeper than the current level. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
 ```yini
 # Prefs
 ## Section
@@ -453,7 +513,7 @@ Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with e
 ### 6.2. Hyper Strings (H-Strings)
 There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `H` or `h`.
 
-Hyper Strings, as Raw Strings, treat the backslash exactly as seen (escape sequences are not supported).
+Like Raw Strings, Hyper Strings treat backslashes as literal characters (escape sequences are not supported).
 
 - However, Hyper strings are special in that they **can span over multiple lines** with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
 - Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted to one single blank space ` `. 
@@ -615,7 +675,9 @@ YINI supports two ways to define lists:
 - **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
 - **Colon-Based List Notation** - A more human-friendly, optionally multi-line style using `:` and no brackets.
 
-### 9.1. Bracketed Notation with `=`
+Note: Only lists can use the alternative notation using `:`.
+
+### 9.1. Bracketed Lists (using `=`)
 A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
@@ -663,8 +725,8 @@ linkItems = [
 ]
 ```
 
-### 9.2. Colon-Based Notation without Brackets (`:`)
-This notation offers a more readable syntax using a colon `:` instead of `=`, and omits square brackets entirely.
+### 9.2. Colon-Based List (using `:`)
+Exclusively for lists, YINI allows an alternative syntax using a colon (`:`) instead of `=`. This style omits square brackets and is intended to improve readability in configurations with list-like values.
 
 ```yini
 list1: "oranges", "bananas", "peaches"  // List with three items.
@@ -673,8 +735,9 @@ list2:  // An empty list.
 ```
 
 **Multi-line List Syntax:**
+Each item in the list may optionally appear on its own line for better readability.
 
-Each item (and its comma) may optionally appear on its own line for better readability.
+**Commas are required between values**, and a **trailing comma** on the last item is allowed — but ONLY when using colon-based list syntax.
 
 ```yini
 list1:
@@ -687,20 +750,35 @@ list2:
   "bananas",
   "peaches",  // Trailing comma is valid here, and is ignored.
 ```
-> **Note:** Commas are required between values. A trailing comma is allowed at last line.
+**Note:** This colon-based list syntax is only valid for lists.
+It must not be used for single values or key-value assignments.
+The trailing comma is ignored ONLY in `:` based lists.
 
-Each item can optionally be placed on its own line for readability. Commas are required between values. A trailing comma is allowed.
+⚠️ **Common Pitfall**
+```yini
+name: "John"  // ⚠️ Interpreted as a list with one string item!
+```
+This is **NOT equivalent** to:
+```yini
+name = "John"  // ✅ A single string value.
+```
+
+**Colon (`:`) is not a substitute for `=`** and must not be used for regular member (non list) assignments.
+
+**Trailing Comma Behavior**
+- In colon-based lists, a **trailing comma is ignored** (legal, optional).
+- In bracketed lists (`[ ... ]`), a **trailing comma results in an implicit** `null` as the last item.
 
 **Termination Rule**
 
-A multi-line list (using `:`) ends when **any of the following** is encountered:
+A colon-based multi-line list ends when **one of the following** is encountered:
 - a new key assignment (`key = ...` or `key: ...`)
 - a new section header (simple or phrased)
-- a document terminator marker (`/END`)
+- a document terminator marker (`/END`, `###`)
 
 **Nested Lists with `:` Notation**
 
-Nested lists are supported and may include inner bracketed Lists:
+Colon-based lists may contain bracketed sub-lists:
 ```yini
 linkItems:
 	["stylesheet", "css/general.css"],
@@ -935,7 +1013,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
     ```
 * Concatenation must occur **on a single line**.
 * Concatenating different types of strings (e.g., r"..." + c'...') is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
-* Only Hyper strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
+* Only Classic strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
 
 ### 12.7 String Literal Types
 
