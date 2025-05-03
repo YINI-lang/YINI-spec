@@ -14,7 +14,7 @@ _Yet another INI — a lightweight configuration file format: clean, readable, s
 
 ## What is YINI?
 
-YINI is a human-friendly configuration file format that blends the simplicity of INI files with the structural clarity of modern data formats.
+YINI is a human-friendly configuration file format — designed as an alternative to INI — blending its simplicity with the structural clarity of modern data formats.
 
 **Purpose:**
 - Make configuration files easy to **read**, **write**, and **understand**.
