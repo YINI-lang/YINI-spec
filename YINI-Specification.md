@@ -309,7 +309,7 @@ An _**identifier**_ can be one of two forms below:
 - **Form 2: Identifier Enclosed in Backticks:**
   - A phrase is a name wrapped in backticks  ``` ` ```.
   - It can include spaces, special (printable) characters, and quotes (single `'` or double `"`).
-  - It must be on a single line and **cannot contain** newlines or another backtick.
+  - It must be on a single line and **cannot contain** any newline, tab, or another backtick.
   
   Example:
   ```yini
@@ -1439,6 +1439,9 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 
 ### 15.3. Spec Changes
 A running log of changes and updates **to the YINI specification**.
+
+v1.0.0 Beta 4 + Updates
+- Adden tab as illegal character in phrased (backticked) identifiers.
 
 v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
