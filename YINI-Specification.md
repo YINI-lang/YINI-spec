@@ -361,7 +361,7 @@ A **key** is an identifier used to reference a specific value in a member (a `ke
 - Keys must be **unique** within the same section and nesting level. 
 - Keys are assigned values using `=` operator.
   
-  **Exception:** In the **alterantive list syntax** (see Section 9.2), the colon (`:`) is used **exclusively for defining list values**. It is not a general-purpose assignment operator.
+  **Exception:** In the **alternative list syntax** (see Section 9.2), the colon (`:`) is used **exclusively for defining list values**. It is not a general-purpose assignment operator.
 
 **Examples:**
 ```yini
@@ -441,18 +441,22 @@ mixed = ["Arial", 12, true]    // List (mixed types)
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
 
 ### 5.1. Syntax
-A _**section header**_ starts a new logical grouping of members. Section headers appear ALWAYS on their own line.
+A _**section header**_ starts a new logical grouping of members. Section headers must ALWAYS appear on their own line.
 ```yini
 // A section header with a simple identifier.
-~ SectionName
+# SectionName
 
 // A section header with a phrased identifier.
-~ `Section Name`
+# `Section name`
+
+// Phrased identifiers can include other special symbols too.
+# `Section-name`
 ```
 
 - A section header begins with a **section marker**, immediately followed by **one or more whitespace (space or tab) characters**, then the section name.
-- The section name must be a valid identifier, either a simple or phrased identifier (text enclosed in backticks).
-- The section header ends at the newline. There may follow a comment, but this will get ignored by the parser.
+- The section name must be a **valid identifier**, either a **simple identifier** or a **phrased identifier** (enclosed in backticks).
+- **Backticks (phrased identifier) are only required** when the identifier contains spaces, punctuation, or other special characters. 
+- The section header ends at the newline. There may follow a comment on the same line, but this will get ignored by the parser.
 ```yini
 # UserSettings
 username = "alice"
@@ -486,7 +490,7 @@ If you want to put a section under another section, nested sections, make a sect
 ## 6. String Literals
 In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
-**YINI supports four types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for triple-quoted strings** `"""`, which do not support any prefix). Multi-line strings can be achieved using Hyper Strings or triple-quoted strings.
+**YINI supports four types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for triple-quoted strings** `"""`, which do not support any prefix). YINI supports multi-line strings via Hyper Strings or triple-quoted strings.
 
 If no prefix is used, the string is treated as a **raw string literal** by default.
 
@@ -590,7 +594,7 @@ three lines."""
 
 """He said, "hello" and left."""
 
-"""You can use "" double quotes inside."""
+"""You can use double quotes ("") inside."""
 ```
 
 Note: All content between the opening and closing triple quotes is preserved as-is, including whitespace and line breaks.
@@ -1326,6 +1330,9 @@ hosts = ['server1.example.com', 'server2.example.com']
 ```
 
 #### 14.3.4. Nulls and Booleans to JSON
+
+**Note:** Null and boolean literals (e.g., `Null`, `True`, `On`, `Yes`) in YINI are **case-insensitive**, while keys are **case-sensitive**.
+
 **YINI:**
 ```yini
 # Flags
