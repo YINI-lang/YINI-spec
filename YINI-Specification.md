@@ -18,7 +18,7 @@ See the full license text at the end of this document.
 ---
 
 ## Preface
-YINI was designed with a simple idea in mind: configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.
+**YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility. It aims to stay minimal, yet flexible enough to express a wide range of configuration needs.
 
 While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces a clean, minimalistic design focused on human readability, structural clarity, and extensibility for the future.  
 One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing complex structures to be expressed in a simple, natural, and visually clear way — without the heavy indentation rules or syntax overhead found in other formats.

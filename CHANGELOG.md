@@ -1,6 +1,13 @@
 # CHANGELOG
 Edits and updates **in this repository**.
 
+2025-05-03
+- Reworded readme as including "alternative to INI".
+- Fixes in specs:
+  * Made it more clear that Lists are also known as arrays.
+  * Clarified, that multi-line strings can be done with Hyper Strings and triple-quotes.
+  * Fixed minor typos, wordings, and tweaks.
+
 2025-05-02
 - Extensively clarified types and colon usage (colon usage is only alloed in combination with lists).
 
