@@ -187,7 +187,7 @@ The following key terms are used consistently throughout this specification. Und
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys must be unique within their section (and depth/level). |
 | Lazy/Lenient Mode         | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input. |
-| List                      | A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
+| List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
 | Section                   | A logical grouping of members, introduced by a header using a section marker like `#`, `~`, or `>`. |
@@ -381,7 +381,7 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
   - Boolean
 
 - **Compound types:**
-  - List (array) — a sequence of values, separated by commas
+  - List (also known as Arrays) — a sequence of values, separated by commas
 
 - **Special type:**
   - NULL
@@ -486,7 +486,7 @@ If you want to put a section under another section, nested sections, make a sect
 ## 6. String Literals
 In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
-YINI supports **four types of string literals**, distinguished by an optional **prefix character** placed before the opening quote (`'` or `"`), triple double quotes `"""` does not support any prefix character.
+**YINI supports four types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for triple-quoted strings** `"""`, which do not support any prefix). Multi-line strings can be achieved using Hyper Strings or triple-quoted strings.
 
 If no prefix is used, the string is treated as a **raw string literal** by default.
 
@@ -679,6 +679,8 @@ Value/literal `NULL` (NON CASE-SENSITIVE).
 Also if value is missing in member, then that member is treated as NULL.
 
 ## 9. List Literals
+Lists in YINI correspond to what are called _Arrays_ in JSON and serve the same purpose as arrays in many programming languages (e.g., in JavaScript).
+
 YINI supports two ways to define lists:
 - **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
 - **Colon-Based List Notation** - A more human-friendly, optionally multi-line style using `:` and no brackets.
