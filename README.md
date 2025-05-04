@@ -16,6 +16,8 @@ _Yet another INI — a lightweight configuration file format: clean, readable, s
 
 YINI is a human-friendly configuration file format — designed as an alternative to INI — blending its simplicity with the structural clarity of modern data formats.
 
+> YINI aims to hit the sweet spot between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
+
 **Purpose:**
 - Make configuration files easy to **read**, **write**, and **understand**.
 - Maintain **minimal syntax** without sacrificing **nesting**, **typing**, or **clarity**.
@@ -25,14 +27,16 @@ YINI is a human-friendly configuration file format — designed as an alternativ
 
 ## Key Features
 
-- ✅ Clean and minimalistic syntax
-- ✅ Typing support: strings, numbers, booleans, nulls, lists
-- ✅ Section nesting using intuitive markers (`#`, `~`, `>`)
-- ✅ `=` for standard assignment (with optional `:` syntax for list-style values)
-- ✅ Document terminator (`/END` or `###`) for clear file boundaries
-- ✅ Designed for **human readability first**, but machine-friendly
-- ✅ Alternative syntax for booleans, including: `true`, `false`, `on`, `off`, `yes`, `no`
-- ✅ Strict and lenient parsing modes
+- ✅ Clean and minimalistic syntax.
+- ✅ Typing support: Strings, Numbers, Booleans, Lists (Arrays), Nulls.
+- ✅ YINI combines structure and simplicity.
+- ✅ **True section nesting** using intuitive marker (`#`, alternative: `~` or `>`).
+- ✅ YINI offers human-friendly structure **without relying on indentation**.
+- ✅ Document terminator (`/END` or `###`) for clear file boundaries.
+- ✅ Designed for **human readability first**, but machine-friendly.
+- ✅ **Alternative syntax for Booleans**, including: `True`, `False`, `On`, `Off`, `Yes`, `No`.
+- ✅ Optional, strict and lenient parsing modes.
+- ✅ `=` for standard assignment (with optional `:` syntax for list-style values).
 
 ---
 
@@ -150,6 +154,9 @@ Licensed under the [Apache License 2.0](./LICENSE).
 Feedback, ideas, and discussions are always welcome. 🚀
 
 (Implementation libraries or parsers can follow once the specification stabilizes.)
+
+A TypeScript-based YINI parser is currently in development:
+here https://github.com/YINI-lang/yini-parser-typescript
 
 ---
 
