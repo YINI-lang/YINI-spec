@@ -26,17 +26,18 @@ YINI is a human-friendly configuration file format — designed as an alternativ
 ---
 
 ## Key Features
+Ten key features below:
 
-- ✅ Clean and minimalistic syntax.
-- ✅ Typing support: Strings, Numbers, Booleans, Lists (Arrays), Nulls.
-- ✅ YINI combines structure and simplicity.
-- ✅ **True section nesting** using intuitive marker (`#`, alternative: `~` or `>`).
-- ✅ YINI offers human-friendly structure **without relying on indentation**.
-- ✅ Document terminator (`/END` or `###`) for clear file boundaries.
-- ✅ Designed for **human readability first**, but machine-friendly.
-- ✅ **Alternative syntax for Booleans**, including: `True`, `False`, `On`, `Off`, `Yes`, `No`.
-- ✅ Optional, strict and lenient parsing modes.
-- ✅ `=` for standard assignment (with optional `:` syntax for list-style values).
+- ✅ **Clean and minimalistic syntax** — easy to write and read.
+- ✅ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
+- ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML.
+- ✅ **True section nesting** using intuitive markers (`#`, `~`, or `>`).
+- ✅ **Indentation-independent structure** — no indentation pitfalls.
+- ✅ **Explicit document terminator** (`/END` or `###`) for clear file boundaries and parser certainty.
+- ✅ **Human readability first**, yet machine-friendly.
+- ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (case-insensitive).
+- ✅ **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
+- ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
 
 ---
 
