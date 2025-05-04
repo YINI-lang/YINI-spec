@@ -16,12 +16,12 @@ _Yet another INI — a lightweight configuration file format: clean, readable, s
 
 YINI is a human-friendly configuration file format — designed as an alternative to INI — blending its simplicity with the structural clarity of modern data formats.
 
-> YINI aims to hit the sweet spot between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
-
 **Purpose:**
 - Make configuration files easy to **read**, **write**, and **understand**.
 - Maintain **minimal syntax** without sacrificing **nesting**, **typing**, or **clarity**.
 - Provide a format that is simple for **humans** and structured enough for **tools**.
+
+> YINI aims to hit the sweet spot between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
 
 ---
 
