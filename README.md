@@ -45,22 +45,22 @@ Ten key features below:
 
 ### Before (Traditional INI or ad-hoc config)
 ```ini
-[server]
-host=localhost
-port=8080
+[Server]                # Defines a section named Server.
+host = localhost
+port = 8080
 
-[features]
-login=true
-notifications=false
+[Features]              # Defines a section named Features.
+login = true
+notifications = false
 ```
 
 ### After (YINI)
-```yini
-# Server
+```c
+# Server                // Defines a section named Server.
 host = "localhost"
 port = 8080
 
-# Features
+# Features              // Defines a section named Features.
 login = true
 notifications = false
 
@@ -68,31 +68,49 @@ notifications = false
 ```
 
 Notice:
-- Natural, readable keys and values.
+- In YINI, (`#`) is used to define sections.
+- Line-comment can be added using (`//`).
+- In YINI, all strings must be enclosed in quotes.
+- Natural, readable keys and values separated by (`=`).
 - Strong typing without heavy syntax.
-- Sections are intuitive with simple markers.
-- Explicit, clean termination.
+- Explicit, clean termination (`/END`).
 
 ---
 
-## Example: Lists, Nesting, and Booleans
+## YINI Syntax
+### Quoted Strings
+Strings in YINI must always be enclosed in quotes — either in double quotes (`"`) or in single quotes (`'`).
 
-```yini
+### Lists
+To declare a list, after the `=` character, square brackets `[ ]` is used. Each item is separated by a comma.
+
+There is also an alternative list notation, using `:` which omits brackets — items are comma-separated — they may appear inline or on separate lines.
+
+### Section Nesting
+Nesting sections can be done easily by adding one extra section marker (e.g. `##`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
+
+### Alternative Boolean Literals
+Booleans uses flexible literals — for example, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
+
+## Example: List, Nesting & Alternative Booleans Literals
+
+ Like here below, using single quotes:
+
+```c
 # AppInfo
-name = "MyApp"
-version = 1.2
+name = 'MyApp'      // String.
+version = 1.2       // Number (real).
 
 # Features
-features = ["login", "sync", "offline"]
+features = ['login', 'sync', 'offline']     // List with 3 items.
 
-# Server
-host = "localhost"
-port = 8080
+## Advanced         // Defines a sub-section of Features.
+timeout = 9000      // Number (integer).
+caching = True      // Boolean.
+isLogging = YES     // Boolean (alternative keyword).
+debugging = ON      // Boolean (alternative keyword).
 
-## Advanced
-caching = true
-
-/END
+/END                // The explicit doc. terminator.
 ```
 
 ---
@@ -157,7 +175,7 @@ Feedback, ideas, and discussions are always welcome. 🚀
 (Implementation libraries or parsers can follow once the specification stabilizes.)
 
 A TypeScript-based YINI parser is currently in development:
-here https://github.com/YINI-lang/yini-parser-typescript
+https://github.com/YINI-lang/yini-parser-typescript
 
 ---
 
