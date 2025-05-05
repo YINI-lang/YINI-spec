@@ -84,7 +84,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 ### Lists
 To declare a list, after the `=` character, square brackets `[ ]` is used. Each item is separated by a comma.
 
-There is also an alternative list notation, using `:` which omits brackets — items are comma-separated — they may appear inline or on separate lines.
+There is also an alternative list notation using `:`, which omits brackets. Items are comma-separated and may appear either inline or on separate lines.
 
 ### Section Nesting
 Nesting sections can be done easily by adding one extra section marker (e.g. `##`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
@@ -98,26 +98,26 @@ Booleans uses flexible literals — for example, in the example below, `True`, `
 
 ```c
 # AppInfo
-name = 'MyApp'      // String.
-version = 1.2       // Number (real).
+name = 'MyApp'          // String.
+version = 1.2           // Number (real).
 
 # Features
 features = ['login', 'sync', 'offline']     // List with 3 items.
 
-## Advanced         // Defines a sub-section of Features.
-timeout = 9000      // Number (integer).
-caching = True      // Boolean.
-isLogging = YES     // Boolean (alternative keyword).
-debugging = ON      // Boolean (alternative keyword).
+## Advanced             // Defines a sub-section of Features.
+timeout = 9000          // Number (integer).
+caching = True          // Boolean.
+isLogging = YES         // Boolean (alternative keyword).
+debugging = ON          // Boolean (alternative keyword).
 
-/END                // The explicit doc. terminator.
+/END                    // The explicit doc. terminator.
 ```
 
 ---
 
-## Example: Using Different String Types
+## Example: Flexible String Types
 
-```yini
+```c
 String = "D:\folder\file"  // No escapes needed.
 
 ClassicString = C"Hello\nWorld"  // Supports escape sequences.
