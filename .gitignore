@@ -6,4 +6,4 @@
 # Ignore Eclipse data.
 .metadata
 
-.temp
+*.temp
