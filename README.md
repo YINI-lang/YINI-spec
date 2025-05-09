@@ -117,22 +117,29 @@ debugging = ON          // Boolean (alternative keyword).
 
 ---
 
-## Example: Flexible String Types
+## Example: Flexible String Literals
+YINI has four types of string literals — raw, classic, hyper, and triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 ```c
-String = "D:\folder\file"  // No escapes needed.
+// Basic strings (R-Strings) are raw by default — no escape sequences are interpreted.
+String = "D:\folder\file"
 
-ClassicString = C"Hello\nWorld"  // Supports escape sequences.
+// Classic strings (C-Strings) are prefixed with C or c — they support escape sequences.
+ClassicString = C"Hello\nWorld\n"
 
+// Hyper strings (H-Strings) are prefixed with H or h — they behave
+// similarly to HTML text: whitespace is normalized and edges are trimmed.
 HyperString = H"
   This is a hyper string spanning multiple lines,
-  trims edges and normalizes whitespaces.
+  with trimmed edges and normalized whitespace.
 "
 
+// Triple-quoted strings can span multiple lines and
+// preserve all characters as-is, including tabs and newlines.
 TripleQuotedString = """
-This is a literal,
-triple-quoted string
-without escapes.
+This is a triple-quoted
+string literal — characters
+are preserved exactly, without escapes.
 """
 
 /END
