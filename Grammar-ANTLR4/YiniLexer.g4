@@ -118,9 +118,12 @@ TRIPLE_QUOTED_STRING:
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
 
 // Note: Except does'n not include quotes `"`, `'`.
-ESC_SEQ_BASE: '\\' ([nrbft\\/0] | UNICODE);
+ESC_SEQ_BASE: '\\' ([nrbft?av\\/0] | UNICODE16 | UNICODE32);
+// TODO: Add support for \ooo (up to 3 digts)
 
-fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+fragment UNICODE16: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+fragment UNICODE32:
+	'U' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 
 fragment INTEGER: DECIMAL_INTEGER;
 

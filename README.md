@@ -81,6 +81,8 @@ Notice:
 ### Quoted Strings
 Strings in YINI must always be enclosed in quotes — either in double quotes (`"`) or in single quotes (`'`).
 
+**Note:** If a string is not quoted, it's not a string — period.
+
 ### Lists
 To declare a list, after the `=` character, square brackets `[ ]` is used. Each item is separated by a comma.
 

@@ -490,6 +490,8 @@ If you want to put a section under another section, nested sections, make a sect
 ## 6. String Literals
 In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
+**Note:** If a string is not quoted, it's not a string — period.
+
 **YINI supports four types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for triple-quoted strings** `"""`, which do not support any prefix). YINI supports multi-line strings via Hyper Strings or triple-quoted strings.
 
 If no prefix is used, the string is treated as a **raw string literal** by default.
@@ -556,23 +558,28 @@ Classic strings must start and end on the same line.
 #### 6.3.1. Escape Characters
 Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter `C` (or `c`). 
 
-**Full List**
-
-**Escape Sequences (lower or uppercase, only in C-Strings):**
-- `\n` for Newline
-- `\r` for Carriage Return
-- `\t` for Tab
-- `\b` for Backspace
-- `\f` for Form Feed
+**Full List: Escape Sequences (lower or uppercase, only in C-Strings):**
+- `\n` for Newline - ASCII 10
+- `\r` for Carriage Return - ASCII 13
+- `\t` for Tab - ASCII 9
+- `\b` for Backspace - ASCII 8
+- `\f` for Form Feed - ASCII 12
 - `\"` for Double Quote
 - `\'` for Single Quote
 - `\\` for backslash
 - `\/` for normal Slash
+- `\?` Literal question mark (due to C/C++ compatibily)
+- `\a` Alert (bell)- ASCII 7
+- `\v` Vertical tab - ASCII 11
 - `\0` for null byte control character
-- `\u hex hex hex hex` Unicode character (4-digit hex)
+- `\ooo`  Octal value (up to 3 digits)
 - `\x hex hex` Hex byte (2-digit)
+- `\u hex hex hex hex` Unicode character (4-digit hex) (UTF-16)
+- `\U hex hex hex hex hex hex hex hex` Unicode character (8-digit hex) (UTF-32)
 
-Where hex is 0-9, or a-f, or A-F.
+Where `hex` is 0-9, or a-f, or A-F.
+
+Where `o` is 0-7.
 
 **Invalid Escapes**
 
@@ -582,8 +589,8 @@ Invalid escape sequences (e.g. `\z`) must result in a parse error unless explici
 A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines** (i.e., includes newline characters).
-- **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string.
-- A triple-quoted string ends at the first unescaped sequence of three double quotes (`"""`).
+- **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved exactly as written, including whitespace and line breaks.
+- A triple-quoted string ends at the first sequence of three double quotes (`"""`).
 - Does not support any prefix character, triple quoted strings are by design raw.
 
 Example of Triple-Quoted strings:
@@ -1030,12 +1037,14 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 * Only Classic strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
 
 ### 12.7 String Literal Types
+**Note:** If a string is not quoted, it's not a string — period.
 
-| Type           | Prefix           | Example    | Behavior |
-|----------------|------------------|------------|----------|
-| (Raw) String   | None, `R`, or `r`| "Some text"| Text is as-is, no escaping; backslash is literal|
-| Classic-String | `C` or `c`       | `C"..."`   | Escape sequences are interpreted|
-| Hyper-String   | `H` or `h`       | `H"..."`   | (*) Multi-line, whitespace-collapsing, trimmed |
+| Type                | Prefix           | Example    | Behavior |
+|---------------------|------------------|------------|----------|
+| (Raw) String        | None, `R`, or `r`| "Some text"| Text is as-is (raw), no escaping,  backslash is literal, preserves all whitespace|
+| Classic String      | `C` or `c`       | `C"..."`   | Escape sequences are interpreted|
+| Hyper String        | `H` or `h`       | `H"..."`   | (*) Multi-line, whitespace-collapsing, trimmed |
+| Triple-quoted String| None       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
 
 (*) Hyper string behavior:
   * Allow multi-line strings.
@@ -1442,6 +1451,7 @@ A running log of changes and updates **to the YINI specification**.
 
 v1.0.0 Beta 4 + Updates
 - Adden tab as illegal character in phrased (backticked) identifiers.
+- Added missing escape codes (as to what C/C++ has).
 
 v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
