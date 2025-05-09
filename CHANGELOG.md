@@ -1,6 +1,11 @@
 # CHANGELOG
 Edits and updates **in this repository**.
 
+2025-05-10
+- Updated spec and grammar with new escape characters.
+- In spec, reserved `{ }` for future use.
+- In spec renamed section to "Future / Reserved Features" from "Reserved Features".
+
 2025-05-03
 - Reworded readme as including "alternative to INI".
 - Fixes in specs:

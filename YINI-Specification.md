@@ -93,7 +93,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 &nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based List (using `:`)
 
 **10. Advanced Constructs**  
-&nbsp;&nbsp;&nbsp;&nbsp;10.1. Reserved Features _(For Future Use)_  
+&nbsp;&nbsp;&nbsp;&nbsp;10.1. Future / Reserved Features _(For Future Use)_  
 
 ---
 
@@ -386,7 +386,7 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
 - **Special type:**
   - NULL
 
-**Note:** YINI types map 1-to-1 to native JSON types.
+**Note:** Currently, YINI types map 1-to-1 to native JSON types. **Constructs and objects like date-time, has currently to be made with strings.** See more in 10.1.3, "Date-time Type".
 
 ### 4.3. Type Rules
 This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
@@ -807,7 +807,7 @@ linkItems:
 ```
 
 ## 10. Advanced Constructs
-### 10.1. Reserved Features _(For Future Use)_
+### 10.1. Future / Reserved Features _(For Future Use)_
 The following features are reserved for potential support in future versions of the YINI specification. They are **not currently active** in this version, but their syntax and keywords **are reserved**.
 
 #### 10.1.1. Anchors and Aliases
@@ -823,6 +823,12 @@ YINI may support modular configuration files via external file inclusion.
   - **Usage:** Proposed as a preprocessor-style directive.
 
 These features, while not implemented in this version, are reserved and must not be repurposed by user-defined syntax.
+
+#### 10.1.3. Date-time Type
+
+Currently, the YINI types in the specification map 1-to-1 to native JSON types. With that said YINI does not currently support native date, time, or date-time types. All date and time values **must currently** be represented as strings.
+
+Support for standardized date-time literals may be considered in a future version, once the core specification is stable.
 
 ## 11. Validation Rules
 YINI enforces a set of validation rules to ensure the structure and content of files are consistent, unambiguous, and semantically correct. These rules fall into two main categories: **reserved syntax protections** and **well-formedness**. Validation ensures compatibility across implementations and minimizes user errors.
@@ -842,6 +848,7 @@ The following characters are reserved by the YINI syntax and must not be used im
 | `//` | Comment | Starts single-line comment |
 | `/* */` | Comment | Marks multi-line comment block |
 | `@` | Directive prefix | Reserved for future syntax |
+| `{ }` | Inline object | Reserved for future syntax |
 | `--` | Line disabling | Experimental use (see Section 3.6) |
 
 #### 11.1.2. Reserved Keywords
@@ -1452,6 +1459,7 @@ A running log of changes and updates **to the YINI specification**.
 v1.0.0 Beta 4 + Updates
 - Adden tab as illegal character in phrased (backticked) identifiers.
 - Added missing escape codes (as to what C/C++ has).
+- Reserved `{ }` for future syntax (inline objects)
 
 v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 

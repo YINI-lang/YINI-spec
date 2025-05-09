@@ -172,9 +172,11 @@ Licensed under the [Apache License 2.0](./LICENSE).
 
 ## Contributions
 
-Feedback, ideas, and discussions are always welcome. 🚀
+Feedback, ideas, testing, and discussions are always welcome. 🚀
 
 (Implementation libraries or parsers can follow once the specification stabilizes.)
+
+Specification needs still more testing, especially in parts like in string concat. and array nesting (where fixes and a few more additions may follow in specification and grammar).
 
 A TypeScript-based YINI parser is currently in development:
 https://github.com/YINI-lang/yini-parser-typescript
