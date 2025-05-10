@@ -162,7 +162,7 @@ While `#` is commonly recognized as a comment symbol in formats like INI or YAML
 - It visually communicates **"a section"** more clearly than `[]` (as used in INI) or other less intuitive symbols.
 - YINI adopts C/C++-style comments instead: `//` for single-line and `/* ... */` for multi-line — aligning better with programming norms.
 - The alternative marker `~` is supported specifically for this reason — allowing users to avoid `#` entirely if preferred.
-- The section header markers (`#`, `~`) was deliberately chosen (by design requirement) from the 7-bit ASCII range for maximum compatibility.
+- The section header markers (`#`, `~`) were deliberately chosen (by design requirement) from the 7-bit ASCII range for maximum compatibility.
 
 #### 1.2.2. Key Design Goals
 The YINI format was created with the following key design goals in mind:
@@ -251,7 +251,7 @@ The syntax of YINI is designed to be minimalistic and human-readable while offer
 ### 3.1. General Syntax Rules
 YINI files consist of a series of **sections, members** (key-value pairs), and optional **comments**. The following rules define the basic structure of a valid YINI file:
 
-**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure in any way, except a tab or space in important in section headers. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
+**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure, except in section headers, where spacing (tabs or spaces) is required between the section marker and the section name. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
 
 **Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `#` or `~`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
 
@@ -406,7 +406,7 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
 - **Special type:**
   - NULL
 
-**Note:** Currently, YINI types map 1-to-1 to native JSON types. **Constructs and objects like date-time, has currently to be made with strings.** See more in 10.1.3, "Date-time Type".
+**Note:** Currently, YINI types map 1-to-1 to native JSON types. Constructs and objects like date-time, **must currently be expressed as strings**. See more in 10.1.3, "Date-time Type".
 
 ### 4.3. Type Rules
 This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
@@ -495,7 +495,7 @@ Supported markers:
   - Reserved: `;`
  
 ### 5.3. Sections in Sections (Nested Sections)
-If you want to put a section under another section, nested sections, make a section header that is one level deeper than the current level. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
+If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels.. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
 ```yini
 # Prefs
 ## Section
@@ -508,6 +508,15 @@ If you want to put a section under another section, nested sections, make a sect
 ```
 
 ## 6. String Literals
+
+**Prefix Glossary Table:**
+|Prefix| Type Name      | Behavior Summary|
+|------|----------------|---|
+|_none_| Raw String     | Raw (default) if no prefix is used |
+| R    | Raw String     | No escapes, preserves text exactly |
+| H    | Hyper String   | Multi-line, trims & normalizes whitespace |
+| C    | Classic String | Supports escape sequences like `\n`, `\t` |
+
 YINI has four types of string literals — raw, classic, hyper, and triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 String literals in YINI **must be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
@@ -552,7 +561,7 @@ There is also another kind of strings, ("Hyper") string literals, called H-Strin
 Like Raw Strings, Hyper Strings treat backslashes as literal characters (escape sequences are not supported).
 
 - However, Hyper strings are special in that they **can span over multiple lines** with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
-- Moreover, one or more succeeding `<NL>` and/or `<WS>` are always converted (normalized) to a single space character ` `. 
+- Multiple consecutive newlines and whitespace are normalized to a single space. 
 - Also, leading and trailing `<NL>` and/or `<WS>` are trimmed away.
 
 Hyper Strings behave similarly to plain text in HTML documents.
@@ -620,7 +629,7 @@ three lines."""
 
 """He said, "hello" and left."""
 
-"""You can use double quotes ("") inside."""
+"""You can use double quotes (") inside."""
 ```
 
 Note: All content between the opening and closing triple quotes is preserved as-is, including whitespace and line breaks.
@@ -1476,7 +1485,7 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 A running log of changes and updates **to the YINI specification**.
 
 v1.0.0 Beta 4 + Updates
-- Adden tab as illegal character in phrased (backticked) identifiers.
+- Added tab as illegal character in phrased (backticked) identifiers.
 - Deprecated `>` for use as section marker, due to its tendency to be  confused with quoting syntax in forums, emails, and messaging platforms, etc.
 - Added missing escape codes (as to what C/C++ has).
 - Reserved `{ }` for future syntax (inline objects).
