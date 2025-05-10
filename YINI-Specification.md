@@ -488,7 +488,9 @@ If you want to put a section under another section, nested sections, make a sect
 ```
 
 ## 6. String Literals
-In YINI, string literals can be enclosed in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
+YINI has four types of string literals — raw, classic, hyper, and triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
+
+String literals in YINI **must be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
 **Note:** If a string is not quoted, it's not a string — period.
 
@@ -559,27 +561,24 @@ Classic strings must start and end on the same line.
 Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter `C` (or `c`). 
 
 **Full List: Escape Sequences (lower or uppercase, only in C-Strings):**
+- `\\` for backslash
+- `\'` for Single Quote
+- `\"` for Double Quote
+- `\?` Literal question mark (due to C/C++ compatibily)
+- `\a` for Alert (bell)- ASCII 7
+- `\b` for Backspace - ASCII 8
+- `\f` for Form Feed - ASCII 12
 - `\n` for Newline - ASCII 10
 - `\r` for Carriage Return - ASCII 13
 - `\t` for Tab - ASCII 9
-- `\b` for Backspace - ASCII 8
-- `\f` for Form Feed - ASCII 12
-- `\"` for Double Quote
-- `\'` for Single Quote
-- `\\` for backslash
-- `\/` for normal Slash
-- `\?` Literal question mark (due to C/C++ compatibily)
-- `\a` Alert (bell)- ASCII 7
-- `\v` Vertical tab - ASCII 11
-- `\0` for null byte control character
-- `\ooo`  Octal value (up to 3 digits)
+- `\v` for Vertical tab - ASCII 11
 - `\x hex hex` Hex byte (2-digit)
 - `\u hex hex hex hex` Unicode character (4-digit hex) (UTF-16)
 - `\U hex hex hex hex hex hex hex hex` Unicode character (8-digit hex) (UTF-32)
+- `\ooo`  Octal value (up to 3 digits, `\0` is valid for null byte)
 
-Where `hex` is 0-9, or a-f, or A-F.
-
-Where `o` is 0-7.
+- Where `hex` is a _Hexadecimal_ value: 0-9, or a-f, or A-F.
+- Where `o` is an _Octal_ value: 0-7.
 
 **Invalid Escapes**
 

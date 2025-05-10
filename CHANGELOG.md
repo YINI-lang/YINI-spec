@@ -5,6 +5,8 @@ Edits and updates **in this repository**.
 - Updated spec and grammar with new escape characters.
 - In spec, reserved `{ }` for future use.
 - In spec renamed section to "Future / Reserved Features" from "Reserved Features".
+- Added examples using escape characters.
+- Updated readme about the Example about Flexible Strings
 
 2025-05-03
 - Reworded readme as including "alternative to INI".
