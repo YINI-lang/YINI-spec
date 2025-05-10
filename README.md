@@ -5,6 +5,8 @@
 **Format Name:** `YINI` (influenced by `INI`, `JSON`, `C`, `Python`...)
 
 ---
+> \# YINI ≡
+---
 
 # YINI Specification
 
@@ -31,13 +33,15 @@ Ten key features below:
 - ✅ **Clean and minimalistic syntax** — easy to write and read.
 - ✅ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML.
-- ✅ **True section nesting** using intuitive markers (`#`, `~`, or `>`).
+- ✅ **True section nesting** using intuitive markers (`#` or `~`).
 - ✅ **Indentation-independent structure** — no indentation pitfalls.
-- ✅ **Explicit document terminator** (`/END` or `###`) for clear file boundaries and parser certainty.
+- ✅ **Optional document terminator** (`/END` or `###`) for clear file boundaries and parser certainty in **strict-mode**.
 - ✅ **Human readability first**, yet machine-friendly.
 - ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (case-insensitive).
 - ✅ **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
+
+⚠️ **Note:** In YINI, the `#` symbol is not used for comments — it is reserved for section headers and hexadecimal number notation. Use `//` or `/*...*/` for comments instead.
 
 ---
 

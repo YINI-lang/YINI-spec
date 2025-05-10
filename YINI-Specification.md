@@ -20,13 +20,21 @@ See the full license text at the end of this document.
 ## Preface
 **YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility. It aims to stay minimal, yet flexible enough to express a wide range of configuration needs.
 
-While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces a clean, minimalistic design focused on human readability, structural clarity, and extensibility for the future.  
-One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing complex structures to be expressed in a simple, natural, and visually clear way — without the heavy indentation rules or syntax overhead found in other formats.
+That said, there are already many excellent configuration formats out there, and most are great at what they do. **YINI isn't trying to replace them** — it's intended as a complement to existing formats.
+
+The motivation for YINI arose during another project, where a configuration format was needed in the spirit of INI — but with a well-defined specification (something INI lacks) and a few modern features. There appeared to be a practical gap that none of the existing formats quite addressed, at least not for the specific needs of that project. 
+
+While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces a clean, minimalistic design **focused on human readability**, **structural clarity**, and extensibility for the future.  
+One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing complex structures to be expressed in a simple, natural, and visually clear way — without the strict indentation rules or syntax overhead found in some other formats.
 
 YINI embraces simplicity as a strength, offering just enough rules to stay consistent, while staying forgiving enough for real-world use.
 
 This specification defines the YINI format with care and clarity, aiming to serve both casual users and implementers seeking a robust, reliable configuration format.  
 Above all, YINI remains true to its founding goal: **make configuration effortless**.
+
+Nonetheless, some aspects of the format may initially raise questions, as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts  the C-style approach of using `//` for line comments, rather than using the `#` symbol. Instead, the `#` character is reserved for section headers and hexadecimal number notation.
+
+(See more in Section 1.2.1, "The # Marker vs Comment")
 
 ---
 
@@ -67,7 +75,7 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 
 **5. Section Headers**  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
-&nbsp;&nbsp;&nbsp;&nbsp;5.2. Allowed Markers (`#`, `~`, `>`)  
+&nbsp;&nbsp;&nbsp;&nbsp;5.2. Allowed Markers (`#`, `~`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Sections in Sections (Nested Sections)
 
 **6. String Literals**  
@@ -147,6 +155,16 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 YINI is particularly targeted at users who need a straightforward format for storing and organizing configuration data, where human readability and ease of use are paramount. YINI is flexible enough to handle a wide range of use cases—from simple key-value pairs to nested and structured data—making it an effective choice for everything from application preferences and program settings to complex system configuration files.
 
 ### 1.2. Purpose and Design Goals
+
+#### 1.2.1. The # Marker vs Comment
+While `#` is commonly recognized as a comment symbol in formats like INI or YAML, in YINI it was intentionally repurposed as a section header marker. This was a deliberate design decision aimed at balancing readability, structure, and extensibility with other features: 
+- Inspired by Markdown, `#` provides a visually clear and familiar way to denote headers.
+- It visually communicates **"a section"** more clearly than `[]` (as used in INI) or other less intuitive symbols.
+- YINI adopts C/C++-style comments instead: `//` for single-line and `/* ... */` for multi-line — aligning better with programming norms.
+- The alternative marker `~` is supported specifically for this reason — allowing users to avoid `#` entirely if preferred.
+- The section header markers (`#`, `~`) was deliberately chosen (by design requirement) from the 7-bit ASCII range for maximum compatibility.
+
+#### 1.2.2. Key Design Goals
 The YINI format was created with the following key design goals in mind:
 
 - **Simplicity:** YINI is designed to be as simple and intuitive as possible. The syntax is minimalistic yet expressive, with clear conventions for defining sections, keys, and values.
@@ -163,7 +181,7 @@ The following is WIP:
 - **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
 
 ### 1.3. Key Features
-- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers can be marked with a variety of symbols (e.g., `#`, `~`, `>`), depending on user preference.
+- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers can be marked with a variety of symbols (e.g., `#`, `~`), depending on user preference.
 
 - **Clear End of Document:** YINI supports clear document terminator markers (`/END` or `###`).
 
@@ -190,8 +208,8 @@ The following key terms are used consistently throughout this specification. Und
 | List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
-| Section                   | A logical grouping of members, introduced by a header using a section marker like `#`, `~`, or `>`. |
-| Section Marker            | A special character (`#`, `~`, or `>`) that denotes a new section header. |
+| Section                   | A logical grouping of members, introduced by a header using a section marker like `#` or `~`. |
+| Section Marker            | A special character (`#` or `~`) that denotes a new section header. |
 | Strict Mode               | A parsing mode where all structural and validation rules are enforced. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
@@ -235,7 +253,7 @@ YINI files consist of a series of **sections, members** (key-value pairs), and o
 
 **Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure in any way, except a tab or space in important in section headers. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
 
-**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `#`, `~`, or `>`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
+**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `#` or `~`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
 
 **Example of a section:**
 ```yini
@@ -463,13 +481,13 @@ username = "alice"
 theme = "dark"
 ```
 
-### 5.2. Allowed Markers (`#`, `~`, `>`)
+### 5.2. Allowed Markers (`#`, `~`)
 YINI allows a limited set of _**section markers**_ to identify section headers. These markers help visually and semantically distinguish section starts from key-value members or comments.
 
 Supported markers:
   - `#` (preferred marker, for now)
   - `~` (alternative marker, in case of confusion of using `#`)
-  - `>` (for legacy or alternative support)
+  - `>` (deprecated)
   - Reserved: `§` (experimental, maybe in future, for enhanced readability)
   - Reserved: `€` (experimental, maybe in future, for enhanced readability)
   - Reserved: `;`
@@ -841,7 +859,7 @@ The following characters are reserved by the YINI syntax and must not be used im
 | Character	| Usage Context	| Description |
 |-----------|---------------|-------------|
 | `=` | Assignment  | Separates key from value |
-| `~`, `>` | Section headers | Used to denote section start |
+| `~` | Section headers | Used to denote section start |
 | `#` | Header prefix / hex values | Begins section or hex number |
 | `%` | Binary prefix | Begins binary number |
 | `//` | Comment | Starts single-line comment |
@@ -866,7 +884,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 #### 11.2.1. Structural Requirements
 - A file may consist of zero or more **sections**.
 - A file may consist of zero or more valid key-value pairs (members).
-- Section headers must begin with a valid marker (`#`, `~`, `>`).
+- Section headers must begin with a valid marker (`#` or `~`).
 - At least one space or tab is required between a section marker and the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
@@ -1457,8 +1475,9 @@ A running log of changes and updates **to the YINI specification**.
 
 v1.0.0 Beta 4 + Updates
 - Adden tab as illegal character in phrased (backticked) identifiers.
+- Deprecated `>` for use as section marker, due to its tendency to be  confused with quoting syntax in forums, emails, and messaging platforms, etc.
 - Added missing escape codes (as to what C/C++ has).
-- Reserved `{ }` for future syntax (inline objects)
+- Reserved `{ }` for future syntax (inline objects).
 
 v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
