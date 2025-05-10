@@ -513,7 +513,7 @@ If you want to put a section under another section, nested sections, use additio
 |Prefix| Type Name      | Behavior Summary|
 |------|----------------|---|
 |_none_| Raw String     | Raw (default) if no prefix is used |
-| R    | Raw String     | No escapes, preserves text exactly |
+| R    | Raw String     | No escapes, preserves text exactly (default) |
 | H    | Hyper String   | Multi-line, trims & normalizes whitespace |
 | C    | Classic String | Supports escape sequences like `\n`, `\t` |
 
@@ -593,7 +593,7 @@ Escape sequences are only supported in Classic Strings (C-Strings), strings encl
 - `\\` for backslash
 - `\'` for Single Quote
 - `\"` for Double Quote
-- `\?` Literal question mark (due to C/C++ compatibily)
+- `\?` Literal question mark (due to C/C++ compatibility)
 - `\a` for Alert (bell)- ASCII 7
 - `\b` for Backspace - ASCII 8
 - `\f` for Form Feed - ASCII 12
