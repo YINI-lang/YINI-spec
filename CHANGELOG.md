@@ -1,15 +1,18 @@
 # CHANGELOG
-Edits and updates **in this repository**.
+Edits and updates **in this repository**. (Very minor changes are not listed.)
 
 2025-05-10
-- Updated spec and grammar with new escape characters.
-- In spec, reserved `{ }` for future use.
-- In spec renamed section to "Future / Reserved Features" from "Reserved Features".
-- Added examples using escape characters.
-- Updated readme about the Example about Flexible Strings
+- Updated Spec and grammar with new escape characters.
+- In Spec, reserved `{ }` for future use.
+- In Spec renamed section to "Future / Reserved Features" from "Reserved Features".
+- Added examples using all escape characters.
+- Updated README about the Example about Flexible Strings
+- Deprecated the `>` as section marker.
+- Added rationale in the Spec for the `#` marker as a design choice, and expanded on it in the preface.
+- Included the YINI "logo" at the top of the README.
 
 2025-05-03
-- Reworded readme as including "alternative to INI".
+- Reworded README as including "alternative to INI".
 - Fixes in specs:
   * Made it more clear that Lists are also known as arrays.
   * Clarified, that multi-line strings can be done with Hyper Strings and triple-quotes.

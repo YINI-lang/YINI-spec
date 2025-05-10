@@ -308,6 +308,8 @@ YINI supports two types of comments:
 
 Note: Comments may generally appear anywhere in the file, except within quoted strings.
 
+⚠️ The `#` symbol is not used for comments in YINI — it is reserved for section headers and hexadecimal number notation. Use `//` or `/*...*/` for comments instead.
+
 ### 3.4. Identifiers
 Identifiers are names used for keys (in members) and sections (section headers). 
 
