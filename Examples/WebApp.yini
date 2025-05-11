@@ -29,5 +29,3 @@ Welcome to TaskTracker!
 Your productivity companion.
 """
 error = "Something went wrong. Please try again."
-
-/END

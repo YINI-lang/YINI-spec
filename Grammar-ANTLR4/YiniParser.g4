@@ -26,12 +26,10 @@ options {
 
 //comment: BLOCK_COMMENT | LINE_COMMENT; NL: LINE_COMMENT+ | NL+;
 
-yini: SHEBANG? COMMENT* NL* section+ NL* EOF;
+yini: SHEBANG? COMMENT* NL* section+ NL* terminal_line? EOF;
 
-section:
-	SECTION_HEAD? section_members
-	| SECTION_HEAD section
-	| terminal_line;
+section: SECTION_HEAD? section_members | SECTION_HEAD section?;
+//| terminal_line?;
 
 terminal_line: TERMINAL_TOKEN (NL+ | COMMENT? NL*);
 

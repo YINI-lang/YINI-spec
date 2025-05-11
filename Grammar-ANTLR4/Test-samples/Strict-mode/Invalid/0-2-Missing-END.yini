@@ -1,0 +1,6 @@
+/*
+  SHOULD FAIL — missing required terminal line '/END'.
+*/
+
+# Data
+key = 12

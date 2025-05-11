@@ -17,5 +17,3 @@ url = 'images/'
 styles = [
     ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
 ]
-
-/END  // End of YINI doc.
