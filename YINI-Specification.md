@@ -341,7 +341,7 @@ An _**identifier**_ can be one of two forms below:
 ### 3.5 Document Terminator
 **Note:** Below is only optional in lenient (non-strict) mode, which is the default.
 
-A YINI document in strict mode must **must always end with a terminator line**.
+A YINI document in strict mode **must always end with a terminator line**.
 
 The document terminator explicitly marks the end of the configuration content and prevents ambiguity about whether the document was fully read.
 
