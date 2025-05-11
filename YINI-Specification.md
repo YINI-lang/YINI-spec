@@ -110,7 +110,7 @@ Nonetheless, some aspects of the format may initially raise questions, as certai
 **11. Validation Rules**  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness Requirements  
-&nbsp;&nbsp;&nbsp;&nbsp;11.3. Strict vs. Lenient Modes _(Optional Feature)_
+&nbsp;&nbsp;&nbsp;&nbsp;11.3. Lenient vs. Strict Modes _(Optional Feature)_
 
 **12. Implementation Notes**  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
@@ -181,9 +181,11 @@ The following is WIP:
 - **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
 
 ### 1.3. Key Features
+**Note:** Unless explicitly stated otherwise, YINI parsers are expected to operate in lenient (non-strict) mode by default. Strict mode is optional and intended for validation-intensive environments.
+
 - **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers can be marked with a variety of symbols (e.g., `#`, `~`), depending on user preference.
 
-- **Clear End of Document:** YINI supports clear document terminator markers (`/END` or `###`).
+- **Clear End of Document:** YINI supports (only in stict-mode) clear document terminator markers (`/END` or `###`).
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
 
@@ -200,17 +202,17 @@ The following key terms are used consistently throughout this specification. Und
 |---------------------------|------------|
 | Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
 | Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
-| Document Terminator       | A special line (`/END` or `###`) that explicitly marks the end of a YINI document. |
+| Document Terminator       | A special line (`/END` or `###`) that explicitly marks the end of a YINI document (only required in strict mode). |
 | Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys must be unique within their section (and depth/level). |
-| Lazy/Lenient Mode         | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input. |
+| Lenient Mode         | This is the default parsing mode in YINI. |
 | List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
 | Section                   | A logical grouping of members, introduced by a header using a section marker like `#` or `~`. |
 | Section Marker            | A special character (`#` or `~`) that denotes a new section header. |
-| Strict Mode               | A parsing mode where all structural and validation rules are enforced. |
+| Strict Mode               | An optional parsing mode where all structural and validation rules (incl. the document terminator) are strictly enforced. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
@@ -337,7 +339,9 @@ An _**identifier**_ can be one of two forms below:
   `Amanda's Project`
   ```
 ### 3.5 Document Terminator
-A YINI document **must always end with a terminator line**.
+**Note:** Below is only optional in lenient (non-strict) mode, which is the default.
+
+A YINI document in strict mode must **must always end with a terminator line**.
 
 The document terminator explicitly marks the end of the configuration content and prevents ambiguity about whether the document was fully read.
 
@@ -900,7 +904,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
-- A YINI file must end with only one single terminator (`/END` or `###`).
+- A YINI file (in strict mode, only optional by default) must have a document terminator, there may only be one single terminator (`/END` or `###`).
 
 #### 11.2.2. Character Encoding
 Files **must** be encoded as **UTF-8 without BOM**.
@@ -915,21 +919,22 @@ Files **must** be encoded as **UTF-8 without BOM**.
 - Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
 
 #### 11.2.5. Document Terminator
+- The terminator is only required in strict-mode.
 - See Section 3.5, "Document Terminator" for terminator syntax.
-- A valid YINI file must end with a terminator (`/END`, `###`).
+- A valid YINI file, in Strict-mode, must end with the terminator (`/END`, `###`).
 - Only one terminator is permitted per file.
 - Missing terminators:
+  - **In lenient mode:** No error or warning.
   - **In strict mode:** Treated as an error.
-  - **In lazy/lenient mode:** Treated as a warning.
 - After the terminator, only whitespaces and comments are allowed.
 
 ##### Table: Terminator Requirement by Mode
 | Mode | Terminator Requirement |
 |---|---|
+| Lenient | Optional (*) |
 | Strict | Yes (mandatory) |
-| Lazy/Lenient | Optional (*) |
 
-(*) In systems that value deterministic parsing, even lazy/lenient mode should favor explicit termination.
+(*) In systems that value deterministic parsing, even lenient mode should favor explicit termination.
 
 ##### Rationale
 The document terminator ensures robust parsing boundaries, improves multi-file safety, and aids debugging.
@@ -970,23 +975,28 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
 
   - ❌ The following empty file (with only a comment) is also invalid:
     ```yini
-    // Invalid empty YINI document, the required document terminator (`/END` or `###`) is missing.
+    // Invalid empty YINI document in strict mode, the required document terminator (`/END` or `###`) is missing.
     ```
     **Note:** The document terminator is required in a valid YINI document.
 
-### 11.3. Strict vs. Lenient Modes _(Optional Feature)_
+### 11.3. Lenient vs. Strict Modes _(Optional Feature)_
+Non-strict mode (lenient mode) is the default and recommended mode of operation. Parsers should operate in this mode by default unless explicitly configured otherwise to operate in fully strict mode.
+
 Some YINI parsers may support multiple **validation modes**:
 
+- **Lenient Mode:** 
+  - Permissive with minor errors (e.g., trailing commas, mixed line endings).
+  - The document terminator (`/END`) is not required.
+  - All typing rules still apply.
+  - Note, string literals must be quoted, if it's not quoted, it's not a string — period.
+  - Useful for hand-edited configuration files.
 - **Strict Mode:**
   - Enforces full well-formedness.
+  - The document terminator (`/END` or `###`) is required.
   - Disallows trailing commas.
   - For production and tool-chain use.
-- **Lazy/Lenient Mode:** 
-  - Permissive with minor errors (e.g., trailing commas, mixed line endings).
-  - May allow unescaped bare values or relaxed typing.
-  - Useful for hand-edited configuration files.
 
-**Note:** Implementations must clearly document the validation mode in use and detail which rules are relaxed under lenient parsing.
+**Note:** Implementations must clearly document the validation mode in use and detail which rules are fully enforced under strict parsing.
  
 ## 12. Implementation Notes
 
@@ -1111,7 +1121,7 @@ Developers are encouraged to implement the following features to improve parser 
 * Normalize internal representations of:
   - `true` / `false`
   - `null`
-* Support both `strict` and `lazy`/`lenient` parsing modes.
+* Support both `lenient` and `strict` parsing modes.
 * (?) Optionally log ignored lines (e.g., with --) for debugging.
 * Optionally, **log ignored or unknown lines** (e.g., those starting with `--`) to assist debugging or migration.
 
@@ -1200,14 +1210,11 @@ See Sections 14.3 and 14.4 for examples of YINI ⇆ JSON mappings.
 name = "Kim"
 entries = 10
 enabled = true
-
-/END
 ```
 
 **Explanation:**
   - Begins with a single section `# Prefs`.
   - Contains three keys (`name`, `entries`, `enabled`) with string, number, and boolean values, respectively.
-  - Ends with the document terminator `/END`.
 
 ### 14.2. Realistic Config Use Cases
 #### 14.2.1. User Preferences Configuration
@@ -1223,8 +1230,6 @@ recent_files = [
   "draft_0423.yini",
   "budget2025.yini"
 ]
-
-/END
 ```
 
 #### 14.2.2. Application Settings with Sections
@@ -1244,7 +1249,6 @@ rotate = true
 enable_experimental = false
 api_version = "v2.1"
 
-/END
 ```
 
 **Notes:**
@@ -1258,8 +1262,6 @@ version = "1.3.0"
 author = "Jane Doe"
 schedule = "daily"
 active = true
-
-/END
 ```
 
 #### 14.2.4. Feature Flags
@@ -1270,8 +1272,6 @@ experimental_ui = false
 use_cache = true
 cache_expiry = 86400  		// In seconds
 last_purge_date = "2025-05-25"	// YYYY-MM-DD
-
-/END
 ```
 
 #### 14.2.5. Feature Toggles with Alternative Syntax
@@ -1289,8 +1289,6 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 ~~ `Cache Config`
 `Cache Expiry` = 86400  		// In seconds
 `Last Purge Date (YYYY-MM-DD)` = "2025-05-25"
-
-###
 ```
 
 **Notes:**
@@ -1309,8 +1307,6 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 name = "Alice"
 age = 28
 active = true
-
-/END
 ```
 
 **JSON Equivalent:**
@@ -1334,8 +1330,6 @@ language = "en"
 ## Display
 resolution = "1920x1080"
 fullscreen = true
-
-/END
 ```
 
 **JSON Equivalent:**
@@ -1357,8 +1351,6 @@ fullscreen = true
 ```yini
 # Server
 hosts = ['server1.example.com', 'server2.example.com']
-
-/END
 ```
 
 **JSON Equivalent:**
@@ -1383,8 +1375,6 @@ hosts = ['server1.example.com', 'server2.example.com']
 enabled = On
 archived = Off
 description = Null
-
-/END
 ```
 
 **JSON Equivalent:**
@@ -1418,8 +1408,6 @@ description = Null
 username = "bob"
 age = 35
 verified = true
-
-/END
 ```
 
 #### 14.4.2. Nested JSON Objects to YINI
@@ -1444,8 +1432,6 @@ version = "2.5"
 ## settings
 theme = "light"
 notifications = true
-
-/END
 ```
 
 #### 14.4.3. JSON Array to YINI
@@ -1462,8 +1448,6 @@ notifications = true
 ```yini
 # Servers
 hosts = ["alpha.local", "beta.local", "gamma.local"]
-
-/END
 ```
 
 ## 15. Appendices and Reserved Areas
@@ -1485,10 +1469,14 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 A running log of changes and updates **to the YINI specification**.
 
 v1.0.0 Beta 4 + Updates
+- Changed the default mode to non-stict (lenient) from Strict-mode:
+  * Thus the "Document Terminator" is now only optional.
+  * Also the section name to 11.3. "Lenient vs. Strict Modes".
 - Added tab as illegal character in backticked identifiers.
 - Deprecated `>` for use as section marker, due to its tendency to be  confused with quoting syntax in forums, emails, and messaging platforms, etc.
 - Added missing escape codes (as to what C/C++ has).
 - Reserved `{ }` for future syntax (inline objects).
+- Renamed the term Phrased to Backticked identifiers, it's simpler.
 
 v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
@@ -1502,4 +1490,3 @@ v1.0.0 Beta 2, 2025-04-23
 - Reintroduced support for the alternative terminator marker `###`.
 
 ---
-/END

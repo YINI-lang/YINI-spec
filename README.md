@@ -35,11 +35,11 @@ Ten key features below:
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML.
 - ✅ **True section nesting** using intuitive markers (`#` or `~`).
 - ✅ **Indentation-independent structure** — no indentation pitfalls.
-- ✅ **Optional document terminator** (`/END` or `###`) for clear file boundaries and parser certainty in **strict-mode**.
 - ✅ **Human readability first**, yet machine-friendly.
 - ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (case-insensitive).
 - ✅ **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
+- ✅ **Optional document terminator** (`/END` or `###`) for clear file boundaries and parser certainty in **strict-mode**.
 
 ⚠️ **Note:** In YINI, the `#` symbol is not used for comments — it is reserved for section headers and hexadecimal number notation. Use `//` or `/*...*/` for comments instead.
 
@@ -67,8 +67,6 @@ port = 8080
 # Features              // Defines a section named Features.
 login = true
 notifications = false
-
-/END
 ```
 
 Notice:
@@ -77,7 +75,6 @@ Notice:
 - In YINI, all strings must be enclosed in quotes.
 - Natural, readable keys and values separated by (`=`).
 - Strong typing without heavy syntax.
-- Explicit, clean termination (`/END`).
 
 ---
 
@@ -115,8 +112,6 @@ timeout = 9000          // Number (integer).
 caching = True          // Boolean.
 isLogging = YES         // Boolean (alternative keyword).
 debugging = ON          // Boolean (alternative keyword).
-
-/END                    // The explicit doc. terminator.
 ```
 
 ---
@@ -145,8 +140,6 @@ This is a triple-quoted
 string literal — characters
 are preserved exactly, without escapes.
 """
-
-/END
 ```
 
 ---
