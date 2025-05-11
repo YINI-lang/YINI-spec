@@ -50,8 +50,6 @@ listOfLists = [
 		["stylesheet", "css/themes.css"]    /* This is the
 			last element. */
 
-// About to end doc.
-/END  /* End of YINI doc. */
 
 
 

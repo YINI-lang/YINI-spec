@@ -16,5 +16,3 @@ rotate = true
 # Features
 enable_experimental = false
 api_version = "v2.1"
-
-/END

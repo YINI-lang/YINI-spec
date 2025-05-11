@@ -7,5 +7,3 @@ three lines."""
 b = """He said, "hello" and left."""
 
 c = """You can use "" double quotes inside."""
-
-###

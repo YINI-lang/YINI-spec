@@ -14,5 +14,3 @@ BackupPath = "/mnt/backup/"
 EnableLogging = YES
 LogLevel = "debug"
 AutoUpdate = NO
-
-/END

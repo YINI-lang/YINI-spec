@@ -13,3 +13,5 @@ MaxLogSize = 1e6  // 1 MB
 ### RotationSettings
 MaxLogCount = 5
 RotationInterval = "daily"
+
+/END

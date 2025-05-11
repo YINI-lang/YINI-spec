@@ -28,7 +28,7 @@ options {
 
 yini: SHEBANG? COMMENT* NL* section+ NL* terminal_line? EOF;
 
-section: SECTION_HEAD? section_members | SECTION_HEAD section;
+section: SECTION_HEAD? section_members | SECTION_HEAD section?;
 //| terminal_line?;
 
 terminal_line: TERMINAL_TOKEN (NL+ | COMMENT? NL*);
