@@ -1473,12 +1473,12 @@ A running log of changes and updates **to the YINI specification**.
 v1.0.0 Beta 4 + Updates
 - Changed the default mode to non-stict (lenient) from Strict-mode:
   * Thus the "Document Terminator" is now only optional.
-  * Also the section name to 11.3. "Lenient vs. Strict Modes".
+  * Renamed section name to 11.3, "Lenient vs. Strict Modes".
 - Added tab as illegal character in backticked identifiers.
-- Deprecated `>` for use as section marker, due to its tendency to be  confused with quoting syntax in forums, emails, and messaging platforms, etc.
-- Added missing escape codes (as to what C/C++ has).
+- Deprecated `>` for use as section marker, due to its tendency to be confused with quoting syntax in forums, emails, and messaging platforms, etc.
+- Added missing escape codes (same as to what C/C++ has).
 - Reserved `{ }` for future syntax (inline objects).
-- Renamed the term Phrased to Backticked identifiers, it's simpler.
+- Renamed the term "Phrased identifiers" to "Backticked identifiers", it's simpler.
 
 v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
