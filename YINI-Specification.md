@@ -517,7 +517,7 @@ If you want to put a section under another section, nested sections, use additio
 | H    | Hyper String   | Multi-line, trims & normalizes whitespace |
 | C    | Classic String | Supports escape sequences like `\n`, `\t` |
 
-YINI has four types of string literals — raw, classic, hyper, and triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
+YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 String literals in YINI **must be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You may use whichever is preferred or most appropriate for the context.
 
@@ -525,7 +525,7 @@ String literals in YINI **must be enclosed** in either single quotes `'` or doub
 
 **YINI supports four types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for triple-quoted strings** `"""`, which do not support any prefix). YINI supports multi-line strings via Hyper Strings or triple-quoted strings.
 
-If no prefix is used, the string is treated as a **raw string literal** by default.
+If no prefix is used, the string is treated as a **Raw string literal** by default.
 
 Triple-quoted strings (`"""`) do not support any prefix character. Therefore, the prefix is only applicable to single-line Hyper-strings (`H`), Classic-strings (`C`), and optionally Raw-strings (`R`).
 
@@ -543,7 +543,7 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 | Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Large multi-line blocks of literal text
 
 ### 6.1. Raw Strings (R-Strings)
-In (raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (raw) strings must be on the same line.
+In (Raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (Raw) strings must be on the same line.
 
 Raw strings are particularly suitable for representing file paths and other literal text.
 >myPath = "C:\Users\John Smith\"
@@ -553,7 +553,7 @@ or
 >myPath = '/Users/kim-lee'
 
 #### Raw String Prefix
-Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing raw strings is not required as strings are Raw as standard.
+Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
 
 ### 6.2. Hyper Strings (H-Strings)
 There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `H` or `h`.
@@ -619,7 +619,7 @@ A **Triple-Quoted String** is a string literal that:
 - **May span multiple lines** (i.e., includes newline characters).
 - **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved exactly as written, including whitespace and line breaks.
 - A triple-quoted string ends at the first sequence of three double quotes (`"""`).
-- Does not support any prefix character, triple quoted strings are by design raw.
+- Does not support any prefix character, triple quoted strings are by design Raw.
 
 Example of Triple-Quoted strings:
 ```yini
@@ -649,7 +649,7 @@ greeting = "Hi, hello there"
 Concatenation supports all string types (Raw, Classic, Hyper), though mixing types is generally discouraged (except for special cases (see more in next section)).
 
 ### 6.6. String Type Mixing
-Concatenation of string literals of different types (e.g., raw + classic, classic + hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
+Concatenation of string literals of different types (e.g., Raw + Classic, Classic + Hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
 
 Engines should handle mixed-type concatenations correctly, but authors are encouraged to use consistent string types within concatenations to ensure clarity and predictable behavior.
 
@@ -935,7 +935,7 @@ Files **must** be encoded as **UTF-8 without BOM**.
 The document terminator ensures robust parsing boundaries, improves multi-file safety, and aids debugging.
 
 #### 11.2.6. Escaping and String Literals
-- Escape sequences are **ONLY allowed** in classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
+- Escape sequences are **ONLY allowed** in Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-quoted strings must use `"""` for both opening and closing (`'''` is not supported).
 
 #### 11.2.7. Shortest Valid YINI Documents

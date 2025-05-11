@@ -122,7 +122,7 @@ debugging = ON          // Boolean (alternative keyword).
 ---
 
 ## Example: Flexible String Literals
-YINI has four types of string literals — raw, classic, hyper, and triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
+YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 ```c
 // Basic strings (R-Strings) are raw by default — no escape sequences are interpreted.
