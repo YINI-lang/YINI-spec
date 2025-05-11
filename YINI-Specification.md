@@ -202,7 +202,7 @@ The following key terms are used consistently throughout this specification. Und
 | Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
 | Document Terminator       | A special line (`/END` or `###`) that explicitly marks the end of a YINI document. |
 | Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
-| Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **phrased identifier** (wrapped in backticks). |
+| Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys must be unique within their section (and depth/level). |
 | Lazy/Lenient Mode         | A relaxed parsing mode allowing fallback behavior and partial tolerance for malformed input. |
 | List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
@@ -377,7 +377,7 @@ YINI represents configuration and structured data through a series of _**members
 ### 4.1. Key Naming Rules
 A **key** is an identifier used to reference a specific value in a member (a `key = value` pair) within a YINI file.
 
-- Keys must be valid identifiers — either a **simple form** or a **phrased identifier** (a backticked string). (See Section 3.4: Identifiers.)
+- Keys must be valid identifiers — either a **simple form** or a **backticked identifier** (a backticked string). (See Section 3.4: Identifiers.)
 - Keys must be **unique** within the same section and nesting level. 
 - Keys are assigned values using `=` operator.
   
@@ -466,16 +466,16 @@ A _**section header**_ starts a new logical grouping of members. Section headers
 // A section header with a simple identifier.
 # SectionName
 
-// A section header with a phrased identifier.
+// A section header with a backticked identifier.
 # `Section name`
 
-// Phrased identifiers can include other special symbols too.
+// Backticked identifiers can include other special symbols too.
 # `Section-name`
 ```
 
 - A section header begins with a **section marker**, immediately followed by **one or more whitespace (space or tab) characters**, then the section name.
-- The section name must be a **valid identifier**, either a **simple identifier** or a **phrased identifier** (enclosed in backticks).
-- **Backticks (phrased identifier) are only required** when the identifier contains spaces, punctuation, or other special characters. 
+- The section name must be a **valid identifier**, either a **simple identifier** or a **backticked identifier** (enclosed in backticks).
+- **Backticks (backticked identifier) are only required** when the identifier contains spaces, punctuation, or other special characters. 
 - The section header ends at the newline. There may follow a comment on the same line, but this will get ignored by the parser.
 ```yini
 # UserSettings
@@ -822,7 +822,7 @@ name = "John"  // ✅ A single string value.
 
 A colon-based multi-line list ends when **one of the following** is encountered:
 - a new key assignment (`key = ...` or `key: ...`)
-- a new section header (simple or phrased)
+- a new section header (simple or backticked)
 - a document terminator marker (`/END`, `###`)
 
 **Nested Lists with `:` Notation**
@@ -1485,7 +1485,7 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 A running log of changes and updates **to the YINI specification**.
 
 v1.0.0 Beta 4 + Updates
-- Added tab as illegal character in phrased (backticked) identifiers.
+- Added tab as illegal character in backticked identifiers.
 - Deprecated `>` for use as section marker, due to its tendency to be  confused with quoting syntax in forums, emails, and messaging platforms, etc.
 - Added missing escape codes (as to what C/C++ has).
 - Reserved `{ }` for future syntax (inline objects).
