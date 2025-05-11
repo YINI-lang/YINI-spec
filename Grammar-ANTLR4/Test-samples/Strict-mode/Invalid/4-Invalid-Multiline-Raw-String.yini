@@ -1,0 +1,9 @@
+/*
+  SHOULD FAIL — raw strings cannot span multiple lines.
+*/
+
+# Strings
+multi = "This
+is not
+allowed"
+/END

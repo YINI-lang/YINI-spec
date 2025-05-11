@@ -1,0 +1,20 @@
+/*
+  Menu with Nested Phrase Identifiers
+*/
+
+# `Main Menu`
+
+## `File Menu`
+`Label` = "File"
+`Shortcut` = "Ctrl+F"
+
+### `New Document`
+`Action` = "CreateNew()"
+
+### `Open File`
+`Action` = "OpenDialog()"
+
+### `Save File`
+`Action` = "SaveDoc()"
+
+/END

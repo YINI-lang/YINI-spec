@@ -1,0 +1,3 @@
+// A dangling key is invalid, either = or : is missing.
+key
+###
