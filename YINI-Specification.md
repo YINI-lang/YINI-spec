@@ -330,8 +330,9 @@ An _**identifier**_ can be one of two forms below:
 
 - **Form 2: Identifier Enclosed in Backticks:**
   - A phrase is a name wrapped in backticks  ``` ` ```.
-  - It can include spaces, special (printable) characters, and quotes (single `'` or double `"`).
-  - It must be on a single line and **cannot contain** any newline, tab, or another backtick.
+  - It must be on a single line and **cannot contain** another backtick.
+  - Backticked identifiers **cannot contain** tabs or line breaks (newline).
+  - Escape sequences inside them are not interpreted.
   
   Example:
   ```yini
@@ -421,7 +422,7 @@ The colon (`:`) is not a general-purpose assignment operator and must not be use
 #### Strings
 If the value is meant to be a string, it must be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`).
 
-**ONLY when quoted**, the value is considered to be of type **String**.
+**ONLY when quoted**, (even in non-strict mode) the value is considered to be of type **String**.
 
 #### Numbers
 - A sequence of digits **without a period** (`.`) is treated as a **Number** (integer).
@@ -445,7 +446,7 @@ If the value is the keyword `null` (case-insensitive), or if the value is missin
 | `3.1415` | **Number** (float) |
 | `true`, `FALSE`, `On`, `off`, `YES`, `No` _(any casing)_| **Boolean** |
 | `null` _(any casing)_, ` ` _(blank)_ | **Null** |
-| _(Unquoted non-number as a value)_ | **ERROR** |
+| _(Any value such as unquoted words that are not booleans, numbers, or null)_ | **ERROR** |
 
 **Example:**
 ```txt
@@ -517,9 +518,10 @@ If you want to put a section under another section, nested sections, use additio
 |Prefix| Type Name      | Behavior Summary|
 |------|----------------|---|
 |_none_| Raw String     | Raw (default) if no prefix is used |
-| R    | Raw String     | No escapes, preserves text exactly (default) |
+| R _(optional and has no functional effect)_   | Raw String     | No escapes, preserves text exactly (default) |
 | H    | Hyper String   | Multi-line, trims & normalizes whitespace |
 | C    | Classic String | Supports escape sequences like `\n`, `\t` |
+**Note:**  Prefix R is optional and has no functional effect — raw strings are the default.
 
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
@@ -550,7 +552,7 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 In (Raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (Raw) strings must be on the same line.
 
 Raw strings are particularly suitable for representing file paths and other literal text.
->myPath = "C:\Users\John Smith\"
+>myPath = "C:\Users\John Smith\"  // Raw string
 or
 >myPath = '/home/Leila Häkkinen'
 or
@@ -943,23 +945,23 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
 - Escape sequences are **ONLY allowed** in Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-quoted strings must use `"""` for both opening and closing (`'''` is not supported).
 
-#### 11.2.7. Shortest Valid YINI Documents
-- **Valid short documents:**
-  - ✅ The following is the shortest valid YINI document **with a member**:
+#### 11.2.7. Shortest Valid YINI Documents in Strict Mode
+- **Valid short documents in strict mode:**
+  - ✅ In strict mode, the following is the shortest valid YINI document **with a member**:
     ```yini
     K=
     ###
     ```
     **Note:** A key named `K`, whose value will be interpreted as `null`.
 
-  - ✅ The following is the shortest valid YINI document **with a section header**:
+  - ✅ In strict mode, the following is the shortest valid YINI document **with a section header**:
     ```yini
     # S
     ###
     ```
     **Note:** A section header named `S`, containing no members.
 
-  - ✅ Thus, the following **is also a valid** YINI document by this specification:
+  - ✅ Thus, the following **is also a valid** YINI document in strict mode by this specification:
     ```yini
     ###
     ```
@@ -986,7 +988,7 @@ Some YINI parsers may support multiple **validation modes**:
 
 - **Lenient Mode:** 
   - Permissive with minor errors (e.g., trailing commas, mixed line endings).
-  - The document terminator (`/END`) is not required.
+  - The document terminator (`/END`) is not required, and is only optional.
   - All typing rules still apply.
   - Note, string literals must be quoted, if it's not quoted, it's not a string — period.
   - Useful for hand-edited configuration files.
