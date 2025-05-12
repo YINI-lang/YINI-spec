@@ -492,7 +492,7 @@ Supported markers:
   - Reserved: `;`
  
 ### 5.3. Sections in Sections (Nested Sections)
-If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels.. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels.
+If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, when retrieving back (going back to lower levels) it is allowed to skip levels. - This technique is inspired by Markdown.
 ```yini
 # Prefs
 ## Section
