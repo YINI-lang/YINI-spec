@@ -504,6 +504,25 @@ If you want to put a section under another section, nested sections, use additio
 ### Level3  // ❌ Invalid: cannot skip Level2
 ```
 
+✅ **Example of valid section nesting:**
+```yini
+# Section 1         // Main section 1 (depth 1)
+
+## Section 1.1      // Sub-section of 1 (depth 2)
+
+### Section 1.1.1   // Sub-section of 1.1 (depth 3)
+
+## Section 1.2      // Sub-section of 1 (depth 2)
+
+# Section 2         // Main section 2 (depth 1)
+
+## Section 2.1      // Sub-section of 2 (depth 2)
+
+### Section 2.1.1   // Sub-section of 2.1 (depth 3)
+
+# Section 2         // Main section 2 (depth 1)
+```
+
 ## 6. String Literals
 
 **Prefix Glossary Table:**
