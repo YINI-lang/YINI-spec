@@ -116,12 +116,12 @@ Nonetheless, some aspects of the format may initially raise questions, as certai
 &nbsp;&nbsp;&nbsp;&nbsp;12.2. Line Handling and Whitespace  
 &nbsp;&nbsp;&nbsp;&nbsp;12.3. Value and NULL Handling  
 &nbsp;&nbsp;&nbsp;&nbsp;12.4. Boolean Canonicalization  
-&nbsp;&nbsp;&nbsp;&nbsp;12.5 Lists  
-&nbsp;&nbsp;&nbsp;&nbsp;12.6 Strings Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;12.7 String Literal Types  
-&nbsp;&nbsp;&nbsp;&nbsp;12.8 Comments  
-&nbsp;&nbsp;&nbsp;&nbsp;12.9 Error Handling Recommendations  
-&nbsp;&nbsp;&nbsp;&nbsp;12.10 Bonus Tips for Implementation
+&nbsp;&nbsp;&nbsp;&nbsp;12.5. Lists  
+&nbsp;&nbsp;&nbsp;&nbsp;12.6. Strings Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;12.7. String Literal Types  
+&nbsp;&nbsp;&nbsp;&nbsp;12.8. Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;12.9. Error Handling Recommendations  
+&nbsp;&nbsp;&nbsp;&nbsp;12.10. Bonus Tips for Implementation
 
 **13. Compatibility and Versioning**  
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Fallback Rules  
@@ -587,29 +587,33 @@ Classic strings must start and end on the same line.
 #### 6.3.1. Escape Characters
 Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter `C` (or `c`). 
 
-**Full List: Escape Sequences (lower or uppercase, only in C-Strings):**
-- `\\` for backslash
-- `\'` for Single Quote
-- `\"` for Double Quote
-- `\?` Literal question mark (due to C/C++ compatibility)
-- `\a` for Alert (bell)- ASCII 7
-- `\b` for Backspace - ASCII 8
-- `\f` for Form Feed - ASCII 12
-- `\n` for Newline - ASCII 10
-- `\r` for Carriage Return - ASCII 13
-- `\t` for Tab - ASCII 9
-- `\v` for Vertical tab - ASCII 11
-- `\x hex hex` Hex byte (2-digit)
-- `\u hex hex hex hex` Unicode character (4-digit hex) (UTF-16)
-- `\U hex hex hex hex hex hex hex hex` Unicode character (8-digit hex) (UTF-32)
-- `\ooo`  Octal value (up to 3 digits, `\0` is valid for null byte)
+**Full List: Escape Sequences (case-sensitive, only valid in C-Strings):**
+- `\\` — backslash
+- `\'` — Single Quote
+- `\"` — Double Quote
+- `\0` — Null Byte
+- `\?` — Literal question mark (for C/C++ compatibility)
+- `\a` — Alert (bell)- ASCII 7
+- `\b` — Backspace - ASCII 8
+- `\f` — Form Feed - ASCII 12
+- `\n` — Newline - ASCII 10
+- `\r` — Carriage Return - ASCII 13
+- `\t` — Tab - ASCII 9
+- `\v` — Vertical tab - ASCII 11
+- `\xhh` — Hex byte (2-digit)
+- `\uhhhh` — Unicode character (4-digit hex) (UTF-16)
+- `\Uhhhhhhhh` — Unicode character (8-digit hex) (UTF-32)
+- `\oOOO` — Octal value (up to 3 digits, valid range `\o0` - `\o377`)
+  * Equivalent to `\OOO` in C/C++
+  * `\o0` has same effect as `\0`
 
-- Where `hex` is a _Hexadecimal_ value: 0-9, or a-f, or A-F.
-- Where `o` is an _Octal_ value: 0-7.
+Where:
+- `h` = _Hexadecimal digit_ `0-9`, `a-f`, or `A-F`.
+- `O` = _Octal digit_ `0-7`.
 
 **Invalid Escapes**
 
-Invalid escape sequences (e.g. `\z`) must result in a parse error unless explicitly allowed by a custom extension or parser configuration.
+Invalid escape sequences (e.g. `\z` or `\o378`) must result in a parse error unless explicitly allowed by a custom extension or parser configuration.
 
 ### 6.4. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
@@ -1110,13 +1114,12 @@ It should:
 ### 12.10 Bonus Tips for Implementation
 Developers are encouraged to implement the following features to improve parser robustness and developer experience:
 
-* Attach **position metadata** (line/column) to tokens for better diagnostics.
-* Normalize internal representations of:
+- Attach **position metadata** (line/column) to tokens for better diagnostics.
+- Normalize internal representations of:
   - `true` / `false`
   - `null`
-* Support both `lenient` and `strict` parsing modes.
-* (?) Optionally log ignored lines (e.g., with --) for debugging.
-* Optionally, **log ignored or unknown lines** (e.g., those starting with `--`) to assist debugging or migration.
+- Support both `strict` as well as `lenient` parsing modes.
+- **Extra Bonus:** In strings, if C/C++-style octal escape codes like `\1` to `\377` are used (which are not valid in YINI), parsers should treat this as an error in strict mode (and suggest the correct YINI syntax). In lenient mode, parsers may optionally emit a warning and suggest the correct YINI syntax: `\o1` to `\o377`, and interpret the octal code as intended.
 
 ## 13. Compatibility and Versioning
 This section covers YINI's compatibility and interoperability principles.
@@ -1466,7 +1469,7 @@ v1.0.0 Beta 4 + Updates
   * Renamed section name to 11.3, "Lenient vs. Strict Modes".
 - Added tab as illegal character in backticked identifiers.
 - Deprecated `>` for use as section marker, due to its tendency to be confused with quoting syntax in forums, emails, and messaging platforms, etc.
-- Added missing escape codes (same as to what C/C++ has).
+- Added missing escape codes in strings (matching those from C/C++), with one exception: YINI uses `\OOO` instead of `\oOOO` for octal values, as the `o` clearly indicates that an octal sequence follows, whereas the C-style form does not.
 - Reserved `{ }` for future syntax (inline objects).
 - Renamed the term "Phrased identifiers" to "Backticked identifiers", it's simpler.
 – Removed support for the alternative document terminator `###`. Although it was intended as a shorter, a one character shorter alternative to `/END`, it contradicted YINI's core principle of simplicity. Its presence risked confusing users unfamiliar with YINI's syntax and ultimately undermined clarity.

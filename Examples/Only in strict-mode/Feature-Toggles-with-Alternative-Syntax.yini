@@ -6,7 +6,7 @@
   - Demonstrates alternative boolean literals: `ON` and `OFF`.
   - `Cache Config` is a nested subsection of `Feature Toggles`.
   - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
-  - Ends with the alternative document terminator `###`.
+  - Ends with the document terminator `/END`.
 */
 
 ~ `Feature Toggles`
@@ -19,4 +19,4 @@
 `Cache Expiry` = 86400  		// In seconds
 `Last Purge Date (YYYY-MM-DD)` = "2025-05-25"
 
-###
+/END

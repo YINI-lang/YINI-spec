@@ -118,8 +118,8 @@ TRIPLE_QUOTED_STRING:
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
 
 // Note: Except does'n not include quotes `"`, `'`.
-ESC_SEQ_BASE: '\\' ([\\?abfnrtv] | UNICODE16 | UNICODE32);
-// TODO: Add support for \ooo (up to 3 digts)
+ESC_SEQ_BASE: '\\' ([\\0?abfnrtv] | UNICODE16 | UNICODE32);
+// TODO: Add support for \oOOO (up to 3 digits, valid range \o0 – \o377)
 
 fragment UNICODE16: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 fragment UNICODE32:
