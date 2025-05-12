@@ -33,7 +33,7 @@ fragment SECTION_MARKER: HASH+ | SS+ | EUR+ | TILDE+;
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
 	//}: '/END' | (SS SS SS) | (EUR EUR EUR) | '\u003E\u003E\u003E';
-}: '/END' | '###';
+}: '/END';
 
 SS: '\u00A7'; // Section sign §.
 EUR: '\u20AC'; // Euro sign €.

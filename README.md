@@ -39,7 +39,7 @@ Ten key features below:
 - ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (case-insensitive).
 - ✅ **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
-- ✅ **Optional document terminator** (`/END` or `###`) for clear file boundaries and parser certainty in **strict-mode**.
+- ✅ **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 
 ⚠️ **Note:** In YINI, the `#` symbol is not used for comments — it is reserved for section headers and hexadecimal number notation. Use `//` or `/*...*/` for comments instead.
 
@@ -50,12 +50,12 @@ Ten key features below:
 ### Before (Traditional INI or ad-hoc config)
 ```ini
 [Server]                # Defines a section named Server.
-host = localhost
-port = 8080
+host=localhost
+port=8080
 
 [Features]              # Defines a section named Features.
-login = true
-notifications = false
+login=true
+notifications=false
 ```
 
 ### After (YINI)
@@ -159,10 +159,10 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 | Feature | Benefit |
 |:---|:---|
 | Minimal syntax | Easy to read and edit by hand |
-| Light typing | Safer and more powerful than plain INI |
-| Simple nesting | Clear structure without complex indentation |
+| Light typing | Safer and more expressive than plain INI |
+| Simple nesting | Clear structure without complex indentation rules |
 | Human-first | Designed for configuration, not data exchange |
-| Predictable parsing | Strict or lenient modes available |
+| Predictable parsing | Optional strict mode available |
 
 ---
 

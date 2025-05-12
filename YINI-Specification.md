@@ -10,7 +10,6 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 ```yini
 # YINI
 Yet_another = 'INI'
-###
 ```
 © 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
 See the full license text at the end of this document.
@@ -185,7 +184,7 @@ The following is WIP:
 
 - **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers can be marked with a variety of symbols (e.g., `#`, `~`), depending on user preference.
 
-- **Clear End of Document:** YINI supports (only in stict-mode) clear document terminator markers (`/END` or `###`).
+- **Clear End of Document:** YINI supports (only in stict-mode) a clear document terminator marker (`/END`).
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
 
@@ -202,7 +201,7 @@ The following key terms are used consistently throughout this specification. Und
 |---------------------------|------------|
 | Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
 | Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
-| Document Terminator       | A special line (`/END` or `###`) that explicitly marks the end of a YINI document (only required in strict mode). |
+| Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document (only required in strict mode). |
 | Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys must be unique within their section (and depth/level). |
@@ -357,13 +356,6 @@ This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
 Only **whitespaces or comments** may appear after the terminator.
 
 It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comments after the marker, these should be ignored.
-
-Alternatively, a shorter form may be used:
-```
-###
-```
-
-While `###` is valid, `/END` is the standard and should be preferred for clarity in most cases.
 
 ### 3.6. Reserved: Ignore / Disable Line *(for future use)*
 --This space is reserved--<br/>
@@ -829,7 +821,7 @@ name = "John"  // ✅ A single string value.
 A colon-based multi-line list ends when **one of the following** is encountered:
 - a new key assignment (`key = ...` or `key: ...`)
 - a new section header (simple or backticked)
-- a document terminator marker (`/END`, `###`)
+- a document terminator marker (`/END`)
 
 **Nested Lists with `:` Notation**
 
@@ -888,7 +880,6 @@ The following characters are reserved by the YINI syntax and must not be used im
 #### 11.1.2. Reserved Keywords
 The following keywords are restricted and must not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
 - `/END` _(case-insensitive)_
-- `###` _(alone on its own line)_
 - `@yini`
 - `@ver`, `@version`
 - `@include`, `@anchor`, `@alias`
@@ -906,7 +897,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
-- A YINI file (in strict mode, only optional by default) must have a document terminator, there may only be one single terminator (`/END` or `###`).
+- A YINI file (in strict mode, only optional by default) must have a document terminator, there may only be one single terminator (`/END`).
 
 #### 11.2.2. Character Encoding
 Files **must** be encoded as **UTF-8 without BOM**.
@@ -923,7 +914,7 @@ Files **must** be encoded as **UTF-8 without BOM**.
 #### 11.2.5. Document Terminator
 - The terminator is only required in strict-mode.
 - See Section 3.5, "Document Terminator" for terminator syntax.
-- A valid YINI file, in Strict-mode, must end with the terminator (`/END`, `###`).
+- A valid YINI file, in Strict-mode, must end with the terminator marker (`/END`).
 - Only one terminator is permitted per file.
 - Missing terminators:
   - **In lenient mode:** No error or warning.
@@ -950,20 +941,20 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
   - ✅ In strict mode, the following is the shortest valid YINI document **with a member**:
     ```yini
     K=
-    ###
+    /END
     ```
     **Note:** A key named `K`, whose value will be interpreted as `null`.
 
   - ✅ In strict mode, the following is the shortest valid YINI document **with a section header**:
     ```yini
     # S
-    ###
+    /END
     ```
     **Note:** A section header named `S`, containing no members.
 
   - ✅ Thus, the following **is also a valid** YINI document in strict mode by this specification:
     ```yini
-    ###
+    /END
     ```
     **Note:** A YINI document may only contain the document terminator, meaning there are no members or sections in the file.
 - **Invalid short documents:**
@@ -971,13 +962,13 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
     ```yini
     // A dangling key is invalid, either = or : is missing.
     key
-    ###
+    /END
     ```
     **Note:** This is not a proper member, it contains only a key, either `=` or `:` is missing to make it a proper member.
 
   - ❌ The following empty file (with only a comment) is also invalid:
     ```yini
-    // Invalid empty YINI document in strict mode, the required document terminator (`/END` or `###`) is missing.
+    // Invalid empty YINI document in strict mode, the required document terminator (`/END`) is missing.
     ```
     **Note:** The document terminator is required in a valid YINI document.
 
@@ -994,7 +985,7 @@ Some YINI parsers may support multiple **validation modes**:
   - Useful for hand-edited configuration files.
 - **Strict Mode:**
   - Enforces full well-formedness.
-  - The document terminator (`/END` or `###`) is required.
+  - The document terminator (`/END`) is required.
   - Disallows trailing commas.
   - For production and tool-chain use.
 
@@ -1298,7 +1289,6 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 - Demonstrates alternative boolean literals: `ON` and `OFF`.
 - \`Cache Config\` is a nested subsection of \`Feature Toggles\`.
 - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
-- Ends with the alternative document terminator `###`.
 
 ### 14.3. Examples of YINI → JSON Mapping
 
@@ -1479,6 +1469,7 @@ v1.0.0 Beta 4 + Updates
 - Added missing escape codes (same as to what C/C++ has).
 - Reserved `{ }` for future syntax (inline objects).
 - Renamed the term "Phrased identifiers" to "Backticked identifiers", it's simpler.
+– Removed support for the alternative document terminator `###`. Although it was intended as a shorter, a one character shorter alternative to `/END`, it contradicted YINI's core principle of simplicity. Its presence risked confusing users unfamiliar with YINI's syntax and ultimately undermined clarity.
 
 v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
@@ -1492,3 +1483,5 @@ v1.0.0 Beta 2, 2025-04-23
 - Reintroduced support for the alternative terminator marker `###`.
 
 ---
+
+[yini-lang.org](https://yini-lang.org)
