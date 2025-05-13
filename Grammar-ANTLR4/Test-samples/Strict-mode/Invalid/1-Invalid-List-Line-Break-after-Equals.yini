@@ -1,0 +1,8 @@
+/*
+  SHOULD FAIL — newline between = and [ is disallowed.
+*/
+
+# BadList
+items =
+  ["a", "b", "c"]
+/END

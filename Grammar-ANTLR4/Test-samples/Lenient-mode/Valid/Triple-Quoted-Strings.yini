@@ -1,0 +1,9 @@
+# Examples
+
+a = """This is a multiline
+string that spans
+three lines."""
+
+b = """He said, "hello" and left."""
+
+c = """You can use "" double quotes inside."""

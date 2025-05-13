@@ -1,5 +1,29 @@
 # CHANGELOG
-Edits and updates **in this repository**.
+Edits and updates **in this repository**. (Very minor changes are not listed.)
+
+2025 May
+- Updated Spec and grammar with new escape characters.
+- In Spec, reserved `{ }` for future use.
+- In Spec renamed section to "Future / Reserved Features" from "Reserved Features".
+- Added examples using all escape characters.
+- Updated README about the Example about Flexible Strings
+- Deprecated the `>` as section marker.
+- Added rationale in the Spec for the `#` marker as a design choice, and expanded on it in the preface.
+- Included the YINI "logo" at the top of the README.
+- Change the default mode to non-strict, updated Spec and examples to not having /END, added examples and test samples in strict mode.
+- Included "Acknowledgments" in Spec.
+- Reworded some parts of the README.
+- Added in README another section "Comparison: YINI vs Other Formats".
+
+2025-05-03
+- Reworded README as including "alternative to INI".
+- Fixes in specs:
+  * Made it more clear that Lists are also known as arrays.
+  * Clarified, that multi-line strings can be done with Hyper Strings and triple-quotes.
+  * Fixed minor typos, wordings, and tweaks.
+
+2025-05-02
+- Extensively clarified types and colon usage (colon usage is only alloed in combination with lists).
 
 2025-04-28
 - In spec, renamed section to "Spec Changes" from "Spec Changelog" (to distinguish it more from the CHANGELOG file).

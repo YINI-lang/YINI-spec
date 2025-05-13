@@ -1,0 +1,12 @@
+#bools
+
+bool1=False
+bool2=True
+
+question1=No
+question2=Yes
+
+switch1=Off
+switch2=On
+
+

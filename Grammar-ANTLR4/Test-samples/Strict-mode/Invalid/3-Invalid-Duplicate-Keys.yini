@@ -1,0 +1,8 @@
+/*
+  SHOULD FAIL — duplicate key within same section.
+*/
+
+# Config
+path = "/usr/local"
+path = "/opt"
+/END

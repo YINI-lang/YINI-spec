@@ -57,5 +57,3 @@ TimeoutSeconds = 30
 EnableLogs = YES
 LogLevel = "DEBUG"
 IgnoredWarnings: 1001, 1002, 1050, 1100
-
-/END // End of YINI config

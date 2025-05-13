@@ -1,0 +1,10 @@
+/*
+  All Boolean variations (case-insensitive) accepted and normalized.
+*/
+
+# Flags
+flag1 = true
+flag2 = FALSE
+flag3 = Yes
+flag4 = off
+
