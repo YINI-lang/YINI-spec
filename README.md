@@ -1,3 +1,7 @@
+**YINI is a lightweight, human-friendly configuration format — simpler than YAML, and more expressive than INI.**
+
+---
+
 **Version:** v1.0.0 Beta 4 (Latest published release)
 
 **Status:** Beta Release
@@ -9,6 +13,8 @@
 ---
 
 # YINI Specification
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
+![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
 
 _Yet another INI — a lightweight configuration file format: clean, readable, structured._
 
@@ -30,12 +36,12 @@ YINI is a human-friendly configuration file format — designed as an alternativ
 ## Key Features
 Ten key features below:
 
-- ✅ **Clean and minimalistic syntax** — easy to write and read.
+- ✅ **Clean and minimalistic syntax** — avoids visual noise, easy to write and read.
 - ✅ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
-- ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML.
+- ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
 - ✅ **True section nesting** using intuitive markers (`#` or `~`).
 - ✅ **Indentation-independent structure** — no indentation pitfalls.
-- ✅ **Human readability first**, yet machine-friendly.
+- ✅ **Human readability first** — prioritizes clarity over cleverness — yet machine-friendly.
 - ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (case-insensitive).
 - ✅ **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
@@ -70,9 +76,9 @@ notifications = false
 ```
 
 Notice:
-- In YINI, (`#`) is used to define sections.
-- Line-comment can be added using (`//`).
-- In YINI, all strings must be enclosed in quotes.
+- In YINI, `#` defines section headers.
+- `//` is used for line comments.
+- All strings must be enclosed in quotes (`"` or `'`).
 - Natural, readable keys and values separated by (`=`).
 - Strong typing without heavy syntax.
 
@@ -93,11 +99,11 @@ There is also an alternative list notation using `:`, which omits brackets. Item
 Nesting sections can be done easily by adding one extra section marker (e.g. `##`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
 
 ### Alternative Boolean Literals
-Booleans uses flexible literals — for example, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
+Booleans use flexible literals — for example, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
 
 ## Example: List, Nesting & Alternative Booleans Literals
 
- Like here below, using single quotes:
+ Here's an example using single-quoted strings:
 
 ```c
 # AppInfo
@@ -120,7 +126,8 @@ debugging = ON          // Boolean (alternative keyword).
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 ```c
-// Basic strings (R-Strings) are raw by default — no escape sequences are interpreted.
+// Raw strings are the default. No prefix is needed, but an optional R prefix
+// may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
 
 // Classic strings (C-Strings) are prefixed with C or c — they support escape sequences.
@@ -159,10 +166,32 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 | Feature | Benefit |
 |:---|:---|
 | Minimal syntax | Easy to read and edit by hand |
-| Light typing | Safer and more expressive than plain INI |
+| Light typing (yet strictly typed) | Safer and more expressive than plain INI |
 | Simple nesting | Clear structure without complex indentation rules |
 | Human-first | Designed for configuration, not data exchange |
-| Predictable parsing | Optional strict mode available |
+| No guesswork in parsing | Optional strict mode available |
+
+## 📊 Comparison: YINI vs Other Formats
+| Feature                      | INI | JSON | YAML | TOML | **YINI** |
+|-----------------------------|:---:|:----:|:----:|:----:|:--------:|
+| Typing (bool, list, null)   | ❌  | ✅   | ✅   | ✅   | ✅       |
+| Section nesting             | ❌  | ❌   | ✅   | ✅   | ✅       |
+| Human-friendly syntax       | ✅  | ❌   | ➖[1]   | ➖[2]  | ✅       |
+| Readable multi-line strings | ❌  | ❌   | ✅   | ✅   | ✅       |
+| Flexible boolean literals   | ❌  | ❌   | ➖[3]  | ✅   | ✅       |
+| Comment support             | ✅  | ❌   | ✅   | ✅   | ✅       |
+| Escape sequence support     | ❌  | ✅   | ✅   | ✅   | ✅       |
+| Clean, minimal syntax       | ✅  | ❌   | ❌   | ➖[2]   | ✅       |
+| Strict vs lenient modes     | ❌  | ❌   | ❌   | ❌   | ✅       |
+
+[1] YAML's syntax can be seen as complex or inconsistent for some users, especially around indentation and implicit typing.  
+[2] Some users find TOML's use of `[`, `]`, and `.` visually noisy in deeply nested files.  
+[3] YAML's flexible boolean handling can result in unintended type coercion, as behavior varies between parsers.
+
+**Legend:**
+- ✅ = Yes / Fully supported
+- ❌ = Not supported
+- ➖ = Disputed, or partially or inconsistently supported,
 
 ---
 
@@ -180,10 +209,13 @@ Feedback, ideas, testing, and discussions are always welcome. 🚀
 
 (Implementation libraries or parsers can follow once the specification stabilizes.)
 
-Specification needs still more testing, especially in parts like in string concat. and array nesting (where fixes and a few more additions may follow in specification and grammar).
+The specification still needs more testing — especially around string concatenation and array nesting. Further adjustments and refinements may follow in both the spec and grammar.
 
 A TypeScript-based YINI parser is currently in development:
 https://github.com/YINI-lang/yini-parser-typescript
+
+### Acknowledgments
+Some parts of the YINI specification have benefited from valuable community feedback. See section 15.2, "Acknowledgments", for more details.
 
 ---
 

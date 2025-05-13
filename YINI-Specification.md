@@ -35,6 +35,8 @@ Nonetheless, some aspects of the format may initially raise questions, as certai
 
 (See more in Section 1.2.1, "The # Marker vs Comment")
 
+Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community, see more in 15.2, "Acknowledgments".
+
 ---
 
 ## Table of Contents
@@ -141,9 +143,10 @@ Nonetheless, some aspects of the format may initially raise questions, as certai
 
 **15. Appendices and Reserved Areas**  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
-&nbsp;&nbsp;&nbsp;&nbsp;15.2. Author(s)  
-&nbsp;&nbsp;&nbsp;&nbsp;15.3. Spec Changes  
-&nbsp;&nbsp;&nbsp;&nbsp;15.4. Reserved: Grammar (Formal)
+&nbsp;&nbsp;&nbsp;&nbsp;15.2. Acknowledgments  
+&nbsp;&nbsp;&nbsp;&nbsp;15.3. Author(s)  
+&nbsp;&nbsp;&nbsp;&nbsp;15.4. Spec Changes  
+&nbsp;&nbsp;&nbsp;&nbsp;15.5. Reserved: Grammar (Formal)
 
 ---
 
@@ -166,7 +169,7 @@ While `#` is commonly recognized as a comment symbol in formats like INI or YAML
 #### 1.2.2. Key Design Goals
 The YINI format was created with the following key design goals in mind:
 
-- **Simplicity:** YINI is designed to be as simple and intuitive as possible. The syntax is minimalistic yet expressive, with clear conventions for defining sections, keys, and values.
+- **Simplicity:** YINI is designed to be as simple and intuitive as possible. The syntax is minimalistic yet expressive, with clear conventions for defining sections, keys, and values. **Prioritize clarity over cleverness.**
 
 - **Human Readability:** A core principle of YINI is that it should feel natural and intuitive for humans to work with. Its structure is designed to be clear and predictable, minimizing unnecessary complexity so that configuration files are easy to read, understand, write, and maintain—even for non-programmers.
 
@@ -1471,7 +1474,21 @@ http://www.apache.org/licenses/
 Copyright 2024-2025 Gothenburg, Marko K. Seppänen. (Sweden via
 Finland).
 
-### 15.2. Author(s)
+### 15.2. Acknowledgments
+Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community.
+Big thanks to readers and contributors on Reddit, Medium, and other platforms — including those I may have unintentionally forgotten.
+
+**Special thanks to:**
+* David Demelier (_markand67_) — discussions and feedback during Beta 3–4 on `/END`, `#`, etc.
+* User _zanfar_ (Reddit) — feedback on `#`, etc.
+* User _lelanthran_ (Reddit) — feedback on `#`, etc.
+* User _saxbophone_ (Reddit) — feedback on `#`, etc.
+* User _JoshYx_ (Reddit) — raised concerns around `###`, etc.
+* User _tonyp7_ (Reddit) — support and encouragement.
+* User _cat_in_the_wall_ (Reddit) — support and encouragement.
+* ...and anyone else I may have forgotten. **Your contributions are appreciated.**
+
+### 15.3. Author(s)
 This specification is created and maintained by Marko K. Seppänen.
 
 #### Creator
@@ -1479,11 +1496,12 @@ First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
 Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
 
-### 15.3. Spec Changes
+### 15.4. Spec Changes
 A running log of changes and updates **to the YINI specification**.
 
 v1.0.0 Beta 4 + Updates
-- Changed the default mode to non-stict (lenient) from Strict-mode:
+- Added new section 15.2, "Acknowledgments".
+- Changed the default mode (after feedback of not requiring the /END) to non-stict (lenient) from Strict-mode:
   * Thus the "Document Terminator" is now only optional.
   * Renamed section name to 11.3, "Lenient vs. Strict Modes".
 - Added tab as illegal character in backticked identifiers.
@@ -1491,7 +1509,7 @@ v1.0.0 Beta 4 + Updates
 - Added missing escape codes in strings (matching those from C/C++), with one exception: YINI uses `\OOO` instead of `\oOOO` for octal values, as the `o` clearly indicates that an octal sequence follows, whereas the C-style form does not.
 - Reserved `{ }` for future syntax (inline objects).
 - Renamed the term "Phrased identifiers" to "Backticked identifiers", it's simpler.
-– Removed support for the alternative document terminator `###`. Although it was intended as a shorter, a one character shorter alternative to `/END`, it contradicted YINI's core principle of simplicity. Its presence risked confusing users unfamiliar with YINI's syntax and ultimately undermined clarity.
+– Removed support (after feedback by user JoshYx at Reddit) for the alternative document terminator `###`. Although it was intended as a shorter, a one character shorter alternative to `/END`, it contradicted YINI's core principle of simplicity. Its presence risked confusing users unfamiliar with YINI's syntax and ultimately undermined clarity.
 
 v1.0.0 Beta 4
 - Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
