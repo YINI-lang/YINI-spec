@@ -4,7 +4,7 @@ Checklist for maintainer(s) of this repository.
 ## Making a Release
 
 1. **Merge develop into staging:** The env `develop` into `staging` (as staging as the base).
-2. **Update with bumbed verstrings in staging:** Update and patch all version strings (e.g. from `v1.0.0.0 Beta 4 + Updates`) in all files, bumbed to the correct and final version strings (e.g. from `v1.0.0.0 Beta 5`).
+2. **Update with bumbed verstrings in staging:** Update and patch all version strings (e.g. from `v1.0.0 Beta 4 + Updates`) in all files, bumbed to the correct and final version strings (e.g. from `v1.0.0 Beta 5`).
    - Update the version string in all files.
    - In spec doc, check that Changes is correct.
    - Check that CHANGELOG.md is up to date.
