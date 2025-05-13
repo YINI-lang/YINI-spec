@@ -1,0 +1,20 @@
+/*
+    NOTE: This should fail, due to opening bracket at line 14 must be on same line as <EQ> at line 13!
+*/
+
+# Lists2
+
+## ListWithBrackets
+
+	list1 = [ "Orange", "Banana", "Pear", "Peach" ]
+
+	list2 = []
+
+	listOfLists =
+	[
+		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
+		["stylesheet", "css/general.css"],
+		["stylesheet", "css/themes.css"]
+	]
+		
+/END

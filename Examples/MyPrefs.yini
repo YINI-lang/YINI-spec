@@ -24,5 +24,3 @@
 		### MenuItem
 		Value = "Save"
 		OnClick = "SaveDoc()"
-
-/END // End of YINI doc.

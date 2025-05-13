@@ -7,5 +7,3 @@
 
 // The following is a member (of above section) with key as called "name", whose value is name = "My Program Name".
 name = "My Program Name"
-
-/END // End of YINI doc.

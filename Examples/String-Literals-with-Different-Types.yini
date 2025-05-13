@@ -12,5 +12,3 @@ TripleQuotedString = """This is a triple-quoted
 string that can span across multiple lines."""
 
 ConcatenatedString = "Hello, " + "world!"
-
-/END

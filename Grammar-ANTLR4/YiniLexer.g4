@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- v1.0.0 Beta 4
+ v1.0.0 Beta 4 + Updates
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -27,13 +27,13 @@ COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 //SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
 SECTION_HEAD: SECTION_MARKER [ \t]+ WS* IDENT NL+;
 
-//SECTION_MARKER: SS+ | EUR+ | GT+; SECTION_MARKER : [\u00A7\u20AC\u003E]+; // §, €, >
-fragment SECTION_MARKER: HASH+ | SS+ | EUR+ | TILDE+ | GT+;
+//SECTION_MARKER: SS+ | EUR+ | GT+; SECTION_MARKER : [\u00A7\u20AC\u003E]+; // §, €
+fragment SECTION_MARKER: HASH+ | SS+ | EUR+ | TILDE+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
 	//}: '/END' | (SS SS SS) | (EUR EUR EUR) | '\u003E\u003E\u003E';
-}: '/END' | '###';
+}: '/END';
 
 SS: '\u00A7'; // Section sign §.
 EUR: '\u20AC'; // Euro sign €.
@@ -118,9 +118,12 @@ TRIPLE_QUOTED_STRING:
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
 
 // Note: Except does'n not include quotes `"`, `'`.
-ESC_SEQ_BASE: '\\' ([nrbft\\/0] | UNICODE);
+ESC_SEQ_BASE: '\\' ([\\0?abfnrtv] | UNICODE16 | UNICODE32);
+// TODO: Add support for \oOOO (up to 3 digits, valid range \o0 – \o377)
 
-fragment UNICODE: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+fragment UNICODE16: 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
+fragment UNICODE32:
+	'U' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT;
 
 fragment INTEGER: DECIMAL_INTEGER;
 
