@@ -17,5 +17,3 @@ IsActive = YES
 LogFilePath = "/var/log/myapp.log"
 DatabasePath = "/mnt/db/"
 BackupPaths: "/mnt/backup1", "/mnt/backup2"
-
-/END
