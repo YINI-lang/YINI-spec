@@ -1,7 +1,7 @@
 # CHANGELOG
 Edits and updates **in this repository**. (Very minor changes are not listed.)
 
-2025 May
+2025 May  (spec: v1.0.0 Beta 5)
 - Updated Spec and grammar with new escape characters.
 - In Spec, reserved `{ }` for future use.
 - In Spec renamed section to "Future / Reserved Features" from "Reserved Features".
