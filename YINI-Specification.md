@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \# YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 4 + Updates
+**Version:** v1.0.0 Beta 5
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -1499,7 +1499,7 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 ### 15.4. Spec Changes
 A running log of changes and updates **to the YINI specification**.
 
-v1.0.0 Beta 4 + Updates
+v1.0.0 Beta 5, 2025-05-13
 - Added new section 15.2, "Acknowledgments".
 - Changed the default mode (after feedback of not requiring the /END) to non-stict (lenient) from Strict-mode:
   * Thus the "Document Terminator" is now only optional.
