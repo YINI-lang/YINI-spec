@@ -25,20 +25,20 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
 //SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
-SECTION_HEAD: SECTION_MARKER [ \t]+ WS* IDENT NL+;
+SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
 
 //SECTION_MARKER: SS+ | EUR+ | GT+; SECTION_MARKER : [\u00A7\u20AC\u003E]+; // §, €
-fragment SECTION_MARKER: HASH+ | SS+ | EUR+ | TILDE+;
+fragment SECTION_MARKER: CARET+ | TILDE+ | SS+ | EUR+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
-	//}: '/END' | (SS SS SS) | (EUR EUR EUR) | '\u003E\u003E\u003E';
 }: '/END';
 
 SS: '\u00A7'; // Section sign §.
 EUR: '\u20AC'; // Euro sign €.
-GT: '>'; // Greater Than.
+CARET: '^';
 TILDE: '~';
+GT: '>'; // Greater Than.
 
 EQ: '=';
 HASH: '#';
@@ -160,4 +160,4 @@ WS: [ \t]+ -> skip;
 BLOCK_COMMENT:
 	'/*' .*? '*/' -> skip; // Block AKA Multi-line comment.
 
-LINE_COMMENT: '//' ~[\r\n]* -> skip;
+LINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> skip;
