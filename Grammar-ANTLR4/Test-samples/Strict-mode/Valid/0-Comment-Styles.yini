@@ -2,7 +2,7 @@
   All comments handled properly and ignored.
 */
 
-# Comments
+^ Comments
 key = "value" // This is a comment
 /* Block
    Comment */

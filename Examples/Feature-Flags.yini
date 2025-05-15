@@ -2,7 +2,7 @@
   Feature Flags
 */
 
-# FeatureFlags
+^ FeatureFlags
 debug = true
 experimental_ui = false
 use_cache = true

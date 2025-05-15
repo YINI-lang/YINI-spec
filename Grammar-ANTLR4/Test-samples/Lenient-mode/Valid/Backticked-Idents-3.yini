@@ -2,18 +2,18 @@
   Menu with Nested Phrase Identifiers
 */
 
-# `Main Menu`
+^ `Main Menu`
 
-## `File Menu`
+^^ `File Menu`
 `Label` = "File"
 `Shortcut` = "Ctrl+F"
 
-### `New Document`
+^^^ `New Document`
 `Action` = "CreateNew()"
 
-### `Open File`
+^^^ `Open File`
 `Action` = "OpenDialog()"
 
-### `Save File`
+^^^ `Save File`
 `Action` = "SaveDoc()"
 

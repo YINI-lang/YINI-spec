@@ -9,14 +9,14 @@
 **Format Name:** `YINI` (influenced by `INI`, `JSON`, `C`, `Python`...)
 
 ---
-> \# YINI ≡
+> \~ YINI ≡
 ---
 
 # YINI Specification
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
 
-_Yet another INI — a lightweight configuration file format: clean, readable, structured._
+_Yet another INI — a lightweight configuration file format that is clean, readable, structured._
 
 ---
 
@@ -39,7 +39,7 @@ Ten key features below:
 - ✅ **Clean and minimalistic syntax** — avoids visual noise, easy to write and read.
 - ✅ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
-- ✅ **True section nesting** using intuitive markers (`#` or `~`).
+- ✅ **True section nesting** using intuitive markers (`^` or `~`).
 - ✅ **Indentation-independent structure** — no indentation pitfalls.
 - ✅ **Human readability first** — prioritizes clarity over cleverness — yet machine-friendly.
 - ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (case-insensitive).
@@ -47,7 +47,7 @@ Ten key features below:
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
 - ✅ **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 
-⚠️ **Note:** In YINI, the `#` symbol is not used for comments — it is reserved for section headers and hexadecimal number notation. Use `//` or `/*...*/` for comments instead.
+⚠️ **Note:** In YINI, `#` starts a comment only when followed by a space or tab (e.g., `# Hello`). This avoids confusion with hex values like `#FF0033`, which are treated as a number value.
 
 ---
 
@@ -65,22 +65,39 @@ notifications=false
 ```
 
 ### After (YINI)
-```c
-# Server                // Defines a section named Server.
+```ini
+^ Server                # Defines a section named Server.
 host = "localhost"
 port = 8080
 
-# Features              // Defines a section named Features.
+^ Features              # Defines a section named Features.
 login = true
 notifications = false
 ```
 
 Notice:
-- In YINI, `#` defines section headers.
-- `//` is used for line comments.
+- In YINI, `^` defines section headers.
+- `#` (followed by space or tab) is used for line comments (`//`for comments works too).
 - All strings must be enclosed in quotes (`"` or `'`).
 - Natural, readable keys and values separated by (`=`).
 - Strong typing without heavy syntax.
+
+---
+
+### Alternative Style (YINI with `~` and `//`)
+```c
+~ Server                // Defines a section named Server.
+host = 'localhost'      // Strings in single quotes works too.
+port = 8080
+
+~ Features              // Defines a section named Features.
+login = true
+notifications = false
+```
+
+Notice:
+- Using alternative section marker `~`.
+- Using `//` for line comments works too.
 
 ---
 
@@ -91,33 +108,33 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a string is not quoted, it's not a string — period.
 
 ### Lists
-To declare a list, after the `=` character, square brackets `[ ]` is used. Each item is separated by a comma.
+To declare a list, after the `=` character, square brackets `[ ]` are used. Each item is separated by a comma.
 
 There is also an alternative list notation using `:`, which omits brackets. Items are comma-separated and may appear either inline or on separate lines.
 
 ### Section Nesting
-Nesting sections can be done easily by adding one extra section marker (e.g. `##`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
+Nesting sections can be done easily by adding one extra section marker (e.g. `^^`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
 
 ### Alternative Boolean Literals
-Booleans use flexible literals — for example, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
+Booleans support flexible, case-insensitive literals, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
 
 ## Example: List, Nesting & Alternative Booleans Literals
 
  Here's an example using single-quoted strings:
 
-```c
-# AppInfo
-name = 'MyApp'          // String.
-version = 1.2           // Number (real).
+```ini
+^ AppInfo
+name = 'MyApp'          # String.
+version = 1.2           # Number (real).
 
-# Features
-features = ['login', 'sync', 'offline']     // List with 3 items.
+^ Features
+features = ['login', 'sync', 'offline']     # List with 3 items.
 
-## Advanced             // Defines a sub-section of Features.
-timeout = 9000          // Number (integer).
-caching = True          // Boolean.
-isLogging = YES         // Boolean (alternative keyword).
-debugging = ON          // Boolean (alternative keyword).
+^^ Advanced             # Defines a sub-section of Features.
+timeout = 9000          # Number (integer).
+caching = True          # Boolean.
+isLogging = YES         # Boolean (alternative keyword).
+debugging = ON          # Boolean (alternative keyword).
 ```
 
 ---
@@ -125,7 +142,7 @@ debugging = ON          // Boolean (alternative keyword).
 ## Example: Flexible String Literals
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
-```c
+```yini
 // Raw strings are the default. No prefix is needed, but an optional R prefix
 // may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
@@ -166,7 +183,7 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 | Feature | Benefit |
 |:---|:---|
 | Minimal syntax | Easy to read and edit by hand |
-| Light typing (yet strictly typed) | Safer and more expressive than plain INI |
+| Lightweight, yet type-safe | Safer and more expressive than plain INI |
 | Simple nesting | Clear structure without complex indentation rules |
 | Human-first | Designed for configuration, not data exchange |
 | No guesswork in parsing | Optional strict mode available |
@@ -209,7 +226,7 @@ Feedback, ideas, testing, and discussions are always welcome. 🚀
 
 (Implementation libraries or parsers can follow once the specification stabilizes.)
 
-The specification still needs more testing — especially around string concatenation and array nesting. Further adjustments and refinements may follow in both the spec and grammar.
+The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
 
 A TypeScript-based YINI parser is currently in development:
 https://github.com/YINI-lang/yini-parser-typescript

@@ -2,7 +2,7 @@
   SHOULD FAIL — duplicate key within same section.
 */
 
-# Config
+^ Config
 path = "/usr/local"
 path = "/opt"
 /END

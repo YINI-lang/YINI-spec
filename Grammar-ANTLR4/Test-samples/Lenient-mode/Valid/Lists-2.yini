@@ -2,9 +2,9 @@
     Lists without comments in between.
 */
 
-# Lists2
+^ Lists2
 
-## ListWithBrackets
+^^ ListWithBrackets
 
 	list1 = [ "Orange", "Banana", "Pear", "Peach" ]
 
@@ -16,7 +16,7 @@
 		["stylesheet", "css/themes.css"]
 	]
 
-## ListWithoutBrackets
+^^ ListWithoutBrackets
 
 	listOfLists:
 		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],

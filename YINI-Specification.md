@@ -1,6 +1,6 @@
 _YINI: A lightweight configuration file format — clean, readable, structured._
 
-> \# YINI ≡
+> \~ YINI ≡
 ---
 # Specification for the YINI Format
 **Version:** v1.0.0 Beta 5 + Updates
@@ -31,11 +31,12 @@ YINI embraces simplicity as a strength, offering just enough rules to stay consi
 This specification defines the YINI format with care and clarity, aiming to serve both casual users and implementers seeking a robust, reliable configuration format.  
 Above all, YINI remains true to its founding goal: **make configuration effortless**.
 
-Nonetheless, some aspects of the format may initially raise questions, as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts  the C-style approach of using `//` for line comments, rather than using the `#` symbol. Instead, the `#` character is reserved for section headers and hexadecimal number notation.
+Nonetheless, some aspects of the format may initially raise questions, as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts a C-style approach of using `//` for line comments, however `#` style comments are also supported — as long as the `#` is followed by a space or tab. This requirement prevents clashes with hex-like values. Using `#` to denote hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise, intended to align with conventions found in CSS (for color codes) and similar contexts.
+For example: #FF0033 is interpreted as a hex value, whereas # FF0033 is treated as a comment.
 
-(See more in Section 1.2.1, "The # Marker vs Comment")
+(See more in section 1.2.1, "The # Marker as a Comment Symbol".)
 
-Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community, see more in 15.2, "Acknowledgments".
+Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community, see Section 15.2, _Acknowledgments_ for more.
 
 ---
 
@@ -76,7 +77,7 @@ Some parts of the YINI specification have benefited from valuable feedback and i
 
 **5. Section Headers**  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
-&nbsp;&nbsp;&nbsp;&nbsp;5.2. Allowed Markers (`#`, `~`)  
+&nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `~`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Sections in Sections (Nested Sections)
 
 **6. String Literals**  
@@ -158,13 +159,15 @@ YINI is particularly targeted at users who need a straightforward format for sto
 
 ### 1.2. Purpose and Design Goals
 
-#### 1.2.1. The # Marker vs Comment
-While `#` is commonly recognized as a comment symbol in formats like INI or YAML, in YINI it was intentionally repurposed as a section header marker. This was a deliberate design decision aimed at balancing readability, structure, and extensibility with other features: 
-- Inspired by Markdown, `#` provides a visually clear and familiar way to denote headers.
-- It visually communicates **"a section"** more clearly than `[]` (as used in INI) or other less intuitive symbols.
-- YINI adopts C/C++-style comments instead: `//` for single-line and `/* ... */` for multi-line — aligning better with programming norms.
-- The alternative marker `~` is supported specifically for this reason — allowing users to avoid `#` entirely if preferred.
-- The section header markers (`#`, `~`) were deliberately chosen (by design requirement) from the 7-bit ASCII range for maximum compatibility.
+#### 1.2.1. The # Marker as a Comment Symbol
+In earlier drafts of YINI (up to Beta 5), the `#` character was temporarily used as a section header marker, inspired by Markdown-style headers. However, based on feedback and concerns about clarity, expectations from other formats, and common usage across tools and communities, this decision was revised.
+
+YINI now treats `#` as a comment symbol (instead of being used as a section marker), aligning with conventions found in formats like classic INI, Bash, YAML, and various scripting environments. This change improves predictability for users familiar with other configuration file styles.
+
+- The `#` starts a comment **only** when followed by a space or tab.
+- **Note:** `##` is invalid, `# #` is valid as a comment.
+- This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
+- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also within 7-bit ASCII).
 
 #### 1.2.2. Key Design Goals
 The YINI format was created with the following key design goals in mind:
@@ -185,7 +188,7 @@ The following is WIP:
 ### 1.3. Key Features
 **Note:** Unless explicitly stated otherwise, YINI parsers are expected to operate in lenient (non-strict) mode by default. Strict mode is optional and intended for validation-intensive environments.
 
-- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers can be marked with a variety of symbols (e.g., `#`, `~`), depending on user preference.
+- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `~` as an alternative).
 
 - **Clear End of Document:** YINI supports (only in stict-mode) a clear document terminator marker (`/END`).
 
@@ -212,8 +215,8 @@ The following key terms are used consistently throughout this specification. Und
 | List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
-| Section                   | A logical grouping of members, introduced by a header using a section marker like `#` or `~`. |
-| Section Marker            | A special character (`#` or `~`) that denotes a new section header. |
+| Section                   | A logical grouping of members, introduced by a header using a section marker like `^`, `~`. |
+| Section Marker            | A special character (`^`, `~`) that denotes a new section header. |
 | Strict Mode               | An optional parsing mode where all structural and validation rules (incl. the document terminator) are strictly enforced. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
@@ -257,26 +260,28 @@ YINI files consist of a series of **sections, members** (key-value pairs), and o
 
 **Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure, except in section headers, where spacing (tabs or spaces) is required between the section marker and the section name. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
 
-**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `#` or `~`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
+**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `^`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
 
 **Example of a section:**
 ```yini
-# SectionName
+^ SectionName
 key = value
 ```
 
-**Keys and Values (Members):** The basic unit of YINI is a key-value pair, called a Member. A key and its associated value are separated by an equal sign (=), Before or after the =, any number of spaces or tabs can be used.
+**Keys and Values (Members):** The basic unit of YINI is a key-value pair, called a Member. A key and its associated value are separated by an equal sign (=). Any number of spaces or tabs may appear before or after the `=`.
 
 **Example:**
 ```yini
 key = value
 ```
 
-**Comments:** YINI supports both single-line and multi-line comments, which are ignored by parsers and serve only for human readability. Note that `#` is not used for comments in YINI—it is reserved for section headers.
+**Comments:** YINI supports both single-line and multi-line comments, which are ignored by parsers and serve only for human readability.
 
 **Example:**
 ```c
 // This is a single-line comment.
+
+# This is also a single-line comment.
 
 /*
   This is a multi-line comment.
@@ -296,10 +301,22 @@ YINI supports two types of comments:
 
 - **Single-line Comments:**
   
-  Begin with `//` and continue to the end of the line.
-  ```c
-  // This is a single-line comment.
-  ```
+  * Begin with `//` and continue to the end of the line.
+    ```c
+    // This is a single-line comment.
+    ```
+
+  * Begin with `#` followed by at least one space or tab, and continue to the end of the line.
+    ```python
+    # This is an alternative single-line comment.
+    ```
+
+    The `#` starts a comment **only** when followed by a space or tab (`# Hello` is a comment, `#FF0033` is not).
+
+    This rule is a deliberate compromise to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
+
+    **Note:** `##` is invalid, `# #` is valid as a comment.
+
 - **Multi-line (Block) Comments:**
   
   Begin with `/*` and end with `*/`. These comments may span multiple lines.
@@ -311,8 +328,6 @@ YINI supports two types of comments:
   ```
 
 Note: Comments may generally appear anywhere in the file, except within quoted strings.
-
-⚠️ The `#` symbol is not used for comments in YINI — it is reserved for section headers and hexadecimal number notation. Use `//` or `/*...*/` for comments instead.
 
 ### 3.4. Identifiers
 Identifiers are names used for keys (in members) and sections (section headers). 
@@ -464,31 +479,31 @@ Sections in YINI are used to organize related members (key-value pairs) into log
 A _**section header**_ starts a new logical grouping of members. Section headers must ALWAYS appear on their own line.
 ```yini
 // A section header with a simple identifier.
-# SectionName
+^ SectionName
 
 // A section header with a backticked identifier.
-# `Section name`
+^ `Section name`
 
 // Backticked identifiers can include other special symbols too.
-# `Section-name`
+^ `Section-name`
 ```
 
-- A section header begins with a **section marker**, immediately followed by **one or more whitespace (space or tab) characters**, then the section name.
+- A section header begins with a **section marker**, it is recommended (but not required) that it is followed by **one or more whitespace (space or tab) characters**, then the section name.
 - The section name must be a **valid identifier**, either a **simple identifier** or a **backticked identifier** (enclosed in backticks).
 - **Backticks (backticked identifier) are only required** when the identifier contains spaces, punctuation, or other special characters. 
 - The section header ends at the newline. There may follow a comment on the same line, but this will get ignored by the parser.
 ```yini
-# UserSettings
+^ UserSettings
 username = "alice"
 theme = "dark"
 ```
 
-### 5.2. Allowed Markers (`#`, `~`)
+### 5.2. Section Markers (`^`, `~`)
 YINI allows a limited set of _**section markers**_ to identify section headers. These markers help visually and semantically distinguish section starts from key-value members or comments.
 
 Supported markers:
-  - `#` (preferred marker, for now)
-  - `~` (alternative marker, in case of confusion of using `#`)
+  - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
+  - `~` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
   - `>` (deprecated)
   - Reserved: `§` (experimental, maybe in future, for enhanced readability)
   - Reserved: `€` (experimental, maybe in future, for enhanced readability)
@@ -497,33 +512,33 @@ Supported markers:
 ### 5.3. Sections in Sections (Nested Sections)
 If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, when retrieving back (going back to lower levels) it is allowed to skip levels. - This technique is inspired by Markdown.
 ```yini
-# Prefs
-## Section
-### SubSection
+^ Prefs
+^^ Section
+^^^ SubSection
 ```
 
 ```txt
-# Level1
-### Level3  // ❌ Invalid: cannot skip Level2
+^ Level1
+^^^ Level3  // ❌ Invalid: cannot skip Level2
 ```
 
 ✅ **Example of valid section nesting:**
 ```yini
-# Section 1         // Main section 1 (depth 1)
+^ Section 1         // Main section 1 (depth 1)
 
-## Section 1.1      // Sub-section of 1 (depth 2)
+^^ Section 1.1      // Sub-section of 1 (depth 2)
 
-### Section 1.1.1   // Sub-section of 1.1 (depth 3)
+^^^ Section 1.1.1   // Sub-section of 1.1 (depth 3)
 
-## Section 1.2      // Sub-section of 1 (depth 2)
+^^ Section 1.2      // Sub-section of 1 (depth 2)
 
-# Section 2         // Main section 2 (depth 1)
+^ Section 2         // Main section 2 (depth 1)
 
-## Section 2.1      // Sub-section of 2 (depth 2)
+^^ Section 2.1      // Sub-section of 2 (depth 2)
 
-### Section 2.1.1   // Sub-section of 2.1 (depth 3)
+^^^ Section 2.1.1   // Sub-section of 2.1 (depth 3)
 
-# Section 2         // Main section 2 (depth 1)
+^ Section 3         // Main section 3 (depth 1)
 ```
 
 ## 6. String Literals
@@ -576,7 +591,7 @@ or
 Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
 
 ### 6.2. Hyper Strings (H-Strings)
-There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `H` or `h`.
+Another kind of string literal supported is the **Hyper String** (H-String). These strings are prefixed with either `H` or `h`.
 
 Like Raw Strings, Hyper Strings treat backslashes as literal characters (escape sequences are not supported).
 
@@ -607,7 +622,7 @@ Classic strings must start and end on the same line.
 >myText = c"This is a newline \n and this is a tab \t character."
 
 #### 6.3.1. Escape Characters
-Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter `C` (or `c`). 
+Escape sequences are supported only in Classic Strings (C-Strings), which must be enclosed in quotes and prefixed with `C` (or `c`). 
 
 **Full List: Escape Sequences (case-sensitive, only valid in C-Strings):**
 - `\\` — backslash
@@ -670,7 +685,7 @@ The result of the above will be equivalent to:
 greeting = "Hi, hello there"
 ```
 
-Concatenation supports all string types (Raw, Classic, Hyper), though mixing types is generally discouraged (except for special cases (see more in next section)).
+Concatenation is supported between all string types, but mixing different types (e.g., Raw + Classic) is discouraged unless necessary for special use cases.
 
 ### 6.6. String Type Mixing
 Concatenation of string literals of different types (e.g., Raw + Classic, Classic + Hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
@@ -713,13 +728,15 @@ In addition to standard decimal numbers (base-10), YINI supports other number ba
 
 Note, binary and hexadecimal values also allow **alternative notations** for convenience and readability.
 
-| Number Format | Alternative Format | Description | Base | Notes
+| Number Format (case-insensitive) | Alternative Format | Description | Base | Notes
 |----------|--|---|---|---|
-| `3e4` |   | Exponent notation number | 10-base | Result: `3 × 10⁴`
-| `0b1010` | `%1010` | Binary number | 2-base | `0` and `1` only
-| `0o7477` |   | Octal number | 8-base | Digits from `0` to `7`
-| `0z2ex9` |   | Duodecimal (dozenal) | 12-base | `x` is 10, `e` is 11
-| `0xf390` | `#f390` | Hexadecimal number | 16-base | `a–f`, `A-F` represent `10–15`
+| `3e4` | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
+| `0b1010` | `%1010` | Binary number | 2-base | Digits: `0` and `1` only
+| `0o7477` | - | Octal number | 8-base | Digits: `0`–`7`
+| `0z2Ex9` | - | Duodecimal (dozenal) | 12-base | `x` = 10, `e` = 11
+| `0xF390` | `#F390` | Hexadecimal number | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15
+
+**Note:** All prefix-based number formats in YINI are case-insensitive. For example, `0xF390`, `0XF390`, `0xf390`, `0Xf390`, and `#f390` are all valid hexadecimal literals.
 
 ## 8. Boolean and Null Literals
 
@@ -771,7 +788,7 @@ list1 = ["a", "b", "c", ]  // Trailing comma here is ignored.
 list2 = ["a", "b", "c", NULL]
 ```
 
-> **Note: ** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
+> **Note:** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
 
 **Syntax Rule**
 
@@ -894,11 +911,13 @@ The following characters are reserved by the YINI syntax and must not be used im
 | Character	| Usage Context	| Description |
 |-----------|---------------|-------------|
 | `=` | Assignment  | Separates key from value |
-| `~` | Section headers | Used to denote section start |
-| `#` | Header prefix / hex values | Begins section or hex number |
+| `^` | Section header | Used to denote section start |
+| `~` | Section header (alternative) | Used to denote section start |
 | `%` | Binary prefix | Begins binary number |
-| `//` | Comment | Starts single-line comment |
-| `/* */` | Comment | Marks multi-line comment block |
+| `#` | Hexadecimal prefix | Begins hexadecimal number |
+| `# ` | Line comment (alternative) | Comment, if starts with `#` followed by at least one space or tab |
+| `//` | Line comment | Starts single-line comment |
+| `/* */` | Block comment | Marks multi-line comment block |
 | `@` | Directive prefix | Reserved for future syntax |
 | `{ }` | Inline object | Reserved for future syntax |
 | `--` | Line disabling | Experimental use (see Section 3.6) |
@@ -918,7 +937,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 #### 11.2.1. Structural Requirements
 - A file may consist of zero or more **sections**.
 - A file may consist of zero or more valid key-value pairs (members).
-- Section headers must begin with a valid marker (`#` or `~`).
+- Section headers must begin with a valid marker (`^`, `~`).
 - At least one space or tab is required between a section marker and the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
@@ -973,7 +992,7 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
 
   - ✅ In strict mode, the following is the shortest valid YINI document **with a section header**:
     ```yini
-    # S
+    ^ S
     /END
     ```
     **Note:** A section header named `S`, containing no members.
@@ -1223,7 +1242,7 @@ See Sections 14.3 and 14.4 for examples of YINI ⇆ JSON mappings.
 
 ### 14.1. Minimal Example
 ```yini
-# Prefs
+^ Prefs
 
 name = "Kim"
 entries = 10
@@ -1237,7 +1256,7 @@ enabled = true
 ### 14.2. Realistic Config Use Cases
 #### 14.2.1. User Preferences Configuration
 ```yini
-# Preferences
+^ Preferences
 
 theme = "dark"
 language = "en"
@@ -1252,29 +1271,29 @@ recent_files = [
 
 #### 14.2.2. Application Settings with Sections
 ```yini
-# Database
+^ Database
 host = "localhost"
 port = 5432
 username = "appuser"
 password = "s3cret"
 
-# Logging
+^ Logging
 level = "debug"
 file = "/var/log/myapp.log"
 rotate = true
 
-# Features
+^ Features
 enable_experimental = false
 api_version = "v2.1"
 
 ```
 
 **Notes:**
-- The `#` marker cleanly divides logical domains into sections.
+- The `^` marker cleanly divides logical domains into sections.
 
 #### 14.2.3. Script Metadata
 ```yini
-# Metadata
+^ Metadata
 name = "Data Fetch Script"
 version = "1.3.0"
 author = "Jane Doe"
@@ -1284,7 +1303,7 @@ active = true
 
 #### 14.2.4. Feature Flags
 ```yini
-# FeatureFlags
+^ FeatureFlags
 debug = true
 experimental_ui = false
 use_cache = true
@@ -1320,7 +1339,7 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 #### 14.3.1. Simple Flat Structure to JSON
 **YINI:**
 ```yini
-# User
+^ User
 name = "Alice"
 age = 28
 active = true
@@ -1340,11 +1359,11 @@ active = true
 #### 14.3.2. Nested Sections (multiple levels) to JSON
 **YINI:**
 ```yini
-# Settings
+^ Settings
 theme = "dark"
 language = "en"
 
-## Display
+^^ Display
 resolution = "1920x1080"
 fullscreen = true
 ```
@@ -1366,7 +1385,7 @@ fullscreen = true
 #### 14.3.3. Lists (Arrays) to JSON
 **YINI:**
 ```yini
-# Server
+^ Server
 hosts = ['server1.example.com', 'server2.example.com']
 ```
 
@@ -1388,7 +1407,7 @@ hosts = ['server1.example.com', 'server2.example.com']
 
 **YINI:**
 ```yini
-# Flags
+^ Flags
 enabled = On
 archived = Off
 description = Null
@@ -1421,7 +1440,7 @@ description = Null
 
 **YINI Equivalent:**
 ```yini
-# Profile
+^ Profile
 username = "bob"
 age = 35
 verified = true
@@ -1443,10 +1462,10 @@ verified = true
 
 **YINI Equivalent:**
 ```yini
-# App
+^ App
 version = "2.5"
 
-## settings
+^^ settings
 theme = "light"
 notifications = true
 ```
@@ -1463,7 +1482,7 @@ notifications = true
 
 **YINI Equivalent:**
 ```yini
-# Servers
+^ Servers
 hosts = ["alpha.local", "beta.local", "gamma.local"]
 ```
 
@@ -1499,6 +1518,12 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 ### 15.4. Spec Changes
 A running log of changes and updates **to the YINI specification**.
 
+v1.0.0 Beta 5 + Updates
+- Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
+  * **(An important caveet):** comments starting with `#` must be followed by a space or tab.
+  * This requirement prevents clashes with hex-like values. Using `#` for hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise to align with conventions found in CSS (for color) and similar contexts. For example: `#FF0033` is a hex value, whereas `# FF0033` is treated as a comment.
+- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and compatibility with the 7-bit ASCII range.
+  
 v1.0.0 Beta 5, 2025-05-13
 - Added new section 15.2, "Acknowledgments".
 - Changed the default mode (after feedback of not requiring the /END) to non-stict (lenient) from Strict-mode:
