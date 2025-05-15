@@ -9,14 +9,14 @@
 **Format Name:** `YINI` (influenced by `INI`, `JSON`, `C`, `Python`...)
 
 ---
-> \# YINI ≡
+> \~ YINI ≡
 ---
 
 # YINI Specification
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
 
-_Yet another INI — a lightweight configuration file format: clean, readable, structured._
+_Yet another INI — a lightweight configuration file format that is clean, readable, structured._
 
 ---
 
@@ -47,7 +47,7 @@ Ten key features below:
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
 - ✅ **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 
-⚠️ **Note:** In YINI, `#` starts a comment **only** when followed by a space or tab (`# Hello` is a comment, `#FF0033` is not). This is to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
+⚠️ **Note:** In YINI, `#` starts a comment only when followed by a space or tab (e.g., `# Hello`). This avoids confusion with hex values like `#FF0033`, which are treated as a number value.
 
 ---
 
@@ -84,7 +84,7 @@ Notice:
 
 ---
 
-### After (YINI)
+### Alternative Style (YINI with `~` and `//`)
 ```c
 ~ Server                // Defines a section named Server.
 host = 'localhost'      // Strings in single quotes works too.
@@ -108,7 +108,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a string is not quoted, it's not a string — period.
 
 ### Lists
-To declare a list, after the `=` character, square brackets `[ ]` is used. Each item is separated by a comma.
+To declare a list, after the `=` character, square brackets `[ ]` are used. Each item is separated by a comma.
 
 There is also an alternative list notation using `:`, which omits brackets. Items are comma-separated and may appear either inline or on separate lines.
 
@@ -116,7 +116,7 @@ There is also an alternative list notation using `:`, which omits brackets. Item
 Nesting sections can be done easily by adding one extra section marker (e.g. `^^`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
 
 ### Alternative Boolean Literals
-Booleans use flexible literals — for example, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
+Booleans support flexible, case-insensitive literals, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
 
 ## Example: List, Nesting & Alternative Booleans Literals
 
@@ -142,7 +142,7 @@ debugging = ON          # Boolean (alternative keyword).
 ## Example: Flexible String Literals
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
-```c
+```yini
 // Raw strings are the default. No prefix is needed, but an optional R prefix
 // may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
@@ -183,7 +183,7 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 | Feature | Benefit |
 |:---|:---|
 | Minimal syntax | Easy to read and edit by hand |
-| Light typing (yet strictly typed) | Safer and more expressive than plain INI |
+| Lightweight, yet type-safe | Safer and more expressive than plain INI |
 | Simple nesting | Clear structure without complex indentation rules |
 | Human-first | Designed for configuration, not data exchange |
 | No guesswork in parsing | Optional strict mode available |
@@ -226,7 +226,7 @@ Feedback, ideas, testing, and discussions are always welcome. 🚀
 
 (Implementation libraries or parsers can follow once the specification stabilizes.)
 
-The specification still needs more testing — especially around string concatenation and array nesting. Further adjustments and refinements may follow in both the spec and grammar.
+The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
 
 A TypeScript-based YINI parser is currently in development:
 https://github.com/YINI-lang/yini-parser-typescript

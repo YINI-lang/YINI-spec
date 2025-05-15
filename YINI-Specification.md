@@ -1,6 +1,6 @@
 _YINI: A lightweight configuration file format — clean, readable, structured._
 
-> \# YINI ≡
+> \~ YINI ≡
 ---
 # Specification for the YINI Format
 **Version:** v1.0.0 Beta 5 + Updates
@@ -31,12 +31,12 @@ YINI embraces simplicity as a strength, offering just enough rules to stay consi
 This specification defines the YINI format with care and clarity, aiming to serve both casual users and implementers seeking a robust, reliable configuration format.  
 Above all, YINI remains true to its founding goal: **make configuration effortless**.
 
-Nonetheless, some aspects of the format may initially raise questions, as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts C-style approach of using `//` for line comments, however `#` style comments are also supported — as long as the `#` is followed by a space or tab.This requirement prevents clashes with hex-like values. Using `#` to denote hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise, intended to align with conventions found in CSS (for color codes) and similar contexts.
+Nonetheless, some aspects of the format may initially raise questions, as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts a C-style approach of using `//` for line comments, however `#` style comments are also supported — as long as the `#` is followed by a space or tab. This requirement prevents clashes with hex-like values. Using `#` to denote hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise, intended to align with conventions found in CSS (for color codes) and similar contexts.
 For example: #FF0033 is interpreted as a hex value, whereas # FF0033 is treated as a comment.
 
 (See more in section 1.2.1, "The # Marker as a Comment Symbol".)
 
-Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community, see more in 15.2, "Acknowledgments".
+Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community, see Section 15.2, _Acknowledgments_ for more.
 
 ---
 
@@ -160,14 +160,14 @@ YINI is particularly targeted at users who need a straightforward format for sto
 ### 1.2. Purpose and Design Goals
 
 #### 1.2.1. The # Marker as a Comment Symbol
-In earlier drafts of YINI (up to Beta 5), the `#` character was temporarily used as a section header marker,inspired by Markdown-style headers. However, based on feedback and concerns about clarity, expectations from other formats, and common usage across tools and communities, this decision was revised.
+In earlier drafts of YINI (up to Beta 5), the `#` character was temporarily used as a section header marker, inspired by Markdown-style headers. However, based on feedback and concerns about clarity, expectations from other formats, and common usage across tools and communities, this decision was revised.
 
 YINI now treats `#` as a comment symbol (instead of being used as a section marker), aligning with conventions found in formats like classic INI, Bash, YAML, and various scripting environments. This change improves predictability for users familiar with other configuration file styles.
 
-- The `#` starts a comment **only** when followed by a space or tab (`# Hello` is a comment, `#FF0033` is not).
+- The `#` starts a comment **only** when followed by a space or tab.
 - **Note:** `##` is invalid, `# #` is valid as a comment.
-- This rule is a deliberate compromise to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
-- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and compatibility with the 7-bit ASCII range. (as `#` also is).
+- This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
+- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also within 7-bit ASCII).
 
 #### 1.2.2. Key Design Goals
 The YINI format was created with the following key design goals in mind:
@@ -268,7 +268,7 @@ YINI files consist of a series of **sections, members** (key-value pairs), and o
 key = value
 ```
 
-**Keys and Values (Members):** The basic unit of YINI is a key-value pair, called a Member. A key and its associated value are separated by an equal sign (=), Before or after the =, any number of spaces or tabs can be used.
+**Keys and Values (Members):** The basic unit of YINI is a key-value pair, called a Member. A key and its associated value are separated by an equal sign (=). Any number of spaces or tabs may appear before or after the `=`.
 
 **Example:**
 ```yini
@@ -308,7 +308,7 @@ YINI supports two types of comments:
 
   * Begin with `#` followed by at least one space or tab, and continue to the end of the line.
     ```python
-    # This is an anternative single-line comment.
+    # This is an alternative single-line comment.
     ```
 
     The `#` starts a comment **only** when followed by a space or tab (`# Hello` is a comment, `#FF0033` is not).
@@ -538,7 +538,7 @@ If you want to put a section under another section, nested sections, use additio
 
 ^^^ Section 2.1.1   // Sub-section of 2.1 (depth 3)
 
-^ Section 2         // Main section 2 (depth 1)
+^ Section 3         // Main section 3 (depth 1)
 ```
 
 ## 6. String Literals
@@ -591,7 +591,7 @@ or
 Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
 
 ### 6.2. Hyper Strings (H-Strings)
-There is also another kind of strings, ("Hyper") string literals, called H-Strings for short. These strings are prefixed with either `H` or `h`.
+Another kind of string literal supported is the **Hyper String** (H-String). These strings are prefixed with either `H` or `h`.
 
 Like Raw Strings, Hyper Strings treat backslashes as literal characters (escape sequences are not supported).
 
@@ -622,7 +622,7 @@ Classic strings must start and end on the same line.
 >myText = c"This is a newline \n and this is a tab \t character."
 
 #### 6.3.1. Escape Characters
-Escape sequences are only supported in Classic Strings (C-Strings), strings enclosed in single quotes or double quotes, prefixed with the letter `C` (or `c`). 
+Escape sequences are supported only in Classic Strings (C-Strings), which must be enclosed in quotes and prefixed with `C` (or `c`). 
 
 **Full List: Escape Sequences (case-sensitive, only valid in C-Strings):**
 - `\\` — backslash
@@ -685,7 +685,7 @@ The result of the above will be equivalent to:
 greeting = "Hi, hello there"
 ```
 
-Concatenation supports all string types (Raw, Classic, Hyper), though mixing types is generally discouraged (except for special cases (see more in next section)).
+Concatenation is supported between all string types, but mixing different types (e.g., Raw + Classic) is discouraged unless necessary for special use cases.
 
 ### 6.6. String Type Mixing
 Concatenation of string literals of different types (e.g., Raw + Classic, Classic + Hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
@@ -788,7 +788,7 @@ list1 = ["a", "b", "c", ]  // Trailing comma here is ignored.
 list2 = ["a", "b", "c", NULL]
 ```
 
-> **Note: ** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
+> **Note:** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
 
 **Syntax Rule**
 
