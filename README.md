@@ -85,7 +85,7 @@ Notice:
 ---
 
 ### Alternative Style (YINI with `~`, `//`, and `'`)
-```c
+```js
 ~ Server                // Defines a section named Server.
 host = 'localhost'      // Strings in single quotes works too.
 port = 8080
