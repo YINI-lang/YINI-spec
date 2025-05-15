@@ -208,7 +208,7 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 **Legend:**
 - ✅ = Yes / Fully supported
 - ❌ = Not supported
-- ➖ = Disputed, or partially or inconsistently supported,
+- ➖ = Disputed, or partially or inconsistently supported
 
 ---
 
