@@ -47,7 +47,7 @@ Ten key features below:
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
 - ✅ **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 
-⚠️ **Note:** YINI supports both `//` and `#` for comments. When using `#`, it must be followed by a space or tab character. This ensures that hex-like values like `#FF9900` are not misinterpreted as comments.
+💡 **Note:** YINI supports both `//` and `#` for comments. When using `#`, it must be followed by a space or tab character. This ensures that hex-like values like `#FF9900` are not misinterpreted as comments.
 
 ---
 
