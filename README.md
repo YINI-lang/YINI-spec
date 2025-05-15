@@ -39,7 +39,7 @@ Ten key features below:
 - ✅ **Clean and minimalistic syntax** — avoids visual noise, easy to write and read.
 - ✅ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
-- ✅ **True section nesting** using intuitive markers (`#` or `~`).
+- ✅ **True section nesting** using intuitive markers (`^` or `~`).
 - ✅ **Indentation-independent structure** — no indentation pitfalls.
 - ✅ **Human readability first** — prioritizes clarity over cleverness — yet machine-friendly.
 - ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (case-insensitive).
@@ -47,7 +47,7 @@ Ten key features below:
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
 - ✅ **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 
-⚠️ **Note:** In YINI, the `#` symbol is not used for comments — it is reserved for section headers and hexadecimal number notation. Use `//` or `/*...*/` for comments instead.
+⚠️ **Note:** In YINI, `#` starts a comment **only** when followed by a space or tab (`# Hello` is a comment, `#FF0033` is not). This is to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
 
 ---
 
@@ -65,22 +65,39 @@ notifications=false
 ```
 
 ### After (YINI)
-```c
-# Server                // Defines a section named Server.
+```ini
+^ Server                # Defines a section named Server.
 host = "localhost"
 port = 8080
 
-# Features              // Defines a section named Features.
+^ Features              # Defines a section named Features.
 login = true
 notifications = false
 ```
 
 Notice:
-- In YINI, `#` defines section headers.
-- `//` is used for line comments.
+- In YINI, `^` defines section headers.
+- `#` (followed by space or tab) is used for line comments (`//`for comments works too).
 - All strings must be enclosed in quotes (`"` or `'`).
 - Natural, readable keys and values separated by (`=`).
 - Strong typing without heavy syntax.
+
+---
+
+### After (YINI)
+```c
+~ Server                // Defines a section named Server.
+host = 'localhost'      // Strings in single quotes works too.
+port = 8080
+
+~ Features              // Defines a section named Features.
+login = true
+notifications = false
+```
+
+Notice:
+- Using alternative section marker `~`.
+- Using `//` for line comments works too.
 
 ---
 
@@ -96,7 +113,7 @@ To declare a list, after the `=` character, square brackets `[ ]` is used. Each 
 There is also an alternative list notation using `:`, which omits brackets. Items are comma-separated and may appear either inline or on separate lines.
 
 ### Section Nesting
-Nesting sections can be done easily by adding one extra section marker (e.g. `##`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
+Nesting sections can be done easily by adding one extra section marker (e.g. `^^`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
 
 ### Alternative Boolean Literals
 Booleans use flexible literals — for example, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
@@ -105,19 +122,19 @@ Booleans use flexible literals — for example, in the example below, `True`, `Y
 
  Here's an example using single-quoted strings:
 
-```c
-# AppInfo
-name = 'MyApp'          // String.
-version = 1.2           // Number (real).
+```ini
+^ AppInfo
+name = 'MyApp'          # String.
+version = 1.2           # Number (real).
 
-# Features
-features = ['login', 'sync', 'offline']     // List with 3 items.
+^ Features
+features = ['login', 'sync', 'offline']     # List with 3 items.
 
-## Advanced             // Defines a sub-section of Features.
-timeout = 9000          // Number (integer).
-caching = True          // Boolean.
-isLogging = YES         // Boolean (alternative keyword).
-debugging = ON          // Boolean (alternative keyword).
+^^ Advanced             # Defines a sub-section of Features.
+timeout = 9000          # Number (integer).
+caching = True          # Boolean.
+isLogging = YES         # Boolean (alternative keyword).
+debugging = ON          # Boolean (alternative keyword).
 ```
 
 ---
