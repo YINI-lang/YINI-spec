@@ -300,7 +300,8 @@ While YINI is not indentation-sensitive, the following whitespace behaviors are 
 YINI supports two types of comments:
 
 - **Single-line Comments:**
-  
+    YINI supports two styles of line comments.
+
   * Begin with `//` and continue to the end of the line.
     ```c
     // This is a single-line comment.
@@ -311,11 +312,17 @@ YINI supports two types of comments:
     # This is an alternative single-line comment.
     ```
 
-    The `#` starts a comment **only** when followed by a space or tab (`# Hello` is a comment, `#FF0033` is not).
-
     This rule is a deliberate compromise to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
 
-    **Note:** `##` is invalid, `# #` is valid as a comment.
+    ✅ Valid `#` comments:
+    - `# Comment` ✅
+    - `# Also valid` ✅
+    - `#\tTabbed too` ✅
+
+    ❌ Non-valid `#` comments:
+    - `#FF9900` ❌ (not a comment — interpreted as a hex value)
+    - `#Invalid comment` ❌ (Invalid, not a comment due to no space/tab)
+    - `##` ❌ (Invalid)
 
 - **Multi-line (Block) Comments:**
   
