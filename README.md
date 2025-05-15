@@ -113,7 +113,7 @@ To declare a list, after the `=` character, square brackets `[ ]` are used. Each
 There is also an alternative list notation using `:`, which omits brackets. Items are comma-separated and may appear either inline or on separate lines.
 
 ### Section Nesting
-Nesting sections can be done easily by adding one extra section marker (e.g. `^^`) — for example, in the example below, the section `Advanced` is a sub-section of the section `Features`.
+Nesting sections can be done easily by adding one extra section marker (e.g. `^^`) — for example, in the example below, the section `Advanced` is a sub-section of the section `AppInfo`.
 
 ### Alternative Boolean Literals
 Booleans support flexible, case-insensitive literals, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
@@ -127,14 +127,14 @@ Booleans support flexible, case-insensitive literals, in the example below, `Tru
 name = 'MyApp'          # String.
 version = 1.2           # Number (real).
 
-^ Features
-features = ['login', 'sync', 'offline']     # List with 3 items.
-
-^^ Advanced             # Defines a sub-section of Features.
+^^ Advanced             # Defines a sub-section of AppInfo.
 timeout = 9000          # Number (integer).
 caching = True          # Boolean.
 isLogging = YES         # Boolean (alternative keyword).
 debugging = ON          # Boolean (alternative keyword).
+
+^ Features
+features = ['login', 'sync', 'offline']     # List with 3 items.
 ```
 
 ---
