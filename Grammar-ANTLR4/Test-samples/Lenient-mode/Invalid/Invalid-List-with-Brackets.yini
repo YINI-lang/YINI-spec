@@ -2,9 +2,9 @@
     NOTE: This should fail, due to opening bracket at line 14 must be on same line as <EQ> at line 13!
 */
 
-# Lists2
+^ Lists2
 
-## ListWithBrackets
+^^ ListWithBrackets
 
 	list1 = [ "Orange", "Banana", "Pear", "Peach" ]
 

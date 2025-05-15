@@ -2,7 +2,7 @@
   Both NULL and missing value treated as null.
 */
 
-# Nulls
+^ Nulls
 path = NULL
 empty =
 /END

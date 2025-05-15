@@ -2,7 +2,7 @@
   All Boolean variations (case-insensitive) accepted and normalized.
 */
 
-# Flags
+^ Flags
 flag1 = true
 flag2 = FALSE
 flag3 = Yes

@@ -1,4 +1,4 @@
-# UserProfile
+^ UserProfile
 
 Name = "Jane Doe"
 Email = "jane.doe@example.com"
@@ -8,12 +8,12 @@ Preferences:
   ["FontSize", 14],
   ["NotificationsEnabled", YES],
 
-# SystemSettings
+^ SystemSettings
 SystemName = "MySystem"
 Version = "1.0.0"
 IsActive = YES
 
-## Paths
+^^ Paths
 LogFilePath = "/var/log/myapp.log"
 DatabasePath = "/mnt/db/"
 BackupPaths: "/mnt/backup1", "/mnt/backup2"
