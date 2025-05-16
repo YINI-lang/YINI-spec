@@ -275,16 +275,18 @@ key = value
 key = value
 ```
 
-**Comments:** YINI supports both single-line and multi-line comments, which are ignored by parsers and serve only for human readability.
+**Comments:** YINI supports full-line, inline, and block (multi-line) comments. These are ignored by parsers and exist solely for human readability.
 
 **Example:**
-```c
-// This is a single-line comment.
+```ini
+; Full-line comment.
+key1 = "Banana"
 
-# This is also a single-line comment.
+key2 = "Mango"  # This is an inline comment.
+key3 = "Peach"  // This is also an inline comment.
 
 /*
-  This is a multi-line comment.
+  This is a block comment.
   It spans several lines.
 */
 ```
@@ -297,17 +299,27 @@ While YINI is not indentation-sensitive, the following whitespace behaviors are 
 - Indentation is not syntactically required but may be used to visually structure content for clarity.
 
 ### 3.3. Comments
-YINI supports two types of comments:
+YINI supports **3 types of comments**:
 
-- **Single-line Comments:**
+| Comment Type | Prefix | Position |
+|--------------|--------|----------|
+| Full-line comment | `;` | Start of line ONLY |
+| Inline comment | `#` or `//` | At end of line |
+| Block comment | `/*` ... `*/` | Anywhere (multi-line) |
+
+While both `#` and `//` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
+
+### 3.3.1 Full-line Comments
+### 3.3.2 Inline Comments
+
     YINI supports two styles of line comments.
 
-  * Begin with `//` and continue to the end of the line.
+  - Begin with `//` and continue to the end of the line.
     ```c
     // This is a single-line comment.
     ```
 
-  * Begin with `#` followed by at least one space or tab, and continue to the end of the line.
+  - Begin with `#` followed by at least one space or tab, and continue to the end of the line.
     ```python
     # This is an alternative single-line comment.
     ```
@@ -324,7 +336,8 @@ YINI supports two types of comments:
     - `#Invalid comment` ❌ (Invalid, not a comment due to no space/tab)
     - `##` ❌ (Invalid)
 
-- **Multi-line (Block) Comments:**
+### 3.3.3 Block Comments
+Multi-line (block) Comments.
   
   Begin with `/*` and end with `*/`. These comments may span multiple lines.
   ```c
@@ -1530,6 +1543,7 @@ v1.0.0 Beta 5 + Updates
   * **(An important caveet):** comments starting with `#` must be followed by a space or tab.
   * This requirement prevents clashes with hex-like values. Using `#` for hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise to align with conventions found in CSS (for color) and similar contexts. For example: `#FF0033` is a hex value, whereas `# FF0033` is treated as a comment.
 - Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and compatibility with the 7-bit ASCII range.
+- Added support for full line comment using `;` and disable line using `--`.
   
 v1.0.0 Beta 5, 2025-05-13
 - Added new section 15.2, "Acknowledgments".
