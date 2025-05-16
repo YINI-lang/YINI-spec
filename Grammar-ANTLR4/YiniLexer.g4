@@ -22,7 +22,7 @@ lexer grammar YiniLexer;
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
-COMMENT: BLOCK_COMMENT | LINE_COMMENT;
+// COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
 //SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
 SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
@@ -151,13 +151,35 @@ fragment EXPONENT: ('e' | 'E') SIGN? DIGIT+;
 
 fragment SIGN: ('+' | '-');
 
-NL: (WS* COMMENT* SINGLE_NL COMMENT*);
+NL: (WS* INLINE_COMMENT* SINGLE_NL INLINE_COMMENT*);
 
 SINGLE_NL: ('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
 
-BLOCK_COMMENT:
-	'/*' .*? '*/' -> skip; // Block AKA Multi-line comment.
+/*
+ DISABLE_LINE:
+ Skip lines starting with `--`.
+ */
+DISABLE_LINE: ('--' ~[\r\n]*) -> skip;
 
-LINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> skip;
+/*
+ FULL_LINE_COMMENT:
+ Skip full-line comments starting with `;`.
+ */
+LINE_COMMENT: (';' ~[\r\n]*) -> skip;
+
+/*
+ INLINE_COMMENT: 
+ Remains in input, but hidden (doesn’t interfere with parsing).
+ */
+INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> channel(HIDDEN);
+
+/*
+ BLOCK_COMMENT:
+ Can appear anywhere, spanning multiple lines.
+ Remains in input, but hidden
+ (doesn’t interfere with parsing).
+ */
+BLOCK_COMMENT:
+	'/*' .*? '*/' -> channel(HIDDEN); // Block AKA Multi-line comment.

@@ -107,6 +107,12 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 
 **Note:** If a string is not quoted, it's not a string — period.
 
+### Comments
+YINI supports **3 types of comments**:
+- Full-line comments `;` (start of line only)
+- Inline comments	using `#` or `//`
+- Block (multi-line) comments using `/*` ... `*/`
+
 ### Lists
 To declare a list, after the `=` character, square brackets `[ ]` are used. Each item is separated by a comma.
 
@@ -118,11 +124,17 @@ Nesting sections can be done easily by adding one extra section marker (e.g. `^^
 ### Alternative Boolean Literals
 Booleans support flexible, case-insensitive literals, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
 
-## Example: List, Nesting & Alternative Booleans Literals
+## Example: Using Common Types and Syntax Features
 
- Here's an example using single-quoted strings:
+ A short, real-world example showing how YINI handles nested sections, lists, comments (`#`, `;`, and `/* */`), and different data types — all while staying human-friendly.
 
-```ini
+```c
+/*
+    This is a block comment.
+    A complete YINI example that demonstrates some of the format's syntax and
+    flexibility — including comments, nested sections, and mixed-type lists.
+ */
+
 ^ AppInfo
 name = 'MyApp'          # String.
 version = 1.2           # Number (real).
@@ -135,6 +147,15 @@ debugging = ON          # Boolean (alternative keyword).
 
 ^ Features
 features = ['login', 'sync', 'offline']     # List with 3 items.
+
+; works too as a full line comment.
+^ SpecialFeatures
+listOfMixedType = [
+    'DarkMode',    # Item 1, a string.
+    42,            # Item 2, a number.
+    true,          # Item 3, a boolean.
+    null           # Item 4, null.
+]
 ```
 
 ---
@@ -143,15 +164,15 @@ features = ['login', 'sync', 'offline']     # List with 3 items.
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 ```yini
-// Raw strings are the default. No prefix is needed, but an optional R prefix
-// may be used for clarity. Escape sequences are not interpreted.
+; Raw strings are the default. No prefix is needed, but an optional R prefix
+; may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
 
-// Classic strings (C-Strings) are prefixed with C or c — they support escape sequences.
+; Classic strings (C-Strings) are prefixed with C or c — they support escape sequences.
 ClassicString = C"Hello\nWorld\n"
 
-// Hyper strings (H-Strings) are prefixed with H or h — they behave
-// similarly to HTML text: whitespace is normalized and edges are trimmed.
+; Hyper strings (H-Strings) are prefixed with H or h — they behave
+; similarly to HTML text: whitespace is normalized and edges are trimmed.
 HyperString = H"
   This is a hyper string spanning multiple lines,
   with trimmed edges and normalized whitespace.
