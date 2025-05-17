@@ -150,7 +150,8 @@ Some parts of the YINI specification have benefited from valuable feedback and i
 &nbsp;&nbsp;&nbsp;&nbsp;15.2. Acknowledgments  
 &nbsp;&nbsp;&nbsp;&nbsp;15.3. Author(s)  
 &nbsp;&nbsp;&nbsp;&nbsp;15.4. Spec Changes  
-&nbsp;&nbsp;&nbsp;&nbsp;15.5. Reserved: Grammar (Formal)
+&nbsp;&nbsp;&nbsp;&nbsp;15.5. Reserved: Grammar (Formal)  
+&nbsp;&nbsp;&nbsp;&nbsp;15.6. Appendix C – Common Mistakes and Pitfalls
 
 ---
 
@@ -183,7 +184,6 @@ The YINI format was created with the following key design goals in mind:
  
 - **Compatibility:** YINI is meant to be compatible with a variety of tools and libraries, ensuring that it can be easily integrated into different programming languages and ecosystems.
      
-The following is WIP:
 > It also allows for optional extensions, enabling future enhancements without breaking backward compatibility.
 
 - **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
@@ -427,7 +427,7 @@ port = 8080
 **Purpose and Usage:**
 - Disabled lines are intended for **temporary deactivation** of configuration content.
 - Unlike comments, which are typically used for documentation or explanatory notes, **disabled lines are structurally valid syntax that is intentionally skipped**.
-- This allows developers or users to **temporary toggle** parts of the configuration without removing them.
+- This allows developers or users to **temporarily toggle** parts of the configuration without removing them.
 
 **Visual Distinction (Editor Highlighting):**
 A recommendation is that syntax highlighters use a **distinct color** or style for disabled lines — different from comments — to improve visual clarity. This helps distinguish between:
@@ -562,7 +562,7 @@ Supported markers:
   - Reserved: `;`
  
 ### 5.3. Sections in Sections (Nested Sections)
-If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, when retrieving back (going back to lower levels) it is allowed to skip levels. - This technique is inspired by Markdown.
+If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, However, when returning to higher (shallower) levels it is allowed to skip levels. - This technique is inspired by Markdown.
 ```yini
 ^ Prefs
 ^^ Section
@@ -869,6 +869,8 @@ linkItems = [
 
 ### 9.2. Colon-Based List (using `:`)
 Exclusively for lists, YINI allows an alternative syntax using a colon (`:`) instead of `=`. This style omits square brackets and is intended to improve readability in configurations with list-like values.
+
+Note: Commas are mandatory after items (execpt after the last item), even in multi-line forms in this notation.
 
 ```yini
 list1: "oranges", "bananas", "peaches"  // List with three items.
@@ -1193,7 +1195,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 
 * YINI supports:
   - `//` for inline comments (rest of the line is ignored).
-  - `#` followed at least one space or tab, for inline comments (rest of the line is ignored).
+  - `#` followed by at least one whitespace character (`SPACE` or `TAB`), for inline comments (rest of the line is ignored).
   - `/* ... */` for block (multi-line) comments (may span lines).
   - **Nested block comments are not supported.**
 
@@ -1580,6 +1582,7 @@ v1.0.0 Beta 5 + Updates
   * This requirement prevents clashes with hex-like values. Using `#` for hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise to align with conventions found in CSS (for color) and similar contexts. For example: `#FF0033` is a hex value, whereas `# FF0033` is treated as a comment.
 - Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and compatibility with the 7-bit ASCII range.
 - Added support for full line comment using `;` and disable line using `--`.
+- Added section 15.6, "Appendix C – Common Mistakes and Pitfalls".
   
 v1.0.0 Beta 5, 2025-05-13
 - Added new section 15.2, "Acknowledgments".
@@ -1603,6 +1606,26 @@ v1.0.0 Beta 2, 2025-04-23
 - Added support for alternative hexadecimal literals using `#`.
 - Added support for binary literals using `%`.
 - Reintroduced support for the alternative terminator marker `###`.
+
+---
+
+### 15.6. Appendix C – Common Mistakes and Pitfalls
+Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats like YAML, JSON, or classic INI. This table aims to clarify syntax edge cases and help avoid subtle bugs.
+
+✅ YINI Syntax Cheatsheet – Common Confusions
+| **Element**       | **Correct Syntax**              | **Common Mistake**              | **Clarification** |
+|-------------------|----------------------------------|----------------------------------|--------------------|
+| Key–Value pair     | `name = "John"`                 | `name: "John"`                   | `:` creates a list — use `=` for single values. |
+| Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | Line break after `=` causes the value to be parsed as null. |
+| Colon-Based List   | `items: "a", "b", "c"`          | `items: "a" "b" "c"`             | Items must be comma-separated — just like bracketed lists. |
+| Colon + Single Item| _Don't use_ `name: "John"`      | Same as left                    | Interpreted as a list with one string item — use `=` instead. |
+| Trailing comma (inline) | `list = ["a", "b", "c",]`   | Assumed to be ignored           | Adds a `null` item at the end of the list. |
+| Trailing comma (colon)  | `list:` <br> `"a", "b", "c",` | —                            | ✅ OK — trailing commas in colon-based lists are ignored. |
+| Comments           | `# Comment` or `// Comment`     | `#Comment`                      | `#` must be followed by **space or tab** to be recognized as a comment. |
+| Hex values         | `color = #FF0033`               | Assumed to be a comment         | Without space after `#`, this is a valid hex value. |
+| Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
+| List nesting       | `list = [[1, 2], [3, 4]]`       | Using inner lists without brackets | All nested lists must be bracketed explicitly. |
+| Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
 
 ---
 
