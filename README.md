@@ -234,6 +234,10 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 - ❌ = Not supported
 - ➖ = Partial, debated, or implementation-dependent
 
+See the full specification here:
+
+➡️ [Read the YINI Specification](./YINI-Specification.md)
+
 ---
 
 ## License
