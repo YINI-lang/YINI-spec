@@ -6,7 +6,7 @@
 
 **Status:** Beta Release
 
-**Format Name:** `YINI` (influenced by `INI`, `JSON`, `C`, `Python`...)
+**Format Name:** `YINI` (inspired by `INI`, `JSON`, `C`, `Python`...)
 
 ---
 > \~ YINI ≡
@@ -39,10 +39,10 @@ Ten key features below:
 - ✅ **Clean and minimalistic syntax** — avoids visual noise, easy to write and read.
 - ✅ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
-- ✅ **True section nesting** using intuitive markers (`^` or `~`).
+- ✅ **True section nesting** using intuitive markers (`^`, `^^`).
 - ✅ **Indentation-independent structure** — no indentation pitfalls.
 - ✅ **Human readability first** — prioritizes clarity over cleverness — yet machine-friendly.
-- ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (case-insensitive).
+- ✅ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (all case-insensitive).
 - ✅ **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
 - ✅ **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
@@ -77,7 +77,7 @@ notifications = false
 
 Notice:
 - In YINI, `^` defines section headers.
-- `#` (followed by space or tab) is used for line comments (`//`for comments works too).
+- `#` (followed by space or tab) is used for line comments (`//` for comments works too).
 - All strings must be enclosed in quotes (`"` or `'`).
 - Natural, readable keys and values separated by (`=`).
 - Strong typing without heavy syntax.
@@ -87,7 +87,7 @@ Notice:
 ### Alternative Style (YINI with `~`, `//`, and `'`)
 ```js
 ~ Server                // Defines a section named Server.
-host = 'localhost'      // Strings in single quotes works too.
+host = 'localhost'      // Strings in single quotes work too.
 port = 8080
 
 ~ Features              // Defines a section named Features.
@@ -122,11 +122,11 @@ There is also an alternative list notation using `:`, which omits brackets. Item
 Nesting sections can be done easily by adding one extra section marker (e.g. `^^`) — for example, in the example below, the section `Advanced` is a sub-section of the section `AppInfo`.
 
 ### Alternative Boolean Literals
-Booleans support flexible, case-insensitive literals, in the example below, `True`, `YES`, and `ON` (case-insensitive) all mean `true`.
+Booleans support flexible, case-insensitive literals, in the example below, `True`, `YES`, and `ON` (all case-insensitive) all mean `true`.
 
 ## Example: Using Common Types and Syntax Features
 
- A short, real-world example showing how YINI handles nested sections, lists, comments (`#`, `;`, and `/* */`), and different data types — all while staying human-friendly.
+ A short, real-world example showing how YINI handles nested sections, lists, comments (`#`, `;`, and `/* */`), and different data types — all while remaining human-friendly.
 
 ```c
 /*
@@ -212,15 +212,15 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 ## 📊 Comparison: YINI vs Other Formats
 | Feature                      | INI | JSON | YAML | TOML | **YINI** |
 |-----------------------------|:---:|:----:|:----:|:----:|:--------:|
-| Typing (bool, list, null)   | ❌  | ✅   | ✅   | ✅   | ✅       |
-| Section nesting             | ❌  | ❌   | ✅   | ✅   | ✅       |
-| Human-friendly syntax       | ✅  | ❌   | ➖[1]   | ➖[2]  | ✅       |
-| Readable multi-line strings | ❌  | ❌   | ✅   | ✅   | ✅       |
-| Flexible boolean literals   | ❌  | ❌   | ➖[3]  | ✅   | ✅       |
-| Comment support             | ✅  | ❌   | ✅   | ✅   | ✅       |
-| Escape sequence support     | ❌  | ✅   | ✅   | ✅   | ✅       |
-| Clean, minimal syntax       | ✅  | ❌   | ❌   | ➖[2]   | ✅       |
-| Strict vs lenient modes     | ❌  | ❌   | ❌   | ❌   | ✅       |
+| Typing (bool, list, null)   | ❌  | ✅   | ✅   | ✅   | ✅ |
+| Section nesting             | ❌  | ❌   | ✅   | ✅   | ✅ |
+| Human-friendly  & clean syntax| ✅  | ❌   | ➖[1]   | ➖[2]  | ✅|
+| Readable multi-line strings | ❌  | ❌   | ✅   | ✅   | ✅ |
+| Flexible boolean literals   | ❌  | ❌   | ➖[3]  | ✅   | ✅ |
+| Comment support             | ✅  | ❌   | ✅   | ✅   | ✅ |
+| Escape sequence support     | ❌  | ✅   | ✅   | ✅   | ✅ |
+| Clean, minimal syntax       | ✅  | ❌   | ❌   | ➖[2]   | ✅|
+| Strict vs lenient modes     | ❌  | ❌   | ❌   | ❌   | ✅ |
 
 [1] YAML's syntax can be seen as complex or inconsistent for some users, especially around indentation and implicit typing.  
 [2] Some users find TOML's use of `[`, `]`, and `.` visually noisy in deeply nested files.  
