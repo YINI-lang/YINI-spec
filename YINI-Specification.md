@@ -62,9 +62,12 @@ Some parts of the YINI specification have benefited from valuable feedback and i
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. General Syntax Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;3.2. Whitespace and Indentation  
 &nbsp;&nbsp;&nbsp;&nbsp;3.3. Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1. Full-line Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. Inline Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. Multi-line Block Comments  
 &nbsp;&nbsp;&nbsp;&nbsp;3.4. Identifiers  
 &nbsp;&nbsp;&nbsp;&nbsp;3.5. Document Terminator  
-&nbsp;&nbsp;&nbsp;&nbsp;3.6. Reserved: Ignore / Disable Line *(for future use)*
+&nbsp;&nbsp;&nbsp;&nbsp;3.6. Disable Line
 
 ---
 
@@ -299,55 +302,57 @@ While YINI is not indentation-sensitive, the following whitespace behaviors are 
 - Indentation is not syntactically required but may be used to visually structure content for clarity.
 
 ### 3.3. Comments
-YINI supports **3 types of comments**:
+YINI supports **three types of comments**:
 
 | Comment Type | Prefix | Position |
 |--------------|--------|----------|
 | Full-line comment | `;` | Start of line ONLY |
 | Inline comment | `#` or `//` | At end of line |
-| Block comment | `/*` ... `*/` | Anywhere (multi-line) |
+| Block comment | `/* ... */` | Anywhere (multi-line) |
 
 While both `#` and `//` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
 
-### 3.3.1 Full-line Comments
-### 3.3.2 Inline Comments
+### 3.3.1. Full-line Comments
+A full-line comment starts with a semicolon `;` and occupies the entire line.
+```yini
+; This is a full-line comment.
+```
 
-    YINI supports two styles of line comments.
-
-  - Begin with `//` and continue to the end of the line.
-    ```c
+### 3.3.2. Inline Comments
+YINI supports two syntaxes for inline comments.
+- **Double slash** `//` comments:
+    ```yini
     // This is a single-line comment.
     ```
-
-  - Begin with `#` followed by at least one space or tab, and continue to the end of the line.
-    ```python
-    # This is an alternative single-line comment.
+- **Hash `#` comments** — must be followed by **at least one space or tab** to be recognized:
+    ```yini
+    # This is also a single-line comment.
     ```
 
-    This rule is a deliberate compromise to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
+This rule is a deliberate compromise to avoid ambiguity with hex-like values (e.g., `#FF0033`) commonly used in domains such as styling or color settings.
 
-    ✅ Valid `#` comments:
-    - `# Comment` ✅
-    - `# Also valid` ✅
-    - `#\tTabbed too` ✅
+  ✅ **Valid `#` comments:**
+  - `# This is a comment`
+  - `# Also valid`
+  - `#\tTabbed too`
 
-    ❌ Non-valid `#` comments:
-    - `#FF9900` ❌ (not a comment — interpreted as a hex value)
-    - `#Invalid comment` ❌ (Invalid, not a comment due to no space/tab)
-    - `##` ❌ (Invalid)
+  ❌ **Invalid `#` comments (not treated as comments):**
+  - `#FF9900` — Interpreted as a hex value.
+  - `#Invalid comment` — No space or tab after `#`.
+  - `##` — Not recognized as a valid comment, no space/tab follows the `#`.
 
-### 3.3.3 Block Comments
+### 3.3.3. Multi-line Block Comments
 Multi-line (block) Comments.
   
-  Begin with `/*` and end with `*/`. These comments may span multiple lines.
-  ```c
-  /*
-    This is a multi-line comment.
-    It can span multiple lines.
-  */
-  ```
+Begin with `/*` and end with `*/`. These comments may span multiple lines.
+```yini
+/*
+  This is a multi-line comment.
+  It can span multiple lines.
+*/
+```
 
-Note: Comments may generally appear anywhere in the file, except within quoted strings.
+**Note:** Block comments may appear between any two members, or on their own lines. They cannot appear inside a quoted string or within an identifier. Comments are ignored by parsers and exist solely for human readability.
 
 ### 3.4. Identifiers
 Identifiers are names used for keys (in members) and sections (section headers). 
@@ -395,16 +400,41 @@ Only **whitespaces or comments** may appear after the terminator.
 
 It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comments after the marker, these should be ignored.
 
-### 3.6. Reserved: Ignore / Disable Line *(for future use)*
---This space is reserved--<br/>
---Ignore / Disable Line: This is a reserved feature for future versions.--
->- Ignore/Disable Line:
-A line that begins with a double minus -- will be completely ignored by the engine. Everything after -- until the end of the line (<NL>) shall be disregarded, including any comments.
+### 3.6. Ignore / Disable Line
+A line that begins with a **double dash** (`--`) is treated as a **disabled line** and will be completely ignored by the YINI parser. Everything after `--` until the end of the line (`<NL>`) is disregarded — including any comments or syntactically valid members.
 
-**Example:**
+This mechanism is similar to a comment, but serves a **distinct purpose**: disabling or temporarily excluding valid configuration lines without deleting them.
+
+**Example 1:**
 ```yini
--- this entire line is ignored, including trailing // comments
+; The next line is ignored — even though it's valid syntax.
+--key = "Apples"
 ```
+
+**Example 2:**
+```yini
+^ Server
+host = 'localhost'
+port = 8080
+
+--^ Features
+--login = true
+--notifications = false
+```
+
+**Purpose and Usage:**
+- Disabled lines are intended for **temporary deactivation** of configuration content.
+- Unlike comments, which are typically used for documentation or explanatory notes, **disabled lines are structurally valid syntax that is intentionally skipped**.
+- This allows developers or users to (temporary) toggle parts of the configuration without removing them.
+
+**Visual Distinction (Editor Highlighting):**
+A recommendation is that syntax highlighters use a **distinct color** or style for disabled lines — different from comments — to improve visual clarity. This helps distinguish between:
+- **Comments** (notes for humans), and
+- **Disabled lines** (intended-to-be-ignored syntax).
+
+**Technical Note:**
+Disabled lines are **functionally identical to comments** from the parser's point of view: they are ignored.
+However, their **semantic intent** is different — they represent _temporarily inactive_ configuration logic rather than annotations.
 
 ## 4. Keys and Values
 YINI represents configuration and structured data through a series of _**members**_, each of which is a key-value pair. This section defines the syntax and rules for keys and values, including allowed characters, data types, quoting, and related behaviors.
@@ -934,9 +964,10 @@ The following characters are reserved by the YINI syntax and must not be used im
 | `^` | Section header | Used to denote section start |
 | `~` | Section header (alternative) | Used to denote section start |
 | `%` | Binary prefix | Begins binary number |
+| `;` | Full-line comment |   |
 | `#` | Hexadecimal prefix | Begins hexadecimal number |
-| `# ` | Line comment (alternative) | Comment, if starts with `#` followed by at least one space or tab |
-| `//` | Line comment | Starts single-line comment |
+| `# ` | Inline comment (alternative) | Comment, if starts with `#` followed by at least one space or tab |
+| `//` | Inine comment |   |
 | `/* */` | Block comment | Marks multi-line comment block |
 | `@` | Directive prefix | Reserved for future syntax |
 | `{ }` | Inline object | Reserved for future syntax |
@@ -1080,7 +1111,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 * Hyper Strings (H-Strings):
   * Leading/trailing whitespaces (tabs or spaces) and newlines are trimmed.
   * Inside a H-string, whitespaces (tabs or spaces) and newlines are normalized to one single space character.
-* Comments may follow key-value members or appear on separate lines.
+* Full-line and inline comments may follow key-value members or appear on separate lines.
 * Whitespace is permitted within lists, including across lines.
 
 ### 12.3. Value and NULL Handling
@@ -1157,8 +1188,9 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 ### 12.8 Comments
 
 * YINI supports:
-  - `//` for single-line comments (rest of the line is ignored).
-  - `/* ... */` for multi-line comments (may span lines).
+  - `//` for inline comments (rest of the line is ignored).
+  - `#` followed at least one space or tab, for inline comments (rest of the line is ignored).
+  - `/* ... */` for block (multi-line) comments (may span lines).
   - **Nested block comments are not supported.**
 
 ### 12.9 Error Handling Recommendations
