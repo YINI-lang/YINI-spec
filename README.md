@@ -210,17 +210,20 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 | No guesswork in parsing | Optional strict mode available |
 
 ## 📊 Comparison: YINI vs Other Formats
-| Feature                      | INI | JSON | YAML | TOML | **YINI** |
-|-----------------------------|:---:|:----:|:----:|:----:|:--------:|
-| Typing (bool, list, null)   | ❌  | ✅   | ✅   | ✅   | ✅ |
-| Section nesting             | ❌  | ❌   | ✅   | ✅   | ✅ |
+| Feature                       | INI | JSON | YAML | TOML | **YINI** |
+|-------------------------------|:---:|:----:|:----:|:----:|:--------:|
+| Typing (bool, list, null)     | ❌  | ✅   | ✅   | ✅   | ✅ |
+| Section nesting               | ❌  | ❌   | ✅   | ✅   | ✅ |
 | Human-friendly  & clean syntax| ✅  | ❌   | ➖[1]   | ➖[2]  | ✅|
-| Readable multi-line strings | ❌  | ❌   | ✅   | ✅   | ✅ |
-| Flexible boolean literals   | ❌  | ❌   | ➖[3]  | ✅   | ✅ |
-| Comment support             | ✅  | ❌   | ✅   | ✅   | ✅ |
-| Escape sequence support     | ❌  | ✅   | ✅   | ✅   | ✅ |
-| Clean, minimal syntax       | ✅  | ❌   | ❌   | ➖[2]   | ✅|
-| Strict vs lenient modes     | ❌  | ❌   | ❌   | ❌   | ✅ |
+| Readable multi-line strings   | ❌  | ❌   | ✅   | ✅   | ✅ |
+| Flexible boolean literals     | ❌  | ❌   | ➖[3]  | ✅   | ✅ |
+| Comment support               | ✅  | ❌   | ✅   | ✅   | ✅ |
+| Escape sequence support       | ❌  | ✅   | ✅   | ✅   | ✅ |
+| Quoted strings mandatory      | ✅  | ❌   | ❌   | ✅   | ✅|
+| Clean, minimal syntax         | ✅  | ❌   | ❌   | ➖[2]   | ✅|
+| Multiple comment styles       | ➖  | ❌   | ❌   | ❌   | ✅ |
+| Strict vs lenient modes       | ❌  | ❌   | ❌   | ❌   | ✅ |
+| Disable valid lines           | ❌  | ❌   | ❌   | ❌   | ✅ |
 
 [1] YAML's syntax can be seen as complex or inconsistent for some users, especially around indentation and implicit typing.  
 [2] Some users find TOML's use of `[`, `]`, and `.` visually noisy in deeply nested files.  
@@ -229,7 +232,7 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 **Legend:**
 - ✅ = Yes / Fully supported
 - ❌ = Not supported
-- ➖ = Disputed, or partially or inconsistently supported
+- ➖ = Partial, debated, or implementation-dependent
 
 ---
 
