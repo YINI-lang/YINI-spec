@@ -312,6 +312,8 @@ YINI supports **three types of comments**:
 
 While both `#` and `//` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
 
+See also Section 3.6, "Disable Line", for a related mechanism used to deactivate valid lines of configuration.
+
 ### 3.3.1. Full-line Comments
 A full-line comment starts with a semicolon `;` and occupies the entire line.
 ```yini
@@ -425,7 +427,7 @@ port = 8080
 **Purpose and Usage:**
 - Disabled lines are intended for **temporary deactivation** of configuration content.
 - Unlike comments, which are typically used for documentation or explanatory notes, **disabled lines are structurally valid syntax that is intentionally skipped**.
-- This allows developers or users to (temporary) toggle parts of the configuration without removing them.
+- This allows developers or users to **temporary toggle** parts of the configuration without removing them.
 
 **Visual Distinction (Editor Highlighting):**
 A recommendation is that syntax highlighters use a **distinct color** or style for disabled lines — different from comments — to improve visual clarity. This helps distinguish between:
@@ -962,15 +964,17 @@ The following characters are reserved by the YINI syntax and must not be used im
 |-----------|---------------|-------------|
 | `=` | Assignment  | Separates key from value |
 | `^` | Section header | Used to denote section start |
+| `,` | Item separator | Used in lists |
 | `~` | Section header (alternative) | Used to denote section start |
 | `%` | Binary prefix | Begins binary number |
 | `;` | Full-line comment |   |
+| `:` | Alternative list notation | Outer list without brackets  |
 | `#` | Hexadecimal prefix | Begins hexadecimal number |
 | `# ` | Inline comment (alternative) | Comment, if starts with `#` followed by at least one space or tab |
 | `//` | Inine comment |   |
 | `/* */` | Block comment | Marks multi-line comment block |
 | `@` | Directive prefix | Reserved for future syntax |
-| `{ }` | Inline object | Reserved for future syntax |
+| `{ }` |  | Reserved for future syntax |
 | `--` | Line disabling | Experimental use (see Section 3.6) |
 
 #### 11.1.2. Reserved Keywords
