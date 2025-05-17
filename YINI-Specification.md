@@ -8,7 +8,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
 ```yini
-# YINI
+^ YINI
 Yet_another = 'INI'
 ```
 © 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
@@ -49,8 +49,9 @@ Some parts of the YINI specification have benefited from valuable feedback and i
 **1. Introduction**  
 &nbsp;&nbsp;&nbsp;&nbsp;1.1. What is YINI?  
 &nbsp;&nbsp;&nbsp;&nbsp;1.2. Purpose and Design Goals  
-&nbsp;&nbsp;&nbsp;&nbsp;1.3. Key Features  
-&nbsp;&nbsp;&nbsp;&nbsp;1.4. Terminology
+&nbsp;&nbsp;&nbsp;&nbsp;1.3. Background and Intent  
+&nbsp;&nbsp;&nbsp;&nbsp;1.4. Key Features  
+&nbsp;&nbsp;&nbsp;&nbsp;1.5. Terminology
 
 **2. File Structure**  
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
@@ -62,9 +63,9 @@ Some parts of the YINI specification have benefited from valuable feedback and i
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. General Syntax Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;3.2. Whitespace and Indentation  
 &nbsp;&nbsp;&nbsp;&nbsp;3.3. Comments  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1. Full-line Comments  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. Inline Comments  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. Multi-line Block Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.1. Inline Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.2. Multi-line Block Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.3.3. Full-line Comments  
 &nbsp;&nbsp;&nbsp;&nbsp;3.4. Identifiers  
 &nbsp;&nbsp;&nbsp;&nbsp;3.5. Document Terminator  
 &nbsp;&nbsp;&nbsp;&nbsp;3.6. Disable Line
@@ -188,7 +189,10 @@ The YINI format was created with the following key design goals in mind:
 
 - **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
 
-### 1.3. Key Features
+### 1.3. Background and Intent
+YINI was created to serve as a clean, minimal, and predictable configuration format that balances readability with structure. For a deeper look into the motivation and design philosophy, see [Why YINI Exists](./RATIONALE.md).
+
+### 1.4. Key Features
 **Note:** Unless explicitly stated otherwise, YINI parsers are expected to operate in lenient (non-strict) mode by default. Strict mode is optional and intended for validation-intensive environments.
 
 - **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `~` as an alternative).
@@ -203,7 +207,7 @@ The YINI format was created with the following key design goals in mind:
 
 - **Multi-line and Nested Data:** The format supports multi-line strings and nested sections, providing the ability to express more complex configurations while maintaining readability.
 
-## 1.4. Terminology
+## 1.5. Terminology
 The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI’s grammar, structure, and semantics.
 
 | Term                     | Definition |
@@ -219,7 +223,7 @@ The following key terms are used consistently throughout this specification. Und
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
 | Section                   | A logical grouping of members, introduced by a header using a section marker like `^`, `~`. |
-| Section Marker            | A special character (`^`, `~`) that denotes a new section header. |
+| Section Marker            | A special character (`^`, alternative is `~`) that denotes a new section header. |
 | Strict Mode               | An optional parsing mode where all structural and validation rules (incl. the document terminator) are strictly enforced. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
@@ -278,7 +282,7 @@ key = value
 key = value
 ```
 
-**Comments:** YINI supports full-line, inline, and block (multi-line) comments. These are ignored by parsers and exist solely for human readability.
+**Comments:** YINI primarly followes C-style commenting rules using `//` and `/* ... */`. Alternative inline `#` comments, and full-line `;` comments are supported too. These are ignored by parsers and exist solely for human readability.
 
 **Example:**
 ```ini
@@ -306,27 +310,21 @@ YINI supports **three types of comments**:
 
 | Comment Type | Prefix | Position |
 |--------------|--------|----------|
-| Full-line comment | `;` | Start of line ONLY |
-| Inline comment | `#` or `//` | At end of line |
+| Inline comment | `//` or `#` | At end of line |
 | Block comment | `/* ... */` | Anywhere (multi-line) |
+| Full-line comment | `;` | Start of line ONLY |
 
-While both `#` and `//` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
+While both `//` and `#` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
 
 See also Section 3.6, "Disable Line", for a related mechanism used to deactivate valid lines of configuration.
 
-### 3.3.1. Full-line Comments
-A full-line comment starts with a semicolon `;` and occupies the entire line.
-```yini
-; This is a full-line comment.
-```
-
-### 3.3.2. Inline Comments
+### 3.3.1. Inline Comments
 YINI supports two syntaxes for inline comments.
-- **Double slash** `//` comments:
+- **Double slash** `//` comments are the default:
     ```yini
     // This is a single-line comment.
     ```
-- **Hash `#` comments** — must be followed by **at least one space or tab** to be recognized:
+- **Hash `#` comments** are supported too — must be followed by **at least one space or tab** to be recognized:
     ```yini
     # This is also a single-line comment.
     ```
@@ -343,7 +341,7 @@ This rule is a deliberate compromise to avoid ambiguity with hex-like values (e.
   - `#Invalid comment` — No space or tab after `#`.
   - `##` — Not recognized as a valid comment, no space/tab follows the `#`.
 
-### 3.3.3. Multi-line Block Comments
+### 3.3.2. Multi-line Block Comments
 Multi-line (block) Comments.
   
 Begin with `/*` and end with `*/`. These comments may span multiple lines.
@@ -352,6 +350,12 @@ Begin with `/*` and end with `*/`. These comments may span multiple lines.
   This is a multi-line comment.
   It can span multiple lines.
 */
+```
+
+### 3.3.3. Full-line Comments
+A full-line comment starts with a semicolon `;` and occupies the entire line.
+```yini
+; This is a full-line comment.
 ```
 
 **Note:** Block comments may appear between any two members, or on their own lines. They cannot appear inside a quoted string or within an identifier. Comments are ignored by parsers and exist solely for human readability.
@@ -409,7 +413,7 @@ This mechanism is similar to a comment, but serves a **distinct purpose**: disab
 
 **Example 1:**
 ```yini
-; The next line is ignored — even though it's valid syntax.
+// The next line is ignored — even though it's valid syntax.
 --key = "Apples"
 ```
 
@@ -577,17 +581,13 @@ If you want to put a section under another section, nested sections, use additio
 ✅ **Example of valid section nesting:**
 ```yini
 ^ Section 1         // Main section 1 (depth 1)
-
 ^^ Section 1.1      // Sub-section of 1 (depth 2)
-
 ^^^ Section 1.1.1   // Sub-section of 1.1 (depth 3)
 
 ^^ Section 1.2      // Sub-section of 1 (depth 2)
 
 ^ Section 2         // Main section 2 (depth 1)
-
 ^^ Section 2.1      // Sub-section of 2 (depth 2)
-
 ^^^ Section 2.1.1   // Sub-section of 2.1 (depth 3)
 
 ^ Section 3         // Main section 3 (depth 1)
@@ -1195,8 +1195,9 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 
 * YINI supports:
   - `//` for inline comments (rest of the line is ignored).
-  - `#` followed by at least one whitespace character (`SPACE` or `TAB`), for inline comments (rest of the line is ignored).
+  - `#` followed by at least one whitespace character (`SPACE` or `TAB`), for alternative inline comments (rest of the line is ignored).
   - `/* ... */` for block (multi-line) comments (may span lines).
+  - `;`at start of line is treated as full-line comments (there may appear only spaces or tabs before `;`).
   - **Nested block comments are not supported.**
 
 ### 12.9 Error Handling Recommendations

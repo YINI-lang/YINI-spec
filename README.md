@@ -6,7 +6,7 @@
 
 **Status:** Beta Release
 
-**Format Name:** `YINI` (inspired by `INI`, `JSON`, `C`, `Python`...)
+**Format Name:** `YINI` (inspired by mainly by `INI` and `JSON`, but also by `C`, `Python`...)
 
 ---
 > \~ YINI ≡
@@ -47,11 +47,11 @@ Ten key features below:
 - ✅ `=` for standard assignment, with optional `:` syntax for list-style values (colon-based lists).
 - ✅ **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 
-💡 **Note:** YINI supports both `//` and `#` for comments. When using `#`, it must be followed by a space or tab character. This ensures that hex-like values like `#FF9900` are not misinterpreted as comments.
+💡 **Note:** YINI primarly followes C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles are also supported. 
 
 ---
 
-## Quick Example
+## Quick Examples
 
 ### Before (Traditional INI or ad-hoc config)
 ```ini
@@ -65,40 +65,66 @@ notifications=false
 ```
 
 ### After (YINI)
-```ini
-^ Server                # Defines a section named Server.
+```js
+^ Server                // Defines a section named Server.
 host = "localhost"
 port = 8080
 
-^ Features              # Defines a section named Features.
+^ Features              // Defines a section named Features.
 login = true
 notifications = false
 ```
 
 Notice:
 - In YINI, `^` defines section headers.
-- `#` (followed by space or tab) is used for line comments (`//` for comments works too).
+- `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
 - All strings must be enclosed in quotes (`"` or `'`).
 - Natural, readable keys and values separated by (`=`).
 - Strong typing without heavy syntax.
 
 ---
 
-### Alternative Style (YINI with `~`, `//`, and `'`)
-```js
-~ Server                // Defines a section named Server.
-host = 'localhost'      // Strings in single quotes work too.
-port = 8080
+### Before (TOML)
+```toml
+[Service]               # Defines a section named Server.
+Enabled = true
 
-~ Features              // Defines a section named Features.
-login = true
-notifications = false
+[Service.Cache]         # Defines Cache, a sub-section of Server.
+Type = "redis"
+TTL = 3600
+
+[Service.Cache.Options] # Defines Options, a sub-section of Cache.
+Host = "127.0.0.1"
+Port = 6379
+
+[Env]                   # Defines a section named Env.
+code = "dev"
+```
+
+### After (YINI)
+```js
+^ Service               // Defines a section named Server.
+Enabled = true
+
+^^ Cache
+Type = "redis"          // Defines Cache, a sub-section of Server.
+TTL = 3600
+
+^^^ Options             // Defines Options, a sub-section of Cache.
+Host = "127.0.0.1"
+Port = 6379
+
+^ Env                   // Defines a section named Env.
+code = "dev"
 ```
 
 Notice:
-- Using alternative section marker `~`.
-- Using `//` for line comments works too.
-
+- Using multiple `^` to indicate section nesting depth (Markdown-style section levels).
+- **One** `^` = top-level section.
+- **Two** `^^` = nested section under previous.
+- **Three** `^^^` = sub-subsection.
+- This structure is visually clear and easy to parse — especially for both humans and machines.
+- Unlike TOML, YINI **does not** use dot `.` notation in sections.
 ---
 
 ## YINI Syntax
@@ -109,9 +135,9 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 
 ### Comments
 YINI supports **3 types of comments**:
-- Full-line comments `;` (start of line only)
-- Inline comments	using `#` or `//`
+- Inline comments	using `//` (alternative inline comment `#` work too)
 - Block (multi-line) comments using `/*` ... `*/`
+- Full-line comments `;` (start of line only)
 
 ### Lists
 To declare a list, after the `=` character, square brackets `[ ]` are used. Each item is separated by a comma.
@@ -126,7 +152,7 @@ Booleans support flexible, case-insensitive literals, in the example below, `Tru
 
 ## Example: Using Common Types and Syntax Features
 
- A short, real-world example showing how YINI handles nested sections, lists, comments (`#`, `;`, and `/* */`), and different data types — all while remaining human-friendly.
+ A short, real-world example showing how YINI handles nested sections, lists, comments (`//`, `/* */`, and `;`), and different data types — all while remaining human-friendly.
 
 ```c
 /*
@@ -136,25 +162,25 @@ Booleans support flexible, case-insensitive literals, in the example below, `Tru
  */
 
 ^ AppInfo
-name = 'MyApp'          # String.
-version = 1.2           # Number (real).
+name = 'MyApp'          // String.
+version = 1.2           // Number (real).
 
-^^ Advanced             # Defines a sub-section of AppInfo.
-timeout = 9000          # Number (integer).
-caching = True          # Boolean.
-isLogging = YES         # Boolean (alternative keyword).
-debugging = ON          # Boolean (alternative keyword).
+^^ Advanced             // Defines a sub-section of AppInfo.
+timeout = 9000          // Number (integer).
+caching = True          // Boolean.
+isLogging = YES         // Boolean (alternative keyword).
+debugging = ON          // Boolean (alternative keyword).
 
 ^ Features
-features = ['login', 'sync', 'offline']     # List with 3 items.
+features = ['login', 'sync', 'offline']     // List with 3 items.
 
-; works too as a full line comment.
+// works too as line comments, if you prefer this style instead.
 ^ SpecialFeatures
 listOfMixedType = [
-    'DarkMode',    # Item 1, a string.
-    42,            # Item 2, a number.
-    true,          # Item 3, a boolean.
-    null           # Item 4, null.
+    'DarkMode',    // Item 1, a string.
+    42,            // Item 2, a number.
+    true,          // Item 3, a boolean.
+    null           // Item 4, null.
 ]
 ```
 

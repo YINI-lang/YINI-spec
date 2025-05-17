@@ -18,6 +18,9 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 - Included "Acknowledgments" in Spec.
 - Reworded some parts of the README.
 - Added in README another section "Comparison: YINI vs Other Formats".
+- Added in README example of TOML to YINI, using nested sections.
+- In README using C-style commenting as YINI follows this philosify primarly, though alternative commenting using `#` and `;` are supported too.
+- Added stubb for rationale.md and small section mentioning it in the Spec.
 
 2025-05-03
 - Reworded README as including "alternative to INI".
