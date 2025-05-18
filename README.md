@@ -18,13 +18,13 @@
 
 ## 🚀 What is YINI?
 
-**YINI (Yet another INI)** is a minimal and human readable configuration file format with a formally defined grammar and a specification. It was designed for clarity and simplicity, offering features that improve on classic INI while avoiding the complexity of formats like YAML - yet being less noisy than JSON and TOML.
+**YINI (Yet another INI)** is a minimal and human-readable configuration file format with a formally defined grammar and a specification. It was designed for clarity and simplicity, offering features that improve on classic INI while avoiding the complexity of formats like YAML - yet being less noisy than JSON and TOML.
 
 YINI is clean, consistent, and structured — easy for humans to write and machines to parse.
 
 > YINI aims to hit the sweet spot between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
 
-Inspired by among others INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
+Inspired by including INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
 
 ## 🔥 Why YINI
 There are already many configuration formats — INI, JSON, YAML, TOML — but none hit the sweet spot of balance YINI was aiming for.
@@ -39,7 +39,7 @@ YINI exists because:
 
 YINI was created out of practical necessity: during the development of another project, none of the existing formats felt right. YINI reflects the same spirit as the project that inspired it — structured, flexible, and predictable — yet simple, human-friendly, and clear.
 
-**TL;TR:**
+**TL;DR:**
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
 - ✅ **Minimal syntax, maximal readability** — aiming for clarity over cleverness.
 
@@ -56,13 +56,13 @@ YINI aims to prioritize **human readability, clarity, and clean syntax**.
   * Numeric notations with base and exponent support.
 - ✔️ **Human readability first** — prioritizes clarity over cleverness — yet machine-friendly.
 
-### Also Features
+### Additional Features
 Definitions for rules in strict-mode (lenient is default).
 - Formal grammar for reliable parsing.
 - **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
-- Explicit string quoting — no ambigioty over strings.
+- Explicit string quoting — no ambiguity over strings.
 - **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
-- **Enhanced robustness** in strict-mode — if you cut a YINI file into two halves, both halves will be render invalid by the rules.
+- **Enhanced robustness** in strict-mode — if you cut a YINI file into two halves, both halves will be rendered invalid by the rules.
 
  ---
 
@@ -90,7 +90,7 @@ login = true
 notifications = false
 ```
 
-Notice:
+💡 Notes:
 > - In YINI, `^` defines section headers.
 > - `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
 > - All strings must be enclosed in quotes (`"` or `'`).
@@ -133,7 +133,7 @@ Port = 6379
 code = "dev"
 ```
 
-Notice:
+💡 Notes:
 > - Using multiple `^` to indicate section nesting depth (Markdown-style section levels).
 > - **One** `^` = top-level section.
 > - **Two** `^^` = nested section under previous.
