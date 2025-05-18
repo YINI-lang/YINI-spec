@@ -18,7 +18,7 @@
 
 ---
 
-## What is YINI?
+## 🚀 What is YINI?
 
 **YINI (Yet another INI)** is a minimal and human readable configuration file format with a formally defined grammar and a specification. It was designed for clarity and simplicity, offering features that improve on classic INI while avoiding the complexity of formats like YAML - yet being less noisy than JSON and TOML.
 
@@ -26,13 +26,18 @@ YINI is clean, consistent, and structured — easy for humans to write and machi
 
 > YINI aims to hit the sweet spot between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
 
-## Why YINI
-There are already many configuration formats — INI, JSON, YAML, TOML — but none hit the sweet spot of balance YINI was aiming for:
+Inspired by among others INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
 
-- INI is simple and friendly, but too limited and lacks specification.
-- JSON is structured and predictable, but too verbose, strict and lacks comments.
+## 🔥 Why YINI
+There are already many configuration formats — INI, JSON, YAML, TOML — but none hit the sweet spot of balance YINI was aiming for.
+
+Too often, config formats are either too limiting (like INI), or too verbose, or too overloaded and complex.
+
+YINI exists because:
+- JSON is structured and predictable, but too verbose, strict (and no comments 😤).
 - YAML is powerful but too permissive, error-prone, and has significant whitespace.
-- TOML is clear and structured but gets verbose too for bigger configs.
+- TOML is fine, but sometimes gets too verbose too quickly.
+- INI is simple and friendly, but too limited and lacks specification.
 
 YINI was created out of practical necessity: during the development of another project, none of the existing formats felt right. YINI reflects the same spirit as the project that inspired it — structured, flexible and predictable - yet simple,human friendly and clear.
 
@@ -40,13 +45,12 @@ YINI was created out of practical necessity: during the development of another p
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
 - ✅ **Minimal syntax, maximal readability** — aiming for clarity over cleverness.
 
-## Key Features
+## ✨ Key Features
 YINI aims to prioritize **human readability, clarity, and clean syntax**.
 
-Ten key features below:
 - ✔️ **Clean and minimalistic syntax** — avoids visual noise, easy to write and read.
 - ✔️ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
-- ✔️ **Easy section nesting** with section headers using `^` (one or more, like Markdown).
+- ✔️ **Easy section nesting** Markdown-style section levels: `^`, `^^`, `^^^` ...
 - ✔️ **Indentation-independent structure** — no indentation pitfalls.
 - ✔️ **Flexible Commenting styles** — C-style commenting rules using `//` and `/* ... */`. Supports `#` and `;` commenting styles too. 
 - ✔️ **Flexible Literals:**
@@ -62,9 +66,9 @@ Definitions for rules in strict-mode (lenient is default).
 - **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 - **Enhanched robusness** in strict-mode — if you cut a YINI file into two halvs, both halvs will be render invalid by the rules.
 
----
+ ---
 
-## Quick Examples
+## 🧠 Quick Examples
 
 ### Before (Traditional INI or ad-hoc config)
 ```ini
@@ -191,47 +195,51 @@ are preserved exactly, without escapes.
 
 ---
 
-## Summary: Differance with Other Formats
+## 🔍 Summary: Differance with Other Formats
 
 YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON — while offering more clarity than TOML.
 
-## Specification
+| Feature                  | INI  | JSON | YAML | TOML | YINI |
+|--------------------------|:----:|:----:|:----:|:----:|:----:|
+| Comments                 | ✔️   | ❌   | ✔️   | ✔️   | ✔️ |
+| Strict/Lenient Modes     | ❌   | ✔️   | ❌   | ✔️   | ✔️ |
+| Nested Sections          | ➖   | ✔️   | ✔️   | ✔️   | ✔️ |
+| Formal Grammar           | ❌   | ✔️   | ➖   | ✔️   | ✔️ |
+| Minimal Syntax Noise     | ✔️   | ❌   | ➖   | ➖   | ✔️ |
+| Human-Focused by Default | ➖   | ❌   | ✔️   | ➖   | ✔️ |
 
-The complete format is formally defined in [Specification](./YINI-Specification.md), including types, escaping rules, reserved syntax, validation modes, and implementation notes.
+> YINI is for people who want clean, minimal, predictable config files that don’t fight back.
+
+## 📘 Read the Spec
+
+The format is defined by a formal grammar. See [Specification](./YINI-Specification.md) for:
+- syntax and types
+- section nesting
+- escape rules
+- comment behavior
+- strict vs lenient mode
+- validation rules
+- and more
+
+But WHY another format, exactly?? [Read the Rationale](./RATIONALE.md) - it covers background, design motivations, and format comparisons.
 
 ---
 
-## Why YINI?
-
-| Feature | Benefit |
-|:---|:---|
-| Minimal syntax | Easy to read and edit by hand |
-| Lightweight, yet type-safe | Safer and more expressive than plain INI |
-| Simple nesting | Clear structure without complex indentation rules |
-| Human-first | Designed for configuration, not data exchange |
-| No guesswork in parsing | Optional strict mode available |
-
-See the full specification here:
-
-➡️ [Read the YINI Specification](./YINI-Specification.md)
-
----
-
-## Status and Roadmap
+## 📦 Status and Roadmap
 
 - Currently in ***Beta stage***.
 - (Implementation libraries or parsers can follow once the specification stabilizes a bit more.)
 - A TypeScript-based YINI parser is about to start development:
 https://github.com/YINI-lang/yini-parser-typescript
-- Feedback welcome 🚀 — open a Discussion or an Issue.
+- Feedback welcome 💬 — open a Discussion or an Issue.
 
-### Future
+### 🚀 Future
 The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
 
 ### Acknowledgments
 Some parts of the YINI specification have benefited from valuable community feedback. See section 15.2, "Acknowledgments", for more details.
 
-## License
+## 🧾 License
 
 YINI is licensed under the [Apache License 2.0](./LICENSE).
 
