@@ -10,8 +10,6 @@
 
 **Status:** Beta Release
 
-**License:** [Apache 2.0](./LICENSE)
-
 ---
 
 - ➡️ [Read the YINI Specification](./YINI-Specification.md)
@@ -31,17 +29,17 @@ Inspired by among others INI, JSON, Python, and Markdown. YINI keeps things mini
 ## 🔥 Why YINI
 There are already many configuration formats — INI, JSON, YAML, TOML — but none hit the sweet spot of balance YINI was aiming for.
 
-Too often, config formats are either too limiting (like INI), or too verbose, or too overloaded and complex.
+> Too often, config formats are either too limiting (like INI), too verbose (like JSON or TOML), or too quirky (like YAML).
 
 YINI exists because:
-- JSON is structured and predictable, but too verbose, strict (and no comments 😤).
+- JSON is structured and predictable, but too verbose and strict (and lacks comments 😤).
 - YAML is powerful but too permissive, error-prone, and has significant whitespace.
 - TOML is fine, but sometimes gets too verbose too quickly.
 - INI is simple and friendly, but too limited and lacks specification.
 
-YINI was created out of practical necessity: during the development of another project, none of the existing formats felt right. YINI reflects the same spirit as the project that inspired it — structured, flexible and predictable - yet simple,human friendly and clear.
+YINI was created out of practical necessity: during the development of another project, none of the existing formats felt right. YINI reflects the same spirit as the project that inspired it — structured, flexible, and predictable — yet simple, human-friendly, and clear.
 
-**TLTR:**
+**TL;TR:**
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
 - ✅ **Minimal syntax, maximal readability** — aiming for clarity over cleverness.
 
@@ -64,7 +62,7 @@ Definitions for rules in strict-mode (lenient is default).
 - **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
 - Explicit string quoting — no ambigioty over strings.
 - **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
-- **Enhanched robusness** in strict-mode — if you cut a YINI file into two halvs, both halvs will be render invalid by the rules.
+- **Enhanced robustness** in strict-mode — if you cut a YINI file into two halves, both halves will be render invalid by the rules.
 
  ---
 
@@ -93,11 +91,11 @@ notifications = false
 ```
 
 Notice:
-- In YINI, `^` defines section headers.
-- `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
-- All strings must be enclosed in quotes (`"` or `'`).
-- Natural, readable keys and values separated by (`=`).
-- Strong typing without heavy syntax.
+> - In YINI, `^` defines section headers.
+> - `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
+> - All strings must be enclosed in quotes (`"` or `'`).
+> - Natural, readable keys and values separated by (`=`).
+> - Strong typing without heavy syntax.
 
 ---
 
@@ -136,12 +134,12 @@ code = "dev"
 ```
 
 Notice:
-- Using multiple `^` to indicate section nesting depth (Markdown-style section levels).
-- **One** `^` = top-level section.
-- **Two** `^^` = nested section under previous.
-- **Three** `^^^` = sub-subsection.
-- This structure is visually clear and easy to parse — especially for both humans and machines.
-- Unlike TOML, YINI **does not** use dot `.` notation in sections.
+> - Using multiple `^` to indicate section nesting depth (Markdown-style section levels).
+> - **One** `^` = top-level section.
+> - **Two** `^^` = nested section under previous.
+> - **Three** `^^^` = sub-subsection.
+> - This structure is visually clear and easy to parse — especially for both humans and machines.
+> - Unlike TOML, YINI **does not** use dot `.` notation in sections.
 
 ---
 
@@ -161,12 +159,12 @@ Note: `#` must be followed by a space or tab to be recognized as a comment (to a
 ### Quoted Strings
 Strings in YINI must always be enclosed in quotes — either in double quotes (`"`) or in single quotes (`'`).
 
-**Note:** If a string is not quoted, it's not a string — period. (No umbigousity overstrings or keywords.)
+**Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### Example: Flexible String Literals
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
-💡 **Note:** YINI primarly followes C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 
+💡 **Note:** YINI primarily follows C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 
 ```yini
 # Raw strings are the default. No prefix is needed, but an optional R prefix
 # may be used for clarity. Escape sequences are not interpreted.
@@ -195,7 +193,7 @@ are preserved exactly, without escapes.
 
 ---
 
-## 🔍 Summary: Differance with Other Formats
+## 🔍 Summary: Difference with Other Formats
 
 YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON — while offering more clarity than TOML.
 
