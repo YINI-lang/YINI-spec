@@ -161,7 +161,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
-### Example: Flexible String Literals
+### String Literals in YINI
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 💡 **Note:** YINI primarily follows C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 

@@ -43,11 +43,11 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 
 | Format | Why Not? |
 |---|---|
-| INI   |	Too limited, no nesting, inconsistent comment support, lacks formal spec
-| JSON  |	No comments, too noisy, unfriendly for hand-editing
-| YAML  |	Too permissive, whitespace-sensitive, ambiguous edge cases
-| TOML  |	Clear and strict, but verbose, rigid, and not very human-friendly in deep nesting
-| JSON5 |	Adds flexibility to JSON, very interesting format but not (yet) a formal standard (or?) but still a bit too noisy
+| INI   | Too limited, no nesting, inconsistent comment support, lacks formal spec.
+| JSON  | No comments, too noisy, unfriendly for hand-editing.
+| YAML  | Too permissive, whitespace-sensitive, ambiguous edge cases.
+| TOML  | Clear and strict, but verbose, rigid, and not very human-friendly in deep nesting.
+| JSON5 | Adds flexibility to JSON, not yet a formal standard (?) and still slightly too noisy for hand-written config.
 
 ### 📊 Comparison: YINI vs Other Formats
 | Feature                       | INI | JSON | YAML | TOML | **YINI** |
