@@ -1,16 +1,20 @@
 # \~ YINI Specification ≡
-[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
-![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
 
 **YINI is a lightweight, human-friendly configuration format — simpler than YAML, and more expressive than INI.**
 
 ---
+[![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
+![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
 
 **Version:** v1.0.0 Beta 5 (Latest published release)
 
 **Status:** Beta Release
 
 **License:** [Apache 2.0](./LICENSE)
+
+---
+
+- ➡️ [Read the YINI Specification](./YINI-Specification.md)
 
 ---
 
@@ -28,7 +32,7 @@ There are already many configuration formats — INI, JSON, YAML, TOML — but n
 - INI is simple and friendly, but too limited and lacks specification.
 - JSON is structured and predictable, but too verbose, strict and lacks comments.
 - YAML is powerful but too permissive, error-prone, and has significant whitespace.
-- TOML is clear and structured but gets verbose too verbose.
+- TOML is clear and structured but gets verbose too for bigger configs.
 
 YINI was created out of practical necessity: during the development of another project, none of the existing formats felt right. YINI reflects the same spirit as the project that inspired it — structured, flexible and predictable - yet simple,human friendly and clear.
 
@@ -44,19 +48,19 @@ Ten key features below:
 - ✔️ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
 - ✔️ **Easy section nesting** with section headers using `^` (one or more, like Markdown).
 - ✔️ **Indentation-independent structure** — no indentation pitfalls.
-- ✔️ **Human readability first** — prioritizes clarity over cleverness — yet machine-friendly.
-- ✔️ **Flexible Boolean literals**, including: `true`, `false`, `on`, `off`, `yes`, `no` (all case-insensitive).
-- ✔️ **Flexible Numeric literals** with base and exponent support.
 - ✔️ **Flexible Commenting styles** — C-style commenting rules using `//` and `/* ... */`. Supports `#` and `;` commenting styles too. 
+- ✔️ **Flexible Literals:**
+  * Including booleans: `true`, `false`, `on`, `off`, `yes`, `no` (all case-insensitive).
+  * Numeric notations with base and exponent support.
+- ✔️ **Human readability first** — prioritizes clarity over cleverness — yet machine-friendly.
 
 ### Also Features
 Definitions for rules in strict-mode (lenient is default).
+- Formal grammar for reliable parsing.
 - **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
-- Optional `:` syntax for list-style values (colon-based and bracket-less lists) (`=` for standard assignment).
+- Explicit string quoting — no ambigioty over strings.
 - **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 - **Enhanched robusness** in strict-mode — if you cut a YINI file into two halvs, both halvs will be render invalid by the rules.
-
-💡 **Note:** YINI primarly followes C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles are also supported. 
 
 ---
 
@@ -134,76 +138,38 @@ Notice:
 - **Three** `^^^` = sub-subsection.
 - This structure is visually clear and easy to parse — especially for both humans and machines.
 - Unlike TOML, YINI **does not** use dot `.` notation in sections.
+
 ---
 
-## YINI Syntax
+## Section Nesting
+Nesting sections can be done easily by adding one extra section marker (e.g. `^^`).
+
+## Comments
+YINI supports **three types of comments**:
+- **Inline comments:** `//` (or commenting using `#`)
+- **Block comments:**  `/* multi-line */`
+- **Full-line comments:** Starting with `;`, `//` or `#`,
+
+Note: `#` must be followed by a space or tab to be recognized as a comment (to avoid clashes with hex values like `#FF0033`).
+
+## Strings
+
 ### Quoted Strings
 Strings in YINI must always be enclosed in quotes — either in double quotes (`"`) or in single quotes (`'`).
 
-**Note:** If a string is not quoted, it's not a string — period.
+**Note:** If a string is not quoted, it's not a string — period. (No umbigousity overstrings or keywords.)
 
-### Comments
-YINI supports **3 types of comments**:
-- Inline comments	using `//` (alternative inline comment `#` work too)
-- Block (multi-line) comments using `/*` ... `*/`
-- Full-line comments `;` (start of line only)
-
-### Lists
-To declare a list, after the `=` character, square brackets `[ ]` are used. Each item is separated by a comma.
-
-There is also an alternative list notation using `:`, which omits brackets. Items are comma-separated and may appear either inline or on separate lines.
-
-### Section Nesting
-Nesting sections can be done easily by adding one extra section marker (e.g. `^^`) — for example, in the example below, the section `Advanced` is a sub-section of the section `AppInfo`.
-
-### Alternative Boolean Literals
-Booleans support flexible, case-insensitive literals, in the example below, `True`, `YES`, and `ON` (all case-insensitive) all mean `true`.
-
-## Example: Using Common Types and Syntax Features
-
- A short, real-world example showing how YINI handles nested sections, lists, comments (`//`, `/* */`, and `;`), and different data types — all while remaining human-friendly.
-
-```c
-/*
-    This is a block comment.
-    A complete YINI example that demonstrates some of the format's syntax and
-    flexibility — including comments, nested sections, and mixed-type lists.
- */
-
-^ AppInfo
-name = 'MyApp'          // String.
-version = 1.2           // Number (real).
-
-^^ Advanced             // Defines a sub-section of AppInfo.
-timeout = 9000          // Number (integer).
-caching = True          // Boolean.
-isLogging = YES         // Boolean (alternative keyword).
-debugging = ON          // Boolean (alternative keyword).
-
-^ Features
-features = ['login', 'sync', 'offline']     // List with 3 items.
-
-// works too as line comments, if you prefer this style instead.
-^ SpecialFeatures
-listOfMixedType = [
-    'DarkMode',    // Item 1, a string.
-    42,            // Item 2, a number.
-    true,          // Item 3, a boolean.
-    null           // Item 4, null.
-]
-```
-
----
-
-## Example: Flexible String Literals
+### Example: Flexible String Literals
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
+💡 **Note:** YINI primarly followes C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 
 ```yini
-; Raw strings are the default. No prefix is needed, but an optional R prefix
-; may be used for clarity. Escape sequences are not interpreted.
+# Raw strings are the default. No prefix is needed, but an optional R prefix
+# may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
 
-; Classic strings (C-Strings) are prefixed with C or c — they support escape sequences.
+// Classic strings (C-Strings) are prefixed with C or c — they support
+// escape sequences.
 ClassicString = C"Hello\nWorld\n"
 
 ; Hyper strings (H-Strings) are prefixed with H or h — they behave
@@ -213,8 +179,9 @@ HyperString = H"
   with trimmed edges and normalized whitespace.
 "
 
-// Triple-quoted strings can span multiple lines and
-// preserve all characters as-is, including tabs and newlines.
+/* Triple-quoted strings can span multiple lines and
+   preserve all characters as-is, including tabs and newlines.
+ */
 TripleQuotedString = """
 This is a triple-quoted
 string literal — characters
@@ -224,13 +191,13 @@ are preserved exactly, without escapes.
 
 ---
 
-## Specification Document
+## Summary: Differance with Other Formats
 
-Full detailed specification available here:
+YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON — while offering more clarity than TOML.
 
-➡️ [Read the YINI Specification](./YINI-Specification.md)
+## Specification
 
-It covers syntax, grammar, validation rules, examples, versioning, JSON compatibility, and more.
+The complete format is formally defined in [Specification](./YINI-Specification.md), including types, escaping rules, reserved syntax, validation modes, and implementation notes.
 
 ---
 
@@ -244,58 +211,29 @@ It covers syntax, grammar, validation rules, examples, versioning, JSON compatib
 | Human-first | Designed for configuration, not data exchange |
 | No guesswork in parsing | Optional strict mode available |
 
-## 📊 Comparison: YINI vs Other Formats
-| Feature                       | INI | JSON | YAML | TOML | **YINI** |
-|-------------------------------|:---:|:----:|:----:|:----:|:--------:|
-| Typing (bool, list, null)     | ❌  | ✅   | ✅   | ✅   | ✅ |
-| Section nesting               | ❌  | ❌   | ✅   | ✅   | ✅ |
-| Human-friendly  & clean syntax| ✅  | ❌   | ➖[1]   | ➖[2]  | ✅|
-| Readable multi-line strings   | ❌  | ❌   | ✅   | ✅   | ✅ |
-| Flexible boolean literals     | ❌  | ❌   | ➖[3]  | ✅   | ✅ |
-| Comment support               | ✅  | ❌   | ✅   | ✅   | ✅ |
-| Escape sequence support       | ❌  | ✅   | ✅   | ✅   | ✅ |
-| Quoted strings mandatory      | ✅  | ❌   | ❌   | ✅   | ✅|
-| Clean, minimal syntax         | ✅  | ❌   | ❌   | ➖[2]   | ✅|
-| Multiple comment styles       | ➖  | ❌   | ❌   | ❌   | ✅ |
-| Strict vs lenient modes       | ❌  | ❌   | ❌   | ❌   | ✅ |
-| Disable valid lines           | ❌  | ❌   | ❌   | ❌   | ✅ |
-
-[1] YAML's syntax can be seen as complex or inconsistent for some users, especially around indentation and implicit typing.  
-[2] Some users find TOML's use of `[`, `]`, and `.` visually noisy in deeply nested files.  
-[3] YAML's flexible boolean handling can result in unintended type coercion, as behavior varies between parsers.
-
-**Legend:**
-- ✅ = Yes / Fully supported
-- ❌ = Not supported
-- ➖ = Partial, debated, or implementation-dependent
-
 See the full specification here:
 
 ➡️ [Read the YINI Specification](./YINI-Specification.md)
 
 ---
 
-## License
+## Status and Roadmap
 
-Licensed under the [Apache License 2.0](./LICENSE).
-
-© 2025 Marko K. Seppänen.
-
----
-
-## Contributions
-
-Feedback, ideas, testing, and discussions are always welcome. 🚀
-
-(Implementation libraries or parsers can follow once the specification stabilizes.)
-
-The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
-
-A TypeScript-based YINI parser is currently in development:
+- Currently in ***Beta stage***.
+- (Implementation libraries or parsers can follow once the specification stabilizes a bit more.)
+- A TypeScript-based YINI parser is about to start development:
 https://github.com/YINI-lang/yini-parser-typescript
+- Feedback welcome 🚀 — open a Discussion or an Issue.
+
+### Future
+The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
 
 ### Acknowledgments
 Some parts of the YINI specification have benefited from valuable community feedback. See section 15.2, "Acknowledgments", for more details.
+
+## License
+
+YINI is licensed under the [Apache License 2.0](./LICENSE).
 
 ---
 
