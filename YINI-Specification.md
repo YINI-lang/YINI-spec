@@ -195,9 +195,9 @@ YINI was created to serve as a clean, minimal, and predictable configuration for
 ### 1.4. Key Features
 **Note:** Unless explicitly stated otherwise, YINI parsers are expected to operate in lenient (non-strict) mode by default. Strict mode is optional and intended for validation-intensive environments.
 
-- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `~` as an alternative).
+YINI aims to prioritize **human readability, clarity, and clean syntax**.
 
-- **Clear End of Document:** YINI supports (only in stict-mode) a clear document terminator marker (`/END`).
+- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `~` as an alternative).
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
 
@@ -206,6 +206,8 @@ YINI was created to serve as a clean, minimal, and predictable configuration for
 - **Commenting and Documentation:** YINI allows for inline comments, enabling users to document their configuration files directly. This enhances the human-readable nature of the format and makes it easier for teams to collaborate on configuration management.
 
 - **Multi-line and Nested Data:** The format supports multi-line strings and nested sections, providing the ability to express more complex configurations while maintaining readability.
+
+- **Clear End of Document:** YINI supports (only in stict-mode) a clear document terminator marker (`/END`).
 
 ## 1.5. Terminology
 The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI’s grammar, structure, and semantics.
