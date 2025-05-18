@@ -200,7 +200,6 @@ YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON �
 | Feature                  | INI  | JSON | YAML | TOML | YINI |
 |--------------------------|:----:|:----:|:----:|:----:|:----:|
 | Comments                 | ✔️   | ❌   | ✔️   | ✔️   | ✔️ |
-| Strict/Lenient Modes     | ❌   | ✔️   | ❌   | ✔️   | ✔️ |
 | Nested Sections          | ➖   | ✔️   | ✔️   | ✔️   | ✔️ |
 | Formal Grammar           | ❌   | ✔️   | ➖   | ✔️   | ✔️ |
 | Minimal Syntax Noise     | ✔️   | ❌   | ➖   | ➖   | ✔️ |
