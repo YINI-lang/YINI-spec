@@ -115,7 +115,7 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 
 [1] YAML's syntax can be seen as complex or inconsistent for some users, especially around indentation and implicit typing.  
 [2] Some users find TOML's use of `[`, `]`, and `.` visually noisy in deeply nested files.  
-[3] YAML's flexible boolean handling can result in unintended type coercion, as behavior varies between parsers.
+[3] YAML's flexible boolean handling can result in unintended type coercion, as behavior varies between parsers.  
 [4] In YINI, valid lines can be temporarily disabled without removing them (technically serving the same function as "commenting out").
 
 **Legend:**
