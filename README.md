@@ -59,7 +59,7 @@ YINI aims to prioritize **human readability, clarity, and clean syntax**.
 ### Additional Features
 Definitions for rules in strict-mode (lenient is default).
 - Formal grammar for reliable parsing.
-- **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs.
+- **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs. Read more in 11.3.1 in the specification, "Table: Lenient vs. Strict Mode".
 - Explicit string quoting — no ambiguity over strings.
 - **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 - **Enhanced robustness** in strict-mode — if you cut a YINI file into two halves, both halves will be rendered invalid by the rules.

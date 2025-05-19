@@ -116,7 +116,8 @@ Some parts of the YINI specification have benefited from valuable feedback and i
 **11. Validation Rules**  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness Requirements  
-&nbsp;&nbsp;&nbsp;&nbsp;11.3. Lenient vs. Strict Modes _(Optional Feature)_
+&nbsp;&nbsp;&nbsp;&nbsp;11.3. Lenient vs. Strict Modes _(Optional Feature)_  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11.3.1. Table: Lenient vs. Strict Mode
 
 **12. Implementation Notes**  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
@@ -1044,31 +1045,22 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
 - **Valid short documents in strict mode:**
   - ✅ In strict mode, the following is the shortest valid YINI document **with a member**:
     ```yini
-    K=
+    ^T
     /END
     ```
-    **Note:** A key named `K`, whose value will be interpreted as `null`.
+    **Note:** A section heading named `T`, without any members.
 
-  - ✅ In strict mode, the following is the shortest valid YINI document **with a section header**:
-    ```yini
-    ^ S
-    /END
-    ```
-    **Note:** A section header named `S`, containing no members.
-
-  - ✅ Thus, the following **is also a valid** YINI document in strict mode by this specification:
-    ```yini
-    /END
-    ```
-    **Note:** A YINI document may only contain the document terminator, meaning there are no members or sections in the file.
 - **Invalid short documents:**
   - ❌ However, the following file is invalid:
     ```yini
-    // A dangling key is invalid, either = or : is missing.
-    key
+    ^ Title
+    ```
+    **Note:** Missing the end terminator marker (`/END`).
+  - ❌ However, the following file is invalid:
+    ```yini
     /END
     ```
-    **Note:** This is not a proper member, it contains only a key, either `=` or `:` is missing to make it a proper member.
+    **Note:** Missing title heading section.
 
   - ❌ The following empty file (with only a comment) is also invalid:
     ```yini
@@ -1083,18 +1075,33 @@ Some YINI parsers may support multiple **validation modes**:
 
 - **Lenient Mode:** 
   - Permissive with minor errors (e.g., trailing commas, mixed line endings).
-  - The document terminator (`/END`) is not required, and is only optional.
+  - The document terminator (`/END`) is **optional** in lenient mode and may be omitted entirely.
   - All typing rules still apply.
-  - Note, string literals must be quoted, if it's not quoted, it's not a string — period.
+  - Note: string literals **must be quoted**. If a value is **not** quoted, it is not a string — no exceptions.
   - Useful for hand-edited configuration files.
 - **Strict Mode:**
   - Enforces full well-formedness.
-  - The document terminator (`/END`) is required.
+  - Strict mode requires both a **title section header** (a level 1 header) and the **document terminator** (`/END`).
+    
+    These constraints provide increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
+    * The **first half** is invalid because it is missing the required `/END` marker.
+    * The **second half** is invalid because it lacks the required level 1 section header (e.g., `^ Title`).
   - Disallows trailing commas.
+    * No _empty_ values allowed, these must be explicitely type: null, Null, or NULL (case-insensitive), though sections without member are allowed.
   - For production and tool-chain use.
 
 **Note:** Implementations must clearly document the validation mode in use and detail which rules are fully enforced under strict parsing.
- 
+
+### 11.3.1. Table: Lenient vs. Strict Mode
+| Feature                 | Lenient Mode (Default) | Strict Mode | Notes |
+|-------------------------|:----------------------:|:-----------:|-------|
+| Explicit string quoting | ✅ | ✅ | All strings must be enclosed with `"` or `'` — no ambiguity over strings. |
+| Duplicate keys          | ❌ | ❌ |   |
+| One level 1 section header | ❌ | ✅ |   |
+| `/END` required         | ❌ | ✅ |   |
+| Trailing commas         | ✅ | ❌ |   |
+| Invalid escape sequences| ✅ (may warn) | ❌ (error) |   |
+
 ## 12. Implementation Notes
 
 The following guidance is intended to assist developers implementing YINI parsers, engines, or tools. These notes aim to promote consistent interpretation of YINI syntax across different platforms and environments.
