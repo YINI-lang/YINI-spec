@@ -124,8 +124,19 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 - ➖ = Partial, debated, or implementation-dependent
 
 ## C. Summary
-YINI isn’t trying to reinvent the wheel — just make it **smoother, lighter, and easier to steer**. It's a configuration format that's:
+YINI isn’t trying to reinvent the wheel — just make it **smoother, lighter, and easier to steer**.
+
+It's a configuration format that's:
 - **Intuitive for humans**
 - **Consistent for machines**
 
-It exists to fill the gap between minimal INI files and complex formats like TOML or YAML — with a pragmatic, readable, and structured approach.
+It exists to fill the gap between minimal INI files and complex formats like YAML or TOML — with a pragmatic, readable, and structured approach.
+
+**YINI offers:**
+- Structured sections without deep syntax or noise (e.g. indendentation or many `.` or `'` symbols).
+- A simple, consistent grammar with predictable behavior.
+- Clear rules around strings, numbers, booleans, and nulls.
+- Multiple comment styles for flexibility and readability.
+- Optional strict mode for toolchains and validation.
+  
+If this philosophy resonates with you — whether as a user or tooling author — we welcome feedback, testing, contributions, and adoption across the ecosystem.
