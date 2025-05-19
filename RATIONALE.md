@@ -83,7 +83,7 @@ These values guide YINI's syntax, structure, and behavior — making it reliable
 
 #### A.4.1. The # Marker as a Comment Symbol
 - This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
-- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also within 7-bit ASCII).
+- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also is within 7-bit ASCII).
 
 ## B. Versus Other Formats
 ### B.1. Why Not Existing Formats?
