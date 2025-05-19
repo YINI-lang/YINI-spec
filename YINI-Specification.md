@@ -21,7 +21,7 @@ See the full license text at the end of this document.
 
 That said, there are already many excellent configuration formats out there, and most are great at what they do. **YINI isn't trying to replace them** — it's intended as a complement to existing formats.
 
-The motivation for YINI arose during another project, where a configuration format was needed in the spirit of INI — but with a well-defined specification (something INI lacks) and a few modern features. There appeared to be a practical gap that none of the existing formats quite addressed, at least not for the specific needs of that project. 
+YINI was initially developed to fill gaps encountered in another project where INI, JSON, or YAML each fell short. See [A.1. Why was YINI created?](./RATIONALE.md) for background.
 
 While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces a clean, minimalistic design **focused on human readability**, **structural clarity**, and extensibility for the future.  
 One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing complex structures to be expressed in a simple, natural, and visually clear way — without the strict indentation rules or syntax overhead found in some other formats.
@@ -30,9 +30,6 @@ YINI embraces simplicity as a strength, offering just enough rules to stay consi
 
 This specification defines the YINI format with care and clarity, aiming to serve both casual users and implementers seeking a robust, reliable configuration format.  
 Above all, YINI remains true to its founding goal: **make configuration effortless**.
-
-Nonetheless, some aspects of the format may initially raise questions, as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts a C-style approach of using `//` for line comments, however `#` style comments are also supported — as long as the `#` is followed by a space or tab. This requirement prevents clashes with hex-like values. Using `#` to denote hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise, intended to align with conventions found in CSS (for color codes) and similar contexts.
-For example: #FF0033 is interpreted as a hex value, whereas # FF0033 is treated as a comment.
 
 (See more in section 1.2.1, "The # Marker as a Comment Symbol".)
 
@@ -168,12 +165,10 @@ YINI is particularly targeted at users who need a straightforward format for sto
 #### 1.2.1. The # Marker as a Comment Symbol
 In earlier drafts of YINI (up to Beta 5), the `#` character was temporarily used as a section header marker, inspired by Markdown-style headers. However, based on feedback and concerns about clarity, expectations from other formats, and common usage across tools and communities, this decision was revised.
 
-YINI now treats `#` as a comment symbol (instead of being used as a section marker), aligning with conventions found in formats like classic INI, Bash, YAML, and various scripting environments. This change improves predictability for users familiar with other configuration file styles.
+YINI now treats `#` as a comment symbol (instead of being used as a section marker), aligning with conventions found in formats like classic INI, Bash, YAML, and various scripting environments. This change improves predictability for users familiar with other configuration file styles. See [A.4. Design Philosophy](./RATIONALE.md) for background.
 
 - The `#` starts a comment **only** when followed by a space or tab.
 - **Note:** `##` is invalid, `# #` is valid as a comment.
-- This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
-- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also within 7-bit ASCII).
 
 #### 1.2.2. Key Design Goals
 The YINI format was created with the following key design goals in mind:
@@ -191,7 +186,7 @@ The YINI format was created with the following key design goals in mind:
 - **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
 
 ### 1.3. Background and Intent
-YINI was created to serve as a clean, minimal, and predictable configuration format that balances readability with structure. For a deeper look into the motivation and design philosophy, see [Why YINI Exists](./RATIONALE.md).
+YINI was created to serve as a clean, minimal, and predictable configuration format that balances readability with structure. For a deeper look into the motivation and design philosophy, see [Why YINI?](./RATIONALE.md).
 
 ### 1.4. Key Features
 **Note:** Unless explicitly stated otherwise, YINI parsers are expected to operate in lenient (non-strict) mode by default. Strict mode is optional and intended for validation-intensive environments.
@@ -569,7 +564,7 @@ Supported markers:
   - Reserved: `;`
  
 ### 5.3. Sections in Sections (Nested Sections)
-If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, However, when returning to higher (shallower) levels it is allowed to skip levels. - This technique is inspired by Markdown.
+If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, when returning to higher (shallower) levels it is allowed to skip levels. - This technique is inspired by Markdown.
 ```yini
 ^ Prefs
 ^^ Section
@@ -713,7 +708,7 @@ A **Triple-Quoted String** is a string literal that:
 - **May span multiple lines** (i.e., includes newline characters).
 - **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved exactly as written, including whitespace and line breaks.
 - A triple-quoted string ends at the first sequence of three double quotes (`"""`).
-- Does not support any prefix character, triple quoted strings are by design Raw.
+- Triple-quoted strings do not support any prefix characters and are always raw.
 
 Example of Triple-Quoted strings:
 ```yini
@@ -873,7 +868,7 @@ linkItems = [
 ### 9.2. Colon-Based List (using `:`)
 Exclusively for lists, YINI allows an alternative syntax using a colon (`:`) instead of `=`. This style omits square brackets and is intended to improve readability in configurations with list-like values.
 
-Note: Commas are mandatory after items (execpt after the last item), even in multi-line forms in this notation.
+Note: Commas are mandatory after items (except after the last item), even in multi-line forms in this notation.
 
 ```yini
 list1: "oranges", "bananas", "peaches"  // List with three items.
@@ -1002,7 +997,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
-- A YINI file (in strict mode, only optional by default) must have a document terminator, there may only be one single terminator (`/END`).
+- The document terminator (`/END`) is **mandatory in strict mode** and **ignored in lenient mode**.
 
 #### 11.2.2. Character Encoding
 Files **must** be encoded as **UTF-8 without BOM**.
@@ -1094,7 +1089,7 @@ Some YINI parsers may support multiple **validation modes**:
 | Feature                 | Lenient Mode (Default) | Strict Mode | Notes |
 |-------------------------|:----------------------:|:-----------:|-------|
 | Explicit string quoting     | ✅ | ✅ | All strings must be enclosed with `"` or `'` — no ambiguity over strings.|
-| Empty sections allowed | ✅ | ✅ | Sections may contain no members (e.g. `key = 10`), for example a `^ Config` with no members are allowed. |
+| Empty sections allowed | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
 | Duplicate keys          | ❌ | ❌ |   |
 | One level 1 section header | ❌ | ✅ |   |
 | `/END` required         | ❌ | ✅ |   |

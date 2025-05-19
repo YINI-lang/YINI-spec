@@ -36,7 +36,9 @@ This document outlines the **background**, **design motivations**, and **format 
 ## A. Background and Intent
 
 ### A.1. Why was YINI created?
-YINI was created out of a real need: during the development of another project, none of the existing configuration formats truly fit the spirit or requirements of that project. INI was too limited. YAML was too flexible and ambiguous. JSON’s types and structure are fairly close but JSON was too noisy and strict. TOML is quite solid, but ultimately felt too verbose and noisy.
+The motivation for YINI arose during another project, where a configuration format was needed in the spirit of INI — but with a well-defined specification (something INI lacks) and a few modern features.
+
+None of the existing configuration formats truly seemed to fit the spirit or requirements of that project. INI was too limited. YAML was too flexible and ambiguous. JSON’s types and structure are fairly close but JSON was too noisy and strict. TOML is quite solid, but ultimately felt too verbose and noisy.
 
 YINI was born from the desire for a configuration format that is:
 - **Simple** enough for humans to edit without friction.
@@ -74,9 +76,14 @@ YINI is built around a few core principles:
 >
 > — Mr. Seppänen (creator of YINI)
 
-
+Nonetheless, some design choices may seem unconventional at first, and may initially raise questions as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts a C-style approach of using `//` for line comments, however `#` style comments are also supported — as long as the `#` is followed by a space or tab. This requirement prevents clashes with hex-like values. Using `#` to denote hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise, intended to align with conventions found in CSS (for color codes) and similar contexts.
+For example: #FF0033 is interpreted as a hex value, whereas # FF0033 is treated as a comment.
 
 These values guide YINI's syntax, structure, and behavior — making it reliable for both humans and machines.
+
+#### A.4.1. The # Marker as a Comment Symbol
+- This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
+- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also within 7-bit ASCII).
 
 ## B. Versus Other Formats
 ### B.1. Why Not Existing Formats?
