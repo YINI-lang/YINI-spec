@@ -1051,22 +1051,21 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
     **Note:** A section heading named `T`, without any members.
 
 - **Invalid short documents:**
-  - ❌ However, the following file is invalid:
+  - ❌ Invalid: missing the /END terminator:
     ```yini
     ^ Title
     ```
-    **Note:** Missing the end terminator marker (`/END`).
-  - ❌ However, the following file is invalid:
+
+  - ❌  Invalid: no title section present:
     ```yini
     /END
     ```
-    **Note:** Missing title heading section.
 
   - ❌ The following empty file (with only a comment) is also invalid:
     ```yini
     // Invalid empty YINI document in strict mode, the required document terminator (`/END`) is missing.
     ```
-    **Note:** The document terminator is required in a valid YINI document.
+    **Note:** Invalid: file contains only a comment and lacks both `/END` and title section.
 
 ### 11.3. Lenient vs. Strict Modes _(Optional Feature)_
 Non-strict mode (lenient mode) is the default and recommended mode of operation. Parsers should operate in this mode by default unless explicitly configured otherwise to operate in fully strict mode.
@@ -1076,8 +1075,7 @@ Some YINI parsers may support multiple **validation modes**:
 - **Lenient Mode:** 
   - Permissive with minor errors (e.g., trailing commas, mixed line endings).
   - The document terminator (`/END`) is **optional** in lenient mode and may be omitted entirely.
-  - All typing rules still apply.
-  - Note: string literals **must be quoted**. If a value is **not** quoted, it is not a string — no exceptions.
+  - All typing rules still apply — for example, string literals must be quoted: if a value is not quoted, it is not a string — no exceptions.
   - Useful for hand-edited configuration files.
 - **Strict Mode:**
   - Enforces full well-formedness.
@@ -1087,7 +1085,7 @@ Some YINI parsers may support multiple **validation modes**:
     * The **first half** is invalid because it is missing the required `/END` marker.
     * The **second half** is invalid because it lacks the required level 1 section header (e.g., `^ Title`).
   - Disallows trailing commas.
-    * No _empty_ values allowed, these must be explicitely type: null, Null, or NULL (case-insensitive), though sections without member are allowed.
+    * Empty values are disallowed — they must be explicitly typed as `null`, `Null`, or `NULL` (case-insensitive), although empty sections (with no members) are allowed.
   - For production and tool-chain use.
 
 **Note:** Implementations must clearly document the validation mode in use and detail which rules are fully enforced under strict parsing.
@@ -1095,12 +1093,15 @@ Some YINI parsers may support multiple **validation modes**:
 ### 11.3.1. Table: Lenient vs. Strict Mode
 | Feature                 | Lenient Mode (Default) | Strict Mode | Notes |
 |-------------------------|:----------------------:|:-----------:|-------|
-| Explicit string quoting | ✅ | ✅ | All strings must be enclosed with `"` or `'` — no ambiguity over strings. |
+| Explicit string quoting     | ✅ | ✅ | All strings must be enclosed with `"` or `'` — no ambiguity over strings.|
+| Empty sections allowed | ✅ | ✅ | Sections may contain no members (e.g. `key = 10`), for example a `^ Config` with no members are allowed. |
 | Duplicate keys          | ❌ | ❌ |   |
 | One level 1 section header | ❌ | ✅ |   |
 | `/END` required         | ❌ | ✅ |   |
 | Trailing commas         | ✅ | ❌ |   |
 | Invalid escape sequences| ✅ (may warn) | ❌ (error) |   |
+
+⚠️ Strict mode enforces a stricter contract suitable for automated validation and reproducible builds. Lenient mode favors user-friendliness and flexibility for human editing.
 
 ## 12. Implementation Notes
 
