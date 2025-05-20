@@ -2,7 +2,7 @@
   Values should be stored as list, newline flexibility allowed.
 */
 
-# Animals
+^ Animals
 pets: "cat", "dog", "hamster"
 colors:
   "red",

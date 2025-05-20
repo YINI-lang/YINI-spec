@@ -2,10 +2,10 @@
   Each number should parse to its correct numeric value.
 */
 
-# Numbers
+^ Numbers
 dec = 42
 hex1 = 0xf3
-hex2 = #3FA9C7
+hex2 = ^3FA9C7
 bin1 = 0b1010
 bin2 = %1111
 oct = 0o755

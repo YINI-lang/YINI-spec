@@ -4,7 +4,7 @@
     * Using short list notation using with the colon character :
 */
 
-# myPackage
+^ myPackage
 name = "SomeName"
 description = "Some description of something."
 version = "1.8.4"
@@ -18,5 +18,5 @@ exclude:
     "examples",
     "packages"
 
-# devDependencies
+^ devDependencies
 tester = "bin/tester@1.1.4"

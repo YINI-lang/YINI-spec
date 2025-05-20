@@ -1,4 +1,4 @@
-# AppSettings
+^ AppSettings
 
 AppName = "MyApplication"
 Version = 2.1
@@ -6,11 +6,11 @@ IsBeta = OFF
 MaxUsers = 100
 SupportedLanguages: "en-US", "es-ES", "fr-FR"
 
-# FilePaths
+^ FilePaths
 DefaultDirectory = "C:\Users\John\Documents\"
 BackupPath = "/mnt/backup/"
 
-# Options
+^ Options
 EnableLogging = YES
 LogLevel = "debug"
 AutoUpdate = NO

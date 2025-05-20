@@ -2,13 +2,13 @@
   Nesting level respected, no missing intermediary levels.
 */
 
-# Root
+^ Root
 version = "1.0"
 
-## Settings
+^^ Settings
 darkMode = yes
 
-### Advanced
+^^^ Advanced
 detailLevel = 3
 
 

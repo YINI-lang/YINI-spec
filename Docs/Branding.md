@@ -2,9 +2,9 @@
 
 ## YINI "Slogan"
 ```yini
-# YINI
+^ YINI
 Yet_another = 'INI'
-###
+/END
 ```
 
 ---
@@ -21,31 +21,36 @@ Yet_another = 'INI'
 ## YINI Logo Suggiestions
 Suggiestions for a "logo" for YINI.
 
-### Option/Suggiestions 1
-> \# YINI ≡
+### Option/Suggiestions 1a
+> \^ YINI ≡
+
+✅ Currently a strong candidate.
+
+### Option/Suggiestions 1b
+> \~ YINI ≡
 
 ✅ Currently a strong candidate.
 
 ### Option/Suggiestions 2
-> \# Y I N I ≡
+> \^ Y I N I ≡
 
 ### Option/Suggiestions 3
-> \# Y ≡
+> \^ Y ≡
 
 ### Option/Suggiestions 3
 ```
-# Y
-## I
-### N
-#### I
+^ Y
+^^ I
+^^^ N
+^^^^ I
 ```
 
 ### Option/Suggiestions 5
 ```
-#    Y
-##   I
-###  N
-#### I
+^    Y
+^^   I
+^^^  N
+^^^^ I
 ```
 
 ---

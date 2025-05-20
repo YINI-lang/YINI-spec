@@ -2,7 +2,7 @@
     Example of a simple YINI document.
 */
 
-# conf
+^ conf
 
 name = "My Program Name"
 

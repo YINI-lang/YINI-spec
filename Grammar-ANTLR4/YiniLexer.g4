@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- v1.0.0 Beta 5
+ v1.0.0 Beta 6
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -22,23 +22,23 @@ lexer grammar YiniLexer;
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
-COMMENT: BLOCK_COMMENT | LINE_COMMENT;
+// COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
 //SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
-SECTION_HEAD: SECTION_MARKER [ \t]+ WS* IDENT NL+;
+SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
 
 //SECTION_MARKER: SS+ | EUR+ | GT+; SECTION_MARKER : [\u00A7\u20AC\u003E]+; // §, €
-fragment SECTION_MARKER: HASH+ | SS+ | EUR+ | TILDE+;
+fragment SECTION_MARKER: CARET+ | TILDE+ | SS+ | EUR+;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;
-	//}: '/END' | (SS SS SS) | (EUR EUR EUR) | '\u003E\u003E\u003E';
 }: '/END';
 
 SS: '\u00A7'; // Section sign §.
 EUR: '\u20AC'; // Euro sign €.
-GT: '>'; // Greater Than.
+CARET: '^';
 TILDE: '~';
+GT: '>'; // Greater Than.
 
 EQ: '=';
 HASH: '#';
@@ -151,13 +151,37 @@ fragment EXPONENT: ('e' | 'E') SIGN? DIGIT+;
 
 fragment SIGN: ('+' | '-');
 
-NL: (WS* COMMENT* SINGLE_NL COMMENT*);
+NL: ( WS* COMMENT* SINGLE_NL COMMENT*);
 
 SINGLE_NL: ('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
 
-BLOCK_COMMENT:
-	'/*' .*? '*/' -> skip; // Block AKA Multi-line comment.
+/*
+ DISABLE_LINE:
+ Skip lines starting with `--`.
+ */
+DISABLE_LINE: ('--' ~[\r\n]*) -> skip;
 
-LINE_COMMENT: '//' ~[\r\n]* -> skip;
+COMMENT: LINE_COMMENT | INLINE_COMMENT | BLOCK_COMMENT;
+/*
+ FULL_LINE_COMMENT:
+ Remains in input, but hidden
+ (doesn't interfere with parsing).
+ */
+LINE_COMMENT: (';' ~[\r\n]*) -> channel(HIDDEN);
+
+/*
+ INLINE_COMMENT: 
+ Remains in input, but hidden (doesn't interfere with parsing).
+ */
+INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> channel(HIDDEN);
+
+/*
+ BLOCK_COMMENT:
+ Can appear anywhere, spanning multiple lines.
+ Remains in input, but hidden
+ (doesn't interfere with parsing).
+ */
+BLOCK_COMMENT:
+	'/*' .*? '*/' -> channel(HIDDEN); // Block AKA Multi-line comment.
