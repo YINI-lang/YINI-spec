@@ -2,6 +2,7 @@
 Edits and updates **in this repository**. (Very minor changes are not listed.)
 
 2025 May  (spec: v1.0.0 Beta 6 + Updates)
+- Fixed backticked identifiers (phrases) (as per Spec) cannot include tabs, newlines, or other backticks.
 
 2025 May  (spec: v1.0.0 Beta 6)
 - Reworked the use of `#` for comments, and added `^` as new default marker for sections. Updated README and Branding to reflect this.

@@ -79,7 +79,7 @@ IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 	)*
 	| PHRASE;
 
-PHRASE: '`' ~[\r\n]* '`'; // NOTE: Only for keys!
+PHRASE: '`' ~[`\r\n\t]* '`'; // NOTE: Only for keys!
 
 NUMBER:
 	INTEGER ('.' INTEGER?)? EXPONENT?
