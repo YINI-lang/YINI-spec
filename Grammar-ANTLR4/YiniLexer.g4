@@ -151,7 +151,7 @@ fragment EXPONENT: ('e' | 'E') SIGN? DIGIT+;
 
 fragment SIGN: ('+' | '-');
 
-NL: (WS* INLINE_COMMENT* SINGLE_NL INLINE_COMMENT*);
+NL: ( WS* COMMENT* SINGLE_NL COMMENT*);
 
 SINGLE_NL: ('\r' '\n'? | '\n');
 
@@ -163,15 +163,17 @@ WS: [ \t]+ -> skip;
  */
 DISABLE_LINE: ('--' ~[\r\n]*) -> skip;
 
+COMMENT: LINE_COMMENT | INLINE_COMMENT | BLOCK_COMMENT;
 /*
  FULL_LINE_COMMENT:
- Skip full-line comments starting with `;`.
+ Remains in input, but hidden
+ (doesn't interfere with parsing).
  */
-LINE_COMMENT: (';' ~[\r\n]*) -> skip;
+LINE_COMMENT: (';' ~[\r\n]*) -> channel(HIDDEN);
 
 /*
  INLINE_COMMENT: 
- Remains in input, but hidden (doesn’t interfere with parsing).
+ Remains in input, but hidden (doesn't interfere with parsing).
  */
 INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> channel(HIDDEN);
 
@@ -179,7 +181,7 @@ INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> channel(HIDDEN);
  BLOCK_COMMENT:
  Can appear anywhere, spanning multiple lines.
  Remains in input, but hidden
- (doesn’t interfere with parsing).
+ (doesn't interfere with parsing).
  */
 BLOCK_COMMENT:
 	'/*' .*? '*/' -> channel(HIDDEN); // Block AKA Multi-line comment.
