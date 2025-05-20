@@ -68,32 +68,44 @@ Definitions for rules in strict-mode (lenient is default).
 
 ## 🧠 Quick Examples
 
-### Before (Traditional INI or ad-hoc config)
-```ini
-[Server]                # Defines a section named Server.
-host=localhost
-port=8080
+### Before (YAML)
+```
+server:
+    connection:
+        host: "localhost"
+        port: 8080  # Dev port
+    auth:
+        enabled: true
+        credentials:
+            username: "admin"
+            password: "secret"  # Change me!
 
-[Features]              # Defines a section named Features.
-login=true
-notifications=false
+# This config is indented. Like, really indented.
 ```
 
 ### After (YINI)
-```js
-^ Server                // Defines a section named Server.
-host = "localhost"
-port = 8080
+```yini
+^ server
 
-^ Features              // Defines a section named Features.
-login = true
-notifications = false
+^^ connection
+host = 'localhost'
+port = 8080  // Dev port
+
+^^ auth
+enabled = true
+
+^^^ credentials
+username = 'admin'
+password = 'secret'  // Change me!
+
+; This config stays pretty clean and easy to read.
 ```
 
 💡 Notes:
 > - In YINI, `^` defines section headers.
 > - `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
-> - All strings must be enclosed in quotes (`"` or `'`).
+> - `;` can be used for full line comments (`//` and `#` can be used too).
+> - All strings must be enclosed in quotes (`'` or `"`).
 > - Natural, readable keys and values separated by (`=`).
 > - Strong typing without heavy syntax.
 
