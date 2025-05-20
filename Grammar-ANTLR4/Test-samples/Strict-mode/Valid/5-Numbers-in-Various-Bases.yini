@@ -2,7 +2,7 @@
   Each number should parse to its correct numeric value.
 */
 
-# Numbers
+^ Numbers
 dec = 42
 hex1 = 0xf3
 hex2 = #3FA9C7

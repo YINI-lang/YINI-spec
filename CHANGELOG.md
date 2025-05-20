@@ -1,6 +1,10 @@
 # CHANGELOG
 Edits and updates **in this repository**. (Very minor changes are not listed.)
 
+2025 May  (spec: v1.0.0 Beta 5 + Updates)
+- Reworked the use of `#` for comments, and added `^` as new default marker for sections. Updated README and Branding to reflect this.
+- Expanded README example with showing the use of the full line comment `;`.
+
 2025 May  (spec: v1.0.0 Beta 5)
 - Updated Spec and grammar with new escape characters.
 - In Spec, reserved `{ }` for future use.
@@ -14,6 +18,10 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 - Included "Acknowledgments" in Spec.
 - Reworded some parts of the README.
 - Added in README another section "Comparison: YINI vs Other Formats".
+- Added in README example of TOML to YINI, using nested sections.
+- In README using C-style commenting as YINI follows this philosify primarly, though alternative commenting using `#` and `;` are supported too.
+- Added RATIONALE.md (with "Background and Intent" and "Versus Other Formats") and small section mentioning it in the Spec.
+- Fixed a handful erroneous examples and samples, that should now parse okey.
 
 2025-05-03
 - Reworded README as including "alternative to INI".

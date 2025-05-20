@@ -1,0 +1,8 @@
+/*
+  INVALID in strict-mode.
+*/
+
+^ Nulls
+path = NULL
+empty =	// INVALID in strict-mode, missing explicit null value.
+/END

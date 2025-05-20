@@ -2,7 +2,7 @@
     Example 1 of a package yini - a more simpler version.
 */
 
-# myPackage
+^ myPackage
 name = "SomeName"
 description = "Some description of something."
 version = "1.8.4"
@@ -18,5 +18,5 @@ exclude = [
     "packages",
 ]
 
-# devDependencies
+^ devDependencies
 tester = "bin/tester@1.1.4"
