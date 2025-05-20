@@ -33,17 +33,5 @@ In the beginning, `YINI` was known by its working name `MINI`, which later evolv
 
 ---
 
-## Versions / Releases
-
-| Version                  | Date YYYY-MM-DD| Description |
-|--------------------------|----------------|-------------|
-| YINI-spec v1.0.0 Beta 3  | 2025-04-25     | Third Beta
-| YINI-spec v1.0.0 Beta 2  | 2025-04-23     | Second Beta
-| YINI-spec v1.0.0 Beta 1  | 2025 Apr       | First Beta
-| YINI-spec v1.0.0 Alpha 2 | 2024 Oct       | Pre-Beta
-| YINI-spec v1.0.0 Alpha   | 2024 Oct       | Initial release
-
----
-
 ## License
 This project is licensed under the Apache-2.0 license.

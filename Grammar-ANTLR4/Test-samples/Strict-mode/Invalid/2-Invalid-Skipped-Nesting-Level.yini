@@ -2,8 +2,8 @@
   SHOULD FAIL — level 2 section is missing before level 3.
 */
 
-# Root
+^ Root
 
-### TooDeep
+^^^ TooDeep
 value = 123
 /END

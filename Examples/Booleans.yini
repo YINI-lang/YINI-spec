@@ -2,7 +2,7 @@
     Boolean values can be any of these 3 forms/styles.
 */
 
-# title
+^ title
 
 bool1 = FALSE
 bool2 = TRUE

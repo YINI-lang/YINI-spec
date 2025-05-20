@@ -2,5 +2,5 @@
   SHOULD FAIL — missing required terminal line '/END'.
 */
 
-# Data
+^ Data
 key = 12
