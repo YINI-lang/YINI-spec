@@ -2,7 +2,7 @@
   Raw, H-strings (trimming and flattening whitespace), and C-strings (escape sequences) parsed correctly.
 */
 
-# Strings
+^ Strings
 a = "normal"
 b = 'also normal'
 c = h"Multi-line

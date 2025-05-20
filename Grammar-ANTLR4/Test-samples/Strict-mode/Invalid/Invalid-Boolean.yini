@@ -2,7 +2,7 @@
   SHOULD FAIL
 */
 
-#bools
+^bools
 
 bool1=falsy	// ERROR HERE, no literal falsy!
 bool2=true

@@ -2,10 +2,10 @@
     Lists with some newlines <NL> and comments in between.
 */
 
-# Lists3
+^ Lists3
 
 
-## ListWithBrackets
+^^ ListWithBrackets
 
 // List with brackets.
 
@@ -20,7 +20,7 @@ listOfLists = [
 
 
 // List without brackets.
-## ListWithoutBrackets
+^^ ListWithoutBrackets
 
     // List without brackets.
 	listOfLists:

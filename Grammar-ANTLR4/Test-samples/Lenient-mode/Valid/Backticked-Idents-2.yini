@@ -2,7 +2,7 @@
   Settings with Special Key Names
 */
 
-# Settings
+^ Settings
 `Output Path` = "/usr/local/output/"
 `Enable Logging` = ON
 `Max Retries` = 5

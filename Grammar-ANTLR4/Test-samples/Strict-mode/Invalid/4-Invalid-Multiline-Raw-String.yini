@@ -2,7 +2,7 @@
   SHOULD FAIL — raw strings cannot span multiple lines.
 */
 
-# Strings
+^ Strings
 multi = "This
 is not
 allowed"
