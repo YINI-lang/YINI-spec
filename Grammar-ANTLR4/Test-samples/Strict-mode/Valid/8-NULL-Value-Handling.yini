@@ -4,5 +4,6 @@
 
 ^ Nulls
 path = NULL
-empty =
+empty = Null
+
 /END
