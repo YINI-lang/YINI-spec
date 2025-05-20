@@ -5,7 +5,7 @@ Checklist for maintainer(s) of this repository.
 
 1. **Merge develop into staging:** The env `develop` into `staging` (as staging as the base).
    - Hint/Note: Create a new branch (e.g. `mergein/develop-into-staging-20250520`) on staging.
-2. **Update with bumbed verstrings in staging:** Update and patch all version strings (e.g. from `v1.0.0 Beta 4 + Updates`) in all files, bumbed to the correct and final version strings (e.g. from `v1.0.0 Beta 5`).
+2. **Update with bumbed verstrings in staging:** Update and patch all version strings (e.g. from `v1.0.0 Beta 4 + Updates`) in all files, bumbed to the correct and final version strings (e.g. to `v1.0.0 Beta 5`, note: leave out the part `+ Updates`).
    - Update the version string in all files.
    - In spec doc, check that Changes is correct.
    - Check that CHANGELOG.md is up to date.
