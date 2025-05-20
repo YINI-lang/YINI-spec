@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \~ YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 5 + Updates
+**Version:** v1.0.0 Beta 6
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -1582,7 +1582,9 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 ### 15.4. Spec Changes
 A running log of changes and updates **to the YINI specification**.
 
-v1.0.0 Beta 5 + Updates
+Note: Dates are in international format, YYYY-MM-DD.
+
+v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
   * **(An important caveet):** comments starting with `#` must be followed by a space or tab.
   * This requirement prevents clashes with hex-like values. Using `#` for hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise to align with conventions found in CSS (for color) and similar contexts. For example: `#FF0033` is a hex value, whereas `# FF0033` is treated as a comment.

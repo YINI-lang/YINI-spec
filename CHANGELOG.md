@@ -1,7 +1,7 @@
 # CHANGELOG
 Edits and updates **in this repository**. (Very minor changes are not listed.)
 
-2025 May  (spec: v1.0.0 Beta 5 + Updates)
+2025 May  (spec: v1.0.0 Beta 6)
 - Reworked the use of `#` for comments, and added `^` as new default marker for sections. Updated README and Branding to reflect this.
 - Expanded README example with showing the use of the full line comment `;`.
 
