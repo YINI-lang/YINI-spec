@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \~ YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 6
+**Version:** v1.0.0 Beta 6 + Updates
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -1583,6 +1583,9 @@ Mr. Seppänen has been programming since the mid-80s, working in languages like 
 A running log of changes and updates **to the YINI specification**.
 
 Note: Dates are in international format, YYYY-MM-DD.
+
+v1.0.0 Beta 6 + Updates
+- --upcoming changes--
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
