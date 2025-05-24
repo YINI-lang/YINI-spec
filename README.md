@@ -13,6 +13,7 @@
 ---
 
 - ➡️ [Read the YINI Specification](./YINI-Specification.md)
+- [Why YINI? Read the Rationale](./RATIONALE.md)
 
 ---
 
@@ -270,7 +271,7 @@ The specification still needs more testing — especially regarding string conca
 ### Acknowledgments
 YINI has grown and improved thanks to the insights, questions, and thoughtful feedback from the community. Much of the specification — and this repository — reflects that shared input.
 
-For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./Docs/RATIONALE.md) document.
+For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## 🧾 License
 
