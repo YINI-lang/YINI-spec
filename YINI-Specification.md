@@ -33,7 +33,9 @@ Above all, YINI remains true to its founding goal: **make configuration effortle
 
 (See more in section 1.2.1, "The # Marker as a Comment Symbol".)
 
-Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community, see Section 15.2, _Acknowledgments_ for more.
+Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community.
+
+For more feedback details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ---
 
@@ -253,7 +255,7 @@ Here’s an example of a YINI document with a shebang that could be used in a Un
 ```yini
 #!/usr/bin/env yini
 
-# Config
+^ Config
 key = value
 ```
 
@@ -571,10 +573,19 @@ If you want to put a section under another section, nested sections, use additio
 ^^^ SubSection
 ```
 
+Or, with indentations (only for human readability):
+```yini
+^ Prefs
+    ^^ Section
+        ^^^ SubSection
+```
+
 ```txt
 ^ Level1
 ^^^ Level3  // ❌ Invalid: cannot skip Level2
 ```
+
+💡While YINI does not require indentation before section headers, it is recommended to visually indent section headers according to their nesting level — this make for for better human readability.
 
 ✅ **Example of valid section nesting:**
 ```yini
@@ -1327,9 +1338,9 @@ language = "en"
 notifications = true
 volume = 85
 recent_files = [
-  "report.yini",
-  "draft_0423.yini",
-  "budget2025.yini"
+    "report.yini",
+    "draft_0423.yini",
+    "budget2025.yini"
 ]
 ```
 
@@ -1387,9 +1398,9 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 `Night Mode` = OFF
 `Use Cache` = ON
 
-~~ `Cache Config`
-`Cache Expiry` = 86400  		// In seconds
-`Last Purge Date (YYYY-MM-DD)` = "2025-05-25"
+    ~~ `Cache Config`
+    `Cache Expiry` = 86400  		// In seconds
+    `Last Purge Date (YYYY-MM-DD)` = "2025-05-25"
 ```
 
 **Notes:**
@@ -1427,9 +1438,9 @@ active = true
 theme = "dark"
 language = "en"
 
-^^ Display
-resolution = "1920x1080"
-fullscreen = true
+    ^^ Display
+    resolution = "1920x1080"
+    fullscreen = true
 ```
 
 **JSON Equivalent:**
@@ -1529,9 +1540,9 @@ verified = true
 ^ App
 version = "2.5"
 
-^^ settings
-theme = "light"
-notifications = true
+    ^^ settings
+    theme = "light"
+    notifications = true
 ```
 
 #### 14.4.3. JSON Array to YINI
@@ -1558,18 +1569,9 @@ Copyright 2024-2025 Gothenburg, Marko K. Seppänen. (Sweden via
 Finland).
 
 ### 15.2. Acknowledgments
-Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community.
-Big thanks to readers and contributors on Reddit, Medium, and other platforms — including those I may have unintentionally forgotten.
+_YINI would not exist in this form and shape what it is today, without the many insights, challenges, and thoughtful, constructive feedback from the community.
 
-**Special thanks to:**
-* David Demelier (_markand67_) — discussions and feedback during Beta 3–4 on `/END`, `#`, etc.
-* User _zanfar_ (Reddit) — feedback on `#`, etc.
-* User _lelanthran_ (Reddit) — feedback on `#`, etc.
-* User _saxbophone_ (Reddit) — feedback on `#`, etc.
-* User _JoshYx_ (Reddit) — raised concerns around `###`, etc.
-* User _tonyp7_ (Reddit) — support and encouragement.
-* User _cat_in_the_wall_ (Reddit) — support and encouragement.
-* ...and anyone else I may have forgotten. **Your contributions are appreciated.**
+For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ### 15.3. Author(s)
 This specification is created and maintained by Marko K. Seppänen.
@@ -1580,9 +1582,12 @@ First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
 
 ### 15.4. Spec Changes
-A running log of changes and updates **to the YINI specification**.
+A running log of changes and updates **to this YINI specification**.
 
-Note: Dates are in international format, YYYY-MM-DD.
+Notes:
+- More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
+- All dates in international format, YYYY-MM-DD.
+
 
 v1.0.0 Beta 6 + Updates
 - --upcoming changes--
@@ -1640,4 +1645,5 @@ Below are some common mistakes and misunderstandings when writing YINI files, es
 
 ---
 
+###### ~ YINI Specification ≡  
 [yini-lang.org](https://yini-lang.org)

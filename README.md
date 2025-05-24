@@ -80,28 +80,29 @@ server:
             username: "admin"
             password: "secret"  # Change me!
 
-# This config is indented. Like, really indented.
+# Like Python, structure relies entirely on indentation — easy to misread or misplace.
 ```
 
 ### After (YINI)
 ```yini
 ^ server
 
-^^ connection
-host = 'localhost'
-port = 8080  // Dev port
+    ^^ connection
+    host = 'localhost'
+    port = 8080  // Dev port
 
-^^ auth
-enabled = true
+    ^^ auth
+    enabled = true
 
-^^^ credentials
-username = 'admin'
-password = 'secret'  // Change me!
+        ^^^ credentials
+        username = 'admin'
+        password = 'secret'  // Change me!
 
-; This config stays pretty clean and easy to read.
+; Clear structure with visual nesting — still easy to read and follow.
 ```
 
 💡 Notes:
+> - Indentation in YINI is purely for human readability.
 > - In YINI, `^` defines section headers.
 > - `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
 > - `;` can be used for full line comments (`//` and `#` can be used too).
@@ -133,13 +134,13 @@ code = "dev"
 ^ Service               // Defines a section named Server.
 Enabled = true
 
-^^ Cache
-Type = "redis"          // Defines Cache, a sub-section of Server.
-TTL = 3600
+    ^^ Cache
+    Type = "redis"          // Defines Cache, a sub-section of Server.
+    TTL = 3600
 
-^^^ Options             // Defines Options, a sub-section of Cache.
-Host = "127.0.0.1"
-Port = 6379
+        ^^^ Options             // Defines Options, a sub-section of Cache.
+        Host = "127.0.0.1"
+        Port = 6379
 
 ^ Env                   // Defines a section named Env.
 code = "dev"
@@ -246,7 +247,9 @@ https://github.com/YINI-lang/yini-parser-typescript
 The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
 
 ### Acknowledgments
-Some parts of the YINI specification have benefited from valuable community feedback. See section 15.2, "Acknowledgments", for more details.
+YINI has grown and improved thanks to the insights, questions, and thoughtful feedback from the community. Much of the specification — and this repository — reflects that shared input.
+
+For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./Docs/RATIONALE.md) document.
 
 ## 🧾 License
 
@@ -254,4 +257,5 @@ YINI is licensed under the [Apache License 2.0](./LICENSE).
 
 ---
 
-> _YINI: Clean. Readable. Structured._
+> ~ **YINI ≡** - _A Clean, Readable, and Structured configuration format_  
+> [https://yini-lang.org](https://yini-lang.org)
