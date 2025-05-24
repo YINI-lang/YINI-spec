@@ -29,7 +29,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - Added in README another section "Comparison: YINI vs Other Formats".
 - Added in README example of TOML to YINI, using nested sections.
 - In README using C-style commenting as YINI follows this philosify primarly, though alternative commenting using `#` and `;` are supported too.
-- Added RATIONALE.md (with "Background and Intent" and "Versus Other Formats") and small section mentioning it in the Spec.
+- Added `RATIONALE.md` (with "Background and Intent" and "Versus Other Formats") and small section mentioning it in the Spec.
 - Fixed a handful erroneous examples and samples, that should now parse okey.
 
 ## 2025-05-03
