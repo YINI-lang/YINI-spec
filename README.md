@@ -110,6 +110,27 @@ server:
 > - Natural, readable keys and values separated by (`=`).
 > - Strong typing without heavy syntax.
 
+### With Alternative Indentation (YINI)
+```yini
+^ server
+
+    ^^ connection
+        host = 'localhost'
+        port = 8080  // Dev port
+
+    ^^ auth
+        enabled = true
+
+        ^^^ credentials
+            username = 'admin'
+            password = 'secret'  // Change me!
+
+; If preferred, YAML indentation style can be used as well
+; — structure is still defined by section markers.
+```
+
+💡 In YINI, indentation is only for human readability.
+
 ---
 
 ### Before (TOML)
