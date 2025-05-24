@@ -44,16 +44,16 @@ server:
 ```yini
 ^ server
 
-^^ connection
-host = "localhost"
-port = 8080  // Dev port
+    ^^ connection
+    host = "localhost"
+    port = 8080  // Dev port
 
-^^ auth
-enabled = true
+    ^^ auth
+    enabled = true
 
-^^^ credentials
-username = "admin"
-password = "secret"  // Change me!
+        ^^^ credentials
+        username = "admin"
+        password = "secret"  // Change me!
 
 ; This config stays pretty clean and easy to read.
 ```
