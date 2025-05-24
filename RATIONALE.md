@@ -11,7 +11,7 @@ This document outlines the **background**, **design motivations**, and **format 
 ### **Part A – Background and Motivation**
 Why YINI exists, what problems it aims to solve.
 
-&nbsp;&nbsp;&nbsp;&nbsp;A.1. Why was YINI created?  
+&nbsp;&nbsp;&nbsp;&nbsp;A.1. Why was YINI created? [-> Link](./RATIONALE.md#11-what-is-yini)  
 &nbsp;&nbsp;&nbsp;&nbsp;A.2. What was missing from other formats?  
 
 ---
