@@ -4,17 +4,17 @@
 
 ^ `Main Menu`
 
-^^ `File Menu`
-`Label` = "File"
-`Shortcut` = "Ctrl+F"
+    ^^ `File Menu`
+    `Label` = "File"
+    `Shortcut` = "Ctrl+F"
 
-^^^ `New Document`
-`Action` = "CreateNew()"
+        ^^^ `New Document`
+        `Action` = "CreateNew()"
 
-^^^ `Open File`
-`Action` = "OpenDialog()"
+        ^^^ `Open File`
+        `Action` = "OpenDialog()"
 
-^^^ `Save File`
-`Action` = "SaveDoc()"
+        ^^^ `Save File`
+        `Action` = "SaveDoc()"
 
 /END

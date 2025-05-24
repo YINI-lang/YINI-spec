@@ -54,3 +54,8 @@ Suggiestions for a "logo" for YINI.
 ```
 
 ---
+
+**~ YINI ≡**  
+> A Clean, Readable, and Human-friendly configuration format.  
+
+[yini-lang.org](https://yini-lang.org)

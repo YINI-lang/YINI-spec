@@ -11,38 +11,38 @@
 ^ Lists4
 
 
-/**	List 
-	with 
-	brackets.
- */
-^^ ListWithBrackets
+	/**	List 
+		with 
+		brackets.
+	*/
+	^^ ListWithBrackets
 
-/* List 
-	with 
-		brackets. */
+	/* List 
+		with 
+			brackets. */
 
-list1 = [ "Orange", "Banana", "Pear", "Peach" ] /* Some
-	comment. */
-list2 = []  /* Empty list. */
-/* List with brackets. */
-listOfLists = [
-		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
-		["stylesheet", "css/general.css"],
-		// Next line is the last element.
-		["stylesheet", "css/themes.css"]    /* Last element. */
+	list1 = [ "Orange", "Banana", "Pear", "Peach" ] /* Some
+		comment. */
+	list2 = []  /* Empty list. */
+	/* List with brackets. */
+	listOfLists = [
+			["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
+			["stylesheet", "css/general.css"],
+			// Next line is the last element.
+			["stylesheet", "css/themes.css"]    /* Last element. */
 	]
 
 
-/* List
-	without
-		brackets. */
+	/* List
+		without
+			brackets. */
 
-^^ ListWithoutBrackets
+	^^ ListWithoutBrackets
 
-    /**	List
+	/**	List
 		without 
 		brackets.
-	 */
+	*/
 	listOfLists:
 		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
 		/* Ignore this comment. */ ["stylesheet", "css/general.css"],

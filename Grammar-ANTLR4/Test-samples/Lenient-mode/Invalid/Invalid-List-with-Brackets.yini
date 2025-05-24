@@ -4,7 +4,7 @@
 
 ^ Lists2
 
-^^ ListWithBrackets
+	^^ ListWithBrackets
 
 	list1 = [ "Orange", "Banana", "Pear", "Peach" ]
 

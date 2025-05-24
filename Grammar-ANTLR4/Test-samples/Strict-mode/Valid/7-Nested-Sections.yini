@@ -5,10 +5,10 @@
 ^ Root
 version = "1.0"
 
-^^ Settings
-darkMode = yes
+    ^^ Settings
+    darkMode = yes
 
-^^^ Advanced
-detailLevel = 3
+        ^^^ Advanced
+        detailLevel = 3
 
 /END
