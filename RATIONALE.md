@@ -12,7 +12,7 @@ This document outlines the **background**, **design motivations**, and **format 
 Why YINI exists, what problems it aims to solve.
 
 &nbsp;&nbsp;&nbsp;&nbsp;A.1. Why was YINI created? [-> Link](./RATIONALE.md#a1-why-was-yini-created)  
-&nbsp;&nbsp;&nbsp;&nbsp;A.2. What was missing from other formats?  
+&nbsp;&nbsp;&nbsp;&nbsp;A.2. What was missing from other formats? [Link](./RATIONALE.md#a2what-was-missing-from-other-formats)  
 
 ---
 
