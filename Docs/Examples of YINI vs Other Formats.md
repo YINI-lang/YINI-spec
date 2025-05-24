@@ -37,7 +37,7 @@ server:
             username: "admin"
             password: "secret"  # Change me!
 
-# This config is indented. Like, really indented.
+# Like Python, structure relies entirely on indentation — easy to misread or misplace.
 ```
 
 ### After (YINI)
