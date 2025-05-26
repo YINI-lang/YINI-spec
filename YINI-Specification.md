@@ -306,8 +306,8 @@ key3 = "Peach"  // This is also an inline comment.
 While YINI is not indentation-sensitive, the following whitespace `<WS>` behaviors are defined:
 
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
-- Tabs (`<TAB>`, U+0009) and blank spaces (`<SPACE>`, U+0020) are ignored outside of quoted values and in the hash comment `#`.
-- Indentation is optional and has no syntactic meaning, but it is recommended to improve visual structure and human readability.
+- Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are ignored outside of strings and section headers.
+- Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
 - Note: In the context of strings, the term `<Unicode-WS>` is used to refer to a broader range of Unicode whitespace characters, beyond just tab and space.
 
 ### 3.3. Comments
@@ -382,10 +382,10 @@ An _**identifier**_ can be one of two forms below:
   ```
 
 - **Form 2: Backticked Identifier:**
-  - A phrase is a name wrapped in backticks  ``` ` ```.
+  - A phrase is a name wrapped in backticks  ``` ` ```, can include spaces.
   - It must be on a single line and **cannot contain** another backtick.
-  - Backticked identifiers **cannot contain** tabs, line breaks (newline), or any other special control characters (C0 control characters).
-  - Escape sequences inside them are not interpreted.
+  - Backticked identifiers **cannot contain** tabs, new lines, or other control characters (i.e., any C0 characters in the range U+0000–U+001F), except spaces are allowed.
+  - Any escape sequences inside them are not interpreted.
 
   **Note:** C0 control characters: range U+0000–U+001F (legacy ASCII control block).
   
@@ -670,7 +670,7 @@ Like raw strings, Hyper Strings treat backslashes as literal characters — esca
 Hyper Strings are designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
 
 - `<NL>` refers to newline/linebreak of in combination of `CR`, `LF`, or `CRLF`.
-- `<Unicode-WS>` includes all **Unicode whitespace characters** in the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and `Cc` (control characters like `TAB` and `LF`).
+- `<Unicode-WS>` includes common **Unicode whitespace characters** from the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and a limited subset of `Cc` (such like `TAB` and `LF`) commonly treated as whitespace in text contexts.
 - Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
 - Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
 - Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
@@ -694,8 +694,6 @@ My name is John Doe, and this is a test string.
 YINI also supports standard string literals, referred to as **Classic Strings**, or **C-Strings** for short. These strings are prefixed with either `C` or `c`.
 
 C-Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Special characters (C0 control characters) are not allowed — except for space and tab — must be written using escape sequences and cannot appear directly.
-
-**Note:** C0 control characters: range U+0000–U+001F (legacy ASCII control block).
 
 Classic strings must begin and end on the same line.
 
