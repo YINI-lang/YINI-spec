@@ -239,7 +239,9 @@ YINI files must be encoded in **UTF-8**. This encoding ensures compatibility wit
 
 - **Mandatory Encoding:** All YINI files should be encoded using UTF-8 without a Byte Order Mark (BOM). This guarantees that the file content is universally readable across different platforms.
 
-- **Character Set:** Only Unicode characters are allowed. Special or non-printable characters, such as control characters (except spaces, tabs, and newlines are allowed), should not be used unless specifically required for escape sequences.
+- **Character Set:** YINI files must use Unicode. Control characters and other non-printable characters should be avoided, except for spaces, tabs, and newlines. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-quoted strings.
+
+Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
 
 ### 2.2. File Extension
 YINI files should use the `.yini` file extension. This extension helps clearly identify the file type and ensures proper handling by tools and parsers designed for the YINI format.
@@ -266,6 +268,8 @@ The syntax of YINI is designed to be minimalistic and human-readable while offer
 YINI files consist of a series of **sections, members** (key-value pairs), and optional **comments**. The following rules define the basic structure of a valid YINI file:
 
 **Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure, except in section headers, where spacing (tabs or spaces) is required between the section marker and the section name. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
+
+Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
 
 **Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `^`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
 
@@ -301,7 +305,7 @@ key3 = "Peach"  // This is also an inline comment.
 ### 3.2. Whitespace and Indentation
 While YINI is not indentation-sensitive, the following whitespace behaviors are defined:
 
-- Newlines (`<NL>`) may be either Unix-style (`LF`, U+000A) or Windows-style (`CRLF`, U+000D U+000A).
+- Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
 - Tabs (`<TAB>`, U+0009) and blank spaces (`<SPACE>`, U+0020) are ignored outside of quoted values and section headers.
 - Indentation is not syntactically required but may be used to visually structure content for clarity.
 
@@ -376,7 +380,7 @@ An _**identifier**_ can be one of two forms below:
   name
   ```
 
-- **Form 2: Identifier Enclosed in Backticks:**
+- **Form 2: Backticked Identifier:**
   - A phrase is a name wrapped in backticks  ``` ` ```.
   - It must be on a single line and **cannot contain** another backtick.
   - Backticked identifiers **cannot contain** tabs or line breaks (newline).
@@ -1127,7 +1131,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 ### 12.2. Line Handling and Whitespace
 
 * Newline normalization is required:
-  * Support both LF (`0x0A`) and CRLF (`0x0D 0x0A`).
+  * Support all three forms: LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`.
 * Leading/trailing whitespaces (tabs or spaces):
   * Trim from section headers and keys.
 * Hyper Strings (H-Strings):
