@@ -77,9 +77,9 @@ IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		| '0' ..'9'
 		| '_'
 	)*
-	| PHRASE;
+	| IDENT_BACKTICKED;
 
-PHRASE: '`' ~[`\r\n\t]* '`'; // NOTE: Only for keys!
+IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
 
 NUMBER:
 	INTEGER ('.' INTEGER?)? EXPONENT?
@@ -108,11 +108,13 @@ HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''
 	| ('h' | 'H') '"' ( ~["])* '"';
 
 // Classic string literal.
-CLASSIC_STRING: ('c' | 'C') '\'' (ESC_SEQ | ~('\''))* '\''
-	| ('c' | 'C') '"' ( ESC_SEQ | ~('"'))* '"';
+CLASSIC_STRING:
+    ('c' | 'C') '\'' (ESC_SEQ | ~[\u0000-\u001F '\\'])* '\''
+  | ('c' | 'C') '"'  (ESC_SEQ | ~[\u0000-\u001F "\\"])* '"';
 
 TRIPLE_QUOTED_STRING:
-	'"""' (~["] | '"' ~["] | '""' ~["])* '"""';
+	//'"""' (~["] | '"' ~["] | '""' ~["])* '"""';
+	'"""' .*? '"""'; // Greedy-safe because of .*? (non-greedy).
 
 // Note: Like 8.2 in specification.
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;

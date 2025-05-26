@@ -9,6 +9,7 @@ More details of feedback, see section D.2, _“Acknowledgments & Special Thanks�
 - Moved _"Acknowledgments"_ from the specificaton file to the `RATIONALE.MD` under the section _"Acknowledgments & Special Thanks"_— to shorten the main spec and improve formal structure.
 - Refactored the structure and order of sections in `RATIONALE.MD` for improved readability and flow.
 - Updated most YINI code examples to use indented nested sections for improved human readability, based on community feedback.
+- Clarified and updated in Spec and the lexer where special/control characters can be and are used,
 
 ## 2025 May  (spec: v1.0.0 Beta 6)
 - Reworked the use of `#` for comments, and added `^` as new default marker for sections. Updated README and Branding to reflect this.
