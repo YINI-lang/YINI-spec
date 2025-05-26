@@ -95,6 +95,11 @@ These values guide YINI's syntax, structure, and behavior — making it reliable
 - This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
 - Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also is within 7-bit ASCII).
 
+#### B.2.2. Non-standard Octal Escape
+Octal escapes in YINI use the `\oNNN` format, which differs from the traditional `\NNN` style used in C and Python. 
+
+This design choice was made because `\NNN` provides no clear indication of the number base, unlike `\u` for Unicode (4-digit hex) and `\U` for extended Unicode (8-digit hex). The `\oNNN` format in YINI follows the same analogy, making the base explicit and the escape more readable and self-descriptive.
+
 ## C. YINI vs Other Formats
 ### C.1. Why Not Existing Formats?
 Here's a quick summary of why YINI doesn't just use an existing format:
