@@ -383,12 +383,9 @@ An _**identifier**_ can be one of two forms below:
 
 - **Form 2: Backticked Identifier:**
   - A phrase is a name wrapped in backticks  ``` ` ```.
-  - Backticked identifiers must be on a single line and must not contain tabs, line breaks, or other control characters (U+0000–U+001F), except for ordinary spaces.
-  - Any escape sequences inside them are not interpreted.
-  - Backticked identifiers are parsed as-is — their contents are treated literally.
-
-  **Note:** C0 control characters: range U+0000–U+001F (legacy ASCII control block).
-  
+  - Backticked identifiers must be on a single line and must not contain tabs or new lines unless using escaping codes, except for ordinary spaces.
+  - Special control characters (U+0000–U+001F) must be escaped.
+   
   Example:
   ```yini
   `Description of Project`
@@ -670,7 +667,7 @@ Like raw strings, Hyper Strings treat backslashes as literal characters — esca
 Hyper Strings are designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
 
 - `<NL>` refers to newline/linebreak of in combination of `CR`, `LF`, or `CRLF`.
-- `<Unicode-WS>` includes common **Unicode whitespace characters** from the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and a limited subset of `Cc` (such like `TAB` and `LF`) commonly treated as whitespace in text contexts.
+`<Unicode-WS>` includes all relevant Unicode whitespace characters: the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` (control characters), primarily from the C0 range (`U+0000–U+001F`).
 - Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
 - Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
 - Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
@@ -1607,7 +1604,7 @@ Notes:
 
 
 v1.0.0 Beta 6 + Updates
-- Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings, with exceptions for TAB and SPACE in the latter.
+- Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
 - Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
 
 v1.0.0 Beta 6, 2025-05-20
