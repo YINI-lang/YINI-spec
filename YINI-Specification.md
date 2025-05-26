@@ -303,11 +303,12 @@ key3 = "Peach"  // This is also an inline comment.
 ```
 
 ### 3.2. Whitespace and Indentation
-While YINI is not indentation-sensitive, the following whitespace behaviors are defined:
+While YINI is not indentation-sensitive, the following whitespace `<WS>` behaviors are defined:
 
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
-- Tabs (`<TAB>`, U+0009) and blank spaces (`<SPACE>`, U+0020) are ignored outside of quoted values and section headers.
-- Indentation is not syntactically required but may be used to visually structure content for clarity.
+- Tabs (`<TAB>`, U+0009) and blank spaces (`<SPACE>`, U+0020) are ignored outside of quoted values and in the hash comment `#`.
+- Indentation is optional and has no syntactic meaning, but it is recommended to improve visual structure and human readability.
+- Note: In the context of strings, the term `<Unicode-WS>` is used to refer to a broader range of Unicode whitespace characters, beyond just tab and space.
 
 ### 3.3. Comments
 YINI supports **three types of comments**:
@@ -383,8 +384,10 @@ An _**identifier**_ can be one of two forms below:
 - **Form 2: Backticked Identifier:**
   - A phrase is a name wrapped in backticks  ``` ` ```.
   - It must be on a single line and **cannot contain** another backtick.
-  - Backticked identifiers **cannot contain** tabs or line breaks (newline).
+  - Backticked identifiers **cannot contain** tabs, line breaks (newline), or any other special control characters (C0 control characters).
   - Escape sequences inside them are not interpreted.
+
+  **Note:** C0 control characters: range U+0000–U+001F (legacy ASCII control block).
   
   Example:
   ```yini
@@ -643,7 +646,11 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 | Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Large multi-line blocks of literal text
 
 ### 6.1. Raw Strings (R-Strings)
-In (Raw) strings the backslash **`\` is "just a backslash"** character, hence different escape sequences like newline or tabs cannot be used. The default (Raw) strings must be on the same line.
+In (Raw) strings, the backslash (`\`) is treated as a literal character — **it is "just a backslash"**. This means escape sequences are not interpreted, and most special characters can be included directly.
+
+However, Raw strings **cannot contain newlines**, as they must appear on a single line.
+
+For multi-line Raw strings, see Triple-quoted string literals.
 
 Raw strings are particularly suitable for representing file paths and other literal text.
 >myPath = "C:\Users\John Smith\"  // Raw string
@@ -656,15 +663,19 @@ or
 Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
 
 ### 6.2. Hyper Strings (H-Strings)
-Another kind of string literal supported is the **Hyper String** (H-String). These strings are prefixed with either `H` or `h`.
+YINI supports a special kind of string literal called a **Hyper String**, or **H-String** for short. These strings are prefixed with either `H` or `h`.
 
-Like Raw Strings, Hyper Strings treat backslashes as literal characters (escape sequences are not supported).
+Like raw strings, Hyper Strings treat backslashes as literal characters — escape sequences are not interpreted.
 
-- However, Hyper strings are special in that they **can span over multiple lines** with `<NL>`, and indentation with `<WS>` can be used to aid human readability in YINI documents.
-- Multiple consecutive newlines and whitespace are normalized to a single space. 
-- Also, leading and trailing `<NL>` and/or `<WS>` are trimmed away.
+Hyper Strings are designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
 
-Hyper Strings behave similarly to plain text in HTML documents.
+- `<NL>` refers to newline/linebreak of in combination of `CR`, `LF`, or `CRLF`.
+- `<Unicode-WS>` includes all **Unicode whitespace characters** in the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and `Cc` (control characters like `TAB` and `LF`).
+- Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
+- Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
+- Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
+
+Hyper Strings behave similarly to how text is rendered in HTML: extra spacing and line breaks are reduced to clean, flowing text.
 
 The following:
 
@@ -680,9 +691,13 @@ My name is John Doe, and this is a test string.
 ```
 
 ### 6.3. Classic Strings (C-Strings)
-Alternatively, YINI also supports standard ("Classic") string literals, called C-Strings for short. These strings are prefixed with either `C` or `c`. All the usual escape sequences that represents newlines, tabs, backspaces, form-feeds, and so on are supported.
+YINI also supports standard string literals, referred to as **Classic Strings**, or **C-Strings** for short. These strings are prefixed with either `C` or `c`.
 
-Classic strings must start and end on the same line.
+C-Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Special characters (C0 control characters) are not allowed — except for space and tab — must be written using escape sequences and cannot appear directly.
+
+**Note:** C0 control characters: range U+0000–U+001F (legacy ASCII control block).
+
+Classic strings must begin and end on the same line.
 
 >myText = c"This is a newline \n and this is a tab \t character."
 
@@ -721,7 +736,7 @@ Invalid escape sequences (e.g. `\z` or `\o378`) must result in a parse error unl
 A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines** (i.e., includes newline characters).
-- **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved exactly as written, including whitespace and line breaks.
+- **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved exactly as written, including whitespace, line breaks and other special characters.
 - A triple-quoted string ends at the first sequence of three double quotes (`"""`).
 - Triple-quoted strings do not support any prefix characters and are always raw.
 
