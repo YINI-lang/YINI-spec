@@ -382,10 +382,10 @@ An _**identifier**_ can be one of two forms below:
   ```
 
 - **Form 2: Backticked Identifier:**
-  - A phrase is a name wrapped in backticks  ``` ` ```, can include spaces.
-  - It must be on a single line and **cannot contain** another backtick.
-  - Backticked identifiers **cannot contain** tabs, new lines, or other control characters (i.e., any C0 characters in the range U+0000–U+001F), except spaces are allowed.
+  - A phrase is a name wrapped in backticks  ``` ` ```.
+  - Backticked identifiers must be on a single line and must not contain tabs, line breaks, or other control characters (U+0000–U+001F), except for ordinary spaces.
   - Any escape sequences inside them are not interpreted.
+  - Backticked identifiers are parsed as-is — their contents are treated literally.
 
   **Note:** C0 control characters: range U+0000–U+001F (legacy ASCII control block).
   
@@ -641,9 +641,9 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 | String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes
 |---|---|---|---|---|---|
 | Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text
-| Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Whitespace is normalized and trimmed
-| Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Supports standard escape sequences
-| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Large multi-line blocks of literal text
+| Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Readable multi-line text, whitespace is normalized and trimmed
+| Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings
+| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line blocks of literal text
 
 ### 6.1. Raw Strings (R-Strings)
 In (Raw) strings, the backslash (`\`) is treated as a literal character — **it is "just a backslash"**. This means escape sequences are not interpreted, and most special characters can be included directly.
@@ -693,7 +693,7 @@ My name is John Doe, and this is a test string.
 ### 6.3. Classic Strings (C-Strings)
 YINI also supports standard string literals, referred to as **Classic Strings**, or **C-Strings** for short. These strings are prefixed with either `C` or `c`.
 
-C-Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Special characters (C0 control characters) are not allowed — except for space and tab — must be written using escape sequences and cannot appear directly.
+C-Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Thus, all special control characters (U+0000–U+001F), except for space and tab, must be written using escape sequences — they cannot appear directly in Classic Strings.
 
 Classic strings must begin and end on the same line.
 
@@ -1607,7 +1607,8 @@ Notes:
 
 
 v1.0.0 Beta 6 + Updates
-- --upcoming changes--
+- Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings, with exceptions for TAB and SPACE in the latter.
+- Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
