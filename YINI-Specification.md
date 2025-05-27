@@ -641,7 +641,8 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 | Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text | Simple raw, 1-line, no escapes
 | Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Readable multi-line text, whitespace is normalized and trimmed | Behaves like HTML text flow
 | Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings | Behaves like C/JSON strings
-| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line blocks of literal text | Like Python triple strings
+| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line blocks of literal text | - triple strings
+| C-Triple-Quoted Strings | `""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line blocks with escapes; all content preserved unless escaped | Like Python triple strings
 
 ### 6.1. Raw Strings (R-Strings)
 In (Raw) strings, the backslash (`\`) is treated as a literal character — **it is "just a backslash"**. This means escape sequences are not interpreted, and most special characters can be included directly.
@@ -733,9 +734,10 @@ A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines**, including embedded newline characters.
 - **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved as written, including whitespace and line breaks — except where escape sequences are interpreted.
-- **Supports all escape sequences**, just like Classic Strings (C-Strings), including `\n`, `\t`, `\xhh`, `\u1234`, `\o123`, etc.
 - A triple-quoted string ends at the first sequence of three double quotes (`"""`).
-- Triple-quoted strings **do not support any prefix characters**, and are distinct from Raw or Hyper strings.
+- Triple-quoted strings **do not support R or H prefixes**, and are distinct from Raw or Hyper strings.
+- If prefixed with `C` or `c`, then all escape sequences are interpreted as well
+  * If `C` prefixed it **supports all escape sequences**, just like Classic Strings (C-Strings), including `\n`, `\t`, `\xhh`, `\u1234`, `\o123`, etc.
 
 Example of Triple-quoted string:
 ```yini
@@ -748,9 +750,9 @@ three lines."""
 """You can use double quotes (") inside."""
 ```
 
-Another Example of Triple-quoted string:
+Example of C-Triple-quoted string:
 ```yini
-"""This is a multiline
+C"""This is a multiline
 string that spans
 three lines with a tab\tand newline\n"""
 
