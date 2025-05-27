@@ -641,8 +641,8 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 | Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text | Simple raw, 1-line, no escapes
 | Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Readable multi-line text, whitespace is normalized and trimmed | Behaves like HTML text flow
 | Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings | Behaves like C/JSON strings
-| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line blocks of literal text | - triple strings
-| C-Triple-Quoted Strings | `""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line blocks with escapes; all content preserved unless escaped | Like Python triple strings
+| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line literal string, Raw by default | Raw multiline, no escapes
+| C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
 
 ### 6.1. Raw Strings (R-Strings)
 In (Raw) strings, the backslash (`\`) is treated as a literal character — **it is "just a backslash"**. This means escape sequences are not interpreted, and most special characters can be included directly.
@@ -733,13 +733,18 @@ Invalid escape sequences (e.g. `\z` or `\o378`) must result in a parse error unl
 A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines**, including embedded newline characters.
-- **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved as written, including whitespace and line breaks — except where escape sequences are interpreted.
-- A triple-quoted string ends at the first sequence of three double quotes (`"""`).
-- Triple-quoted strings **do not support R or H prefixes**, and are distinct from Raw or Hyper strings.
-- If prefixed with `C` or `c`, then all escape sequences are interpreted as well
-  * If `C` prefixed it **supports all escape sequences**, just like Classic Strings (C-Strings), including `\n`, `\t`, `\xhh`, `\u1234`, `\o123`, etc.
+- **May contain any characters**, including quotes (`"`) and double quotes (`""`), **except** an unescaped sequence of three double quotes (`"""`), which ends the string.
+- **Preserves all content exactly as written**, including whitespace and line breaks — unless escape sequences are enabled (see below).
+- **Ends at the first unescaped** sequence of three double quotes  (`"""`).
+- **Does not support `R` or `H` prefixes**.
 
-Example of Triple-quoted string:
+By default, Triple-quoted strings are treated as **Raw** — escape sequences are not interpreted.
+
+If **prefixed with `C` or `c`**, the string supports escape sequences, just like Classic Strings (C-Strings). This includes support for: `\n`, `\t`, `\\`, `\"`, `\xhh`, `\u1234`, `\o123`, etc.
+
+#### Examples
+
+Raw (default) triple-quoted strings:
 ```yini
 """This is a multiline
 string that spans
@@ -750,16 +755,14 @@ three lines."""
 """You can use double quotes (") inside."""
 ```
 
-Example of C-Triple-quoted string:
+C-Triple-quoted strings (with escapes enabled):
 ```yini
-C"""This is a multiline
-string that spans
-three lines with a tab\tand newline\n"""
+C"""This spans multiple lines with a tab\tand newline\n"""
 
-"""Quotes inside: "double" and 'single'"""
+C"""Quotes inside: "double" and 'single'"""
 ```
 
-Note: All characters are preserved as written, including whitespace and line breaks — except where escape sequences are interpreted.
+**Note:** Triple-quoted strings always preserve their contents exactly — including all whitespace and line breaks — unless prefixed with `C` (or `c`), in which case escape sequences are interpreted.
 
 ### 6.5. String Concatenation
 Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
