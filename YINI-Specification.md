@@ -152,7 +152,8 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;15.3. Author(s)  
 &nbsp;&nbsp;&nbsp;&nbsp;15.4. Spec Changes  
 &nbsp;&nbsp;&nbsp;&nbsp;15.5. Reserved: Grammar (Formal)  
-&nbsp;&nbsp;&nbsp;&nbsp;15.6. Appendix C – Common Mistakes and Pitfalls
+&nbsp;&nbsp;&nbsp;&nbsp;15.6. Appendix C – Common Mistakes and Pitfalls  
+&nbsp;&nbsp;&nbsp;&nbsp;15.7. 🧾 Unicode Whitespace Characters  
 
 ---
 
@@ -308,7 +309,7 @@ While YINI is not indentation-sensitive, the following whitespace `<WS>` behavio
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
 - Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are ignored outside of strings and section headers.
 - Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
-- Note: In the context of strings, the term `<Unicode-WS>` is used to refer to a broader range of Unicode whitespace characters, beyond just tab and space.
+- Note: In the context of strings, the term `<Unicode-WS>` is used to refer to a broader range of Unicode whitespace characters, beyond just tab and space. For a complete table, see more in section 15.7, "🧾 Unicode Whitespace Characters".
 
 ### 3.3. Comments
 YINI supports **three types of comments**:
@@ -635,12 +636,12 @@ Triple-quoted strings (`"""`) do not support any prefix character. Therefore, th
 
 **Summary**
 
-| String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes
-|---|---|---|---|---|---|
-| Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text
-| Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Readable multi-line text, whitespace is normalized and trimmed
-| Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings
-| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line blocks of literal text
+| String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes | Behavior Hint
+|---|---|---|---|---|---|---|
+| Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text | Simple raw, 1-line, no escapes
+| Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Readable multi-line text, whitespace is normalized and trimmed | Behaves like HTML text flow
+| Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings | Behaves like C/JSON strings
+| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line blocks of literal text | Like Python triple strings
 
 ### 6.1. Raw Strings (R-Strings)
 In (Raw) strings, the backslash (`\`) is treated as a literal character — **it is "just a backslash"**. This means escape sequences are not interpreted, and most special characters can be included directly.
@@ -667,7 +668,7 @@ Like raw strings, Hyper Strings treat backslashes as literal characters — esca
 Hyper Strings are designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
 
 - `<NL>` refers to newline/linebreak of in combination of `CR`, `LF`, or `CRLF`.
-`<Unicode-WS>` includes all relevant Unicode whitespace characters: the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` (control characters), primarily from the C0 range (`U+0000–U+001F`).
+`<Unicode-WS>` includes all relevant Unicode whitespace characters: the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` (control characters), primarily from the C0 range (`U+0000–U+001F`). For a complete table, see more in section 15.7, "🧾 Unicode Whitespace Characters".
 - Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
 - Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
 - Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
@@ -730,12 +731,13 @@ Invalid escape sequences (e.g. `\z` or `\o378`) must result in a parse error unl
 ### 6.4. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
-- **May span multiple lines** (i.e., includes newline characters).
-- **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved exactly as written, including whitespace, line breaks and other special characters.
+- **May span multiple lines**, including embedded newline characters.
+- **May contain any characters**, including regular quotes (`"`) and double quotes (`""`), **except** for an unescaped sequence of three double quotes (`"""`) that would terminate the string. All characters are preserved as written, including whitespace and line breaks — except where escape sequences are interpreted.
+- **Supports all escape sequences**, just like Classic Strings (C-Strings), including `\n`, `\t`, `\xhh`, `\u1234`, `\o123`, etc.
 - A triple-quoted string ends at the first sequence of three double quotes (`"""`).
-- Triple-quoted strings do not support any prefix characters and are always raw.
+- Triple-quoted strings **do not support any prefix characters**, and are distinct from Raw or Hyper strings.
 
-Example of Triple-Quoted strings:
+Example of Triple-quoted string:
 ```yini
 """This is a multiline
 string that spans
@@ -746,7 +748,16 @@ three lines."""
 """You can use double quotes (") inside."""
 ```
 
-Note: All content between the opening and closing triple quotes is preserved as-is, including whitespace and line breaks.
+Another Example of Triple-quoted string:
+```yini
+"""This is a multiline
+string that spans
+three lines with a tab\tand newline\n"""
+
+"""Quotes inside: "double" and 'single'"""
+```
+
+Note: All characters are preserved as written, including whitespace and line breaks — except where escape sequences are interpreted.
 
 ### 6.5. String Concatenation
 Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
@@ -1606,6 +1617,7 @@ Notes:
 v1.0.0 Beta 6 + Updates
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
 - Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
+- Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
@@ -1657,6 +1669,36 @@ Below are some common mistakes and misunderstandings when writing YINI files, es
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
 | List nesting       | `list = [[1, 2], [3, 4]]`       | Using inner lists without brackets | All nested lists must be bracketed explicitly. |
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
+
+---
+
+### 15.7. 🧾 Unicode Whitespace Characters
+Below is a categorized list of Unicode whitespace characters recognized as within <Unicode-WS>, these are normalized or trimmed in Hyper Strings.
+
+| Code Point | Character Name                | Abbreviation | Unicode Category | Notes                                 |
+|------------|-------------------------------|--------------|------------------|----------------------------------------|
+| `U+0009`   | -                             | TAB          | Cc               | Common ASCII tab                       |
+| `U+000A`   | LINE FEED                     | LF           | Cc               | Newline / Unix line ending             |
+| `U+000D`   | CARRIAGE RETURN               | CR           | Cc               | Used in Windows line endings           |
+| `U+0020`   | -                             | SPACE        | Zs               | Standard space                         |
+| `U+00A0`   | NO-BREAK SPACE                | NBSP         | Zs               | Common in HTML                         |
+| `U+1680`   | OGHAM SPACE MARK              |              | Zs               | Rare, historic                         |
+| `U+2000`   | EN QUAD                       |              | Zs               | Typographic space                      |
+| `U+2001`   | EM QUAD                       |              | Zs               | Typographic space                      |
+| `U+2002`   | EN SPACE                      |              | Zs               | Narrower than EM space                 |
+| `U+2003`   | EM SPACE                      |              | Zs               | Wider than EN space                    |
+| `U+2004`   | THREE-PER-EM SPACE            |              | Zs               | Typographic space                      |
+| `U+2005`   | FOUR-PER-EM SPACE             |              | Zs               | Typographic space                      |
+| `U+2006`   | SIX-PER-EM SPACE              |              | Zs               | Typographic space                      |
+| `U+2007`   | FIGURE SPACE                  |              | Zs               | Aligns with numeric digits             |
+| `U+2008`   | PUNCTUATION SPACE             |              | Zs               | Same width as a period                 |
+| `U+2009`   | THIN SPACE                    |              | Zs               | Narrow space                           |
+| `U+200A`   | HAIR SPACE                    |              | Zs               | Very narrow space                      |
+| `U+202F`   | NARROW NO-BREAK SPACE         |              | Zs               | Used in Mongolian, etc.                |
+| `U+205F`   | MEDIUM MATHEMATICAL SPACE     |              | Zs               | Used in math layout                    |
+| `U+3000`   | IDEOGRAPHIC SPACE             |              | Zs               | Full-width space in CJK                |
+| `U+2028`   | LINE SEPARATOR                |              | Zl               | Treated as newline in some contexts    |
+| `U+2029`   | PARAGRAPH SEPARATOR           |              | Zp               | Paragraph break                        |
 
 ---
 
