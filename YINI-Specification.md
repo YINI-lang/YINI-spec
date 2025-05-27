@@ -85,12 +85,13 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 **6. String Literals**  
 &nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
-&nbsp;&nbsp;&nbsp;&nbsp;6.2. Hyper Strings (H-Strings)  
-&nbsp;&nbsp;&nbsp;&nbsp;6.3. Classic Strings (C-Strings)  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.3.1. Escape Characters  
-&nbsp;&nbsp;&nbsp;&nbsp;6.4. Triple-Quoted Strings  
-&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Type Mixing
+&nbsp;&nbsp;&nbsp;&nbsp;6.2. Classic Strings (C-Strings)  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.1. Escape Characters  
+&nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
+&nbsp;&nbsp;&nbsp;&nbsp;6.4. Hyper Strings (H-Strings)  
+&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Types Summary  
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;6.7. String Type Mixing
 
 **7. Number Literals**  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
@@ -631,18 +632,18 @@ If no prefix is used, the string is treated as a **Raw string literal** by defau
 Triple-quoted strings (`"""`) do not support any prefix character. Therefore, the prefix is only applicable to single-line Hyper-strings (`H`), Classic-strings (`C`), and optionally Raw-strings (`R`).
 
 **Rules and Behavior for Strings:**
-- All string literals **must start and finish on the same line**, except for **H-Strings** (see section 6.2.) and **Triple-Quoted Strings** (see section 6.4.), which can span multiple lines.
-- Multiple string literals can be **concatenated** to create longer strings (see section 6.5).
+- All string literals **must start and finish on the same line**, except for **H-Strings** (see section 6.4.) and **Triple-Quoted Strings** (see section 6.3.), which can span multiple lines.
+- Multiple string literals can be **concatenated** to create longer strings (see section 6.6, "String Concatenation").
 
-**Summary**
+**String Overview**
 
-| String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes | Behavior Hint
-|---|---|---|---|---|---|---|
-| Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text | Simple raw, 1-line, no escapes
-| Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Readable multi-line text, whitespace is normalized and trimmed | Behaves like HTML text flow
-| Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings | Behaves like C/JSON strings
-| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line literal string, Raw by default | Raw multiline, no escapes
-| C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
+| Type                   | Quotes Used              | Multi-Line | Escapes | Trims Whitespace | Description                          | Similar To            |
+|------------------------|--------------------------|------------|---------|------------------|--------------------------------------|------------------------|
+| Raw String             | `'...'` or `"..."`       | ❌ No      | ❌ No   | ❌ No             | Simple 1-line literal                | Raw literal strings    |
+| Classic String (C)     | `C'...'` or `c"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
+| Triple-Quoted (Raw)    | `"""..."""`              | ✅ Yes     | ❌ No   | ❌ No             | Multi-line raw text                  | Python raw triple-quote |
+| Triple-Quoted (C)      | `C"""..."""` or `c"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
+| Hyper String (H)       | `H'...'` or `h"..."`      | ✅ Yes     | ❌ No   | ✅ Yes            | Clean multi-line text, trimmed       | HTML text flow         |
 
 ### 6.1. Raw Strings (R-Strings)
 In (Raw) strings, the backslash (`\`) is treated as a literal character — **it is "just a backslash"**. This means escape sequences are not interpreted, and most special characters can be included directly.
@@ -661,35 +662,7 @@ or
 #### Raw String Prefix
 Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
 
-### 6.2. Hyper Strings (H-Strings)
-YINI supports a special kind of string literal called a **Hyper String**, or **H-String** for short. These strings are prefixed with either `H` or `h`.
-
-Like raw strings, Hyper Strings treat backslashes as literal characters — escape sequences are not interpreted.
-
-Hyper Strings are designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
-
-- `<NL>` refers to newline/linebreak of in combination of `CR`, `LF`, or `CRLF`.
-`<Unicode-WS>` includes all relevant Unicode whitespace characters: the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` (control characters), primarily from the C0 range (`U+0000–U+001F`). For a complete table, see more in section 15.7, "🧾 Unicode Whitespace Characters".
-- Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
-- Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
-- Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
-
-Hyper Strings behave similarly to how text is rendered in HTML: extra spacing and line breaks are reduced to clean, flowing text.
-
-The following:
-
-```yini
-H"My name is
-  John Doe,  
-  and this is a test string."
-```
-
-Will result in:
-```txt
-My name is John Doe, and this is a test string.
-```
-
-### 6.3. Classic Strings (C-Strings)
+### 6.2. Classic Strings (C-Strings)
 YINI also supports standard string literals, referred to as **Classic Strings**, or **C-Strings** for short. These strings are prefixed with either `C` or `c`.
 
 C-Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Thus, all special control characters (U+0000–U+001F), except for space and tab, must be written using escape sequences — they cannot appear directly in Classic Strings.
@@ -698,7 +671,7 @@ Classic strings must begin and end on the same line.
 
 >myText = c"This is a newline \n and this is a tab \t character."
 
-#### 6.3.1. Escape Characters
+#### 6.2.1. Escape Characters
 Escape sequences are supported only in Classic Strings (C-Strings), which must be enclosed in quotes and prefixed with `C` (or `c`). 
 
 **Full List: Escape Sequences (case-sensitive, only valid in C-Strings):**
@@ -729,7 +702,7 @@ Where:
 
 Invalid escape sequences (e.g. `\z` or `\o378`) must result in a parse error unless explicitly allowed by a custom extension or parser configuration.
 
-### 6.4. Triple-Quoted Strings
+### 6.3. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines**, including embedded newline characters.
@@ -764,7 +737,46 @@ C"""Quotes inside: "double" and 'single'"""
 
 **Note:** Triple-quoted strings always preserve their contents exactly — including all whitespace and line breaks — unless prefixed with `C` (or `c`), in which case escape sequences are interpreted.
 
-### 6.5. String Concatenation
+### 6.4. Hyper Strings (H-Strings)
+YINI supports a special kind of string literal called a **Hyper String**, or **H-String** for short. These strings are prefixed with either `H` or `h`.
+
+Like raw strings, Hyper Strings treat backslashes as literal characters — escape sequences are not interpreted.
+
+Hyper Strings are designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
+
+- `<NL>` refers to newline/linebreak of in combination of `CR`, `LF`, or `CRLF`.
+`<Unicode-WS>` includes all relevant Unicode whitespace characters: the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` (control characters), primarily from the C0 range (`U+0000–U+001F`). For a complete table, see more in section 15.7, "🧾 Unicode Whitespace Characters".
+- Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
+- Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
+- Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
+
+Hyper Strings behave similarly to how text is rendered in HTML: extra spacing and line breaks are reduced to clean, flowing text.
+
+The following:
+
+```yini
+H"My name is
+  John Doe,  
+  and this is a test string."
+```
+
+Will result in:
+```txt
+My name is John Doe, and this is a test string.
+```
+
+### 6.5. String Types Summary
+**Summary**
+
+| String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes | Behavior Hint
+|---|---|---|---|---|---|---|
+| Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text | Simple raw, 1-line, no escapes
+| Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings | Behaves like C/JSON strings
+| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line literal string, Raw by default | Raw multiline, no escapes
+| C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
+| Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Readable multi-line text, whitespace is normalized and trimmed | Behaves like HTML text flow
+
+### 6.6. String Concatenation
 Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
 
 **Example:**
@@ -778,7 +790,7 @@ greeting = "Hi, hello there"
 
 Concatenation is supported between all string types, but mixing different types (e.g., Raw + Classic) is discouraged unless necessary for special use cases.
 
-### 6.6. String Type Mixing
+### 6.7. String Type Mixing
 Concatenation of string literals of different types (e.g., Raw + Classic, Classic + Hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
 
 Engines should handle mixed-type concatenations correctly, but authors are encouraged to use consistent string types within concatenations to ensure clarity and predictable behavior.
