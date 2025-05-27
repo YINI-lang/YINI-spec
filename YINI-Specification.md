@@ -1635,7 +1635,7 @@ v1.0.0 Beta 6 + Updates
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
 - Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
 - Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
-- Added support for Triple-Quoted strings prefixed with `C`, that interpretes escape codes.
+- Added support for Triple-quoted strings with the prefix `C`, which interprets escape codes. Additionally, they can optionally be prefixed with `R` but this is not required since they are Raw by default.
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
