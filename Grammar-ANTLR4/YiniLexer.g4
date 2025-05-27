@@ -95,26 +95,29 @@ STRING:
 	RAW_STRING
 	| HYPER_STRING
 	| CLASSIC_STRING
-	| TRIPLE_QUOTED_STRING;
+	| TRIPLE_QUOTED_STRING
+	| C_TRIPLE_QUOTED_STRING;
 
 // Raw string literal, treats the backslash character (\) as a literal.
 RAW_STRING:
 	//('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\'' | ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
-	('r' | 'R')? '\'' ~['\r\n]* '\''
-	| ('r' | 'R')? '"' ~["\r\n]* '"';
+	[Rr]? '\'' ~['\r\n]* '\''
+	| [Rr]? '"' ~["\r\n]* '"';
 
 // Hyper string literal.
-HYPER_STRING: ('h' | 'H') '\'' (~['])* '\''
-	| ('h' | 'H') '"' ( ~["])* '"';
+HYPER_STRING: [Hh] '\'' (~['])* '\''
+	| [Hh] '"' ( ~["])* '"';
 
 // Classic string literal.
 CLASSIC_STRING:
-    ('c' | 'C') '\'' (ESC_SEQ | ~[\u0000-\u001F '\\'])* '\''
-  | ('c' | 'C') '"'  (ESC_SEQ | ~[\u0000-\u001F "\\"])* '"';
+    [Cc] '\'' (ESC_SEQ | ~[\u0000-\u001F '])* '\''
+  | [Cc] '"'  (ESC_SEQ | ~[\u0000-\u001F "])* '"';
 
 TRIPLE_QUOTED_STRING:
 	//'"""' (~["] | '"' ~["] | '""' ~["])* '"""';
-	'"""' .*? '"""'; // Greedy-safe because of .*? (non-greedy).
+	[Rr]? '"""' .*? '"""'; // Greedy-safe because of .*? (non-greedy).
+
+C_TRIPLE_QUOTED_STRING: [Cc] '"""' (ESC_SEQ | ~["])* '"""';
 
 // Note: Like 8.2 in specification.
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;

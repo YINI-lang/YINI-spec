@@ -27,7 +27,7 @@ options {
 //comment: BLOCK_COMMENT | LINE_COMMENT; NL: LINE_COMMENT+ | NL+;
 
 yini:
-	SHEBANG? INLINE_COMMENT* NL* section+ NL* terminal_line? EOF;
+	SHEBANG? INLINE_COMMENT* NL* section+ NL* terminal_line? EOF?;
 
 section: SECTION_HEAD? section_members | SECTION_HEAD section?;
 //| terminal_line?;
