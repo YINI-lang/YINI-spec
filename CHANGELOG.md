@@ -10,6 +10,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - Refactored the structure and order of sections in `RATIONALE.MD` for improved readability and flow.
 - Updated most YINI code examples to use indented nested sections for improved human readability, based on community feedback.
 - Clarified and updated in Spec and the `YiniLexer.g4` where special/control characters can be and are used.
+- In Spec added support for `C` (or `c`) prefixed Triple-quoted strings (similar to Python triple quotes), though default Triple-quoted strings behaves similar to multi-line raw strings.
 
 ## 2025 May  (spec: v1.0.0 Beta 6)
 - Reworked the use of `#` for comments, and added `^` as new default marker for sections. Updated README and Branding to reflect this.

@@ -707,7 +707,7 @@ A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines**, including embedded newline characters.
 - **May contain any characters**, including quotes (`"`) and double quotes (`""`), **except** an unescaped sequence of three double quotes (`"""`), which ends the string.
-- **Preserves all content exactly as written**, including whitespace and line breaks — unless escape sequences are enabled (see below).
+- **Preserves all content exactly as written**, including whitespace and line breaks (new lines) — unless escape sequences are enabled by prefixing the string with `C` or `c` (see below).
 - **Ends at the first unescaped** sequence of three double quotes  (`"""`).
 - **Does not support `R` or `H` prefixes**.
 
@@ -735,7 +735,7 @@ C"""This spans multiple lines with a tab\tand newline\n"""
 C"""Quotes inside: "double" and 'single'"""
 ```
 
-**Note:** Triple-quoted strings always preserve their contents exactly — including all whitespace and line breaks — unless prefixed with `C` (or `c`), in which case escape sequences are interpreted.
+**Note:** Triple-quoted strings always preserve their contents exactly — including all whitespace and line breaks (new lines) — unless prefixed with `C` (or `c`), in which case escape sequences are interpreted.
 
 ### 6.4. Hyper Strings (H-Strings)
 YINI supports a special kind of string literal called a **Hyper String**, or **H-String** for short. These strings are prefixed with either `H` or `h`.
@@ -1635,6 +1635,7 @@ v1.0.0 Beta 6 + Updates
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
 - Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
 - Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
+- Added support for Triple-Quoted strings prefixed with `C`, that interpretes escape codes.
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
