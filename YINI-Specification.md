@@ -709,9 +709,9 @@ A **Triple-Quoted String** is a string literal that:
 - **May contain any characters**, including quotes (`"`) and double quotes (`""`), **except** an unescaped sequence of three double quotes (`"""`), which ends the string.
 - **Preserves all content exactly as written**, including whitespace and line breaks (new lines) — unless escape sequences are enabled by prefixing the string with `C` or `c` (see below).
 - **Ends at the first unescaped** sequence of three double quotes  (`"""`).
-- **Does not support `R` or `H` prefixes**.
+- **Does not support `H` prefixes**.
 
-By default, Triple-quoted strings are treated as **Raw** — escape sequences are not interpreted.
+By default, Triple-quoted strings are treated as **Raw** — escape sequences are not interpreted. To explicitly indicate that a Triple-quoted string is raw, a prefix `R` (or `r`) may optionally be used. This prefix is purely **syntactic sugar** and does not affect its default behavior.
 
 If **prefixed with `C` or `c`**, the string supports escape sequences, just like Classic Strings (C-Strings). This includes support for: `\n`, `\t`, `\\`, `\"`, `\xhh`, `\u1234`, `\o123`, etc.
 
