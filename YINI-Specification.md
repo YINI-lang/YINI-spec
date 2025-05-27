@@ -674,7 +674,7 @@ Classic strings must begin and end on the same line.
 #### 6.2.1. Escape Characters
 Escape sequences are supported only in Classic Strings (C-Strings), which must be enclosed in quotes and prefixed with `C` (or `c`). 
 
-**Full List: Escape Sequences (case-sensitive, only valid in C-Strings):**
+**Full List: Escape Sequences: (case-sensitive, only valid in C-Strings and C-Triple-Quoted Strings)**
 - `\\` — backslash
 - `\'` — Single Quote
 - `\"` — Double Quote
