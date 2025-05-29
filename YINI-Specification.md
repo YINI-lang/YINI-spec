@@ -97,33 +97,33 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.6. String Concatenation  
 &nbsp;&nbsp;&nbsp;&nbsp;6.7. String Type Mixing
 
-**7. Number Literals** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
 &nbsp;&nbsp;&nbsp;&nbsp;7.2. Exponent Format  
 &nbsp;&nbsp;&nbsp;&nbsp;7.3. Number Formats
 
-**8. Boolean and Null Literals** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**8. Boolean and Null Literals** ([Link ⇨](./YINI-Specification.md#8-boolean-and-null-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;8.1. Booleans  
 &nbsp;&nbsp;&nbsp;&nbsp;8.2. Null Literal
 
-**9. List Literals** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**9. List Literals** ([Link ⇨](./YINI-Specification.md#9-list-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Lists (using `=`)  
 &nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based List (using `:`)
 
-**10. Advanced Constructs** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**10. Advanced Constructs** ([Link ⇨](./YINI-Specification.md#10-advanced-constructs))  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Future / Reserved Features _(For Future Use)_  
 
 ---
 
 ### **Part III – Validation, Implementation & Compatibility**
 
-**11. Validation Rules** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**11. Validation Rules** ([Link ⇨](./YINI-Specification.md#11-validation-rules))  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness Requirements  
 &nbsp;&nbsp;&nbsp;&nbsp;11.3. Lenient vs. Strict Modes _(Optional Feature)_  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11.3.1. Table: Lenient vs. Strict Mode
 
-**12. Implementation Notes** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**12. Implementation Notes** ([Link ⇨](./YINI-Specification.md#12-implementation-notes))  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
 &nbsp;&nbsp;&nbsp;&nbsp;12.2. Line Handling and Whitespace  
 &nbsp;&nbsp;&nbsp;&nbsp;12.3. Value and NULL Handling  
@@ -135,7 +135,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;12.9. Error Handling Recommendations  
 &nbsp;&nbsp;&nbsp;&nbsp;12.10. Bonus Tips for Implementation
 
-**13. Compatibility and Versioning** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**13. Compatibility and Versioning** ([Link ⇨](./YINI-Specification.md#13-compatibility-and-versioning))  
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Fallback Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Versioning Strategy  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Encoding Notes  
@@ -145,13 +145,13 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 ### **Part IV – Examples and Appendices**
 
-**14. Examples** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**14. Examples** ([Link ⇨](./YINI-Specification.md#14-examples))  
 &nbsp;&nbsp;&nbsp;&nbsp;14.1. Minimal Example  
 &nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases  
 &nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI → JSON Mapping  
 &nbsp;&nbsp;&nbsp;&nbsp;14.4. Examples of JSON → YINI Mapping  
 
-**15. Appendices and Reserved Areas** ([Link ⇨](./YINI-Specification.md#1-introduction))  
+**15. Appendices and Reserved Areas** ([Link ⇨](./YINI-Specification.md#15-appendices-and-reserved-areas))  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
 &nbsp;&nbsp;&nbsp;&nbsp;15.2. Acknowledgments  
 &nbsp;&nbsp;&nbsp;&nbsp;15.3. Author(s)  
