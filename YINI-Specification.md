@@ -45,7 +45,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 ### **Part I – Introduction and Fundamentals**
 
-**1. Introduction** [Link ⇨](./YINI-Specification.md#a-background-and-motivation)  
+**1. Introduction** [Link ⇨](./YINI-Specification.md#1-introduction)  
 &nbsp;&nbsp;&nbsp;&nbsp;1.1. What is YINI?  
 &nbsp;&nbsp;&nbsp;&nbsp;1.2. Purpose and Design Goals  
 &nbsp;&nbsp;&nbsp;&nbsp;1.3. Background and Intent  
