@@ -49,20 +49,20 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 ### **Part I – Introduction and Fundamentals**
 
-**1. Introduction** [Link ⇨](./YINI-Specification.md#1-introduction)  
+**1. Introduction** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;1.1. What is YINI?  
 &nbsp;&nbsp;&nbsp;&nbsp;1.2. Purpose and Design Goals  
 &nbsp;&nbsp;&nbsp;&nbsp;1.3. Background and Intent  
 &nbsp;&nbsp;&nbsp;&nbsp;1.4. Key Features  
 &nbsp;&nbsp;&nbsp;&nbsp;1.5. Terminology
 
-**2. File Structure**  
+**2. File Structure** ([Link ⇨](./YINI-Specification.md#2-file-structure))  
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
 &nbsp;&nbsp;&nbsp;&nbsp;2.2. File Extension  
 &nbsp;&nbsp;&nbsp;&nbsp;2.3. Optional Shebang (`#!`)  
 &nbsp;&nbsp;&nbsp;&nbsp;2.4. Reserved: Optional Header (`@yini`) *(for future use)*
 
-**3. Syntax Overview**  
+**3. Syntax Overview** ([Link ⇨](./YINI-Specification.md#3-syntax-overview))  
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. General Syntax Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;3.2. Whitespace and Indentation  
 &nbsp;&nbsp;&nbsp;&nbsp;3.3. Comments  
@@ -77,17 +77,17 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 ### **Part II – Grammar and Literals**
 
-**4. Keys and Values**  
+**4. Keys and Values** ([Link ⇨](./YINI-Specification.md#4-keys-and-values))  
 &nbsp;&nbsp;&nbsp;&nbsp;4.1. Key Naming Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;4.2. Value Types (Simple, Compound, Special)  
 &nbsp;&nbsp;&nbsp;&nbsp;4.3. Type Rules
 
-**5. Section Headers**  
+**5. Section Headers** ([Link ⇨](./YINI-Specification.md#5-section-headers))  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `~`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Sections in Sections (Nested Sections)
 
-**6. String Literals**  
+**6. String Literals** ([Link ⇨](./YINI-Specification.md#6-string-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
 &nbsp;&nbsp;&nbsp;&nbsp;6.2. Classic Strings (C-Strings)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.1. Escape Characters  
@@ -97,33 +97,33 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.6. String Concatenation  
 &nbsp;&nbsp;&nbsp;&nbsp;6.7. String Type Mixing
 
-**7. Number Literals**  
+**7. Number Literals** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
 &nbsp;&nbsp;&nbsp;&nbsp;7.2. Exponent Format  
 &nbsp;&nbsp;&nbsp;&nbsp;7.3. Number Formats
 
-**8. Boolean and Null Literals**  
+**8. Boolean and Null Literals** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;8.1. Booleans  
 &nbsp;&nbsp;&nbsp;&nbsp;8.2. Null Literal
 
-**9. List Literals**  
+**9. List Literals** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Lists (using `=`)  
 &nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based List (using `:`)
 
-**10. Advanced Constructs**  
+**10. Advanced Constructs** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Future / Reserved Features _(For Future Use)_  
 
 ---
 
 ### **Part III – Validation, Implementation & Compatibility**
 
-**11. Validation Rules**  
+**11. Validation Rules** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness Requirements  
 &nbsp;&nbsp;&nbsp;&nbsp;11.3. Lenient vs. Strict Modes _(Optional Feature)_  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11.3.1. Table: Lenient vs. Strict Mode
 
-**12. Implementation Notes**  
+**12. Implementation Notes** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
 &nbsp;&nbsp;&nbsp;&nbsp;12.2. Line Handling and Whitespace  
 &nbsp;&nbsp;&nbsp;&nbsp;12.3. Value and NULL Handling  
@@ -135,7 +135,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;12.9. Error Handling Recommendations  
 &nbsp;&nbsp;&nbsp;&nbsp;12.10. Bonus Tips for Implementation
 
-**13. Compatibility and Versioning**  
+**13. Compatibility and Versioning** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Fallback Rules  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Versioning Strategy  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Encoding Notes  
@@ -145,13 +145,13 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 ### **Part IV – Examples and Appendices**
 
-**14. Examples**  
+**14. Examples** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;14.1. Minimal Example  
 &nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases  
 &nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI → JSON Mapping  
 &nbsp;&nbsp;&nbsp;&nbsp;14.4. Examples of JSON → YINI Mapping  
 
-**15. Appendices and Reserved Areas**  
+**15. Appendices and Reserved Areas** ([Link ⇨](./YINI-Specification.md#1-introduction))  
 &nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
 &nbsp;&nbsp;&nbsp;&nbsp;15.2. Acknowledgments  
 &nbsp;&nbsp;&nbsp;&nbsp;15.3. Author(s)  
