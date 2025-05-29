@@ -12,8 +12,8 @@
 
 ---
 
-- ➡️ [Read the YINI Specification](./YINI-Specification.md)
-- [Why YINI? Read the Rationale](./RATIONALE.md)
+- ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (ToC)
+- [Why YINI, but why exactly!? ⇨](./RATIONALE.md) Rationale
 
 ---
 

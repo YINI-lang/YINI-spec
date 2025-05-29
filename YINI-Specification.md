@@ -16,6 +16,8 @@ See the full license text at the end of this document.
 
 ---
 
+[⇨ Table of Contents](./YINI-Specification.md#table-of-contents)
+
 ## Preface
 **YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility. It aims to stay minimal, yet flexible enough to express a wide range of configuration needs.
 
@@ -42,6 +44,8 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 ## Table of Contents
 
 ---
+
+([⇨ Preface](./YINI-Specification.md#preface))  
 
 ### **Part I – Introduction and Fundamentals**
 
