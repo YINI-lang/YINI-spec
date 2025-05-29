@@ -8,15 +8,15 @@ This document outlines the **background**, **design motivations**, and **format 
 
 ---
 
-### **Part A – Background and Motivation**
+### Part A – Background and Motivation ([Link ⇨](./RATIONALE.md#a-background-and-motivation))
 Why YINI exists, what problems it aims to solve.
 
-&nbsp;&nbsp;&nbsp;&nbsp;A.1. Why was YINI created? [⇨ Link](./RATIONALE.md#a1-why-was-yini-created)  
-&nbsp;&nbsp;&nbsp;&nbsp;A.2. What was missing from other formats? [⇨ Link](./RATIONALE.md#a2-what-was-missing-from-other-formats)  
+&nbsp;&nbsp;&nbsp;&nbsp;A.1. Why was YINI created?  
+&nbsp;&nbsp;&nbsp;&nbsp;A.2. What was missing from other formats?  
 
 ---
 
-### **Part B – Design Goals and Philosophy**
+### Part B – Design Goals and Philosophy ([Link ⇨](./RATIONALE.md#b-design-goals-and-philosophy))
 Minimalism, human readability, lenient vs. strict, etc.
 
 &nbsp;&nbsp;&nbsp;&nbsp;B.1. What inspired its design?  
@@ -25,7 +25,7 @@ Minimalism, human readability, lenient vs. strict, etc.
 
 ---
 
-### **Part C – YINI vs Other Formats**
+### Part C – YINI vs Other Formats ([Link ⇨](./RATIONALE.md#c-yini-vs-other-formats))
 What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 
 &nbsp;&nbsp;&nbsp;&nbsp;C.1. Why Not Existing Formats?  
@@ -33,7 +33,7 @@ What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 
 ---
 
-### **Part D – Reflections and Acknowledgments**
+### Part D – Reflections and Acknowledgments ([Link ⇨](./RATIONALE.md#d-reflections-and-acknowledgments))
 
 &nbsp;&nbsp;&nbsp;&nbsp;D.1. Summary  
 &nbsp;&nbsp;&nbsp;&nbsp;D.2. Acknowledgments & Special Thanks  

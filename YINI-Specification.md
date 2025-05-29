@@ -1161,7 +1161,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 
 * If a document contains **multiple top-level sections** (i.e., multiple level-1 sections), they must be considered **children of an implicit root**.
 * The implicit root section:
-  - **Has no name**, or may be labeled "`root`" or similar (implementation-defined).
+  - **Has no name**, or may be labeled "`base`", "`root`" or similar (implementation-defined).
 * Section hierarchy must be respected:
   - A level-3 section **must follow** a level-2 section.
   - Skipping levels (e.g., directly from level-1 to level-3) is invalid.
@@ -1636,6 +1636,8 @@ v1.0.0 Beta 6 + Updates
 - Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
 - Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
 - Added support for Triple-quoted strings with the prefix `C`, which interprets escape codes. Additionally, they can optionally be prefixed with `R` but this is not required since they are Raw by default.
+- Added "`base`"  as an alternative name for the implicit root section, in addition to the previously suggested "`root`".
+
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
