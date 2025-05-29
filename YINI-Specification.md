@@ -231,7 +231,7 @@ The following key terms are used consistently throughout this specification. Und
 | Section                   | A logical grouping of members, introduced by a header using a section marker like `^`, `~`. |
 | Section Marker            | A special character (`^`, alternative is `~`) that denotes a new section header. |
 | Strict Mode               | An optional parsing mode where all structural and validation rules (incl. the document terminator) are strictly enforced. Not the default. |
-| Triple-Quoted String      | A string enclosed in `""" ... """`, allowing multi-line raw content without escapes. |
+| Triple-Quoted String      | A string enclosed in `""" ... """`that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
 | YINI file                 | A complete YINI configuration. In this specification, "file" and "document" mean the same thing. |
@@ -1241,12 +1241,13 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 ### 12.7 String Literal Types
 **Note:** If a string is not quoted, it's not a string — period.
 
-| Type                | Prefix           | Example    | Behavior |
-|---------------------|------------------|------------|----------|
-| (Raw) String        | None, `R`, or `r`| "Some text"| Text is as-is (raw), no escaping,  backslash is literal, preserves all whitespace|
-| Classic String      | `C` or `c`       | `C"..."`   | Escape sequences are interpreted|
-| Hyper String        | `H` or `h`       | `H"..."`   | (*) Multi-line, whitespace-collapsing, trimmed |
-| Triple-quoted String| None       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
+| Type                   | Prefix           | Example    | Behavior |
+|------------------------|------------------|------------|----------|
+| (Raw) String           | _None_, `R`, or `r`| "Some text"| Text is as-is (raw), no escaping,  backslash is literal, preserves all whitespace|
+| Classic String         | `C` or `c`       | `C"..."`   | Escape sequences are interpreted|
+| Hyper String           | `H` or `h`       | `H"..."`   | (*) Multi-line, whitespace-collapsing, trimmed |
+| Triple-quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
+| C-Triple-quoted String | `C`, or `c`       | `C"""..."""`   | Can be multi-line, escapes interpreted, preserves all whitespace, including line breaks |
 
 (*) Hyper string behavior:
   * Allow multi-line strings.
@@ -1281,6 +1282,11 @@ Developers are encouraged to implement the following features to improve parser 
   - `true` / `false`
   - `null`
 - Support both `strict` as well as `lenient` parsing modes.
+- Support different **Abort Sensitivity Levels** while parsing a YINI document:
+  (AKA severity threshold)
+  - Level 0 = ignore everything
+  - Level 1 = abort on errors only
+  - Level 2 = abort even on warnings
 - **Extra Bonus:** In strings, if C/C++-style octal escape codes like `\1` to `\377` are used (which are not valid in YINI), parsers should treat this as an error in strict mode (and suggest the correct YINI syntax). In lenient mode, parsers may optionally emit a warning and suggest the correct YINI syntax: `\o1` to `\o377`, and interpret the octal code as intended.
 
 ## 13. Compatibility and Versioning
@@ -1288,10 +1294,10 @@ This section covers YINI's compatibility and interoperability principles.
 
 ### 13.1. Fallback Rules
 #### 13.1.1. Invalid Sections or Keys
-- Invalid key names or section headers should be retained as-is but ignored if in lenient mode, or issue a warning or error if in strict mode.
+- Invalid key names or section headers **should be retained as-is** if possible and/or illegal characters remapped (both in lenient and strict mode, and optionally also support "Abort Sensitivity Levels"), though at least a warning should be issued depending on it's severity.
   
 #### 13.1.2. Graceful Degradation
-- Parsers may issue warnings instead of errors when encountering unrecognized features (e.g., unknown directives, anchors, or section markers).
+- Parsers should issue warnings instead of errors when encountering unrecognized features (e.g., unknown directives, anchors, or section markers).
 - Implementations should strive to process known-valid content even if advanced features are not supported.
 
 ### 13.2. Versioning Strategy
@@ -1641,6 +1647,8 @@ v1.0.0 Beta 6 + Updates
 - Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
 - Added support for Triple-quoted strings with the prefix `C`, which interprets escape codes. Additionally, they can optionally be prefixed with `R` but this is not required since they are Raw by default.
 - Added "`base`"  as an alternative name for the implicit root section, in addition to the previously suggested "`root`".
+- Changed policy in 13.1, "Fallback Rules" to keep invalid key names or section headers as-is.
+- Added note about optional "Abort Sensitivity Levels" in parsing.
 
 
 v1.0.0 Beta 6, 2025-05-20
