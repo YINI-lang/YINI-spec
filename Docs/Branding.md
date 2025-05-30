@@ -2,7 +2,7 @@
 
 ## YINI "Slogan"
 ```yini
-^ YINI
+~ YINI
 Yet_another = 'INI'
 /END
 ```
