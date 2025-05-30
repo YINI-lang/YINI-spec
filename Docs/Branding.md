@@ -10,11 +10,25 @@ Yet_another = 'INI'
 ---
 
 ## YINI Taglines
+
+Below is good for logo area, headers, or minimal contexts (e.g., website banner, favicon tooltip, GitHub repo subtitle):
+
 > _YINI: Clean. Readable. Structured._
-- Perfect for logo area, headers, or minimal contexts (e.g., website banner, favicon tooltip, GitHub repo subtitle).
+
+---
+
+Below is excellent for README intros, specification headers, professional documents:
 
 > _YINI: A lightweight configuration file format — clean, readable, structured._
-- Excellent for README intros, specification headers, professional documents.
+
+---
+
+Below is good for footers:
+
+**~ YINI ≡**  
+> A Clean, Readable, and Human-friendly configuration format.  
+
+[yini-lang.org](https://yini-lang.org)
 
 ---
 
