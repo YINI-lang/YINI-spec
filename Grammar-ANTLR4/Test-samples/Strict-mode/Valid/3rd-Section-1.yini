@@ -1,5 +1,0 @@
-^title
-    ^^ body
-        ^^^ myPackage
-        number=3
-/END
