@@ -988,13 +988,19 @@ linkItems:
 ### 10.1. Future / Reserved Features _(For Future Use)_
 The following features are reserved for potential support in future versions of the YINI specification. They are **not currently active** in this version, but their syntax and keywords **are reserved**.
 
-#### 10.1.1. Anchors and Aliases
+#### 10.1.1. Short-hand Section Marker
+Support for an alternative, shorter version of the section marker is planned to be added in the near future. 
+
+#### 10.1.2. Inline Objects
+Support for inline objects (e.g., within lists) is planned in the near future. 
+
+#### 10.1.3. Anchors and Aliases
 YINI may introduce a mechanism similar to YAML’s anchors and aliases. These constructs would allow users to define reusable fragments within a configuration.
 
   - **Anchors (`@`):** Or some other token, to assign a name to a key, section, or structure.
   - **Aliases (`use`):** Reference a previously defined anchor using the use keyword.
 
-#### 10.1.2. Includes
+#### 10.1.4. Includes
 YINI may support modular configuration files via external file inclusion.
   - **Directive:** `@include "<path/to/file>"`
   - **Description:** Imports the contents of another YINI file into the current one.
@@ -1002,7 +1008,7 @@ YINI may support modular configuration files via external file inclusion.
 
 These features, while not implemented in this version, are reserved and must not be repurposed by user-defined syntax.
 
-#### 10.1.3. Date-time Type
+#### 10.1.5. Date-time Type
 
 Currently, the YINI types in the specification map 1-to-1 to native JSON types. With that said YINI does not currently support native date, time, or date-time types. All date and time values **must currently** be represented as strings.
 
@@ -1641,7 +1647,7 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 
-v1.0.0 Beta 6 + Updates
+v1.0XX.0 Beta + Updates
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
 - Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
 - Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
@@ -1649,7 +1655,9 @@ v1.0.0 Beta 6 + Updates
 - Added "`base`"  as an alternative name for the implicit root section, in addition to the previously suggested "`root`".
 - Changed policy in 13.1, "Fallback Rules" to keep invalid key names or section headers as-is.
 - Added note about optional "Abort Sensitivity Levels" in parsing.
-
+- Added a couple of sections in future:
+  * 10.1.1, "Short-hand Section Marker"
+  * 10.1.2, "Inline Objects"
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
