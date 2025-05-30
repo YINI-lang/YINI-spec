@@ -5,7 +5,7 @@
 ^ Strings
 a = "normal"
 b = 'also normal'
-c = h"Multi-line
+c = h" 👍 Multi-line
      H-String  text  "
 d = c"This is a tab:\t and a newline:\n"
 

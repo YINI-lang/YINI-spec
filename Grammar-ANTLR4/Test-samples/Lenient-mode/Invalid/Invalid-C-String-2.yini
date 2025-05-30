@@ -1,0 +1,7 @@
+/*
+  SHOULD FAIL
+*/
+
+
+str = C"Yes
+	mate"	// ERROR HERE, C-String must be on single line!
