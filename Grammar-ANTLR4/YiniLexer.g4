@@ -98,11 +98,19 @@ STRING:
 	| TRIPLE_QUOTED_STRING
 	| C_TRIPLE_QUOTED_STRING;
 
+TRIPLE_QUOTED_STRING:
+	//'"""' (~["] | '"' ~["] | '""' ~["])* '"""';
+	[Rr]? '"""' .*? '"""'; // Greedy-safe because of .*? (non-greedy).
+
+C_TRIPLE_QUOTED_STRING: [Cc] '"""' (ESC_SEQ | ~["])* '"""';
+
 // Raw string literal, treats the backslash character (\) as a literal.
 RAW_STRING:
 	//('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\'' | ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
 	[Rr]? '\'' ~['\r\n]* '\''
-	| [Rr]? '"' ~["\r\n]* '"';
+	| [Rr]? '"'
+		{ _input.LA(2) != '"' }?    // <-- make sure we’re not looking at C""…
+		 ~["\r\n]* '"';
 
 // Hyper string literal.
 HYPER_STRING: [Hh] '\'' (~['])* '\''
@@ -110,14 +118,10 @@ HYPER_STRING: [Hh] '\'' (~['])* '\''
 
 // Classic string literal.
 CLASSIC_STRING:
-    [Cc] '\'' (ESC_SEQ | ~[\u0000-\u001F '])* '\''
-  | [Cc] '"'  (ESC_SEQ | ~[\u0000-\u001F "])* '"';
-
-TRIPLE_QUOTED_STRING:
-	//'"""' (~["] | '"' ~["] | '""' ~["])* '"""';
-	[Rr]? '"""' .*? '"""'; // Greedy-safe because of .*? (non-greedy).
-
-C_TRIPLE_QUOTED_STRING: [Cc] '"""' (ESC_SEQ | ~["])* '"""';
+	[Cc] '\'' (ESC_SEQ | ~[\u0000-\u001F '])* '\''
+  	| [Cc] '"'
+  		{ _input.LA(2) != '"' }?    // <-- make sure we’re not looking at C""…
+    	(ESC_SEQ | ~[\u0000-\u001F "])* '"';
 
 // Note: Like 8.2 in specification.
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
