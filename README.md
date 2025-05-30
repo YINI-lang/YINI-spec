@@ -13,7 +13,7 @@
 ---
 
 - ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (ToC)
-- [Why YINI, but why exactly!? ⇨](./RATIONALE.md) Rationale
+- ➡️ [Why YINI, why another format!?](./RATIONALE.md) (Rationale)
 
 ---
 
