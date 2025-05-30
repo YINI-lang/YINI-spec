@@ -14,6 +14,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - Added another section in Spec with summary table for "String Types Summary".
 - In Spec added supported control characters in <Unicode-WS>.
 - Added internal links to all level 2 sections in the ToC of both in the Spec and `RATIONALE.MD`.
+- Renamed the branch and enviroment, from `release` to `production`.
 
 ## 2025 May  (spec: v1.0.0 Beta 6)
 - Reworked the use of `#` for comments, and added `^` as new default marker for sections. Updated README and Branding to reflect this.
