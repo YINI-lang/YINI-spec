@@ -615,6 +615,9 @@ Or, with indentations (only for human readability):
 ## 6. String Literals
 
 **Prefix Glossary Table:**
+
+Prefix letters are **case-insensitive**, e.g. lowercase `h` behaves identically to `H`.
+
 |Prefix| Type Name      | Behavior Summary|
 |------|----------------|---|
 |_none_| Raw String     | Raw (default) if no prefix is used |
@@ -633,7 +636,7 @@ String literals in YINI **must be enclosed** in either single quotes `'` or doub
 
 If no prefix is used, the string is treated as a **Raw string literal** by default.
 
-Triple-quoted strings (`"""`) do not support any prefix character. Therefore, the prefix is only applicable to single-line Hyper-strings (`H`), Classic-strings (`C`), and optionally Raw-strings (`R`).
+**Note:** Triple-quoted strings (`"""`) only support the `R` and `C` prefixes. If no prefix is given, a Triple-quoted string is treated as raw. 
 
 **Rules and Behavior for Strings:**
 - All string literals **must start and finish on the same line**, except for **H-Strings** (see section 6.4.) and **Triple-Quoted Strings** (see section 6.3.), which can span multiple lines.
@@ -718,6 +721,7 @@ Hyper Strings are designed to be **multi-line friendly** and **visually readable
 - Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
 - Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
 - Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
+- For the complete set of characters in <Unicode-WS>, refer to section 15.7 — [Unicode Whitespace Characters.](./YINI-Specification.md#157--unicode-whitespace-characters)
 
 Hyper Strings behave similarly to how text is rendered in HTML: extra spacing and line breaks are reduced to clean, flowing text.
 
