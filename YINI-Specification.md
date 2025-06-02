@@ -975,7 +975,7 @@ list2 = [100, 200, 300]
 list3 = []  // An empty list.
 ```
 
-For convenience, a trailing comma (`,`) may be optionally be included.
+For convenience, a trailing comma (`,`) may be optionally be included (only in lenient-mode).
 
 ```yini
 // A list with THREE items.
@@ -1055,8 +1055,11 @@ name = "John"  // ✅ A single string value.
 **Colon (`:`) is not a substitute for `=`** and must not be used for regular member (non list) assignments.
 
 **Trailing Comma Behavior**
-- In colon-based lists, a **trailing comma is ignored** (legal, optional).
-- In bracketed lists (`[ ... ]`), a **trailing comma results in an implicit** `null` as the last item.
+- In objects, a **trailing comma is ignored** (legal in lenient-mode, optional).
+- In colon-based lists, a **trailing comma is ignored** (legal in lenient-mode, optional).
+- In bracketed lists (`[ ... ]`), a **trailing comma is ignored** (legal in 
+lenient-mode, optional).
+  
 
 **Termination Rule**
 
@@ -1215,9 +1218,12 @@ Non-strict mode (lenient mode) is the default and recommended mode of operation.
 Some YINI parsers may support multiple **validation modes**:
 
 - **Lenient Mode:** 
-  - Permissive with minor errors (e.g., trailing commas, mixed line endings).
+  - Permissive with minor errors (e.g., trailing commas (are ignored), mixed line endings).
   - The document terminator (`/END`) is **optional** in lenient mode and may be omitted entirely.
   - All typing rules still apply — for example, string literals must be quoted: if a value is not quoted, it is not a string — no exceptions.
+  - Empty values are allowed:
+    - Empty value (after a comma) inside lists and object - is itnored.
+    - Empty value (ONLY outside lists and objects) are treated as `Null`.
   - Useful for hand-edited configuration files.
 - **Strict Mode:**
   - Enforces full well-formedness.
@@ -1300,7 +1306,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
     items = ["a", "b", "c"]
     ```
       * A bracketed list line must not begin with a comma.
-      * A trailing comma in `[ ]` is treated as a `null` value.
+      * A trailing comma in `[ ]` is ignored.
   - **(b) Unbracketed multiline:**
     ```yini
     items1: "a", "b", "c"
@@ -1745,6 +1751,11 @@ v1.0XX.0 Beta + Updates
 - Updated section heading rule:
   * Section heading markers (^, ~, etc.) may be repeated up to six times to indicate levels 1–6. 
   * Beyond level 6, numeric shorthand must be used (see Section 5.3.1).
+- Added support for objects (`{ ... }`). 
+- Changed handling of trailing comma to:
+  - A missing value (empty value) for a **section-top-level** assignment in and that is not inside `[ ]` or `{ }`) is equivalent to `Null`.
+  - A missing **last element/member** inside `[ ... ]` or `{ ... }` is always considered a trailing comma and does not produce a null element.
+
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
@@ -1790,7 +1801,7 @@ Below are some common mistakes and misunderstandings when writing YINI files, es
 | Colon-Based List   | `items: "a", "b", "c"`          | `items: "a" "b" "c"`             | Items must be comma-separated — just like bracketed lists. |
 | Colon + Single Item| _Don't use_ `name: "John"`      | Same as left                    | Interpreted as a list with one string item — use `=` instead. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Assumed to be ignored           | Adds a `null` item at the end of the list. |
-| Trailing comma (colon)  | `list:` <br> `"a", "b", "c",` | —                            | ✅ OK — trailing commas in colon-based lists are ignored. |
+| Trailing comma (colon)  | `list:` <br> `"a", "b", "c",` | —                            | ✅ OK — trailing commas in colon-based lists, are ignored. |
 | Comments           | `# Comment` or `// Comment`     | `#Comment`                      | `#` must be followed by **space or tab** to be recognized as a comment. |
 | Hex values         | `color = #FF0033`               | Assumed to be a comment         | Without space after `#`, this is a valid hex value. |
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
