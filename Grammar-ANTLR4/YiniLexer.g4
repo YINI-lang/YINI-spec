@@ -131,10 +131,15 @@ SINGLE_OR_DOUBLE:
 //   	| [Cc] '"'
 //     	(ESC_SEQ | ~[\u0000-\u001F "])* '"';
 
-// Common rule for RAW and CLASSIC string literals.
-// Illegal characters are deferred to the parser, which gives more control
-// and enables better user feedback (e.g., pinpointing the exact location of invalid characters).
-// Additionally, this simplifies the lexer rule.
+/**
+ * Common rule for RAW and CLASSIC string literals.
+ * Illegal characters are deferred to the parser, which gives more control
+ * and enables better user feedback (e.g., pinpointing the exact location of
+ * invalid characters). Additionally, this simplifies the lexer rule.
+ *
+ * Rather than having the lexer reject on any "illegal" character, lets the
+ * parser catch it so you can give a more precise error message. 
+*/
 R_AND_C_STRING:
 	[RrCc]? '\'' ~['\r\n]* '\''
 	| [RrCc]? '"'	 ~["\r\n]* '"';
