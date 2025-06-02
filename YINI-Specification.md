@@ -107,59 +107,63 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;8.1. Booleans  
 &nbsp;&nbsp;&nbsp;&nbsp;8.2. Null Literal
 
-**9. List Literals** ([Link ⇨](./YINI-Specification.md#9-list-literals))  
-&nbsp;&nbsp;&nbsp;&nbsp;9.1. Bracketed Lists (using `=`)  
-&nbsp;&nbsp;&nbsp;&nbsp;9.2. Colon-Based List (using `:`)
+**9. Object Literals** ([Link ⇨](./YINI-Specification.md#9-object-literals))  
+&nbsp;&nbsp;&nbsp;&nbsp;9.1. Objects (using `{` and `}`)  
 
-**10. Advanced Constructs** ([Link ⇨](./YINI-Specification.md#10-advanced-constructs))  
-&nbsp;&nbsp;&nbsp;&nbsp;10.1. Future / Reserved Features _(For Future Use)_  
+**10. List Literals** ([Link ⇨](./YINI-Specification.md#10-list-literals))  
+&nbsp;&nbsp;&nbsp;&nbsp;10.1. Bracketed Lists (using `=`)  
+&nbsp;&nbsp;&nbsp;&nbsp;10.2. Colon-Based List (using `:`)
+
+**11. Advanced Constructs** ([Link ⇨](./YINI-Specification.md#11-advanced-constructs))  
+&nbsp;&nbsp;&nbsp;&nbsp;11.1. Future / Reserved Features _(For Future Use)_  
 
 ---
 
 ### **Part III – Validation, Implementation & Compatibility**
 
-**11. Validation Rules** ([Link ⇨](./YINI-Specification.md#11-validation-rules))  
-&nbsp;&nbsp;&nbsp;&nbsp;11.1. Reserved Syntax  
-&nbsp;&nbsp;&nbsp;&nbsp;11.2. Well-Formedness Requirements  
-&nbsp;&nbsp;&nbsp;&nbsp;11.3. Lenient vs. Strict Modes _(Optional Feature)_  
+**12. Validation Rules** ([Link ⇨](./YINI-Specification.md#12-validation-rules))  
+&nbsp;&nbsp;&nbsp;&nbsp;12.1. Reserved Syntax  
+&nbsp;&nbsp;&nbsp;&nbsp;12.2. Well-Formedness Requirements  
+&nbsp;&nbsp;&nbsp;&nbsp;12.3. Lenient vs. Strict Modes _(Optional Feature)_  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11.3.1. Table: Lenient vs. Strict Mode
 
-**12. Implementation Notes** ([Link ⇨](./YINI-Specification.md#12-implementation-notes))  
-&nbsp;&nbsp;&nbsp;&nbsp;12.1. Top-Level Sections and Implicit Root  
-&nbsp;&nbsp;&nbsp;&nbsp;12.2. Line Handling and Whitespace  
-&nbsp;&nbsp;&nbsp;&nbsp;12.3. Value and NULL Handling  
-&nbsp;&nbsp;&nbsp;&nbsp;12.4. Boolean Canonicalization  
-&nbsp;&nbsp;&nbsp;&nbsp;12.5. Lists  
-&nbsp;&nbsp;&nbsp;&nbsp;12.6. Strings Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;12.7. String Literal Types  
-&nbsp;&nbsp;&nbsp;&nbsp;12.8. Comments  
-&nbsp;&nbsp;&nbsp;&nbsp;12.9. Error Handling Recommendations  
-&nbsp;&nbsp;&nbsp;&nbsp;12.10. Bonus Tips for Implementation
+**13. Implementation Notes** ([Link ⇨](./YINI-Specification.md#13-implementation-notes))  
+&nbsp;&nbsp;&nbsp;&nbsp;13.1. Top-Level Sections and Implicit Root  
+&nbsp;&nbsp;&nbsp;&nbsp;13.2. Line Handling and Whitespace  
+&nbsp;&nbsp;&nbsp;&nbsp;13.3. Value and NULL Handling  
+&nbsp;&nbsp;&nbsp;&nbsp;13.4. Boolean Canonicalization  
+&nbsp;&nbsp;&nbsp;&nbsp;13.5. Objects  
+&nbsp;&nbsp;&nbsp;&nbsp;13.5. Lists  
+&nbsp;&nbsp;&nbsp;&nbsp;13.6. Strings Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;13.7. String Literal Types  
+&nbsp;&nbsp;&nbsp;&nbsp;13.8. Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;13.9. Error Handling Recommendations  
+&nbsp;&nbsp;&nbsp;&nbsp;13.10. Bonus Tips for Implementation
 
-**13. Compatibility and Versioning** ([Link ⇨](./YINI-Specification.md#13-compatibility-and-versioning))  
-&nbsp;&nbsp;&nbsp;&nbsp;13.1. Fallback Rules  
-&nbsp;&nbsp;&nbsp;&nbsp;13.2. Versioning Strategy  
-&nbsp;&nbsp;&nbsp;&nbsp;13.3. Encoding Notes  
-&nbsp;&nbsp;&nbsp;&nbsp;13.4. JSON Compatibility
+**14. Compatibility and Versioning** ([Link ⇨](./YINI-Specification.md#14-compatibility-and-versioning))  
+&nbsp;&nbsp;&nbsp;&nbsp;14.1. Fallback Rules  
+&nbsp;&nbsp;&nbsp;&nbsp;14.2. Versioning Strategy  
+&nbsp;&nbsp;&nbsp;&nbsp;14.3. Encoding Notes  
+&nbsp;&nbsp;&nbsp;&nbsp;14.4. JSON Compatibility
 
 ---
 
 ### **Part IV – Examples and Appendices**
 
-**14. Examples** ([Link ⇨](./YINI-Specification.md#14-examples))  
-&nbsp;&nbsp;&nbsp;&nbsp;14.1. Minimal Example  
-&nbsp;&nbsp;&nbsp;&nbsp;14.2. Realistic Config Use Cases  
-&nbsp;&nbsp;&nbsp;&nbsp;14.3. Examples of YINI → JSON Mapping  
-&nbsp;&nbsp;&nbsp;&nbsp;14.4. Examples of JSON → YINI Mapping  
+**15. Examples** ([Link ⇨](./YINI-Specification.md#15-examples))  
+&nbsp;&nbsp;&nbsp;&nbsp;15.1. Minimal Example  
+&nbsp;&nbsp;&nbsp;&nbsp;15.2. Realistic Config Use Cases  
+&nbsp;&nbsp;&nbsp;&nbsp;15.3. Examples of YINI → JSON Mapping  
+&nbsp;&nbsp;&nbsp;&nbsp;15.4. Examples of JSON → YINI Mapping  
 
-**15. Appendices and Reserved Areas** ([Link ⇨](./YINI-Specification.md#15-appendices-and-reserved-areas))  
-&nbsp;&nbsp;&nbsp;&nbsp;15.1. License  
-&nbsp;&nbsp;&nbsp;&nbsp;15.2. Acknowledgments  
-&nbsp;&nbsp;&nbsp;&nbsp;15.3. Author(s)  
-&nbsp;&nbsp;&nbsp;&nbsp;15.4. Spec Changes  
-&nbsp;&nbsp;&nbsp;&nbsp;15.5. Reserved: Grammar (Formal)  
-&nbsp;&nbsp;&nbsp;&nbsp;15.6. Appendix C – Common Mistakes and Pitfalls  
-&nbsp;&nbsp;&nbsp;&nbsp;15.7. 🧾 Unicode Whitespace Characters  
+**16. Appendices and Reserved Areas** ([Link ⇨](./YINI-Specification.md#16-appendices-and-reserved-areas))  
+&nbsp;&nbsp;&nbsp;&nbsp;16.1. License  
+&nbsp;&nbsp;&nbsp;&nbsp;16.2. Acknowledgments  
+&nbsp;&nbsp;&nbsp;&nbsp;16.3. Author(s)  
+&nbsp;&nbsp;&nbsp;&nbsp;16.4. Spec Changes  
+&nbsp;&nbsp;&nbsp;&nbsp;16.5. Reserved: Grammar (Formal)  
+&nbsp;&nbsp;&nbsp;&nbsp;16.6. Appendix C – Common Mistakes and Pitfalls  
+&nbsp;&nbsp;&nbsp;&nbsp;16.7. 🧾 Unicode Whitespace Characters  
 
 ---
 
@@ -315,7 +319,7 @@ While YINI is not indentation-sensitive, the following whitespace `<WS>` behavio
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
 - Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are ignored outside of strings and section headers.
 - Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
-- Note: In the context of strings, the term `<Unicode-WS>` is used to refer to a broader range of Unicode whitespace characters, beyond just tab and space. For a complete table, see more in section 15.7, "🧾 Unicode Whitespace Characters".
+- Note: In the context of strings, the term `<Unicode-WS>` is used to refer to a broader range of Unicode whitespace characters, beyond just tab and space. For a complete table, see more in section 16.7, "🧾 Unicode Whitespace Characters".
 
 ### 3.3. Comments
 YINI supports **three types of comments**:
@@ -483,6 +487,7 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
   - Boolean
 
 - **Compound types:**
+  - Object (similar to a map) — a sequence of key-value pairs (members), separated by commas
   - List (also known as Arrays) — a sequence of values, separated by commas
 
 - **Special type:**
@@ -765,11 +770,11 @@ Like raw strings, Hyper Strings treat backslashes as literal characters — esca
 Hyper Strings are designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
 
 - `<NL>` refers to newline/linebreak of in combination of `CR`, `LF`, or `CRLF`.
-`<Unicode-WS>` includes all relevant Unicode whitespace characters: the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` (control characters), primarily from the C0 range (`U+0000–U+001F`). For a complete table, see more in section 15.7, "🧾 Unicode Whitespace Characters".
+`<Unicode-WS>` includes all relevant Unicode whitespace characters: the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` (control characters), primarily from the C0 range (`U+0000–U+001F`). For a complete table, see more in section 16.7, "🧾 Unicode Whitespace Characters".
 - Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
 - Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
 - Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
-- For the complete set of characters in <Unicode-WS>, refer to section 15.7 — [Unicode Whitespace Characters.](./YINI-Specification.md#157--unicode-whitespace-characters)
+- For the complete set of characters in <Unicode-WS>, refer to section 16.7 — [Unicode Whitespace Characters.](./YINI-Specification.md#157--unicode-whitespace-characters)
 
 Hyper Strings behave similarly to how text is rendered in HTML: extra spacing and line breaks are reduced to clean, flowing text.
 
@@ -917,7 +922,40 @@ Value/literal `NULL` (NON CASE-SENSITIVE).
 
 Also if value is missing in member, then that member is treated as NULL.
 
-## 9. List Literals
+## 9. Object Literals
+### 9.1. Objects (using `{` and `}`)
+YINI supports inline objects as a value type, allowing one or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a standard YINI `key = value` pair, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
+
+An object in YINI  have the following form:
+```txt
+<identifier> = { <key1> = <value1>, <key2> = <value2>, ... }
+```
+
+- The **key** in each member follows the same rules as any YINI identifier.
+The **value** in each member may be:
+  * A string (quoted with `'...'`).
+  * A number (integer or float).
+  * A boolean (true/false/on/off).
+  * A list (`[ ... ]`).
+  * Another inline object (`{ ... }`).
+
+The following rules apply to objects in YINI:
+- Begins with `{` and ends with `}`.
+- Between `{` and `}`, write one or more members of the form `key = value` (a member), separated by commas.
+- Optionally and only in lenient-mode, allow a trailing comma before the closing `}`
+- Whitespace (spaces, tabs, newlines) is ignored except inside quoted strings.
+- Comments (e.g. `// ...` or `# ...`) may appear anywhere whitespace is allowed.
+
+**Example:**
+```yini
+^ section
+object = { member1 = "value1", member2 = "value2" }
+```
+
+- 
+
+
+## 10. List Literals
 Lists in YINI correspond to what are called _Arrays_ in JSON and serve the same purpose as arrays in many programming languages (e.g., in JavaScript).
 
 YINI supports two ways to define lists:
@@ -926,7 +964,7 @@ YINI supports two ways to define lists:
 
 Note: Only lists can use the alternative notation using `:`.
 
-### 9.1. Bracketed Lists (using `=`)
+### 10.1. Bracketed Lists (using `=`)
 A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
@@ -974,7 +1012,7 @@ linkItems = [
 ]
 ```
 
-### 9.2. Colon-Based List (using `:`)
+### 10.2. Colon-Based List (using `:`)
 Exclusively for lists, YINI allows an alternative syntax using a colon (`:`) instead of `=`. This style omits square brackets and is intended to improve readability in configurations with list-like values.
 
 Note: Commas are mandatory after items (except after the last item), even in multi-line forms in this notation.
@@ -1036,23 +1074,17 @@ linkItems:
 	["stylesheet", "css/themes.css"]
 ```
 
-## 10. Advanced Constructs
-### 10.1. Future / Reserved Features _(For Future Use)_
+## 11. Advanced Constructs
+### 11.1. Future / Reserved Features _(For Future Use)_
 The following features are reserved for potential support in future versions of the YINI specification. They are **not currently active** in this version, but their syntax and keywords **are reserved**.
 
-#### 10.1.1. Short-hand Section Marker
-Support for an alternative, shorter version of the section marker is planned to be added in the near future. 
-
-#### 10.1.2. Inline Objects
-Support for inline objects (e.g., within lists) is planned in the near future. 
-
-#### 10.1.3. Anchors and Aliases
+#### 11.1.1. Anchors and Aliases
 YINI may introduce a mechanism similar to YAML’s anchors and aliases. These constructs would allow users to define reusable fragments within a configuration.
 
   - **Anchors (`@`):** Or some other token, to assign a name to a key, section, or structure.
   - **Aliases (`use`):** Reference a previously defined anchor using the use keyword.
 
-#### 10.1.4. Includes
+#### 11.1.2. Includes
 YINI may support modular configuration files via external file inclusion.
   - **Directive:** `@include "<path/to/file>"`
   - **Description:** Imports the contents of another YINI file into the current one.
@@ -1060,19 +1092,19 @@ YINI may support modular configuration files via external file inclusion.
 
 These features, while not implemented in this version, are reserved and must not be repurposed by user-defined syntax.
 
-#### 10.1.5. Date-time Type
+#### 11.1.3. Date-time Type
 
 Currently, the YINI types in the specification map 1-to-1 to native JSON types. With that said YINI does not currently support native date, time, or date-time types. All date and time values **must currently** be represented as strings.
 
 Support for standardized date-time literals may be considered in a future version, once the core specification is stable.
 
-## 11. Validation Rules
+## 12. Validation Rules
 YINI enforces a set of validation rules to ensure the structure and content of files are consistent, unambiguous, and semantically correct. These rules fall into two main categories: **reserved syntax protections** and **well-formedness**. Validation ensures compatibility across implementations and minimizes user errors.
 
-### 11.1. Reserved Syntax
+### 12.1. Reserved Syntax
 Certain characters and keywords are **reserved** by the YINI specification for internal syntax or future use. Using them incorrectly may lead to a parse error or undefined behavior.
 
-#### 11.1.1. Reserved Characters
+#### 12.1.1. Reserved Characters
 The following characters are reserved by the YINI syntax and must not be used improperly outside of their defined contexts. They may appear inside quoted strings or phrase identifiers but are otherwise restricted:
 
 | Character	| Usage Context	| Description |
@@ -1092,7 +1124,7 @@ The following characters are reserved by the YINI syntax and must not be used im
 | `{ }` |  | Reserved for future syntax |
 | `--` | Line disabling | Experimental use (see Section 3.6) |
 
-#### 11.1.2. Reserved Keywords
+#### 12.1.2. Reserved Keywords
 The following keywords are restricted and must not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
 - `/END` _(case-insensitive)_
 - `@yini`
@@ -1101,7 +1133,7 @@ The following keywords are restricted and must not be used as bare identifiers (
 
 Use of these keywords outside their defined roles may result in a parse error.
 
-### 11.2. Well-Formedness Requirements
+### 12.2. Well-Formedness Requirements
 A YINI file is considered **well-formed** if it adheres to the core syntactic and structural rules defined in this specification.
 
 #### 11.2.1. Structural Requirements
@@ -1177,7 +1209,7 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
     ```
     **Note:** Invalid: file contains only a comment and lacks both `/END` and title section.
 
-### 11.3. Lenient vs. Strict Modes _(Optional Feature)_
+### 12.3. Lenient vs. Strict Modes _(Optional Feature)_
 Non-strict mode (lenient mode) is the default and recommended mode of operation. Parsers should operate in this mode by default unless explicitly configured otherwise to operate in fully strict mode.
 
 Some YINI parsers may support multiple **validation modes**:
@@ -1200,7 +1232,7 @@ Some YINI parsers may support multiple **validation modes**:
 
 **Note:** Implementations must clearly document the validation mode in use and detail which rules are fully enforced under strict parsing.
 
-### 11.3.1. Table: Lenient vs. Strict Mode
+### 12.3.1. Table: Lenient vs. Strict Mode
 | Feature                 | Lenient Mode (Default) | Strict Mode | Notes |
 |-------------------------|:----------------------:|:-----------:|-------|
 | Explicit string quoting     | ✅ | ✅ | All strings must be enclosed with `"` or `'` — no ambiguity over strings.|
@@ -1213,13 +1245,13 @@ Some YINI parsers may support multiple **validation modes**:
 
 ⚠️ Strict mode enforces a stricter contract suitable for automated validation and reproducible builds. Lenient mode favors user-friendliness and flexibility for human editing.
 
-## 12. Implementation Notes
+## 13. Implementation Notes
 
 The following guidance is intended to assist developers implementing YINI parsers, engines, or tools. These notes aim to promote consistent interpretation of YINI syntax across different platforms and environments.
 
 See also [Section 11.2: Well-Formedness Requirements] for formal validation criteria.
 
-### 12.1. Top-Level Sections and Implicit Root
+### 13.1. Top-Level Sections and Implicit Root
 
 * If a document contains **multiple top-level sections** (i.e., multiple level-1 sections), they must be considered **children of an implicit root**.
 * The implicit root section:
@@ -1228,7 +1260,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   - A level-3 section **must follow** a level-2 section.
   - Skipping levels (e.g., directly from level-1 to level-3) is invalid.
 
-### 12.2. Line Handling and Whitespace
+### 13.2. Line Handling and Whitespace
 
 * Newline normalization is required:
   * Support all three forms: LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`.
@@ -1240,7 +1272,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 * Full-line and inline comments may follow key-value members or appear on separate lines.
 * Whitespace is permitted within lists, including across lines.
 
-### 12.3. Value and NULL Handling
+### 13.3. Value and NULL Handling
 
 * If a key is assigned without a value::
   ```yini
@@ -1252,7 +1284,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   - Keys must be **unique within the same section and section level**.
   - Duplicates in the same section are a **parse error**.
 
-### 12.4. Boolean Canonicalization
+### 13.4. Boolean Canonicalization
 
 * Boolean literals are **case-insensitive**.
 * The following values must be interpreted as Booleans:
@@ -1260,7 +1292,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   * `false`, `no`, `off` → `false`
 * Do not allow Boolean values like `1` or `0` unless explicitly cast by the host software.
 
-### 12.5 Lists
+### 13.5 Lists
 
 * Two syntaxes are valid for lists:
   - **(a) Bracketed form (preferred):**
@@ -1286,7 +1318,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   [1, 2, 3]     // Not parsed as a list!
   ```
 
-### 12.6 Strings Concatenation
+### 13.6 Strings Concatenation
 
 * Strings can be concatenated using the `+` operator:
     ```yini
@@ -1296,7 +1328,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 * Concatenating different types of strings (e.g., r"..." + c'...') is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
 * Only Classic strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
 
-### 12.7 String Literal Types
+### 13.7 String Literal Types
 **Note:** If a string is not quoted, it's not a string — period.
 
 | Type                   | Prefix           | Example    | Behavior |
@@ -1312,7 +1344,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   * Collapse sequences of whitespace and newlines into a single space.
   * Trim leading/trailing whitespace.
 
-### 12.8 Comments
+### 13.8 Comments
 
 * YINI supports:
   - `//` for inline comments (rest of the line is ignored).
@@ -1321,7 +1353,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   - `;`at start of line is treated as full-line comments (there may appear only spaces or tabs before `;`).
   - **Nested block comments are not supported.**
 
-### 12.9 Error Handling Recommendations
+### 13.9 Error Handling Recommendations
 
 If the parser encounters:
   * A **missing intermediate section level** (e.g., level 3 without level 2),
@@ -1332,7 +1364,7 @@ It should:
 * **Fail gracefully** and report an error, OR
 * **Use host-defined fallback logic**, if robustness is preferred.
 
-### 12.10 Bonus Tips for Implementation
+### 13.10 Bonus Tips for Implementation
 Developers are encouraged to implement the following features to improve parser robustness and developer experience:
 
 - Attach **position metadata** (line/column) to tokens for better diagnostics.
@@ -1347,18 +1379,18 @@ Developers are encouraged to implement the following features to improve parser 
   - Level 2 = abort even on warnings
 - **Extra Bonus:** In strings, if C/C++-style octal escape codes like `\1` to `\377` are used (which are not valid in YINI), parsers should treat this as an error in strict mode (and suggest the correct YINI syntax). In lenient mode, parsers may optionally emit a warning and suggest the correct YINI syntax: `\o1` to `\o377`, and interpret the octal code as intended.
 
-## 13. Compatibility and Versioning
+## 14. Compatibility and Versioning
 This section covers YINI's compatibility and interoperability principles.
 
-### 13.1. Fallback Rules
-#### 13.1.1. Invalid Sections or Keys
+### 14.1. Fallback Rules
+#### 14.1.1. Invalid Sections or Keys
 - Invalid key names or section headers **should be retained as-is** if possible and/or illegal characters remapped (both in lenient and strict mode, and optionally also support "Abort Sensitivity Levels"), though at least a warning should be issued depending on it's severity.
   
-#### 13.1.2. Graceful Degradation
+#### 14.1.2. Graceful Degradation
 - Parsers should issue warnings instead of errors when encountering unrecognized features (e.g., unknown directives, anchors, or section markers).
 - Implementations should strive to process known-valid content even if advanced features are not supported.
 
-### 13.2. Versioning Strategy
+### 14.2. Versioning Strategy
 **Version Format**
 
 - In the future, the YINI Specification will adopt _Semantic Versioning_ (`MAJOR.MINOR.PATCH STAGE`) to signal format evolution.
@@ -1369,24 +1401,24 @@ Semantic Versioning:
 - **MINOR:** Backward-compatible additions.
 - **PATCH:** Backward-compatible fixes.
 
-### 13.3. Encoding Notes
-#### 13.3.1 Required Encoding
+### 14.3. Encoding Notes
+#### 14.3.1 Required Encoding
 - **UTF-8 without BOM** is the required and default encoding for YINI files.
 - Parsers must support UTF-8 fully.
 - Use of other encodings (e.g., UTF-16, Latin-1) is discouraged and not guaranteed to be portable.
 
-#### 13.3.2 Byte Order Mark (BOM)
+#### 14.3.2 Byte Order Mark (BOM)
 - A UTF-8 BOM (`0xEF 0xBB 0xBF`) is **not required** and **should be avoided**.
 - If present, parsers must detect and ignore the BOM without failing.
 
-#### 13.3.3 Shebang Line (Optional)
+#### 14.3.3 Shebang Line (Optional)
 A shebang line may be used at the very top of the file:
 ```
 #!/usr/bin/env yini
 ```
 This line is ignored by YINI parsers but may affect script execution in Unix environments. It must be ignored by the YINI parser as a comment or metadata line.
 
-### 13.4. JSON Compatibility
+### 14.4. JSON Compatibility
 
 A valid YINI file can be converted into a valid JSON file (and vice versa) while preserving **data structure, types, and identifier names exactly**.
 
@@ -1423,9 +1455,9 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 ### See also:
 See Sections 14.3 and 14.4 for examples of YINI ⇆ JSON mappings.
 
-## 14. Examples
+## 15. Examples
 
-### 14.1. Minimal Example
+### 15.1. Minimal Example
 ```yini
 ^ Prefs
 
@@ -1438,8 +1470,8 @@ enabled = true
   - Begins with a single section `# Prefs`.
   - Contains three keys (`name`, `entries`, `enabled`) with string, number, and boolean values, respectively.
 
-### 14.2. Realistic Config Use Cases
-#### 14.2.1. User Preferences Configuration
+### 15.2. Realistic Config Use Cases
+#### 15.2.1. User Preferences Configuration
 ```yini
 ^ Preferences
 
@@ -1454,7 +1486,7 @@ recent_files = [
 ]
 ```
 
-#### 14.2.2. Application Settings with Sections
+#### 15.2.2. Application Settings with Sections
 ```yini
 ^ Database
 host = "localhost"
@@ -1476,7 +1508,7 @@ api_version = "v2.1"
 **Notes:**
 - The `^` marker cleanly divides logical domains into sections.
 
-#### 14.2.3. Script Metadata
+#### 15.2.3. Script Metadata
 ```yini
 ^ Metadata
 name = "Data Fetch Script"
@@ -1486,7 +1518,7 @@ schedule = "daily"
 active = true
 ```
 
-#### 14.2.4. Feature Flags
+#### 15.2.4. Feature Flags
 ```yini
 ^ FeatureFlags
 debug = true
@@ -1496,7 +1528,7 @@ cache_expiry = 86400  		// In seconds
 last_purge_date = "2025-05-25"	// YYYY-MM-DD
 ```
 
-#### 14.2.5. Feature Toggles with Alternative Syntax
+#### 15.2.5. Feature Toggles with Alternative Syntax
 ```yini
 /*
   Feature Toggles with Alternative Syntax
@@ -1519,9 +1551,9 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
 - \`Cache Config\` is a nested subsection of \`Feature Toggles\`.
 - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
 
-### 14.3. Examples of YINI → JSON Mapping
+### 15.3. Examples of YINI → JSON Mapping
 
-#### 14.3.1. Simple Flat Structure to JSON
+#### 15.3.1. Simple Flat Structure to JSON
 **YINI:**
 ```yini
 ^ User
@@ -1541,7 +1573,7 @@ active = true
 }
 ```
 
-#### 14.3.2. Nested Sections (multiple levels) to JSON
+#### 15.3.2. Nested Sections (multiple levels) to JSON
 **YINI:**
 ```yini
 ^ Settings
@@ -1567,7 +1599,7 @@ language = "en"
 }
 ```
 
-#### 14.3.3. Lists (Arrays) to JSON
+#### 15.3.3. Lists (Arrays) to JSON
 **YINI:**
 ```yini
 ^ Server
@@ -1586,7 +1618,7 @@ hosts = ['server1.example.com', 'server2.example.com']
 }
 ```
 
-#### 14.3.4. Nulls and Booleans to JSON
+#### 15.3.4. Nulls and Booleans to JSON
 
 **Note:** Null and boolean literals (e.g., `Null`, `True`, `On`, `Yes`) in YINI are **case-insensitive**, while keys are **case-sensitive**.
 
@@ -1609,9 +1641,9 @@ description = Null
 }
 ```
 
-### 14.4. Examples of JSON → YINI Mapping
+### 15.4. Examples of JSON → YINI Mapping
 
-#### 14.4.1. Simple JSON Object to YINI
+#### 15.4.1. Simple JSON Object to YINI
 **JSON:**
 ```json
 {
@@ -1631,7 +1663,7 @@ age = 35
 verified = true
 ```
 
-#### 14.4.2. Nested JSON Objects to YINI
+#### 15.4.2. Nested JSON Objects to YINI
 **JSON:**
 ```json
 {
@@ -1655,7 +1687,7 @@ version = "2.5"
     notifications = true
 ```
 
-#### 14.4.3. JSON Array to YINI
+#### 15.4.3. JSON Array to YINI
 **JSON:**
 ```json
 {
@@ -1671,19 +1703,19 @@ version = "2.5"
 hosts = ["alpha.local", "beta.local", "gamma.local"]
 ```
 
-## 15. Appendices and Reserved Areas
-### 15.1. License
+## 16. Appendices and Reserved Areas
+### 16.1. License
 Apache License, Version 2.0, January 2004,
 http://www.apache.org/licenses/
 Copyright 2024-2025 Gothenburg, Marko K. Seppänen. (Sweden via
 Finland).
 
-### 15.2. Acknowledgments
+### 16.2. Acknowledgments
 _YINI would not exist in this form and shape what it is today, without the many insights, challenges, and thoughtful, constructive feedback from the community.
 
 For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
-### 15.3. Author(s)
+### 16.3. Author(s)
 This specification is created and maintained by Marko K. Seppänen.
 
 #### Creator
@@ -1691,7 +1723,7 @@ First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
 Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
 
-### 15.4. Spec Changes
+### 16.4. Spec Changes
 A running log of changes and updates **to this YINI specification**.
 
 Notes:
@@ -1747,7 +1779,7 @@ v1.0.0 Beta 2, 2025-04-23
 
 ---
 
-### 15.6. Appendix C – Common Mistakes and Pitfalls
+### 16.6. Appendix C – Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats like YAML, JSON, or classic INI. This table aims to clarify syntax edge cases and help avoid subtle bugs.
 
 ✅ YINI Syntax Cheatsheet – Common Confusions
@@ -1767,7 +1799,7 @@ Below are some common mistakes and misunderstandings when writing YINI files, es
 
 ---
 
-### 15.7. 🧾 Unicode Whitespace Characters
+### 16.7. 🧾 Unicode Whitespace Characters
 Below is a categorized list of Unicode whitespace characters recognized as within <Unicode-WS>, these are normalized or trimmed in Hyper Strings.
 
 | Code Point | Character Name                | Abbreviation | Unicode Category | Notes                                 |
