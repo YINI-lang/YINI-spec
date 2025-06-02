@@ -25,7 +25,7 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 // COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
 //SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
-SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
+SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
 
 // Section markers: '^', '~', '§', '€'.
 // – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
