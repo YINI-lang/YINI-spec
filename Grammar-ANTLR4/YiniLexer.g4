@@ -91,37 +91,58 @@ NUMBER:
 		| HEX_INTEGER
 	);
 
-STRING:
-	RAW_STRING
-	| HYPER_STRING
-	| CLASSIC_STRING
-	| TRIPLE_QUOTED_STRING
-	| C_TRIPLE_QUOTED_STRING;
+// Illegal prefix characters and characters inside strings are deferred to the
+// parser, which gives more control and enables better user feedback (e.g.,
+// pinpointing the exact location of invalid characters, etc).
+
+// STRING:
+// 	RAW_STRING
+// 	| HYPER_STRING
+// 	| CLASSIC_STRING
+// 	| TRIPLE_QUOTED_STRING
+// 	| C_TRIPLE_QUOTED_STRING;
+STRING
+    : TRIPLE_QUOTED_STRING
+    | SINGLE_OR_DOUBLE
+    ;
 
 TRIPLE_QUOTED_STRING:
 	//'"""' (~["] | '"' ~["] | '""' ~["])* '"""';
-	[Rr]? '"""' .*? '"""'; // Greedy-safe because of .*? (non-greedy).
+	[RrCc]? '"""' .*? '"""'
+	; // Greedy-safe because of .*? (non-greedy).
 
-C_TRIPLE_QUOTED_STRING: [Cc] '"""' (ESC_SEQ | ~["])* '"""';
+SINGLE_OR_DOUBLE:
+	R_AND_C_STRING
+	| HYPER_STRING
+	;
+
+// C_TRIPLE_QUOTED_STRING: [Cc] '"""' (ESC_SEQ | ~["])* '"""';
 
 // Raw string literal, treats the backslash character (\) as a literal.
-RAW_STRING:
-	//('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\'' | ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
-	[Rr]? '\'' ~['\r\n]* '\''
-	| [Rr]? '"'
-		{ _input.LA(2) != '"' }?    // <-- make sure we’re not looking at C""…
-		 ~["\r\n]* '"';
+// RAW_STRING:
+// 	//('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\'' | ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
+// 	[Rr]? '\'' ~['\r\n]* '\''
+// 	| [Rr]? '"'
+// 		 ~["\r\n]* '"';
+
+// Classic string literal.
+// CLASSIC_STRING:
+// 	[Cc] '\'' (ESC_SEQ | ~[\u0000-\u001F '])* '\''
+//   	| [Cc] '"'
+//     	(ESC_SEQ | ~[\u0000-\u001F "])* '"';
+
+// Common rule for RAW and CLASSIC string literals.
+// Illegal characters are deferred to the parser, which gives more control
+// and enables better user feedback (e.g., pinpointing the exact location of invalid characters).
+// Additionally, this simplifies the lexer rule.
+R_AND_C_STRING:
+	[RrCc]? '\'' ~['\r\n]* '\''
+	| [RrCc]? '"'	 ~["\r\n]* '"';
+
 
 // Hyper string literal.
 HYPER_STRING: [Hh] '\'' (~['])* '\''
 	| [Hh] '"' ( ~["])* '"';
-
-// Classic string literal.
-CLASSIC_STRING:
-	[Cc] '\'' (ESC_SEQ | ~[\u0000-\u001F '])* '\''
-  	| [Cc] '"'
-  		{ _input.LA(2) != '"' }?    // <-- make sure we’re not looking at C""…
-    	(ESC_SEQ | ~[\u0000-\u001F "])* '"';
 
 // Note: Like 8.2 in specification.
 ESC_SEQ: '\\' (["']) | ESC_SEQ_BASE;
