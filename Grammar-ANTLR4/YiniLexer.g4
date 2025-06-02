@@ -67,6 +67,8 @@ COMMA: ',';
 COLON: ':';
 OB: '['; // Opening Bracket.
 CB: ']'; // Closing Bracket.
+OC: '{'; // Opening Curly Brace.
+CC: '}'; // Closing Curly Brace.
 PLUS: '+';
 DOLLAR: '$';
 // ASTERIX: '*';
@@ -86,6 +88,7 @@ NULL options {
 	caseInsensitive = true;
 }: 'null';
 
+EMPTY_OBJECT: '{' '}';
 EMPTY_LIST: '[' ']';
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
