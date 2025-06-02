@@ -41,12 +41,12 @@ section_members: member+;
 // -----------------------
 member:
 	//| KEY EQ NL+ // Empty value is treated as NULL.
-	KEY EQ value? NL+ // Empty value is treated as NULL.
+	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
 	//| KEY COLON elements? NL+
 	| member_colon_list;
 //| STRING COLON value? NL+; // ???
 
-member_colon_list: KEY COLON elements? NL+;
+member_colon_list: KEY COLON WS? elements? NL+;
 
 value:
 	null_literal // NOTE: In specs NULL should be case-insensitive.
@@ -68,7 +68,7 @@ objectMemberList
     ;
     
 objectMember
-    : KEY EQ NL* value
+    : KEY WS? EQ NL* value
     ;
 
 list: elements | list_in_brackets;
