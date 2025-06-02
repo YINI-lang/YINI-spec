@@ -571,7 +571,7 @@ YINI allows a limited set of _**section markers**_ to identify section headers. 
 Supported markers:
   - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
   - `~` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
-  - `>` (deprecated)
+  - `>` (discontinued)
   - Reserved: `§` (experimental, maybe in future, for enhanced readability)
   - Reserved: `€` (experimental, maybe in future, for enhanced readability)
 
