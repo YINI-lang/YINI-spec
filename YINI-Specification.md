@@ -596,10 +596,13 @@ That is, the following denote nesting levels 1–6:
 To represent nesting deeper than level 6, switch to the **numeric shorthand section header** syntax (see Section 5.3.1).
 
 ### 5.3. Nested Sections
-To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (shallower) level, you may drop directly to any smaller level.
+To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
 
-- Section heading markers (`^` or `~`, etc) may only be repeated up to six times — to level 6.
+- Section heading markers (`^` or `~`, etc) may only be repeated up to six times — to level 6 (maximum).
 - Beyond level 6, the numeric shorthand section must be used (see section 5.3.1).
+- **Going deeper (increase nesting):** You must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.
+- **Going shallower (decrease nesting):** You may drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
+- Optionally the short-hand section notation may be used for level 1 - 6 as well, but it's not preffered (e.g. `^^^` is `^3` interchangeable indeed).
 
 ```yini
 ^ Prefs
@@ -639,7 +642,7 @@ Optionally, indentation may be omitted:
 #### 5.3.1. Short-hand Section Heading
 
 **Short-hand Section Headings:**
-Numeric shorthand is required when nesting beyond six levels with the same marker (e.g., `^`). The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. For example:
+Numeric shorthand is required when nesting beyond six levels with the same marker (e.g., `^`). The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 6 indicating the nesting level (alternativily, integer ≥ 1 is allowed, but not recommended). For example:
 
 - To go from depth 6 to depth 7: write `^7`.  
 - To go from depth 7 to depth 8: write `^8`.  
@@ -920,7 +923,8 @@ The engine should convert the literal value to the corresponding Boolean value i
 ### 8.2. Null Literal
 Value/literal `NULL` (NON CASE-SENSITIVE). 
 
-Also if value is missing in member, then that member is treated as NULL.
+- Empty value in section-top-level key-value pair (member), that member is treated as NULL in lenient-mode, error in strict-mode.
+- Inside lists and objects, may contain a trailing comma efter the last value, that comma is ignored. A missing value never produces a null value in list or objects.
 
 ## 9. Object Literals
 ### 9.1. Objects (using `{` and `}`)
@@ -942,7 +946,7 @@ The **value** in each member may be:
 
 The following rules apply to objects in YINI:
 - Begins with `{` and ends with `}`.
-- Between `{` and `}`, write one or more members of the form `key = value` (a member), separated by commas.
+- Between `{` and `}`, write one or more members (also zero members is allowed in lenient-mode, while in strict-mode it must include at least one member) of the form `key = value` (a member), separated by commas.
 - Optionally and only in lenient-mode, after a value allow a trailing comma before the closing `}`
 - Whitespace (spaces, tabs, newlines) is ignored except inside quoted strings.
 - Comments (e.g. `// ...` or `# ...`) may appear anywhere whitespace is allowed.
@@ -952,9 +956,6 @@ The following rules apply to objects in YINI:
 ^ section
 object = { member1 = "value1", member2 = "value2" }
 ```
-
-- 
-
 
 ## 10. List Literals
 Lists in YINI correspond to what are called _Arrays_ in JSON and serve the same purpose as arrays in many programming languages (e.g., in JavaScript).
@@ -1038,11 +1039,11 @@ list1:
 list2:
   "oranges",
   "bananas",
-  "peaches",  // Trailing comma is valid here, and is ignored.
+  "peaches",  // Trailing comma is valid here, and is ignored. (Only in lenient-mode.)
 ```
 **Note:** This colon-based list syntax is only valid for lists.
 It must not be used for single values or key-value assignments.
-The trailing comma is ignored ONLY in `:` based lists.
+The trailing comma is ignored in lists ONLY in lenient-mode.
 
 ⚠️ **Common Pitfall**
 ```yini
@@ -1219,12 +1220,12 @@ Non-strict mode (lenient mode) is the default and recommended mode of operation.
 Some YINI parsers may support multiple **validation modes**:
 
 - **Lenient Mode:** 
-  - Permissive with minor errors (e.g., trailing commas (are ignored), mixed line endings).
+  - Permissive with minor errors (e.g., trailing commas after last value/member (are ignored), mixed line endings).
   - The document terminator (`/END`) is **optional** in lenient mode and may be omitted entirely.
   - All typing rules still apply — for example, string literals must be quoted: if a value is not quoted, it is not a string — no exceptions.
-  - Empty values are allowed:
-    - Empty value (after a comma) inside lists and object - is itnored.
-    - Empty value (ONLY outside lists and objects) are treated as `Null`.
+  - Empty values are allowed ONLY in members in section-top-levels:
+    - Missing value (ONLY outside lists and objects) are treated as `Null`.
+    - Trailing comma (after last value/member) inside lists and object - comma is ignored.
   - Useful for hand-edited configuration files.
 - **Strict Mode:**
   - Enforces full well-formedness.
@@ -1242,13 +1243,15 @@ Some YINI parsers may support multiple **validation modes**:
 ### 12.3.1. Table: Lenient vs. Strict Mode
 | Feature                 | Lenient Mode (Default) | Strict Mode | Notes |
 |-------------------------|:----------------------:|:-----------:|-------|
-| Explicit string quoting     | ✅ | ✅ | All strings must be enclosed with `"` or `'` — no ambiguity over strings.|
-| Empty sections allowed | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
-| Duplicate keys          | ❌ | ❌ |   |
-| One level 1 section header | ❌ | ✅ |   |
-| `/END` required         | ❌ | ✅ |   |
-| Trailing commas         | ✅ | ❌ |   |
-| Invalid escape sequences| ✅ (may warn) | ❌ (error) |   |
+| Explicit string quoting               | ✅ | ✅ | All strings must be enclosed with `"` or `'` — no ambiguity over strings.|
+| Empty sections allowed                | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
+| Duplicate keys                        | ❌ | ❌ |   |
+| One level 1 section header            | ❌ | ✅ |   |
+| `/END` required                       | ❌ | ✅ |   |
+| Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient-mode the comma is ignored, error in strict-mode  |
+| Missing (empty) value (only in section-top-level)| ✅ | ❌ | Will result in a `Null` value in lenient-mode  |
+| Missing (empty) value before comma | - | ❌ | In lenient-mode must warn or make error  |
+| Invalid escape sequences              | ✅ (may warn) | ❌ (error) |   |
 
 ⚠️ Strict mode enforces a stricter contract suitable for automated validation and reproducible builds. Lenient mode favors user-friendliness and flexibility for human editing.
 
@@ -1801,6 +1804,9 @@ v1.0.0 Beta 2, 2025-04-23
 ### 16.6. Appendix C – Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats like YAML, JSON, or classic INI. This table aims to clarify syntax edge cases and help avoid subtle bugs.
 
+#### Trailing commas in list and objects
+Note: Trailing commas (after any value/member) inside list or objects, does never result in any `Null` values.
+
 ✅ YINI Syntax Cheatsheet – Common Confusions
 | **Element**       | **Correct Syntax**              | **Common Mistake**              | **Clarification** |
 |-------------------|----------------------------------|----------------------------------|--------------------|
@@ -1808,7 +1814,7 @@ Below are some common mistakes and misunderstandings when writing YINI files, es
 | Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | Line break after `=` causes the value to be parsed as null. |
 | Colon-Based List   | `items: "a", "b", "c"`          | `items: "a" "b" "c"`             | Items must be comma-separated — just like bracketed lists. |
 | Colon + Single Item| _Don't use_ `name: "John"`      | Same as left                    | Interpreted as a list with one string item — use `=` instead. |
-| Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | Does NOT add any `null` item at the end of the list. |
+| Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
 | Trailing comma (colon)  | `list:` <br> `"a", "b", "c",` | —                            | ✅ OK — trailing commas in colon-based lists, are ignored. |
 | Comments           | `# Comment` or `// Comment`     | `#Comment`                      | `#` must be followed by **space or tab** to be recognized as a comment. |
 | Hex values         | `color = #FF0033`               | Assumed to be a comment         | Without space after `#`, this is a valid hex value. |
