@@ -85,7 +85,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 **5. Section Headers** ([Link ⇨](./YINI-Specification.md#5-section-headers))  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `~`)  
-&nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections
+&nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Short-hand Section Heading  
 
 **6. String Literals** ([Link ⇨](./YINI-Specification.md#6-string-literals))  
