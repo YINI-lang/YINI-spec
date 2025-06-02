@@ -27,8 +27,29 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 //SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
 SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
 
-//SECTION_MARKER: SS+ | EUR+ | GT+; SECTION_MARKER : [\u00A7\u20AC\u003E]+; // §, €
-fragment SECTION_MARKER: CARET+ | TILDE+ | SS+ | EUR+;
+// Section markers: '^', '~', '§', '€'.
+// – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
+// – For levels beyond 6, use the numeric shorthand form (e.g. ^7, ~12, §100, €42).
+fragment SECTION_MARKER
+    : SECTION_MARKER_BASIC_REPEAT
+    | SECTION_MARKER_SHORTHAND
+    ;
+
+// Match one or more of the same marker.  Parser must check "count ≤ 6.",
+// this check is deferred to the parser, which
+// gives more control and enables better user feedback
+fragment SECTION_MARKER_BASIC_REPEAT
+    : CARET+   // up to 6 carets (parser will reject more than 6)
+    | TILDE+   // up to 6 tildes
+    | SS+      // up to 6 '§' characters
+    | EUR+     // up to 6 '€' characters
+    ;
+
+// Shorthand: a single marker followed by a positive integer (1 or larger).
+// Examples: ^7, ~12, §100, €42
+fragment SECTION_MARKER_SHORTHAND
+    : (CARET | TILDE | SS | EUR) [1-9] DIGIT*
+    ;
 
 TERMINAL_TOKEN options {
 	caseInsensitive = true;

@@ -573,21 +573,39 @@ Supported markers:
   - `>` (deprecated)
   - Reserved: `§` (experimental, maybe in future, for enhanced readability)
   - Reserved: `€` (experimental, maybe in future, for enhanced readability)
-  - Reserved: `;`
- 
-### 5.3. Sections in Sections (Nested Sections)
-If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, when returning to higher (shallower) levels it is allowed to skip levels. - This technique is inspired by Markdown.
-```yini
-^ Prefs
-^^ Section
-^^^ SubSection
+
+**When using a repeated marker to indicate nesting, a maximum of six (`6`) repeated markers is allowed.**  
+That is, the following are valid only up to six repetitions (levels 1–6):
+
+```
+^       ← level 1
+^^      ← level 2
+^^^     ← level 3
+^^^^    ← level 4
+^^^^^   ← level 5
+^^^^^^  ← level 6
 ```
 
-Or, with indentations (only for human readability):
+**Attempting to write seven or more of the same marker (e.g. `^^^^^^^`) is invalid** in "basic" repeating form.  
+If you need to go deeper than level 6, use the **numeric shorthand** syntax (see Section 5.3).
+
+### 5.3. Sections in Sections (Nested Sections)
+If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, when returning to higher (shallower) levels it is allowed to skip levels. - This technique is inspired by Markdown.
+
+- Section heading markers (`^` or `~`, etc) may only be repeated up to six times — to level 6.
+- Beyond level 6, the numeric shorthand section must be used, see more in section 5.3.1.
+
 ```yini
 ^ Prefs
     ^^ Section
         ^^^ SubSection
+```
+
+Optionally, you may leave out indenting if you prefer:
+```yini
+^ Prefs
+^^ Section
+^^^ SubSection
 ```
 
 ```txt
@@ -610,6 +628,35 @@ Or, with indentations (only for human readability):
 ^^^ Section 2.1.1   // Sub-section of 2.1 (depth 3)
 
 ^ Section 3         // Main section 3 (depth 1)
+```
+
+#### 5.3. Short-hand Section Heading Rule
+
+**Short-hand Section Headings:**
+When nesting deeper than six levels of the same section marker (e.g., ^), you must switch to the numeric shorthand form. The shorthand is written as <marker><n>, where <marker> is one of an allowed section marker character (`^` or `~`, etc), and <n> is an integer ≥ 7 representing the new depth. For example, to nest from level 6 to level 7, write `^7`; from level 7 to level 8, write `^8`; and so on. When ascending (moving to shallower levels), you may drop to any smaller level (e.g., from `^9` directly back to `^^`).
+
+- To go from depth 6 to depth 7: write `^7`.  
+- To go from depth 7 to depth 8: write `^8`.  
+- To go from depth 8 to depth 9: write `^9`.  
+- And so on.
+
+This prevents arbitrarily long runs of the same marker. When ascending (moving to a shallower level), you may skip multiple levels at once (e.g., from `^9` back to `^^`).  
+
+**Examples:**
+```yini
+^      Level1      # One caret
+^^     Level2      # Two carets   → depth 2
+^^^    Level3      # Three carets → depth 3
+^^^^   Level4      # Four carets  → depth 4
+^^^^^  Level5      # Five carets  → depth 5
+^^^^^^ Level6      # Six carets   → depth 6
+^7     Level7      # Shorthand    → depth 7
+^8     Level8      # Shorthand    → depth 8
+^9     Level9      # Shorthand    → depth 9
+^10    Level10     # Shorthand    → depth 10
+
+^     BackTo1      # Going back to level 1 (allowed)
+^^    BackTo2      # Going back to level 2
 ```
 
 ## 6. String Literals
