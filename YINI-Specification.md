@@ -600,8 +600,8 @@ To place a section under another (i.e., to nest sections), repeat the section ma
 
 - Section heading markers (`^` or `~`, etc) may only be repeated up to six times — to level 6 (maximum).
 - Beyond level 6, the numeric shorthand section must be used (see section 5.3.1).
-- **Going deeper (increase nesting):** You must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.
-- **Going shallower (decrease nesting):** You may drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
+- **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.
+- **Going shallower (decrease nesting):** May drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
 - Optionally the short-hand section notation may be used for level 1 - 6 as well, but it's not preffered (e.g. `^^^` is `^3` interchangeable indeed).
 
 ```yini
@@ -923,12 +923,15 @@ The engine should convert the literal value to the corresponding Boolean value i
 ### 8.2. Null Literal
 Value/literal `NULL` (NON CASE-SENSITIVE). 
 
-- Empty value in section-top-level key-value pair (member), that member is treated as NULL in lenient-mode, error in strict-mode.
-- Inside lists and objects, may contain a trailing comma efter the last value, that comma is ignored. A missing value never produces a null value in list or objects.
+- Empty or missing value in section-top-level key-value pair (member outside any list or object), is treated as NULL in lenient-mode, error in strict-mode.
+  If written `key = `with nothing after `=`, that member’s value is `null` (lenient only; strict mode requires explicitly `key = null`).
+- Note: A missing value never produces a null value inside any list or object.
 
 ## 9. Object Literals
 ### 9.1. Objects (using `{` and `}`)
-YINI supports inline objects as a value type, allowing zero, one or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a standard YINI `key = value` pair, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
+YINI supports inline objects as a value type, allowing one or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a standard YINI `key = value` pair, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
+
+An empty object `{ }` is only allowed as in lenient-mode.
 
 An object in YINI  have the following form:
 ```txt
@@ -1028,7 +1031,7 @@ list2:  // An empty list.
 **Multi-line List Syntax:**
 Each item in the list may optionally appear on its own line for better readability.
 
-**Commas are required between values**, and a **trailing comma** on the last item is allowed — but ONLY when using colon-based list syntax.
+**Commas are required between values**, and a **trailing comma** on the last item is allowed.
 
 ```yini
 list1:
@@ -1043,7 +1046,7 @@ list2:
 ```
 **Note:** This colon-based list syntax is only valid for lists.
 It must not be used for single values or key-value assignments.
-The trailing comma is ignored in lists ONLY in lenient-mode.
+The trailing comma is ignored in lists (and objects) ONLY in lenient-mode.
 
 ⚠️ **Common Pitfall**
 ```yini
@@ -1185,7 +1188,7 @@ Files **must** be encoded as **UTF-8 without BOM**.
 The document terminator ensures robust parsing boundaries, improves multi-file safety, and aids debugging.
 
 #### 11.2.6. Escaping and String Literals
-- Escape sequences are **ONLY allowed** in Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
+- Escape sequences are **ONLY allowed** in in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-quoted strings must use `"""` for both opening and closing (`'''` is not supported).
 
 #### 11.2.7. Shortest Valid YINI Documents in Strict Mode
@@ -1224,8 +1227,8 @@ Some YINI parsers may support multiple **validation modes**:
   - The document terminator (`/END`) is **optional** in lenient mode and may be omitted entirely.
   - All typing rules still apply — for example, string literals must be quoted: if a value is not quoted, it is not a string — no exceptions.
   - Empty values are allowed ONLY in members in section-top-levels:
-    - Missing value (ONLY outside lists and objects) are treated as `Null`.
-    - Trailing comma (after last value/member) inside lists and object - comma is ignored.
+    - Missing/empty value (ONLY outside lists and objects) are treated as `Null`.
+    - Trailing comma (after last value/member) inside lists and object - comma is ignored - ONLY in lenient-mode.
   - Useful for hand-edited configuration files.
 - **Strict Mode:**
   - Enforces full well-formedness.
