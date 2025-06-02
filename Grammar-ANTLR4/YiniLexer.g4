@@ -20,12 +20,19 @@
 
 lexer grammar YiniLexer;
 
+/*
+ DISABLE_LINE:
+ Skip lines starting with `--`.
+ NOTE: Must at very top of lexer rules.
+ */
+DISABLE_LINE: ('--' ~[\r\n]*) -> skip;
+
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 // COMMENT: BLOCK_COMMENT | LINE_COMMENT;
 
 //SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
-SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
+SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
 
 // Section markers: '^', '~', '§', '€'.
 // – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
@@ -67,6 +74,8 @@ COMMA: ',';
 COLON: ':';
 OB: '['; // Opening Bracket.
 CB: ']'; // Closing Bracket.
+OC: '{'; // Opening Curly Brace.
+CC: '}'; // Closing Curly Brace.
 PLUS: '+';
 DOLLAR: '$';
 // ASTERIX: '*';
@@ -86,6 +95,7 @@ NULL options {
 	caseInsensitive = true;
 }: 'null';
 
+EMPTY_OBJECT: '{' '}';
 EMPTY_LIST: '[' ']';
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
@@ -214,11 +224,14 @@ SINGLE_NL: ('\r' '\n'? | '\n');
 WS: [ \t]+ -> skip;
 
 /*
- DISABLE_LINE:
- Skip lines starting with `--`.
+ BLOCK_COMMENT:
+ Can appear anywhere, spanning multiple lines.
+ Remains in input, but hidden
+ (doesn't interfere with parsing).
  */
-DISABLE_LINE: ('--' ~[\r\n]*) -> skip;
-
+BLOCK_COMMENT:
+	'/*' .*? '*/' -> channel(HIDDEN); // Block AKA Multi-line comment.
+	
 COMMENT: LINE_COMMENT | INLINE_COMMENT | BLOCK_COMMENT;
 /*
  FULL_LINE_COMMENT:
@@ -232,12 +245,3 @@ LINE_COMMENT: (';' ~[\r\n]*) -> channel(HIDDEN);
  Remains in input, but hidden (doesn't interfere with parsing).
  */
 INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> channel(HIDDEN);
-
-/*
- BLOCK_COMMENT:
- Can appear anywhere, spanning multiple lines.
- Remains in input, but hidden
- (doesn't interfere with parsing).
- */
-BLOCK_COMMENT:
-	'/*' .*? '*/' -> channel(HIDDEN); // Block AKA Multi-line comment.

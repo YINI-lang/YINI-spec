@@ -36,21 +36,40 @@ terminal_line: TERMINAL_TOKEN (NL+ | INLINE_COMMENT? NL*);
 
 section_members: member+;
 
+// -----------------------
+// Key–Value Assignment
+// -----------------------
 member:
 	//| KEY EQ NL+ // Empty value is treated as NULL.
-	KEY EQ value? NL+ // Empty value is treated as NULL.
+	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
 	//| KEY COLON elements? NL+
 	| member_colon_list;
 //| STRING COLON value? NL+; // ???
 
-member_colon_list: KEY COLON elements? NL+;
+member_colon_list: KEY COLON WS? elements? NL+;
 
 value:
-	list_in_brackets
+	null_literal // NOTE: In specs NULL should be case-insensitive.
 	| string_literal
 	| number_literal
 	| boolean_literal
-	| NULL; // NOTE: In specs NULL should be case-insensitive.
+	| list_in_brackets
+	| object_literal;
+
+object_literal
+  : OC NL* objectMemberList NL* CC NL*
+  | EMPTY_OBJECT
+  ;
+
+// A memberList is one or more key=value pairs separated by commas.
+objectMemberList
+    : objectMember ( COMMA NL* objectMember )* ( COMMA )?
+	| EMPTY_OBJECT
+    ;
+    
+objectMember
+    : KEY WS? EQ NL* value
+    ;
 
 list: elements | list_in_brackets;
 
@@ -61,6 +80,7 @@ elements: element COMMA? | element COMMA elements;
 element: NL* value NL* | NL* list_in_brackets NL*;
 
 number_literal: NUMBER;
+null_literal: NULL;
 
 string_literal: STRING string_concat*;
 string_concat: NL* PLUS NL* STRING;
