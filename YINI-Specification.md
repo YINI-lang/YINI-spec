@@ -133,12 +133,12 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Value and NULL Handling  
 &nbsp;&nbsp;&nbsp;&nbsp;13.4. Boolean Canonicalization  
 &nbsp;&nbsp;&nbsp;&nbsp;13.5. Objects  
-&nbsp;&nbsp;&nbsp;&nbsp;13.5. Lists  
-&nbsp;&nbsp;&nbsp;&nbsp;13.6. Strings Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;13.7. String Literal Types  
-&nbsp;&nbsp;&nbsp;&nbsp;13.8. Comments  
-&nbsp;&nbsp;&nbsp;&nbsp;13.9. Error Handling Recommendations  
-&nbsp;&nbsp;&nbsp;&nbsp;13.10. Bonus Tips for Implementation
+&nbsp;&nbsp;&nbsp;&nbsp;13.6. Lists  
+&nbsp;&nbsp;&nbsp;&nbsp;13.7. Strings Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;13.8. String Literal Types  
+&nbsp;&nbsp;&nbsp;&nbsp;13.9. Comments  
+&nbsp;&nbsp;&nbsp;&nbsp;13.10. Error Handling Recommendations  
+&nbsp;&nbsp;&nbsp;&nbsp;13.11. Bonus Tips for Implementation
 
 **14. Compatibility and Versioning** ([Link ⇨](./YINI-Specification.md#14-compatibility-and-versioning))  
 &nbsp;&nbsp;&nbsp;&nbsp;14.1. Fallback Rules  
@@ -924,7 +924,7 @@ Also if value is missing in member, then that member is treated as NULL.
 
 ## 9. Object Literals
 ### 9.1. Objects (using `{` and `}`)
-YINI supports inline objects as a value type, allowing one or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a standard YINI `key = value` pair, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
+YINI supports inline objects as a value type, allowing zero, one or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a standard YINI `key = value` pair, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
 
 An object in YINI  have the following form:
 ```txt
@@ -938,11 +938,12 @@ The **value** in each member may be:
   * A boolean (true/false/on/off).
   * A list (`[ ... ]`).
   * Another inline object (`{ ... }`).
+  * An empty object `{ }` is allowed as well only in lenient-mode.
 
 The following rules apply to objects in YINI:
 - Begins with `{` and ends with `}`.
 - Between `{` and `}`, write one or more members of the form `key = value` (a member), separated by commas.
-- Optionally and only in lenient-mode, allow a trailing comma before the closing `}`
+- Optionally and only in lenient-mode, after a value allow a trailing comma before the closing `}`
 - Whitespace (spaces, tabs, newlines) is ignored except inside quoted strings.
 - Comments (e.g. `// ...` or `# ...`) may appear anywhere whitespace is allowed.
 
@@ -1298,8 +1299,15 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   * `false`, `no`, `off` → `false`
 * Do not allow Boolean values like `1` or `0` unless explicitly cast by the host software.
 
-### 13.5 Lists
+### 13.5. Objects
+Any empty slot inside `{ ... }` e.g.:
+```
+object = { a = 1, , b = 2 }
+```
 
+is error in strict-mode or at least a warning (in lenient-mode).
+
+### 13.6. Lists
 * Two syntaxes are valid for lists:
   - **(a) Bracketed form (preferred):**
     ```yini
@@ -1324,7 +1332,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   [1, 2, 3]     // Not parsed as a list!
   ```
 
-### 13.6 Strings Concatenation
+### 13.7. Strings Concatenation
 
 * Strings can be concatenated using the `+` operator:
     ```yini
@@ -1334,7 +1342,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 * Concatenating different types of strings (e.g., r"..." + c'...') is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
 * Only Classic strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
 
-### 13.7 String Literal Types
+### 13.8. String Literal Types
 **Note:** If a string is not quoted, it's not a string — period.
 
 | Type                   | Prefix           | Example    | Behavior |
@@ -1350,7 +1358,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   * Collapse sequences of whitespace and newlines into a single space.
   * Trim leading/trailing whitespace.
 
-### 13.8 Comments
+### 13.9. Comments
 
 * YINI supports:
   - `//` for inline comments (rest of the line is ignored).
@@ -1359,7 +1367,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
   - `;`at start of line is treated as full-line comments (there may appear only spaces or tabs before `;`).
   - **Nested block comments are not supported.**
 
-### 13.9 Error Handling Recommendations
+### 13.10. Error Handling Recommendations
 
 If the parser encounters:
   * A **missing intermediate section level** (e.g., level 3 without level 2),
@@ -1370,7 +1378,7 @@ It should:
 * **Fail gracefully** and report an error, OR
 * **Use host-defined fallback logic**, if robustness is preferred.
 
-### 13.10 Bonus Tips for Implementation
+### 13.11 Bonus Tips for Implementation
 Developers are encouraged to implement the following features to improve parser robustness and developer experience:
 
 - Attach **position metadata** (line/column) to tokens for better diagnostics.
@@ -1743,7 +1751,7 @@ v1.0XX.0 Beta + Updates
 - Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
 - Added support for Triple-quoted strings with the prefix `C`, which interprets escape codes. Additionally, they can optionally be prefixed with `R` but this is not required since they are Raw by default.
 - Added "`base`"  as an alternative name for the implicit root section, in addition to the previously suggested "`root`".
-- Changed policy in 13.1, "Fallback Rules" to keep invalid key names or section headers as-is.
+- Changed policy in 14.1, "Fallback Rules" to keep invalid key names or section headers as-is.
 - Added note about optional "Abort Sensitivity Levels" in parsing.
 - Added a couple of sections in future:
   * 10.1.1, "Short-hand Section Marker"
@@ -1763,13 +1771,13 @@ v1.0.0 Beta 6, 2025-05-20
   * This requirement prevents clashes with hex-like values. Using `#` for hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise to align with conventions found in CSS (for color) and similar contexts. For example: `#FF0033` is a hex value, whereas `# FF0033` is treated as a comment.
 - Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and compatibility with the 7-bit ASCII range.
 - Added support for full line comment using `;` and disable line using `--`.
-- Added section 15.6, "Appendix C – Common Mistakes and Pitfalls".
+- Added section 16.6, "Appendix C – Common Mistakes and Pitfalls".
   
 v1.0.0 Beta 5, 2025-05-13
-- Added new section 15.2, "Acknowledgments".
+- Added new section 16.2, "Acknowledgments".
 - Changed the default mode (after feedback of not requiring the /END) to non-stict (lenient) from Strict-mode:
   * Thus the "Document Terminator" is now only optional.
-  * Renamed section name to 11.3, "Lenient vs. Strict Modes".
+  * Renamed section name to 12.3, "Lenient vs. Strict Modes".
 - Added tab as illegal character in backticked identifiers.
 - Deprecated `>` for use as section marker, due to its tendency to be confused with quoting syntax in forums, emails, and messaging platforms, etc.
 - Added missing escape codes in strings (matching those from C/C++), with one exception: YINI uses `\OOO` instead of `\oOOO` for octal values, as the `o` clearly indicates that an octal sequence follows, whereas the C-style form does not.
@@ -1800,7 +1808,7 @@ Below are some common mistakes and misunderstandings when writing YINI files, es
 | Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | Line break after `=` causes the value to be parsed as null. |
 | Colon-Based List   | `items: "a", "b", "c"`          | `items: "a" "b" "c"`             | Items must be comma-separated — just like bracketed lists. |
 | Colon + Single Item| _Don't use_ `name: "John"`      | Same as left                    | Interpreted as a list with one string item — use `=` instead. |
-| Trailing comma (inline) | `list = ["a", "b", "c",]`   | Assumed to be ignored           | Adds a `null` item at the end of the list. |
+| Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | Does NOT add any `null` item at the end of the list. |
 | Trailing comma (colon)  | `list:` <br> `"a", "b", "c",` | —                            | ✅ OK — trailing commas in colon-based lists, are ignored. |
 | Comments           | `# Comment` or `// Comment`     | `#Comment`                      | `#` must be followed by **space or tab** to be recognized as a comment. |
 | Hex values         | `color = #FF0033`               | Assumed to be a comment         | Without space after `#`, this is a valid hex value. |
