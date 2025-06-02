@@ -85,7 +85,8 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 **5. Section Headers** ([Link ⇨](./YINI-Specification.md#5-section-headers))  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `~`)  
-&nbsp;&nbsp;&nbsp;&nbsp;5.3. Sections in Sections (Nested Sections)
+&nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Short-hand Section Heading  
 
 **6. String Literals** ([Link ⇨](./YINI-Specification.md#6-string-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
@@ -575,9 +576,9 @@ Supported markers:
   - Reserved: `€` (experimental, maybe in future, for enhanced readability)
 
 **When using a repeated marker to indicate nesting, a maximum of six (`6`) repeated markers is allowed.**  
-That is, the following are valid only up to six repetitions (levels 1–6):
 
-```
+That is, the following denote nesting levels 1–6:
+```yini
 ^       ← level 1
 ^^      ← level 2
 ^^^     ← level 3
@@ -586,14 +587,14 @@ That is, the following are valid only up to six repetitions (levels 1–6):
 ^^^^^^  ← level 6
 ```
 
-**Attempting to write seven or more of the same marker (e.g. `^^^^^^^`) is invalid** in "basic" repeating form.  
-If you need to go deeper than level 6, use the **numeric shorthand** syntax (see Section 5.3).
+**Using seven or more of the same marker in succession (e.g. `^^^^^^^`) is invalid.**
+To represent nesting deeper than level 6, switch to the **numeric shorthand section header** syntax (see Section 5.3.1).
 
-### 5.3. Sections in Sections (Nested Sections)
-If you want to put a section under another section, nested sections, use additional section markers to indicate each level of nesting, without skipping intermediate levels. This means that each additional marker indicates a deeper nesting level. It is not allowed to skip any level when going to higher/deeper levels, the levels must come in order when nesting to deeper levels. However, when returning to higher (shallower) levels it is allowed to skip levels. - This technique is inspired by Markdown.
+### 5.3. Nested Sections
+To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (shallower) level, you may drop directly to any smaller level.
 
 - Section heading markers (`^` or `~`, etc) may only be repeated up to six times — to level 6.
-- Beyond level 6, the numeric shorthand section must be used, see more in section 5.3.1.
+- Beyond level 6, the numeric shorthand section must be used (see section 5.3.1).
 
 ```yini
 ^ Prefs
@@ -601,7 +602,7 @@ If you want to put a section under another section, nested sections, use additio
         ^^^ SubSection
 ```
 
-Optionally, you may leave out indenting if you prefer:
+Optionally, indentation may be omitted:
 ```yini
 ^ Prefs
 ^^ Section
@@ -630,15 +631,15 @@ Optionally, you may leave out indenting if you prefer:
 ^ Section 3         // Main section 3 (depth 1)
 ```
 
-#### 5.3. Short-hand Section Heading Rule
+#### 5.3.1. Short-hand Section Heading
 
 **Short-hand Section Headings:**
-When nesting deeper than six levels of the same section marker (e.g., ^), you must switch to the numeric shorthand form. The shorthand is written as <marker><n>, where <marker> is one of an allowed section marker character (`^` or `~`, etc), and <n> is an integer ≥ 7 representing the new depth. For example, to nest from level 6 to level 7, write `^7`; from level 7 to level 8, write `^8`; and so on. When ascending (moving to shallower levels), you may drop to any smaller level (e.g., from `^9` directly back to `^^`).
+Numeric shorthand is required when nesting beyond six levels with the same marker (e.g., `^`). The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. For example:
 
 - To go from depth 6 to depth 7: write `^7`.  
 - To go from depth 7 to depth 8: write `^8`.  
 - To go from depth 8 to depth 9: write `^9`.  
-- And so on.
+- And so on...
 
 This prevents arbitrarily long runs of the same marker. When ascending (moving to a shallower level), you may skip multiple levels at once (e.g., from `^9` back to `^^`).  
 
@@ -656,7 +657,7 @@ This prevents arbitrarily long runs of the same marker. When ascending (moving t
 ^10    Level10     # Shorthand    → depth 10
 
 ^     BackTo1      # Going back to level 1 (allowed)
-^^    BackTo2      # Going back to level 2
+^^    BackTo2      # Going back to level 2 (allowed)
 ```
 
 ## 6. String Literals
@@ -1709,6 +1710,9 @@ v1.0XX.0 Beta + Updates
 - Added a couple of sections in future:
   * 10.1.1, "Short-hand Section Marker"
   * 10.1.2, "Inline Objects"
+- Updated section heading rule:
+  * Section heading markers (^, ~, etc.) may be repeated up to six times to indicate levels 1–6. 
+  * Beyond level 6, numeric shorthand must be used (see Section 5.3.1).
 
 v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
