@@ -172,8 +172,10 @@ SINGLE_OR_DOUBLE:
  * parser catch it so you can give a more precise error message. 
 */
 R_AND_C_STRING:
-	[RrCc]? '\'' ~['\r\n]* '\''
-	| [RrCc]? '"'	 ~["\r\n]* '"';
+	// [RrCc]? '\'' ~['\r\n]* '\''
+	// | [RrCc]? '"'	 ~["\r\n]* '"';
+	[RrCc]? '\'' 	('\\\'' | ~['\r\n])* '\''
+	| [RrCc]? '"'	('\\"' | ~["\r\n])* '"';
 
 
 // Hyper string literal.
