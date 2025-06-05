@@ -642,7 +642,7 @@ Optionally, indentation may be omitted:
 #### 5.3.1. Short-hand Section Heading
 
 **Short-hand Section Headings:**
-Numeric shorthand is required when nesting beyond six levels with the same marker (e.g., `^`). The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level (whilte the level is 1 - 6 the use of `^`, `^^`, `^^^` and so on is preferred). For example:
+Numeric shorthand is required when nesting beyond six levels with the same marker (e.g., `^`). The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level (while the level is 1 - 6 the use of `^`, `^^`, `^^^` and so on is preferred). For example:
 
 - To go from depth 6 to depth 7: write `^7`.  
 - To go from depth 7 to depth 8: write `^8`.  
@@ -980,7 +980,7 @@ The following rules apply to objects in YINI:
 
 Grammar rule:
 ```
-member-list := member ("," member)* ("," )?
+member-list := member ("," member)* ("," )?  // Any trailing is comma dropped.
 member      := IDENTIFIER "=" value
 ```
 
