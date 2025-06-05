@@ -170,10 +170,10 @@ SINGLE_OR_DOUBLE:
  *
  * Rather than having the lexer reject on any "illegal" character, lets the
  * parser catch it so you can give a more precise error message. 
-*/
+ *
+ * @note If refactoring rule(s), make sure C-strings can include \' and \" as well.
+ */
 R_AND_C_STRING:
-	// [RrCc]? '\'' ~['\r\n]* '\''
-	// | [RrCc]? '"'	 ~["\r\n]* '"';
 	[RrCc]? '\'' 	('\\\'' | ~['\r\n])* '\''
 	| [RrCc]? '"'	('\\"' | ~["\r\n])* '"';
 
