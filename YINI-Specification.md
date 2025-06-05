@@ -738,9 +738,10 @@ Classic strings must begin and end on the same line.
 Escape sequences are supported only in Classic Strings (C-Strings), which must be enclosed in quotes and prefixed with `C` (or `c`). 
 
 **Full List: Escape Sequences: (case-sensitive, only valid in C-Strings and C-Triple-Quoted Strings)**
-- `\\` — backslash
+- `\\` — Backslash
 - `\'` — Single Quote
 - `\"` — Double Quote
+- `\/` — Normal Slash (yields a plain `/` as JSON)
 - `\0` — Null Byte
 - `\?` — Literal question mark (for C/C++ compatibility)
 - `\a` — Alert (bell)- ASCII 7
@@ -931,7 +932,7 @@ Value/literal `NULL` (NON CASE-SENSITIVE).
 ### 9.1. Objects (using `{` and `}`)
 YINI supports inline objects as a value type, allowing one or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a standard YINI `key = value` pair, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
 
-An empty object `{ }` is only allowed as in lenient-mode.
+An empty object `{ }` is allowed as well (both in lenient and strict-mode).
 
 An object in YINI  have the following form:
 ```txt
@@ -945,7 +946,7 @@ The **value** in each member may be:
   * A boolean (true/false/on/off).
   * A list (`[ ... ]`).
   * Another inline object (`{ ... }`).
-  * An empty object `{ }` is allowed as well only in lenient-mode.
+  * An empty object `{ }` is allowed as well (both in lenient/strict-mode).
 
 The following rules apply to objects in YINI:
 - Begins with `{` and ends with `}`.
@@ -1129,7 +1130,8 @@ The following characters are reserved by the YINI syntax and must not be used im
 | `//` | Inine comment |   |
 | `/* */` | Block comment | Marks multi-line comment block |
 | `@` | Directive prefix | Reserved for future syntax |
-| `{ }` |  | Reserved for future syntax |
+| `[ ]` | List literal |  |
+| `{ }` | Object literal |  |
 | `--` | Line disabling | Experimental use (see Section 3.6) |
 
 #### 12.1.2. Reserved Keywords
@@ -1287,15 +1289,15 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 
 ### 13.3. Value and NULL Handling
 
-* If a key is assigned without a value::
+* If a key is assigned without a value (only in lenient-mode):
   ```yini
-  key =          // NULL
-  key:           // NULL
+  key =          // NULL, same as: key = Null
+  key:           // NULL, same as: key = [Null]
   ```
   it must be interpreted as having a value of `null`.
 * Key uniqueness:
   - Keys must be **unique within the same section and section level**.
-  - Duplicates in the same section are a **parse error**.
+  - Duplicates in the same section are a **parse warning**.
 
 ### 13.4. Boolean Canonicalization
 
