@@ -642,8 +642,9 @@ Optionally, indentation may be omitted:
 #### 5.3.1. Short-hand Section Heading
 
 **Short-hand Section Headings:**
-Numeric shorthand is required when nesting beyond six levels with the same marker (e.g., `^`). The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level (while the level is 1 - 6 the use of `^`, `^^`, `^^^` and so on is preferred). For example:
+Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers is preferred but not required).
 
+For example:
 - To go from depth 6 to depth 7: write `^7`.  
 - To go from depth 7 to depth 8: write `^8`.  
 - To go from depth 8 to depth 9: write `^9`.  
@@ -927,28 +928,30 @@ Value/literal `NULL` (NON CASE-SENSITIVE).
 - Empty or missing value in section-top-level key-value pair (member outside any list or object), is treated as NULL in lenient-mode, error in strict-mode.
   If written `key = `with nothing after `=`, that member’s value is `null` (lenient only; strict mode requires explicitly `key = null`).
 - Note: At top level (outside any `[ ]` or `{ }`), `key =` with nothing after `=` → `key = null` in lenient mode; in strict mode that is a syntax error unless you write `key = null` explicitly.
-  Example:
+  
+  Invalid Examples (both strict and lenient):
   ```yini
-  ^ Section
-  key = { a = } // NOT OK! Parse error on this row.
-  ```
-  ```yini
-  ^ Section
-  key = { a = Null } // OK
-  ```
+  ^ Section1
+  key = { a = }    # ❌ Missing value within object.
 
-Example:
+  ^ Section2
+  key = { a = , }  # ❌ Comma without preceding value.
+  ```
+  👆 An isolated comma or missing value is never interpreted as `Null` inside `{ }`.
+
+Examples:
 ```yini
-^ Section
+^ Section1
 # In lenient-mode:
-key1 =       # lenient: key1 → null
-key2 = [1, 2, ]  # lenient: [1, 2, null]
-key3 = { a = 1, b = 2, }  # lenient: {a:1, b:2}
+key1 =                    # ✅ Lenient: key1 → null
+key2 = [1, 2, ]           # ✅ Lenient: [1, 2]
+key3 = { a = 1, b = 2, }  # ✅ Lenient: {a: 1, b: 2}
 
+^ Section2
 # In Strict-mode:
-key1 =       # error: missing value
-key2 = [1, 2, ]  # error: trailing comma
-key3 = { a = 1, b = 2, }  # error: trailing comma
+key1 =                    # ❌ Error: Missing value
+key2 = [1, 2, ]           # ❌ Error: Stray trailing comma
+key3 = { a = 1, b = 2, }  # ❌ Error: Stray trailing comma
 ```
 
 ## 9. Object Literals
@@ -978,6 +981,8 @@ The following rules apply to objects in YINI:
 - Whitespace (spaces, tabs, newlines) is ignored except inside quoted strings.
 - Comments (e.g. `// ...` or `# ...`) may appear anywhere whitespace is allowed.
 
+💡 **In lenient-mode only**, a trailing comma after the last member is permitted and ignored (no `Null` member is added). **In strict mode**, trailing commas result in a parse error.
+
 Grammar rule:
 ```
 member-list := member ("," member)* ("," )?  // Any trailing is comma dropped.
@@ -993,13 +998,13 @@ object = { member1 = "value1", member2 = "value2" }
 More Example:
 ```
 # In lenient mode:
-obj1 = { a = 1, b = 2, }   # → {a:1, b:2} ✅
-obj2 = { a = 1,, b = 2 }   # → ❌ parse error or warning (double comma)
-obj3 = { , a = 1 }         # → ❌ parse error (leading comma not allowed)
+obj1 = { a = 1, b = 2, }   # → {a: 1, b: 2} ✅
+obj2 = { a = 1,, b = 2 }   # → ❌ Parse error or warning (double comma)
+obj3 = { , a = 1 }         # → ❌ Parse error (leading comma not allowed)
 obj4 = { }                 # → {} ✅
 
 # In strict mode:
-obj1 = { a = 1, b = 2, }   # → ❌ error: trailing comma not allowed in strict mode
+obj1 = { a = 1, b = 2, }   # → ❌ Error: trailing comma not allowed in strict mode
 obj4 = { }                 # → {} ✅
 ```
 
@@ -1027,10 +1032,17 @@ For convenience, a trailing comma (`,`) may be optionally be included (only in l
 
 ```yini
 // A list with THREE items.
-list1 = ["a", "b", "c", ]  // Trailing comma here is ignored.
+list1 = [
+  "a",
+  "b",
+  "c",  # Trailing comma here is ignored (parse error in strict-mode).
+]
+
+// A list with THREE items.
+list2 = ["a", "b", "c", ]  # Trailing comma here is ignored.
 
 // A list with FOUR items.
-list2 = ["a", "b", "c", NULL]
+list3 = ["a", "b", "c", NULL]
 ```
 
 > **Note:** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
@@ -1103,10 +1115,9 @@ name = "John"  // ✅ A single string value.
 **Colon (`:`) is not a substitute for `=`** and must not be used for regular member (non list) assignments.
 
 **Trailing Comma Behavior**
-- In objects, a **trailing comma is ignored** (legal in lenient-mode, optional).
-- In colon-based lists, a **trailing comma is ignored** (legal in lenient-mode, optional).
-- In bracketed lists (`[ ... ]`), a **trailing comma is ignored** (legal in 
-lenient-mode, optional).
+- In objects, a **trailing comma is ignored** (only in lenient-mode, parse error in strict-mode).
+- In colon-based lists, a **trailing comma is ignored** (only in lenient-mode, parse error in strict-mode).
+- In bracketed lists (`[ ... ]`), a **trailing comma is ignored** (only in lenient-mode, parse error in strict-mode).
   
 
 **Termination Rule**
@@ -1262,7 +1273,7 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
     **Note:** Invalid: file contains only a comment and lacks both `/END` and title section.
 
 ### 12.3. Lenient vs. Strict Modes _(Optional Feature)_
-Non-strict mode (lenient mode) is the default and recommended mode of operation. Parsers should operate in this mode by default unless explicitly configured otherwise to operate in fully strict mode.
+Non-strict mode (lenient mode) is the default mode of operation. Parsers should operate in this mode by default unless explicitly configured otherwise to operate in fully strict mode.
 
 Some YINI parsers may support multiple **validation modes**:
 
@@ -1272,10 +1283,12 @@ Some YINI parsers may support multiple **validation modes**:
   - All typing rules still apply — for example, string literals must be quoted: if a value is not quoted, it is not a string — no exceptions.
   - Empty values are allowed ONLY in members in section-top-levels:
     - Missing/empty value (ONLY outside lists and objects) are treated as `Null`.
-    - Trailing comma (after last value/member) inside lists and object - comma is ignored - ONLY in lenient-mode.
+    - Trailing comma (after last value/member) inside lists and object - comma is ignored - ONLY in lenient-mode (parse error in strict-mode).
   - Useful for hand-edited configuration files.
 - **Strict Mode:**
   - Enforces full well-formedness.
+  - No empty values are allowed, must always be explicitly with `Null`. 
+  - No (stray) trailing commas (after last value/member) inside lists and object permitted.
   - Strict mode requires both a **title section header** (a level 1 header) and the **document terminator** (`/END`).
     
     These constraints provide increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
@@ -1286,6 +1299,24 @@ Some YINI parsers may support multiple **validation modes**:
   - For production and tool-chain use.
 
 **Note:** Implementations must clearly document the validation mode in use and detail which rules are fully enforced under strict parsing.
+
+Example:
+```yini
+; Lenient mode examples:
+list_bracketed1 = [1, 2, ]   # ✅ → [1, 2]
+list_colon:
+  "one",
+  "two",                     # ✅ → ["one", "two"] (trailing comma dropped)
+
+object1 = { a = 1, b = 2, }  # ✅ → {a: 1, b: 2} (trailing comma dropped)
+
+; Strict mode examples:
+list_bracketed2 = [1, 2, ]   # ❌ Error: Stray trailing comma
+object2 = { a = 1, b = 2, }  # ❌ Error: Stray trailing comma
+
+list_bracketed3 = [1, 2]     # ✅ OK
+object3 = { a = 1, b = 2 }   # ✅ OK
+```
 
 ### 12.3.1. Table: Lenient vs. Strict Mode
 | Feature                 | Lenient Mode (Default) | Strict Mode | Notes |
