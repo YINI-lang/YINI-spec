@@ -153,18 +153,18 @@ code = "dev"
 
 ### After (YINI)
 ```js
-^ Service               // Defines a section named Server.
+^ Service                   // Defines a section named Server.
 Enabled = true
 
     ^^ Cache
     Type = "redis"          // Defines Cache, a sub-section of Server.
     TTL = 3600
 
-        ^^^ Options             // Defines Options, a sub-section of Cache.
+        ^^^ Options         // Defines Options, a sub-section of Cache.
         Host = "127.0.0.1"
         Port = 6379
 
-^ Env                   // Defines a section named Env.
+^ Env                       // Defines a section named Env.
 code = "dev"
 ```
 
@@ -185,7 +185,7 @@ Nesting sections can be done easily by adding one extra section marker (e.g. `^^
 YINI supports **three types of comments**:
 - **Inline comments:** `//` (or commenting using `#`)
 - **Block comments:**  `/* multi-line */`
-- **Full-line comments:** Starting with `;`, `//` or `#`,
+- **Full-line comments:** Starting with `;`, `//` or `#`
 
 Note: `#` must be followed by a space or tab to be recognized as a comment (to avoid clashes with hex values like `#FF0033`).
 
@@ -245,13 +245,13 @@ YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON â€
 ## ðŸ“˜ Read the Spec
 
 The format is defined by a formal grammar. See [Specification](./YINI-Specification.md) for:
-- syntax and types
-- section nesting
-- escape rules
-- comment behavior
-- strict vs lenient mode
-- validation rules
-- and more
+- Syntax and types
+- Section nesting
+- Wscape rules
+- Comment behavior
+- Strict vs lenient mode
+- Validation rules
+- And more
 
 But WHY another format, exactly?? [Read the Rationale](./RATIONALE.md) - it covers background, design motivations, and format comparisons.
 
