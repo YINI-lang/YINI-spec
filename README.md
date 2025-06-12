@@ -6,7 +6,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
 
-**Version:** v1.0.0 Beta 6 (Latest published release)
+**Version:** v1.0.0 Beta 7 (Latest published release)
 
 **Status:** Beta Release
 
