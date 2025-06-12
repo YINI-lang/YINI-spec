@@ -26,18 +26,18 @@ Keywords: "node", "express", "web", "app", "backend"
 Author = "Jane Doe"
 License = "MIT"
 
-^^ Repository
-`type` = "git"
-`url` = "https://github.com/janedoe/my-node-app"
+    ^^ Repository
+    `type` = "git"
+    `url` = "https://github.com/janedoe/my-node-app"
 
-^^ `Custom Configuration`
-^^^ Configurations
-`port` = 3000
-`debug` = YES
-`enableCors` = YES
+    ^^ `Custom Configuration`
+    ^^^ Configurations
+    `port` = 3000
+    `debug` = YES
+    `enableCors` = YES
 
-^^ AppSettings
-`VersionString` = "v1.0.0"
-`HomePageURL` = "https://myapp.example.com"
+    ^^ AppSettings
+    `VersionString` = "v1.0.0"
+    `HomePageURL` = "https://myapp.example.com"
 
 /END
