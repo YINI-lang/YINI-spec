@@ -4,7 +4,10 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 ### Feedback Acknowledgments
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
-## 2025 May  (spec: v1.0.0 Beta 6 + Updates)
+## --v1.0.0 Beta 7 + Updates--
+- --Future changes--
+
+## 2025 Jun (spec: v1.0.0 Beta 7)
 - Fixed backticked identifiers (phrases) (as per Spec) cannot include tabs, newlines, or other backticks.
 - Moved _"Acknowledgments"_ from the specificaton file to the `RATIONALE.MD` under the section _"Acknowledgments & Special Thanks"_— to shorten the main spec and improve formal structure.
 - Refactored the structure and order of sections in `RATIONALE.MD` for improved readability and flow.
@@ -17,11 +20,11 @@ More details of feedback, see section D.2, _“Acknowledgments & Special Thanks�
 - Renamed the branch and enviroment, from `release` to `production`.
 - Simplified string rules in lexer, illegal characters are deferred to the parser, which gives more control.
 
-## 2025 May  (spec: v1.0.0 Beta 6)
+## 2025 May (spec: v1.0.0 Beta 6)
 - Reworked the use of `#` for comments, and added `^` as new default marker for sections. Updated README and Branding to reflect this.
 - Expanded README example with showing the use of the full line comment `;`.
 
-## 2025 May  (spec: v1.0.0 Beta 5)
+## 2025 May (spec: v1.0.0 Beta 5)
 - Updated Spec and grammar with new escape characters.
 - In Spec, reserved `{ }` for future use.
 - In Spec renamed section to "Future / Reserved Features" from "Reserved Features".
