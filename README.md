@@ -6,13 +6,14 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
 
-**Version:** v1.0.0 Beta 6 (Latest published release)
+**Version:** v1.0.0 Beta 7 (Latest published release)
 
 **Status:** Beta Release
 
 ---
 
-- ➡️ [Read the YINI Specification](./YINI-Specification.md)
+- ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (ToC)
+- ➡️ [Why YINI, why another format!?](./RATIONALE.md) (Rationale)
 
 ---
 
@@ -68,34 +69,68 @@ Definitions for rules in strict-mode (lenient is default).
 
 ## 🧠 Quick Examples
 
-### Before (Traditional INI or ad-hoc config)
-```ini
-[Server]                # Defines a section named Server.
-host=localhost
-port=8080
+### Before (YAML)
+```
+server:
+    connection:
+        host: "localhost"
+        port: 8080  # Dev port
+    auth:
+        enabled: true
+        credentials:
+            username: "admin"
+            password: "secret"  # Change me!
 
-[Features]              # Defines a section named Features.
-login=true
-notifications=false
+# Like Python, structure relies entirely on indentation — easy to misread or misplace.
 ```
 
 ### After (YINI)
-```js
-^ Server                // Defines a section named Server.
-host = "localhost"
-port = 8080
+```yini
+^ server
 
-^ Features              // Defines a section named Features.
-login = true
-notifications = false
+    ^^ connection
+    host = 'localhost'
+    port = 8080  // Dev port
+
+    ^^ auth
+    enabled = true
+
+        ^^^ credentials
+        username = 'admin'
+        password = 'secret'  // Change me!
+
+; Clear structure with visual nesting — still easy to read and follow.
 ```
 
 💡 Notes:
+> - Indentation in YINI is purely for human readability.
 > - In YINI, `^` defines section headers.
 > - `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
-> - All strings must be enclosed in quotes (`"` or `'`).
+> - `;` can be used for full line comments (`//` and `#` can be used too).
+> - All strings must be enclosed in quotes (`'` or `"`).
 > - Natural, readable keys and values separated by (`=`).
 > - Strong typing without heavy syntax.
+
+### With Alternative Indentation (YINI)
+```yini
+^ server
+
+    ^^ connection
+        host = 'localhost'
+        port = 8080  // Dev port
+
+    ^^ auth
+        enabled = true
+
+        ^^^ credentials
+            username = 'admin'
+            password = 'secret'  // Change me!
+
+; If preferred, YAML indentation style can be used as well
+; — structure is still defined by section markers.
+```
+
+💡 In YINI, indentation is only for human readability.
 
 ---
 
@@ -118,18 +153,18 @@ code = "dev"
 
 ### After (YINI)
 ```js
-^ Service               // Defines a section named Server.
+^ Service                   // Defines a section named Server.
 Enabled = true
 
-^^ Cache
-Type = "redis"          // Defines Cache, a sub-section of Server.
-TTL = 3600
+    ^^ Cache
+    Type = "redis"          // Defines Cache, a sub-section of Server.
+    TTL = 3600
 
-^^^ Options             // Defines Options, a sub-section of Cache.
-Host = "127.0.0.1"
-Port = 6379
+        ^^^ Options         // Defines Options, a sub-section of Cache.
+        Host = "127.0.0.1"
+        Port = 6379
 
-^ Env                   // Defines a section named Env.
+^ Env                       // Defines a section named Env.
 code = "dev"
 ```
 
@@ -150,7 +185,7 @@ Nesting sections can be done easily by adding one extra section marker (e.g. `^^
 YINI supports **three types of comments**:
 - **Inline comments:** `//` (or commenting using `#`)
 - **Block comments:**  `/* multi-line */`
-- **Full-line comments:** Starting with `;`, `//` or `#`,
+- **Full-line comments:** Starting with `;`, `//` or `#`
 
 Note: `#` must be followed by a space or tab to be recognized as a comment (to avoid clashes with hex values like `#FF0033`).
 
@@ -210,13 +245,13 @@ YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON �
 ## 📘 Read the Spec
 
 The format is defined by a formal grammar. See [Specification](./YINI-Specification.md) for:
-- syntax and types
-- section nesting
-- escape rules
-- comment behavior
-- strict vs lenient mode
-- validation rules
-- and more
+- Syntax and types
+- Section nesting
+- Wscape rules
+- Comment behavior
+- Strict vs lenient mode
+- Validation rules
+- And more
 
 But WHY another format, exactly?? [Read the Rationale](./RATIONALE.md) - it covers background, design motivations, and format comparisons.
 
@@ -234,7 +269,9 @@ https://github.com/YINI-lang/yini-parser-typescript
 The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
 
 ### Acknowledgments
-Some parts of the YINI specification have benefited from valuable community feedback. See section 15.2, "Acknowledgments", for more details.
+YINI has grown and improved thanks to the insights, questions, and thoughtful feedback from the community. Much of the specification — and this repository — reflects that shared input.
+
+For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## 🧾 License
 
@@ -242,4 +279,5 @@ YINI is licensed under the [Apache License 2.0](./LICENSE).
 
 ---
 
-> _YINI: Clean. Readable. Structured._
+> ~ **YINI ≡** - _A Clean, Readable, and Structured configuration format_  
+> [https://yini-lang.org](https://yini-lang.org)

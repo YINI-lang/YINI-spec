@@ -1,6 +1,6 @@
 # Rationale
 
-This document outlines the **background**, **design motivations**, and **format comparisons** that led to the creation of YINI. It aims to explain **why YINI exists**, what problems it solves, and how its structure and features were shaped by practical needs and lessons from other formats.
+This document outlines the **background**, **design motivations**, and **format comparisons** that led to the creation of YINI. It aims to explain **why YINI exists**, what problems it solves, and how its structure and features were shaped by practical needs, lessons from other formats, and from community feedback.
 
 ---
 
@@ -8,33 +8,42 @@ This document outlines the **background**, **design motivations**, and **format 
 
 ---
 
-### **Part I – Background and Intent**
+### Part A – Background and Motivation ([Link ⇨](./RATIONALE.md#a-background-and-motivation))
+Why YINI exists, what problems it aims to solve.
 
-**A. Background and Intent**  
 &nbsp;&nbsp;&nbsp;&nbsp;A.1. Why was YINI created?  
 &nbsp;&nbsp;&nbsp;&nbsp;A.2. What was missing from other formats?  
-&nbsp;&nbsp;&nbsp;&nbsp;A.3. What inspired its design?  
-&nbsp;&nbsp;&nbsp;&nbsp;A.4. Design Philosophy  
 
 ---
 
-### **Part II – Versus Other Formats**
+### Part B – Design Goals and Philosophy ([Link ⇨](./RATIONALE.md#b-design-goals-and-philosophy))
+Minimalism, human readability, lenient vs. strict, etc.
 
-**B. Versus Other Formats**  
-&nbsp;&nbsp;&nbsp;&nbsp;B.1. Why Not Existing Formats?  
-&nbsp;&nbsp;&nbsp;&nbsp;B.2. 📊 Comparison: YINI vs Other Formats  
-
----
-
-### **Part III – Summary**
-
-&nbsp;&nbsp;&nbsp;&nbsp;C. Summary  
+&nbsp;&nbsp;&nbsp;&nbsp;B.1. What inspired its design?  
+&nbsp;&nbsp;&nbsp;&nbsp;B.2. Design Philosophy  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.1. The `#` Marker as a Comment Symbol
 
 ---
 
+### Part C – YINI vs Other Formats ([Link ⇨](./RATIONALE.md#c-yini-vs-other-formats))
+What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 
-## A. Background and Intent
+&nbsp;&nbsp;&nbsp;&nbsp;C.1. Why Not Existing Formats?  
+&nbsp;&nbsp;&nbsp;&nbsp;C.2. 📊 Comparison: YINI vs Other Formats  
 
+---
+
+### Part D – Reflections and Acknowledgments ([Link ⇨](./RATIONALE.md#d-reflections-and-acknowledgments))
+
+&nbsp;&nbsp;&nbsp;&nbsp;D.1. Summary  
+&nbsp;&nbsp;&nbsp;&nbsp;D.2. Acknowledgments & Special Thanks  
+&nbsp;&nbsp;&nbsp;&nbsp;D.3. Rejected Ideas or Alternatives _(TODO)_  
+&nbsp;&nbsp;&nbsp;&nbsp;D.4. Future Considerations _(TODO)_  
+
+---
+
+
+## A. Background and Motivation
 ### A.1. Why was YINI created?
 The motivation for YINI arose during another project, where a configuration format was needed in the spirit of INI — but with a well-defined specification (something INI lacks) and a few modern features.
 
@@ -56,10 +65,11 @@ The core motivations behind YINI include:
 - **Predictability** — A small set of rules that always work the same way, regardless of platform or parser.
 - **Minimalist syntax** — Fewer surprises. YINI avoids magic behaviors and favors explicitness.
 
-### A.3. What inspired its design?
+## B. Design Goals and Philosophy
+### B.1. What inspired its design?
 YINI was mainly inspired by formats such as INI, JSON, Python, Markdown, and C — borrowing good ideas while introducing its own principles.
 
-### A.4. Design Philosophy
+### B.2. Design Philosophy
 YINI is built around a few core principles:
 
 - **Minimalism over complexity** — fewer rules, fewer surprises.
@@ -81,12 +91,17 @@ For example: #FF0033 is interpreted as a hex value, whereas # FF0033 is treated 
 
 These values guide YINI's syntax, structure, and behavior — making it reliable for both humans and machines.
 
-#### A.4.1. The # Marker as a Comment Symbol
+#### B.2.1. The `#` Marker as a Comment Symbol
 - This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
 - Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also is within 7-bit ASCII).
 
-## B. Versus Other Formats
-### B.1. Why Not Existing Formats?
+#### B.2.2. Non-standard Octal Escape
+Octal escapes in YINI use the `\oNNN` format, which differs from the traditional `\NNN` style used in C and Python. 
+
+This design choice was made because `\NNN` provides no clear indication of the number base, unlike `\u` for Unicode (4-digit hex) and `\U` for extended Unicode (8-digit hex). The `\oNNN` format in YINI follows the same analogy, making the base explicit and the escape more readable and self-descriptive.
+
+## C. YINI vs Other Formats
+### C.1. Why Not Existing Formats?
 Here's a quick summary of why YINI doesn't just use an existing format:
 
 | Format | Why Not? |
@@ -97,7 +112,7 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 | TOML  | Clear and strict, but verbose, rigid, and not very human-friendly in deep nesting.
 | JSON5 | Adds flexibility to JSON, but lacks formal standardization (?) and is still slightly too noisy for hand-edited configs.
 
-### B.2. 📊 Comparison: YINI vs Other Formats
+### C.2. 📊 Comparison: YINI vs Other Formats
 | Feature                       | INI | JSON | YAML | TOML | **YINI** |
 |-------------------------------|:---:|:----:|:----:|:----:|:--------:|
 | Typing (bool, list, null)     | ❌  | ✅   | ✅   | ✅   | ✅ |
@@ -123,7 +138,8 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 - ❌ = Not supported
 - ➖ = Partial, debated, or implementation-dependent
 
-## C. Summary
+## D. Reflections and Acknowledgments
+### D.1. Summary
 YINI isn’t trying to reinvent the wheel — just make it **smoother, lighter, and easier to steer**.
 
 It's a configuration format that's:
@@ -140,3 +156,25 @@ It exists to fill the gap between minimal INI files and complex formats like YAM
 - Optional strict mode for toolchains and validation.
   
 If this philosophy resonates with you — whether as a user or tooling author — we welcome feedback, testing, contributions, and adoption across the ecosystem.
+
+### D.2. Acknowledgments & Special Thanks
+Parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community.
+Big thanks to readers and contributors on Reddit, Medium, and other platforms — including those I may have unintentionally forgotten.
+
+**Special thanks to:**
+* User _jaskij_ (Reddit) — feedback during v1.0.0 Beta 6 on topics like special characters and Unicode handling needs more attention, and the suggestion to indent nested sections for improved readability, etc.
+* David Demelier (_markand67_) — for valuable discussions and feedback during v1.0.0 Beta 3–4 on topics such as the `/END` terminator, comment syntax (`#`), and related design choices, etc.
+* User _zanfar_ (Reddit) — feedback on `#`, etc.
+* User _lelanthran_ (Reddit) — feedback on `#`, etc.
+* User _saxbophone_ (Reddit) — feedback on `#`, etc.
+* User _JoshYx_ (Reddit) — raised concerns around `###`, etc.
+* User _tonyp7_ (Reddit) — support and encouragement.
+* User _cat_in_the_wall_ (Reddit) — support and encouragement.
+* ...and anyone else I may have forgotten. **Your contributions are appreciated.**
+
+---
+
+**~ YINI ≡**  
+> A Clean, Readable, and Human-friendly configuration format.  
+
+[yini-lang.org](https://yini-lang.org)

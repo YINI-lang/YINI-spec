@@ -1,0 +1,6 @@
+/*
+  SHOULD FAIL
+*/
+
+
+str = C"👍yes"	// ERROR HERE, illegal character in C-String!
