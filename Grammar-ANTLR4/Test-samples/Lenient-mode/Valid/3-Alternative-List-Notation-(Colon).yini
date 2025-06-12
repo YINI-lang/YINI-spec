@@ -5,7 +5,7 @@
 ^ Animals
 pets: "cat", "dog", "hamster"
 colors:
-  "red",
-  "green",
-  "blue",
+    "red",
+    "green",
+    "blue",
 

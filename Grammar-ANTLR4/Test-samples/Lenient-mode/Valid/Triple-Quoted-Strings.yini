@@ -4,6 +4,12 @@ a = """This is a multiline
 string that spans
 three lines."""
 
-b = """He said, "hello" and left."""
+// In C-Tripple-quoted strings
+// must use escape codes.
+b = C"""He said, \"hello\" and left.""" 
 
 c = """You can use "" double quotes inside."""
+
+d1 = """You can use 👍 inside."""
+d2 = R"""You can use 👍 inside."""
+

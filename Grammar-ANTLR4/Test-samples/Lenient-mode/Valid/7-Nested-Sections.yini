@@ -1,14 +1,28 @@
-/*
-  Nesting level respected, no missing intermediary levels.
-*/
+# Up to six levels using repeated carets
 
-^ Root
-version = "1.0"
+^ Application
+appName = "MyApp"
+version = "1.0.0"
 
-^^ Settings
-darkMode = yes
+  ^^ Database
+  host = "db.example.com"
+  port = 5432
 
-^^^ Advanced
-detailLevel = 3
+    ^^^ Credentials
+    username = "admin"
+    password = "secret"
 
+      ^^^^ Pools
+      maxConnections = 20
+      minConnections = 2
 
+        ^^^^^ Timeouts
+        connectTimeout = 5000
+        readTimeout    = 15000
+
+          ^^^^^^ Logging
+          level = "INFO"
+          path  = "/var/log/myapp.log"
+
+# If we tried to go to level 7 here (e.g. ^^^^^^^ TooDeep),
+# the parser would reject it—use the ^<n> shorthand instead.

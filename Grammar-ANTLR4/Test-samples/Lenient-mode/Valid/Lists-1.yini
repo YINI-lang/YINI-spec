@@ -3,17 +3,17 @@
 */
 
 ^ Lists1
-^^ ListWithBrackets
-	list1 = [ "Orange", "Banana", "Pear", "Peach" ]
-	list2 = []
-	listOfLists = [
-		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
-		["stylesheet", "css/general.css"],
-		["stylesheet", "css/themes.css"]
-	]
-^^ ListWithoutBrackets
-	listOfLists:
-		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
-		["stylesheet", "css/general.css"],
-		["stylesheet", "css/themes.css"]
+	^^ ListWithBrackets
+		list1 = [ "Orange", "Banana", "Pear", "Peach" ]
+		list2 = []
+		listOfLists = [
+			["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
+			["stylesheet", "css/general.css"],
+			["stylesheet", "css/themes.css"]
+		]
+	^^ ListWithoutBrackets
+		listOfLists:
+			["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
+			["stylesheet", "css/general.css"],
+			["stylesheet", "css/themes.css"]
 

@@ -2,6 +2,9 @@
 Checklist for maintainer(s) of this repository.
 
 ## Making a Release
+Making a release into the branch `production`.
+
+(Note: Some external websites might link directly to files in this branch `production`.)
 
 1. **Merge develop into staging:** The env `develop` into `staging` (as staging as the base).
    - Hint/Note: Create a new branch (e.g. `mergein/develop-into-staging-20250520`) on staging.
@@ -10,9 +13,9 @@ Checklist for maintainer(s) of this repository.
    - In spec doc, check that Changes is correct.
    - Check that CHANGELOG.md is up to date.
    - Do any commits directly on staging. 
-3. **When staging is OK, merge into release:** When staging is OK with correct string versions. Merge the env `staging` into `release` (as release as the base).
-   - Note: There shall not be any commits needed in env release, they should be made in staging already.
-4. **Create a New Relase In GitHub:** In GitHub, create a new **Release**.
+3. **When staging is OK, merge into production:** When staging is OK with correct string versions. Merge the env `staging` into `production` (as production as the base).
+   - Note: There shall not be any commits needed in env production, they should be made in staging already.
+4. **Create a New Relase In GitHub:** In GitHub, create a new **Production**.
    - Create new tag to the new verson string above: E.g. `v1.0.0-beta.4`.
    - Give a title in the form: `YINI Specification-v1.0.0 Beta 4`.
    - Fill rest of field, and the press Publish.
