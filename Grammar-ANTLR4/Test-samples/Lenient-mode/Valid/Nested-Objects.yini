@@ -1,0 +1,12 @@
+^cacheSettings
+
+cache = {
+    enabled = true,
+    settings = {
+        ttl   = 600,
+        clean = {
+            interval = 60,
+            force    = false,
+        },
+    },
+}

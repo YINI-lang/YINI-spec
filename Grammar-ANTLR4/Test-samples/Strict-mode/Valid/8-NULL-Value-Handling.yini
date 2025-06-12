@@ -1,9 +1,0 @@
-/*
-  Both NULL and missing value treated as null.
-*/
-
-^ Nulls
-path = NULL
-empty = Null
-
-/END
