@@ -29,9 +29,6 @@ DISABLE_LINE: ('--' ~[\r\n]*) -> skip;
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
-// COMMENT: BLOCK_COMMENT | LINE_COMMENT;
-
-//SECTION_HEAD: HASH+ [ \t]+ WS* IDENT NL+;
 SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
 
 // Section markers: '^', '~', '§', '€'.
@@ -126,12 +123,6 @@ NUMBER:
 // parser, which gives more control and enables better user feedback (e.g.,
 // pinpointing the exact location of invalid characters, etc).
 
-// STRING:
-// 	RAW_STRING
-// 	| HYPER_STRING
-// 	| CLASSIC_STRING
-// 	| TRIPLE_QUOTED_STRING
-// 	| C_TRIPLE_QUOTED_STRING;
 STRING
     : TRIPLE_QUOTED_STRING
     | SINGLE_OR_DOUBLE
@@ -146,21 +137,6 @@ SINGLE_OR_DOUBLE:
 	R_AND_C_STRING
 	| HYPER_STRING
 	;
-
-// C_TRIPLE_QUOTED_STRING: [Cc] '"""' (ESC_SEQ | ~["])* '"""';
-
-// Raw string literal, treats the backslash character (\) as a literal.
-// RAW_STRING:
-// 	//('r' | 'R')? '\'' ~(['\n\r\b\f\t])* '\'' | ('r' | 'R')? '"' ~(["\n\r\b\f\t])* '"';
-// 	[Rr]? '\'' ~['\r\n]* '\''
-// 	| [Rr]? '"'
-// 		 ~["\r\n]* '"';
-
-// Classic string literal.
-// CLASSIC_STRING:
-// 	[Cc] '\'' (ESC_SEQ | ~[\u0000-\u001F '])* '\''
-//   	| [Cc] '"'
-//     	(ESC_SEQ | ~[\u0000-\u001F "])* '"';
 
 /**
  * Common rule for RAW and CLASSIC string literals.
