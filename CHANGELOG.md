@@ -4,6 +4,9 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 ### Feedback Acknowledgments
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
+## --v1.0.0 Beta 7 + Updates--
+- --Future changes--
+
 ## 2025 Jun (spec: v1.0.0 Beta 7)
 - Fixed backticked identifiers (phrases) (as per Spec) cannot include tabs, newlines, or other backticks.
 - Moved _"Acknowledgments"_ from the specificaton file to the `RATIONALE.MD` under the section _"Acknowledgments & Special Thanks"_— to shorten the main spec and improve formal structure.
