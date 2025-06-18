@@ -5,7 +5,7 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## --v1.0.0 Beta 7 + Updates--
-- --Future changes--
+- In spec, clarified "Abort Sensitivity Levels" and added it can also be called (or be known as) "Bail Sensitivity Levels".
 
 ## 2025 Jun (spec: v1.0.0 Beta 7)
 - Fixed backticked identifiers (phrases) (as per Spec) cannot include tabs, newlines, or other backticks.

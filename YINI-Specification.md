@@ -1478,11 +1478,11 @@ Developers are encouraged to implement the following features to improve parser 
   - `true` / `false`
   - `null`
 - Support both `strict` as well as `lenient` parsing modes.
-- Support different **Abort Sensitivity Levels** while parsing a YINI document:
+- Support different **Bail/Abort Sensitivity Levels** while parsing a YINI document:
   (AKA severity threshold)
-  - Level 0 = ignore errors and try parse anyway (may remap falty key/section names)
-  - Level 1 = abort on errors only
-  - Level 2 = abort even on warnings
+  - Level 0 = Ignore errors and try parse anyway (may remap falty key/section names to something more valid so parsing can continue).
+  - Level 1 = Abort on errors only.
+  - Level 2 = Abort even on warnings.
 - **Extra Bonus:** In strings, if C/C++-style octal escape codes like `\1` to `\377` are used (which are not valid in YINI), parsers should treat this as an error in strict mode (and suggest the correct YINI syntax). In lenient mode, parsers may optionally emit a warning and suggest the correct YINI syntax: `\o1` to `\o377`, and interpret the octal code as intended.
 
 ## 14. Compatibility and Versioning
