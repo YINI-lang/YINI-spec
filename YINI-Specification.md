@@ -60,7 +60,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
 &nbsp;&nbsp;&nbsp;&nbsp;2.2. File Extension  
 &nbsp;&nbsp;&nbsp;&nbsp;2.3. Optional Shebang (`#!`)  
-&nbsp;&nbsp;&nbsp;&nbsp;2.4. Reserved: Optional Keyword (`@yini`) *(for future use)*
+&nbsp;&nbsp;&nbsp;&nbsp;2.4. YINI Marker (`@yini`)  
 
 **3. Syntax Overview** ([Link ⇨](./YINI-Specification.md#3-syntax-overview))  
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. General Syntax Rules  
@@ -264,9 +264,33 @@ For Unix-based systems, a shebang (#!) is commonly used in script files to speci
 - The **very first line** of the document may optionally begin with a Unix-style **shebang** (`#!`), which specifies the interpreter for the script.
 - If present, the shebang line will be ignored by the YINI parser.
 
-Here’s an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
+Here's an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
 ```yini
 #!/usr/bin/env yini
+
+^ Config
+key = value
+```
+### 2.4. YINI Marker (`@yini`)
+The optional `@yini` keyword/marker can be added at the top (but after a possible shebang) of a YINI file.
+
+The YINI marker is case-insensitive: `@Yini`, `@YINI` is the same thing.
+
+Its purpose is to tell both humans and programs what format or dialect the file is in (although YINI files has the extension `.yini`, however the file name is not always visible).
+
+Example:
+```yini
+@YINI
+
+^ Config
+key = value
+```
+
+Example: (with shebang)
+```yini
+#!/usr/bin/env yini
+
+@yini
 
 ^ Config
 key = value
@@ -1190,7 +1214,6 @@ The following characters are reserved by the YINI syntax and must not be used im
 #### 12.1.2. Reserved Keywords
 The following keywords are restricted and must not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
 - `/END` _(case-insensitive)_
-- `@yini`
 - `@ver`, `@version`
 - `@include`, `@anchor`, `@alias`
 
