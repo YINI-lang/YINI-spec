@@ -1,5 +1,7 @@
 // package.json-like structure in YINI format
 
+@yini
+
 ^ General
 Name = "MyNodeApp"
 Version = "1.0.0"

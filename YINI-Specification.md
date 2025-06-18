@@ -272,11 +272,15 @@ Here's an example of a YINI document with a shebang that could be used in a Unix
 key = value
 ```
 ### 2.4. YINI Marker (`@yini`)
-The optional `@yini` keyword/marker can be added at the top (but after a possible shebang) of a YINI file.
+The optional YINI marker (`@yini`) can be added at the very top of a YINI file (if present, it must appear after any shebang line).
 
-The YINI marker is case-insensitive: `@Yini`, `@YINI` is the same thing.
+The marker is case-insensitive: `@yini`, `@YINI`, and `@Yini` are all valid.
 
-Its purpose is to tell both humans and programs what format or dialect the file is in (although YINI files has the extension `.yini`, however the file name is not always visible).
+Its main purpose is to clearly indicate — both to humans and to programs — what format the file is in.
+
+Although YINI files typically have the `.yini` extension, the filename is not always visible (for example, when files are embedded, or copied as snippets, etc.). The marker line provides immediate identification regardless of context.
+
+- It also helps clarify the file format when files are opened in editors or included in bug reports.
 
 Example:
 ```yini
@@ -286,7 +290,7 @@ Example:
 key = value
 ```
 
-Example: (with shebang)
+Example (with shebang):
 ```yini
 #!/usr/bin/env yini
 
@@ -1860,7 +1864,7 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 --v1.0.0 Beta 7 + Updates--
-- --Future changes--
+- Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".
 
 v1.0.0 Beta 7, 2025-06-12
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
