@@ -60,7 +60,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
 &nbsp;&nbsp;&nbsp;&nbsp;2.2. File Extension  
 &nbsp;&nbsp;&nbsp;&nbsp;2.3. Optional Shebang (`#!`)  
-&nbsp;&nbsp;&nbsp;&nbsp;2.4. Reserved: Optional Header (`@yini`) *(for future use)*
+&nbsp;&nbsp;&nbsp;&nbsp;2.4. Reserved: Optional Keyword (`@yini`) *(for future use)*
 
 **3. Syntax Overview** ([Link ⇨](./YINI-Specification.md#3-syntax-overview))  
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. General Syntax Rules  
