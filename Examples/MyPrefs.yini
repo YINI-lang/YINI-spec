@@ -2,6 +2,8 @@
    Indentation doesn't matter, it's just for readability, you can indent however you want.
 */
 
+@yini
+
 ^ MyPrefs
 
 	^^ General

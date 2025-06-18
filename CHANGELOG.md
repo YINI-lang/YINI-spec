@@ -6,6 +6,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 
 ## --v1.0.0 Beta 7 + Updates--
 - In spec, clarified "Abort Sensitivity Levels" and added it can also be called (or be known as) "Bail Sensitivity Levels".
+- In spec added section 2.4, "YINI Marker (`@yini`)" and support for it in the grammar (lexer and parser).
 
 ## 2025 Jun (spec: v1.0.0 Beta 7)
 - Fixed backticked identifiers (phrases) (as per Spec) cannot include tabs, newlines, or other backticks.

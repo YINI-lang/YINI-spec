@@ -60,7 +60,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
 &nbsp;&nbsp;&nbsp;&nbsp;2.2. File Extension  
 &nbsp;&nbsp;&nbsp;&nbsp;2.3. Optional Shebang (`#!`)  
-&nbsp;&nbsp;&nbsp;&nbsp;2.4. Reserved: Optional Keyword (`@yini`) *(for future use)*
+&nbsp;&nbsp;&nbsp;&nbsp;2.4. YINI Marker (`@yini`)  
 
 **3. Syntax Overview** ([Link ⇨](./YINI-Specification.md#3-syntax-overview))  
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. General Syntax Rules  
@@ -264,9 +264,37 @@ For Unix-based systems, a shebang (#!) is commonly used in script files to speci
 - The **very first line** of the document may optionally begin with a Unix-style **shebang** (`#!`), which specifies the interpreter for the script.
 - If present, the shebang line will be ignored by the YINI parser.
 
-Here’s an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
+Here's an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
 ```yini
 #!/usr/bin/env yini
+
+^ Config
+key = value
+```
+### 2.4. YINI Marker (`@yini`)
+The optional YINI marker (`@yini`) can be added at the very top of a YINI file (if present, it must appear after any shebang line).
+
+The marker is case-insensitive: `@yini`, `@YINI`, and `@Yini` are all valid.
+
+Its main purpose is to clearly indicate — both to humans and to programs — what format the file is in.
+
+Although YINI files typically have the `.yini` extension, the filename is not always visible (for example, when files are embedded, or copied as snippets, etc.). The marker line provides immediate identification regardless of context.
+
+- It also helps clarify the file format when files are opened in editors or included in bug reports.
+
+Example:
+```yini
+@YINI
+
+^ Config
+key = value
+```
+
+Example (with shebang):
+```yini
+#!/usr/bin/env yini
+
+@yini
 
 ^ Config
 key = value
@@ -1190,7 +1218,6 @@ The following characters are reserved by the YINI syntax and must not be used im
 #### 12.1.2. Reserved Keywords
 The following keywords are restricted and must not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
 - `/END` _(case-insensitive)_
-- `@yini`
 - `@ver`, `@version`
 - `@include`, `@anchor`, `@alias`
 
@@ -1837,7 +1864,7 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 --v1.0.0 Beta 7 + Updates--
-- --Future changes--
+- Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".
 
 v1.0.0 Beta 7, 2025-06-12
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.

@@ -27,6 +27,10 @@ lexer grammar YiniLexer;
  */
 DISABLE_LINE: ('--' ~[\r\n]*) -> skip;
 
+YINI_MARKER options {
+	caseInsensitive = true;
+}: '@yini';
+
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
