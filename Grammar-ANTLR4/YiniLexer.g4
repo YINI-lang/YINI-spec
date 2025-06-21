@@ -20,13 +20,6 @@
 
 lexer grammar YiniLexer;
 
-/*
- DISABLE_LINE:
- Skip lines starting with `--`.
- NOTE: Must at very top of lexer rules.
- */
-DISABLE_LINE: ('--' ~[\r\n]*) -> skip;
-
 YINI_MARKER options {
 	caseInsensitive = true;
 }: '@yini';
@@ -200,8 +193,8 @@ fragment EXPONENT: ('e' | 'E') SIGN? DIGIT+;
 fragment SIGN: ('+' | '-');
 
 NL: ( WS* COMMENT* SINGLE_NL COMMENT*);
-
 SINGLE_NL: ('\r' '\n'? | '\n');
+//NL: WS*('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
 
@@ -220,10 +213,13 @@ COMMENT: LINE_COMMENT | INLINE_COMMENT | BLOCK_COMMENT;
  Remains in input, but hidden
  (doesn't interfere with parsing).
  */
-LINE_COMMENT: (';' ~[\r\n]*) -> channel(HIDDEN);
+LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> channel(HIDDEN);
 
 /*
  INLINE_COMMENT: 
  Remains in input, but hidden (doesn't interfere with parsing).
  */
 INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> channel(HIDDEN);
+
+fragment DISABLE_LINE: ('--' ~[\r\n]*);
+
