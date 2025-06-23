@@ -205,7 +205,7 @@ WS: [ \t]+ -> skip;
  (doesn't interfere with parsing).
  */
 BLOCK_COMMENT:
-	'/*' .*? '*/' -> channel(HIDDEN); // Block AKA Multi-line comment.
+	'/*' .*? '*/' -> skip; // Block AKA Multi-line comment.
 	
 COMMENT: LINE_COMMENT | INLINE_COMMENT | BLOCK_COMMENT;
 /*
@@ -213,13 +213,13 @@ COMMENT: LINE_COMMENT | INLINE_COMMENT | BLOCK_COMMENT;
  Remains in input, but hidden
  (doesn't interfere with parsing).
  */
-LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> channel(HIDDEN);
+LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
 
 /*
  INLINE_COMMENT: 
  Remains in input, but hidden (doesn't interfere with parsing).
  */
-INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> channel(HIDDEN);
+INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> skip;
 
 fragment DISABLE_LINE: ('--' ~[\r\n]*);
 
