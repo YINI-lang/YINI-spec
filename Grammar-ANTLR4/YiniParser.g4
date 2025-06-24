@@ -29,7 +29,8 @@ yini:
 	YINI_MARKER? INLINE_COMMENT* NL* 
 	section+ NL* terminal_line? EOF?;
 
-section: SECTION_HEAD? section_members | SECTION_HEAD section?;
+//section: SECTION_HEAD? section_members | SECTION_HEAD section?;
+section: SECTION_HEAD? section_members;
 
 terminal_line: TERMINAL_TOKEN (NL+ | INLINE_COMMENT? NL*);
 
@@ -42,7 +43,8 @@ member:
 	//| KEY EQ NL+ // Empty value is treated as NULL.
 	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
 	//| KEY COLON elements? NL+
-	| member_colon_list;
+	| member_colon_list
+	| SECTION_HEAD section_members?;
 //| STRING COLON value? NL+; // ???
 
 member_colon_list: KEY COLON WS? elements? NL+;
