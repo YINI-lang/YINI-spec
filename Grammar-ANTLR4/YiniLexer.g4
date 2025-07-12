@@ -32,8 +32,8 @@ SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
 // – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
 // – For levels beyond 6, use the numeric shorthand form (e.g. ^7, ~12, §100, €42).
 fragment SECTION_MARKER
-    : SECTION_MARKER_BASIC_REPEAT
-    | SECTION_MARKER_SHORTHAND
+    : SECTION_MARKER_BASIC_REPEAT // Classic/repeating marker section headers (e.g. ^^ SectionName).
+    | SECTION_MARKER_SHORTHAND // Numeric shorthand section headers (e.g. ^7 SectionName.
     ;
 
 // Match one or more of the same marker.  Parser must check "count ≤ 6.",
@@ -61,6 +61,7 @@ EUR: '\u20AC'; // Euro sign €.
 CARET: '^';
 TILDE: '~';
 GT: '>'; // Greater Than.
+LT: '<'; // Less Than.
 
 EQ: '=';
 HASH: '#';
@@ -102,7 +103,8 @@ IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		| '0' ..'9'
 		| '_'
 	)*
-	| IDENT_BACKTICKED;
+	| IDENT_BACKTICKED
+	| IDENT_INVALID;
 
 IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
 
@@ -223,3 +225,6 @@ INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> skip;
 
 fragment DISABLE_LINE: ('--' ~[\r\n]*);
 
+IDENT_INVALID
+    : [0-9][a-zA-Z0-9_]*
+    ;
