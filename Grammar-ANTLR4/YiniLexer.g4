@@ -227,6 +227,4 @@ fragment DISABLE_LINE: ('--' ~[\r\n]*);
 
 IDENT_INVALID
     : [0-9][a-zA-Z0-9_]*
-    //| ()*? // Non-greedy syntax.
-    |(~[\u00A7\u20AC^~])+
     ;
