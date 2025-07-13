@@ -421,10 +421,11 @@ An _**identifier**_ can be one of two forms below:
   ```
 
 - **Form 2: Backticked Identifier:**
-  - The backticked identifier must start and end with backticks  ``` ` ```.
-  - It must be on a single line, and must not contain tabs or new lines unless using escaping codes (`\n`, `\r`, `\t`, etc).
-  - It may contain ordinary spaces.
-  - Special control characters (U+0000–U+001F) must be escaped, and should not be present as raw chars.
+  - The identifier must start and end with a backtick  <code>`</code>.
+  - It must be on a single line, and must not contain tabs or newlines unless using escape codes (`\n`, `\r`, `\t`, etc.).
+  - Ordinary spaces are allowed.
+  - Special control characters (U+0000–U+001F) must be escaped and should not appear as raw characters.
+  - **Note:** A backticked identifier **may be empty**  <code>``</code> (to conform with the JSON empty key <code>""</code>), though this is rarely used in practice and should generally be avoided.
    
   Example:
   ```yini

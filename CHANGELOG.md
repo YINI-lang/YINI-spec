@@ -9,6 +9,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - In spec added section 2.4, "YINI Marker (`@yini`)" and support for it in the grammar (lexer and parser).
 - In lexer, fixed bug that caused DISABLE_LINE to skip/consume every line after the (`--`).
 - Refactored parser, so a new section is part of a "member" (instead of being a "nested section" part of a "section" directly). Due to it will be easier to implement the parser.
+- In spec, updated section 3.4, backticked identifiers to clarify the rules, explicitly stating that empty backticked identifiers are permitted.
 
 ## 2025 Jun (spec: v1.0.0 Beta 7)
 - Fixed backticked identifiers (phrases) (as per Spec) cannot include tabs, newlines, or other backticks.
