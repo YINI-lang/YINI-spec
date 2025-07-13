@@ -421,9 +421,10 @@ An _**identifier**_ can be one of two forms below:
   ```
 
 - **Form 2: Backticked Identifier:**
-  - A phrase is a name wrapped in backticks  ``` ` ```.
-  - Backticked identifiers must be on a single line and must not contain tabs or new lines unless using escaping codes, except for ordinary spaces.
-  - Special control characters (U+0000–U+001F) must be escaped.
+  - The backticked identifier must start and end with backticks  ``` ` ```.
+  - It must be on a single line, and must not contain tabs or new lines unless using escaping codes (`\n`, `\r`, `\t`, etc).
+  - It may contain ordinary spaces.
+  - Special control characters (U+0000–U+001F) must be escaped, and should not be present as raw chars.
    
   Example:
   ```yini
