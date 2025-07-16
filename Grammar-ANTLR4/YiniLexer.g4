@@ -95,6 +95,17 @@ EMPTY_LIST: '[' ']';
 
 SHEBANG: '#!' ~[\n\r\b\f\t]* NL;
 
+// NOTE: NUMBER must come before KEY, IDENT, etc.
+NUMBER:
+	INTEGER ('.' INTEGER?)? EXPONENT?
+	| SIGN? '.' DIGIT+ EXPONENT?
+	| SIGN? (
+		BIN_INTEGER
+		| OCT_INTEGER // Make sure to not clash with boolean ON | OFF.
+		| DUO_INTEGER
+		| HEX_INTEGER
+	);
+
 KEY: IDENT;
 
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
@@ -107,16 +118,6 @@ IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 	| IDENT_INVALID;
 
 IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
-
-NUMBER:
-	INTEGER ('.' INTEGER?)? EXPONENT?
-	| SIGN? '.' DIGIT+ EXPONENT?
-	| SIGN? (
-		BIN_INTEGER
-		| OCT_INTEGER // Make sure to not clash with boolean ON | OFF.
-		| DUO_INTEGER
-		| HEX_INTEGER
-	);
 
 // Illegal prefix characters and characters inside strings are deferred to the
 // parser, which gives more control and enables better user feedback (e.g.,
