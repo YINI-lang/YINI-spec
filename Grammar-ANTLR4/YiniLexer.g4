@@ -34,6 +34,7 @@ SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
 fragment SECTION_MARKER
     : SECTION_MARKER_BASIC_REPEAT // Classic/repeating marker section headers (e.g. ^^ SectionName).
     | SECTION_MARKER_SHORTHAND // Numeric shorthand section headers (e.g. ^7 SectionName.
+	| SECTION_MARKER_INVALID // Catch invalid or erroneous section markers so they can be forwarded to the parser for error reporting.
     ;
 
 // Match one or more of the same marker.  Parser must check "count ≤ 6.",
@@ -50,6 +51,12 @@ fragment SECTION_MARKER_BASIC_REPEAT
 // Examples: ^7, ~12, §100, €42
 fragment SECTION_MARKER_SHORTHAND
     : (CARET | TILDE | SS | EUR) [1-9] DIGIT*
+    ;
+
+// Invalid or erroneous section markers so they can be forwarded to the
+// parser for error reporting. E.g. ^^2 # Invalid marker, mixup between basic and numeric section marker.
+fragment SECTION_MARKER_INVALID
+    : (CARET | TILDE | SS | EUR)+ DIGIT+
     ;
 
 TERMINAL_TOKEN options {

@@ -11,6 +11,11 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - Refactored parser, so a new section is part of a "member" (instead of being a "nested section" part of a "section" directly). Due to it will be easier to implement the parser.
 - In spec, updated section 3.4, backticked identifiers to clarify the rules, explicitly stating that empty backticked identifiers are permitted.
 - In lexer, fixed issue that invalid identifiers are correctly identified. And being able to be forwarded to the parser.
+- Updated lexer so it can identify invalid or erroneous section markers, so they can be forwarded to the parser for error reporting. E.g. 
+```
+^^2 SectionHead # Invalid marker, mixup between basic and numeric section marker.
+```
+
 
 ## 2025 Jun (spec: v1.0.0 Beta 7)
 - Fixed backticked identifiers (phrases) (as per Spec) cannot include tabs, newlines, or other backticks.
