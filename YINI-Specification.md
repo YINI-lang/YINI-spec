@@ -1,6 +1,6 @@
 _YINI: A lightweight configuration file format — clean, readable, structured._
 
-> \~ YINI ≡
+> \< YINI ≡
 ---
 # Specification for the YINI Format
 **Version:** v1.0.0 Beta 7 + Updates
@@ -8,7 +8,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
 ```yini
-~ YINI
+< YINI
 Yet_another = 'INI'
 ```
 © 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
@@ -84,7 +84,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 **5. Section Headers** ([Link ⇨](./YINI-Specification.md#5-section-headers))  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
-&nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `~`)  
+&nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `<`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Short-hand Section Heading  
 
@@ -206,7 +206,7 @@ YINI was created to serve as a clean, minimal, and predictable configuration for
 
 YINI aims to prioritize **human readability, clarity, and clean syntax**.
 
-- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `~` as an alternative).
+- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `<` as an alternative).
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
 
@@ -233,8 +233,8 @@ The following key terms are used consistently throughout this specification. Und
 | List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
-| Section                   | A logical grouping of members, introduced by a header using a section marker like `^`, `~`. |
-| Section Marker            | A special character (`^`, alternative is `~`) that denotes a new section header. |
+| Section                   | A logical grouping of members, introduced by a header using a section marker like `^`, `<`. |
+| Section Marker            | A special character (`^`, alternative is `<`) that denotes a new section header. |
 | Strict Mode               | An optional parsing mode where all structural and validation rules (incl. the document terminator) are strictly enforced. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
@@ -600,15 +600,16 @@ username = "alice"
 theme = "dark"
 ```
 
-### 5.2. Section Markers (`^`, `~`)
+### 5.2. Section Markers (`^`, `<`)
 YINI allows a limited set of _**section markers**_ to identify section headers. These markers help visually and semantically distinguish section starts from key-value members or comments.
 
 Supported markers:
   - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
-  - `~` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
-  - `>` (discontinued)
-  - Reserved: `§` (experimental, maybe in future, for enhanced readability)
-  - Reserved: `€` (experimental, maybe in future, for enhanced readability)
+  - `<` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
+  - `§` (experimental, for enhanced readability, may get promoted in future)
+  - `€` (experimental, for enhanced readability, may get promoted in future)
+  - `~` (discontinued, was visually ambiguous)
+  - `>` (discontinued, was easy to confuse with reply)
 
 **When using a repeated marker to indicate nesting, a maximum of six (`6`) repeated markers is allowed.**  
 
@@ -628,7 +629,7 @@ To represent nesting deeper than level 6, switch to the **numeric shorthand sect
 ### 5.3. Nested Sections
 To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
 
-- Section heading markers (`^` or `~`, etc) may only be repeated up to six times — to level 6 (maximum).
+- Section heading markers (`^` or `<`, etc) may only be repeated up to six times — to level 6 (maximum).
 - Beyond level 6, the numeric shorthand section must be used (see section 5.3.1).
 - **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.
 - **Going shallower (decrease nesting):** May drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
@@ -672,7 +673,7 @@ Optionally, indentation may be omitted:
 #### 5.3.1. Short-hand Section Heading
 
 **Short-hand Section Headings:**
-Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers is preferred but not required).
+Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `<`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers is preferred but not required).
 
 For example:
 - To go from depth 6 to depth 7: write `^7`.  
@@ -1204,7 +1205,7 @@ The following characters are reserved by the YINI syntax and must not be used im
 | `=` | Assignment  | Separates key from value |
 | `^` | Section header | Used to denote section start |
 | `,` | Item separator | Used in lists |
-| `~` | Section header (alternative) | Used to denote section start |
+| `<` | Section header (alternative) | Used to denote section start |
 | `%` | Binary prefix | Begins binary number |
 | `;` | Full-line comment |   |
 | `:` | Alternative list notation | Outer list without brackets  |
@@ -1231,7 +1232,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 #### 11.2.1. Structural Requirements
 - A file may consist of zero or more **sections**.
 - A file may consist of zero or more valid key-value pairs (members).
-- Section headers must begin with a valid marker (`^`, `~`).
+- Section headers must begin with a valid marker (`^`, `<`).
 - At least one space or tab is required between a section marker and the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
@@ -1669,19 +1670,19 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
   Feature Toggles with Alternative Syntax
 */
 
-~ `Feature Toggles`
+< `Feature Toggles`
 `Debug` = ON
 `Experimental UI` = OFF
 `Night Mode` = OFF
 `Use Cache` = ON
 
-    ~~ `Cache Config`
+    << `Cache Config`
     `Cache Expiry` = 86400  		// In seconds
     `Last Purge Date (YYYY-MM-DD)` = "2025-05-25"
 ```
 
 **Notes:**
-- Uses the alternative section marker `~`.
+- Uses the alternative section marker `<`.
 - Demonstrates alternative boolean literals: `ON` and `OFF`.
 - \`Cache Config\` is a nested subsection of \`Feature Toggles\`.
 - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
@@ -1867,6 +1868,8 @@ Notes:
 
 --v1.0.0 Beta 7 + Updates--
 - Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".
+- Discontinued alternative marker character `~` (visually ambiguous) in favor of `<`.
+- Promoted the section markers `§` and `€` to "Experimental" from only being "Reserved".
 
 v1.0.0 Beta 7, 2025-06-12
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
