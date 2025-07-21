@@ -16,7 +16,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 ^^2 SectionHead # Invalid marker, mixup between basic and numeric section marker.
 ```
 - Updated spec, discontinued alternative marker character `~` (visually ambiguous) in favor of `<`.
-- Grammar rule for IDENT updated to include the `.` character (even though it is invalid in YINI identifiers), enabling the parser to catch and throw an error if a dot is present.
+- Lexer rule for IDENT updated to include the `.` character (even though it is invalid in YINI identifiers), enabling the parser to catch and throw an error if a dot is present.
 
 
 
