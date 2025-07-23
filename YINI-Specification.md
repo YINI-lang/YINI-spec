@@ -1857,7 +1857,7 @@ This specification is created and maintained by Marko K. Seppänen.
 #### Creator
 First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
-Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
+Mr. Seppänen has been programming since the mid-80s, starting with languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages, at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, especially with TypeScript, JavaScript, PHP, and full-stack web development.
 
 ### 16.4. Spec Changes
 A running log of changes and updates **to this YINI specification**.
