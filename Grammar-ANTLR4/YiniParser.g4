@@ -59,13 +59,13 @@ value:
 
 object_literal
   : OC NL* objectMemberList NL* CC NL*
-  | EMPTY_OBJECT
+  | empty_object NL*
   ;
 
 // A memberList is one or more key=value pairs separated by commas.
 objectMemberList
     : objectMember ( COMMA NL* objectMember )* ( COMMA )?
-	| EMPTY_OBJECT
+	| empty_object NL*
     ;
     
 objectMember
@@ -74,7 +74,7 @@ objectMember
 
 list: elements | list_in_brackets;
 
-list_in_brackets: OB NL* elements NL* CB | EMPTY_LIST;
+list_in_brackets: OB NL* elements NL* CB | empty_list NL*;
 
 elements: element COMMA? | element COMMA elements;
 
@@ -88,3 +88,6 @@ string_concat: NL* PLUS NL* STRING;
 
 // NOTE: In specs boolean literals should be case-insensitive.
 boolean_literal: BOOLEAN_FALSE | BOOLEAN_TRUE;
+
+empty_object: EMPTY_OBJECT | '{' NL* '}';
+empty_list: EMPTY_LIST | '[' NL* ']';

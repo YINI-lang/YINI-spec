@@ -17,6 +17,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 ```
 - Updated spec, discontinued alternative marker character `~` (visually ambiguous) in favor of `<`.
 - Lexer rule for IDENT updated to include the `.` character (even though it is invalid in YINI identifiers), enabling the parser to catch and throw an error if a dot is present.
+- Fixed a grammar issue where empty lists `[]` and empty objects `{}`, with or without whitespace in between opening and closing characters, were not handled correctly.
 
 
 
