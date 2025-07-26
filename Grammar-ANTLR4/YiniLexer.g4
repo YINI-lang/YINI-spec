@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- 1.0.0-rc.1
+ 1.0.0-rc.1 + --UPDATES--
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
