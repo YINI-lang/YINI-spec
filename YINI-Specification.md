@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \< YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** 1.0.0-rc.1
+**Version:** 1.0.0-RC.1
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
