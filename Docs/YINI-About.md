@@ -25,7 +25,7 @@ This repository includes a YINI grammar defined using ANTLR 4, which closely fol
 Feedback, bug reports, suggestions, and code contributions are welcome! Head over to **[Docs/Contributing](https://github.com/YINI-lang/YINI-spec/blob/develop/Docs/Contributing.md)**
 
 ## Author 🤓
-Mr. Seppänen has been programming since the mid-80s, working in languages like Basic, C, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages, at Chalmers University of Technology. Professionally, he has worked many years in software development across PHP, TypeScript, and full-stack web development.
+Mr. Seppänen has been programming since the mid-80s, starting with languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages, at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, especially with TypeScript, JavaScript, PHP, and full-stack web development.
 
 ## Trivia
 ### The Name
