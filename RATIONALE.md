@@ -95,10 +95,29 @@ These values guide YINI's syntax, structure, and behavior — making it reliable
 - This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
 - Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also is within 7-bit ASCII).
 
+In v1.0.0 Alpha 8, the section marker character `~` (due to visually ambiguous) was replaced by `<`, which is also 7-bit ASCII.
+
 #### B.2.2. Non-standard Octal Escape
 Octal escapes in YINI use the `\oNNN` format, which differs from the traditional `\NNN` style used in C and Python. 
 
 This design choice was made because `\NNN` provides no clear indication of the number base, unlike `\u` for Unicode (4-digit hex) and `\U` for extended Unicode (8-digit hex). The `\oNNN` format in YINI follows the same analogy, making the base explicit and the escape more readable and self-descriptive.
+
+#### B.2.3. Summary of Marker Characters
+  - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
+  - `<` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
+  - `~` (discontinued, was visually ambiguous)
+  - `>` (discontinued, was easy to confuse with reply)
+  - Reserved: `§` (experimental, maybe in future, for enhanced readability)
+  - Reserved: `€` (experimental, maybe in future, for enhanced readability)
+
+| Marker Char. | Status         | Example        | Notes |
+|--------------|---------------|---------------|---------|
+| `^`          | Official/main | `^^ Section2` | Always supported  |
+| `<`          | Alternative   | `<< Section2` | Easy to count, replaced `~` |
+| `§`          | Experimental  | `§§ Section2` | For enhanced readability, may get promoted in future |
+| `€`          | Experimental  | `€€ Section2` | For enhanced readability, may get promoted in future  |
+| `~`          | Discontinued  | `~~ Section2` | Hard to count when repeated, phased out      |
+| `>`          | Discontinued  | `>> Section2` | Was easy to confuse with reply in forums, etc   |
 
 ## C. YINI vs Other Formats
 ### C.1. Why Not Existing Formats?

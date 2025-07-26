@@ -1,14 +1,14 @@
 _YINI: A lightweight configuration file format — clean, readable, structured._
 
-> \~ YINI ≡
+> \< YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** v1.0.0 Beta 7
+**Version:** 1.0.0-RC.1
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
 ```yini
-~ YINI
+< YINI
 Yet_another = 'INI'
 ```
 © 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
@@ -60,7 +60,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;2.1. File Encoding  
 &nbsp;&nbsp;&nbsp;&nbsp;2.2. File Extension  
 &nbsp;&nbsp;&nbsp;&nbsp;2.3. Optional Shebang (`#!`)  
-&nbsp;&nbsp;&nbsp;&nbsp;2.4. Reserved: Optional Header (`@yini`) *(for future use)*
+&nbsp;&nbsp;&nbsp;&nbsp;2.4. YINI Marker (`@yini`)  
 
 **3. Syntax Overview** ([Link ⇨](./YINI-Specification.md#3-syntax-overview))  
 &nbsp;&nbsp;&nbsp;&nbsp;3.1. General Syntax Rules  
@@ -84,7 +84,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 **5. Section Headers** ([Link ⇨](./YINI-Specification.md#5-section-headers))  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
-&nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `~`)  
+&nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `<`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Short-hand Section Heading  
 
@@ -206,7 +206,7 @@ YINI was created to serve as a clean, minimal, and predictable configuration for
 
 YINI aims to prioritize **human readability, clarity, and clean syntax**.
 
-- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `~` as an alternative).
+- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `<` as an alternative).
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
 
@@ -233,8 +233,8 @@ The following key terms are used consistently throughout this specification. Und
 | List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
 | Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
-| Section                   | A logical grouping of members, introduced by a header using a section marker like `^`, `~`. |
-| Section Marker            | A special character (`^`, alternative is `~`) that denotes a new section header. |
+| Section                   | A logical grouping of members, introduced by a header using a section marker like `^`, `<`. |
+| Section Marker            | A special character (`^`, alternative is `<`) that denotes a new section header. |
 | Strict Mode               | An optional parsing mode where all structural and validation rules (incl. the document terminator) are strictly enforced. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
@@ -264,9 +264,37 @@ For Unix-based systems, a shebang (#!) is commonly used in script files to speci
 - The **very first line** of the document may optionally begin with a Unix-style **shebang** (`#!`), which specifies the interpreter for the script.
 - If present, the shebang line will be ignored by the YINI parser.
 
-Here’s an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
+Here's an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
 ```yini
 #!/usr/bin/env yini
+
+^ Config
+key = value
+```
+### 2.4. YINI Marker (`@yini`)
+The optional YINI marker (`@yini`) can be added at the very top of a YINI file (if present, it must appear after any shebang line).
+
+The marker is case-insensitive: `@yini`, `@YINI`, and `@Yini` are all valid.
+
+Its main purpose is to clearly indicate — both to humans and to programs — what format the file is in.
+
+Although YINI files typically have the `.yini` extension, the filename is not always visible (for example, when files are embedded, or copied as snippets, etc.). The marker line provides immediate identification regardless of context.
+
+- It also helps clarify the file format when files are opened in editors or included in bug reports.
+
+Example:
+```yini
+@YINI
+
+^ Config
+key = value
+```
+
+Example (with shebang):
+```yini
+#!/usr/bin/env yini
+
+@yini
 
 ^ Config
 key = value
@@ -393,9 +421,11 @@ An _**identifier**_ can be one of two forms below:
   ```
 
 - **Form 2: Backticked Identifier:**
-  - A phrase is a name wrapped in backticks  ``` ` ```.
-  - Backticked identifiers must be on a single line and must not contain tabs or new lines unless using escaping codes, except for ordinary spaces.
-  - Special control characters (U+0000–U+001F) must be escaped.
+  - The identifier must start and end with a backtick  <code>`</code>.
+  - It must be on a single line, and must not contain tabs or newlines unless using escape codes (`\n`, `\r`, `\t`, etc.).
+  - Ordinary spaces are allowed.
+  - Special control characters (U+0000–U+001F) must be escaped and should not appear as raw characters.
+  - **Note:** A backticked identifier **may be empty**  <code>``</code> (to conform with the JSON empty key <code>""</code>), though this is rarely used in practice and should generally be avoided.
    
   Example:
   ```yini
@@ -467,7 +497,7 @@ A **key** is an identifier used to reference a specific value in a member (a `ke
 - Keys must be **unique** within the same section and nesting level. 
 - Keys are assigned values using `=` operator.
   
-  **Exception:** In the **alternative list syntax** (see Section 9.2), the colon (`:`) is used **exclusively for defining list values**. It is not a general-purpose assignment operator.
+  **Exception:** In the **alternative list syntax** (see Section 9.2), the colon (`:`) is used ** or object properties**. It is not a general-purpose assignment operator.
 
 **Examples:**
 ```yini
@@ -570,15 +600,16 @@ username = "alice"
 theme = "dark"
 ```
 
-### 5.2. Section Markers (`^`, `~`)
+### 5.2. Section Markers (`^`, `<`)
 YINI allows a limited set of _**section markers**_ to identify section headers. These markers help visually and semantically distinguish section starts from key-value members or comments.
 
 Supported markers:
   - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
-  - `~` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
-  - `>` (discontinued)
-  - Reserved: `§` (experimental, maybe in future, for enhanced readability)
-  - Reserved: `€` (experimental, maybe in future, for enhanced readability)
+  - `<` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
+  - `§` (experimental, for enhanced readability, may get promoted in future)
+  - `€` (experimental, for enhanced readability, may get promoted in future)
+  - `~` (discontinued, was visually ambiguous)
+  - `>` (discontinued, was easy to confuse with reply)
 
 **When using a repeated marker to indicate nesting, a maximum of six (`6`) repeated markers is allowed.**  
 
@@ -598,7 +629,7 @@ To represent nesting deeper than level 6, switch to the **numeric shorthand sect
 ### 5.3. Nested Sections
 To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
 
-- Section heading markers (`^` or `~`, etc) may only be repeated up to six times — to level 6 (maximum).
+- Section heading markers (`^` or `<`, etc) may only be repeated up to six times — to level 6 (maximum).
 - Beyond level 6, the numeric shorthand section must be used (see section 5.3.1).
 - **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.
 - **Going shallower (decrease nesting):** May drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
@@ -642,7 +673,7 @@ Optionally, indentation may be omitted:
 #### 5.3.1. Short-hand Section Heading
 
 **Short-hand Section Headings:**
-Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `~`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers is preferred but not required).
+Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `<`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers is preferred but not required).
 
 For example:
 - To go from depth 6 to depth 7: write `^7`.  
@@ -956,13 +987,13 @@ key3 = { a = 1, b = 2, }  # ❌ Error: Stray trailing comma
 
 ## 9. Object Literals
 ### 9.1. Objects (using `{` and `}`)
-YINI supports inline objects as a value type, allowing zero or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a standard YINI `key = value` pair, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
+YINI supports inline objects as a value type, allowing zero or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a YINI `key: value` definition, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
 
 An empty object `{ }` is allowed as well (both in lenient and strict-mode).
 
 An object in YINI  have the following form:
 ```txt
-<identifier> = { <key1> = <value1>, <key2> = <value2>, ... }
+<identifier> = { <key1>: <value1>, <key2>: <value2>, ... }
 ```
 
 - The **key** in each member follows the same rules as any YINI identifier.
@@ -974,9 +1005,11 @@ The **value** in each member may be:
   * Another inline object (`{ ... }`).
   * An empty object `{ }` is allowed as well (both in lenient/strict-mode).
 
+**Note:** The equal sign `=` is never used between keys and values inside an object literal, always use `:` in objects.
+
 The following rules apply to objects in YINI:
 - Begins with `{` and ends with `}`.
-- Between `{` and `}`, write zero or more members (including no members at all is allowed both in lenient and strict mode) of the form `key = value` (a member), separated by commas.
+- Between `{` and `}`, write zero or more members (including no members at all is allowed both in lenient and strict mode) of the form `key: value` (definition), separated by commas.
 - Optionally and only in lenient-mode, after a value allow a trailing comma before the closing `}`
 - Whitespace (spaces, tabs, newlines) is ignored except inside quoted strings.
 - Comments (e.g. `// ...` or `# ...`) may appear anywhere whitespace is allowed.
@@ -985,26 +1018,36 @@ The following rules apply to objects in YINI:
 
 Grammar rule:
 ```
-member-list := member ("," member)* ("," )?  // Any trailing is comma dropped.
-member      := IDENTIFIER "=" value
+objectMemberList
+  : objectMember ( COMMA NL* objectMember )* ( COMMA )?
+  | empty_object NL*
+  ;
+    
+objectMember
+  : KEY WS? COLON NL* value
+  ;
 ```
 
 **Example:**
 ```yini
+// ✅ Valid.
 ^ section
-object = { member1 = "value1", member2 = "value2" }
+object = { member1: "value1", member2: "value2" }
+
+// ❌ Invalid: Never use = inside object
+obj = { a = 1, b = 2 }
 ```
 
 More Example:
 ```
 # In lenient mode:
-obj1 = { a = 1, b = 2, }   # → {a: 1, b: 2} ✅
-obj2 = { a = 1,, b = 2 }   # → ❌ Parse error or warning (double comma)
-obj3 = { , a = 1 }         # → ❌ Parse error (leading comma not allowed)
+obj1 = { a: 1, b: 2, }     # → {a: 1, b: 2} ✅
+obj2 = { a: 1,, b: 2 }     # → ❌ Parse error or warning (double comma)
+obj3 = { , a: 1 }          # → ❌ Parse error (leading comma not allowed)
 obj4 = { }                 # → {} ✅
 
 # In strict mode:
-obj1 = { a = 1, b = 2, }   # → ❌ Error: trailing comma not allowed in strict mode
+obj1 = { a: 1, b: 2, }     # → ❌ Error: trailing comma not allowed in strict mode
 obj4 = { }                 # → {} ✅
 ```
 
@@ -1171,13 +1214,15 @@ The following characters are reserved by the YINI syntax and must not be used im
 
 | Character	| Usage Context	| Description |
 |-----------|---------------|-------------|
-| `=` | Assignment  | Separates key from value |
+| `=` | Assignment  | Assign to key at root/section level |
 | `^` | Section header | Used to denote section start |
+| `:` | (1) Alternative list notation <br/> (2) Define a property inside an object | (1) Alternative list notation <br/> (2) Define a value to a key inside an inline object |
 | `,` | Item separator | Used in lists |
-| `~` | Section header (alternative) | Used to denote section start |
+| `<` | Section header (alternative) | Used to denote section start |
+| `§` | Section header (alternative) |   |
+| `€` | Section header (alternative) |   |
 | `%` | Binary prefix | Begins binary number |
 | `;` | Full-line comment |   |
-| `:` | Alternative list notation | Outer list without brackets  |
 | `#` | Hexadecimal prefix | Begins hexadecimal number |
 | `# ` | Inline comment (alternative) | Comment, if starts with `#` followed by at least one space or tab, due to `#` without space is reserved for hex literals (e.g. #FF00FF) |
 | `//` | Inine comment |   |
@@ -1190,7 +1235,6 @@ The following characters are reserved by the YINI syntax and must not be used im
 #### 12.1.2. Reserved Keywords
 The following keywords are restricted and must not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
 - `/END` _(case-insensitive)_
-- `@yini`
 - `@ver`, `@version`
 - `@include`, `@anchor`, `@alias`
 
@@ -1202,7 +1246,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 #### 11.2.1. Structural Requirements
 - A file may consist of zero or more **sections**.
 - A file may consist of zero or more valid key-value pairs (members).
-- Section headers must begin with a valid marker (`^`, `~`).
+- Section headers must begin with a valid marker (`^`, `<`).
 - At least one space or tab is required between a section marker and the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
@@ -1308,14 +1352,14 @@ list_colon:
   "one",
   "two",                     # ✅ → ["one", "two"] (trailing comma dropped)
 
-object1 = { a = 1, b = 2, }  # ✅ → {a: 1, b: 2} (trailing comma dropped)
+object1 = { a: 1, b: 2, }    # ✅ → {a: 1, b: 2} (trailing comma dropped)
 
 ; Strict mode examples:
 list_bracketed2 = [1, 2, ]   # ❌ Error: Stray trailing comma
-object2 = { a = 1, b = 2, }  # ❌ Error: Stray trailing comma
+object2 = { a: 1, b: 2, }    # ❌ Error: Stray trailing comma
 
 list_bracketed3 = [1, 2]     # ✅ OK
-object3 = { a = 1, b = 2 }   # ✅ OK
+object3 = { a: 1, b: 2 }     # ✅ OK
 ```
 
 ### 12.3.1. Table: Lenient vs. Strict Mode
@@ -1394,7 +1438,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 ### 13.5. Objects
 Any empty slot inside `{ ... }` e.g.:
 ```
-object = { a = 1, , b = 2 }
+object = { a: 1, , b: 2 }
 ```
 
 is error in strict-mode or at least a warning (in lenient-mode).
@@ -1478,11 +1522,11 @@ Developers are encouraged to implement the following features to improve parser 
   - `true` / `false`
   - `null`
 - Support both `strict` as well as `lenient` parsing modes.
-- Support different **Abort Sensitivity Levels** while parsing a YINI document:
+- Support different **Bail/Abort Sensitivity Levels** while parsing a YINI document:
   (AKA severity threshold)
-  - Level 0 = ignore errors and try parse anyway (may remap falty key/section names)
-  - Level 1 = abort on errors only
-  - Level 2 = abort even on warnings
+  - Level 0 = Ignore errors and try parse anyway (may remap falty key/section names to something more valid so parsing can continue).
+  - Level 1 = Abort on errors only.
+  - Level 2 = Abort even on warnings.
 - **Extra Bonus:** In strings, if C/C++-style octal escape codes like `\1` to `\377` are used (which are not valid in YINI), parsers should treat this as an error in strict mode (and suggest the correct YINI syntax). In lenient mode, parsers may optionally emit a warning and suggest the correct YINI syntax: `\o1` to `\o377`, and interpret the octal code as intended.
 
 ## 14. Compatibility and Versioning
@@ -1550,13 +1594,14 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 
 **Table: Correspondence Between YINI and JSON**
 
-| Entity             | → JSON                         | → YINI                          | Notes |
-|--------------------|---------------------------------|----------------------------------|-------|
-| Structure Mapping  | ✅ Yes (sections become objects) | ✅ Yes (objects become sections)|   |
-| Types Mapping      | ✅ Yes (direct type mapping)     | ✅ Yes (direct type mapping)    |   |
-| Identifiers (Keys) | ✅ Yes (must always be quoted)    | ✅ Yes (backticks if needed)   |   |
-| Comments           | 🚫 No (discarded)                | -                               | Comments are dropped during JSON conversion.|
-| Terminator         | 🚫 No (ignored)                  | -                               | Terminator must be appended when converting to YINI.|
+| Entity / Feature    | To YINI                                             | To JSON                               | Notes                                                                             |
+|---------------------|----------------------------------------------------|--------------------------------------|-----------------------------------------------------------------------------------|
+| Structure Mapping   | ✅ Yes (sections become objects)                   | ✅ Yes (objects, nested)              | Each YINI section is mapped to a JSON object.                                     |
+| Types Mapping       | ✅ Yes (direct type mapping)                       | ✅ Yes (direct type mapping)          | All core types (string, number, bool, null, object, list) are preserved.          |
+| Key/Value Syntax    | ✅ Top-level: `key = value`<br>Object: `key: value`| ✅ Keys always quoted, `:` for objects| YINI uses `=` for top-level, `:` for object members.                              |
+| Identifiers (Keys)  | ✅ Unquoted, or backticked if needed               | ✅ Must always be quoted              | Backticks in YINI for special chars; JSON always quotes keys.                     |
+| Comments            | ✅ Supported (full-line, inline, or multi-line)                 | 🚫 Not supported (discarded)          | Comments are dropped when converting to JSON.                                     |
+| Terminator          | ✅ Optional (for doc-ending)                       | 🚫 Not supported (ignored)            | YINI document terminator (`/END`) is ignored in JSON.                              |
 
 ### See also:
 See Sections 14.3 and 14.4 for examples of YINI ⇆ JSON mappings.
@@ -1640,19 +1685,19 @@ last_purge_date = "2025-05-25"	// YYYY-MM-DD
   Feature Toggles with Alternative Syntax
 */
 
-~ `Feature Toggles`
+< `Feature Toggles`
 `Debug` = ON
 `Experimental UI` = OFF
 `Night Mode` = OFF
 `Use Cache` = ON
 
-    ~~ `Cache Config`
+    << `Cache Config`
     `Cache Expiry` = 86400  		// In seconds
     `Last Purge Date (YYYY-MM-DD)` = "2025-05-25"
 ```
 
 **Notes:**
-- Uses the alternative section marker `~`.
+- Uses the alternative section marker `<`.
 - Demonstrates alternative boolean literals: `ON` and `OFF`.
 - \`Cache Config\` is a nested subsection of \`Feature Toggles\`.
 - All keys and section header identifiers are enclosed in backticks, allowing the use of spaces and special characters.
@@ -1827,7 +1872,7 @@ This specification is created and maintained by Marko K. Seppänen.
 #### Creator
 First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
 
-Mr. Seppänen has been programming since the mid-80s, working in languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, particularly in TypeScript, JavaScript, PHP, and full-stack web development.
+Mr. Seppänen has been programming since the mid-80s, starting with languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages, at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, especially with TypeScript, JavaScript, PHP, and full-stack web development.
 
 ### 16.4. Spec Changes
 A running log of changes and updates **to this YINI specification**.
@@ -1836,6 +1881,11 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
+v1.0.0 RC 1, 2025-07-26
+- Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".
+- Discontinued alternative marker character `~` (visually ambiguous) in favor of `<`.
+- Promoted the section markers `§` and `€` to "Experimental" from only being "Reserved".
+- Droped the use of `=` in object literals, objects now use `:` (similar as to JSON, etc).
 
 v1.0.0 Beta 7, 2025-06-12
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.

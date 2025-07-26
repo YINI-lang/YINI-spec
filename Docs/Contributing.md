@@ -5,7 +5,7 @@
 
 ---
 
-Even though `YINI-spec` is still in alpha/beta, your feedback, suggestions, and contributions are highly valued. 
+Even though `YINI-spec` is still in beta, your feedback, suggestions, and contributions are highly valued. 
 
 If you find any bugs or errors in the `YINI` specification, grammar, or elsewhere, feel free to add a new issue or make a PR :)
 
@@ -47,17 +47,3 @@ If you don't see a parse tree or get an error when clicking "Run", check the fol
 - **Parser Not Loaded Correctly** - Make sure you copied the full content of "YiniParser.g4" into the Parser field in ANTLR Lab.
 
 - **A message in the console says "No such start rule: Program"** - Double-check that the "Start rule" field (on the right) is set to "yini".
-
-## Submitting Changes
-
-Did you write a patch that fixes a bug or other issue?
-
-Thank you!
-
-- Open a pull request (PR) against the `develop` branch (this is where all new code goes).
-- Name the branch using one of the following prefixes:
-  * `fix/` if the branch is meant to fix an issue.
-  * `update/` if the branch updates information or data.
-  * `feature/` if the branch adds a new feature. **But before that, create an issue to discuss it so that PR is less likely to be wasted!** :)
-
-
