@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- v1.0.0 Beta 7 + Updates
+ 1.0.0-rc.1
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -29,7 +29,6 @@ yini:
 	YINI_MARKER? INLINE_COMMENT* NL* 
 	section+ NL* terminal_line? EOF?;
 
-//section: SECTION_HEAD? section_members | SECTION_HEAD section?;
 section: SECTION_HEAD? section_members;
 
 terminal_line: TERMINAL_TOKEN (NL+ | INLINE_COMMENT? NL*);
@@ -40,12 +39,10 @@ section_members: member+;
 // Key–Value Assignment
 // -----------------------
 member:
-	//| KEY EQ NL+ // Empty value is treated as NULL.
 	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
-	//| KEY COLON elements? NL+
 	| member_colon_list
-	| SECTION_HEAD section_members?;
-//| STRING COLON value? NL+; // ???
+	| SECTION_HEAD section_members?
+	;
 
 member_colon_list: KEY COLON WS? elements? NL+;
 
@@ -69,7 +66,6 @@ objectMemberList
     ;
     
 objectMember
-    // : KEY WS? EQ NL* value
     : KEY WS? COLON NL* value
     ;
 
