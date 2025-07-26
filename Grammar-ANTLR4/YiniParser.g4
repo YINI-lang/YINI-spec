@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- v1.0.0 Beta 7, 2025-06-12
+ v1.0.0 Beta 7 + Updates
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -25,9 +25,12 @@ options {
 }
 
 yini:
-	SHEBANG? INLINE_COMMENT* NL* section+ NL* terminal_line? EOF?;
+	SHEBANG? INLINE_COMMENT* NL* 
+	YINI_MARKER? INLINE_COMMENT* NL* 
+	section+ NL* terminal_line? EOF?;
 
-section: SECTION_HEAD? section_members | SECTION_HEAD section?;
+//section: SECTION_HEAD? section_members | SECTION_HEAD section?;
+section: SECTION_HEAD? section_members;
 
 terminal_line: TERMINAL_TOKEN (NL+ | INLINE_COMMENT? NL*);
 
@@ -40,7 +43,8 @@ member:
 	//| KEY EQ NL+ // Empty value is treated as NULL.
 	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
 	//| KEY COLON elements? NL+
-	| member_colon_list;
+	| member_colon_list
+	| SECTION_HEAD section_members?;
 //| STRING COLON value? NL+; // ???
 
 member_colon_list: KEY COLON WS? elements? NL+;
@@ -55,22 +59,23 @@ value:
 
 object_literal
   : OC NL* objectMemberList NL* CC NL*
-  | EMPTY_OBJECT
+  | empty_object NL*
   ;
 
 // A memberList is one or more key=value pairs separated by commas.
 objectMemberList
     : objectMember ( COMMA NL* objectMember )* ( COMMA )?
-	| EMPTY_OBJECT
+	| empty_object NL*
     ;
     
 objectMember
-    : KEY WS? EQ NL* value
+    // : KEY WS? EQ NL* value
+    : KEY WS? COLON NL* value
     ;
 
 list: elements | list_in_brackets;
 
-list_in_brackets: OB NL* elements NL* CB | EMPTY_LIST;
+list_in_brackets: OB NL* elements NL* CB | empty_list NL*;
 
 elements: element COMMA? | element COMMA elements;
 
@@ -84,3 +89,6 @@ string_concat: NL* PLUS NL* STRING;
 
 // NOTE: In specs boolean literals should be case-insensitive.
 boolean_literal: BOOLEAN_FALSE | BOOLEAN_TRUE;
+
+empty_object: EMPTY_OBJECT | '{' NL* '}';
+empty_list: EMPTY_LIST | '[' NL* ']';
