@@ -69,7 +69,8 @@ objectMemberList
     ;
     
 objectMember
-    : KEY WS? EQ NL* value
+    // : KEY WS? EQ NL* value
+    : KEY WS? COLON NL* value
     ;
 
 list: elements | list_in_brackets;

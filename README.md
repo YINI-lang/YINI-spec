@@ -12,10 +12,11 @@
 
 ---
 
-- ➡️ [Official YINI Parser on npm](https://www.npmjs.com/package/yini-parser)
-- ➡️ [YINI Parser GitHub Repo](https://github.com/YINI-lang/yini-parser-typescript)
-- ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (ToC)
 - ➡️ [Why YINI, why another format!?](./RATIONALE.md) (Rationale)
+- ➡️ [Official YINI Parser on npm](https://www.npmjs.com/package/yini-parser) (npm)
+- ➡️ [YINI Parser GitHub Repo](https://github.com/YINI-lang/yini-parser-typescript) (GitHub)
+- ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (ToC)
+- ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/Docs/Examples%20of%20YINI%20vs%20Other%20Formats.md)
 
 ---
 
@@ -302,7 +303,7 @@ But WHY another format, exactly?? [Read the Rationale](./RATIONALE.md) - it cove
 - A TypeScript-based YINI parser is in development:
 https://github.com/YINI-lang/yini-parser-typescript
 - YINI parser release on NPM: https://www.npmjs.com/package/yini-parser
-- Feedback welcome 💬 — open a Discussion or an Issue.
+- Feedback welcome 💬 — open an Issue or a Discussion.
 
 ### 🚀 Future
 The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.

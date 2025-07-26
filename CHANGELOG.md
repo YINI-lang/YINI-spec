@@ -18,8 +18,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - Updated spec, discontinued alternative marker character `~` (visually ambiguous) in favor of `<`.
 - Lexer rule for IDENT updated to include the `.` character (even though it is invalid in YINI identifiers), enabling the parser to catch and throw an error if a dot is present.
 - Fixed a grammar issue where empty lists `[]` and empty objects `{}`, with or without whitespace in between opening and closing characters, were not handled correctly.
-
-
+- Object literals in YINI now always use `:` between keys and values (e.g., `{ foo: 123 }`). The use of `=` inside objects is no longer valid.
 
 ## 2025 Jun (spec: v1.0.0 Beta 7)
 - Fixed backticked identifiers (phrases) (as per Spec) cannot include tabs, newlines, or other backticks.

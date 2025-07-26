@@ -497,7 +497,7 @@ A **key** is an identifier used to reference a specific value in a member (a `ke
 - Keys must be **unique** within the same section and nesting level. 
 - Keys are assigned values using `=` operator.
   
-  **Exception:** In the **alternative list syntax** (see Section 9.2), the colon (`:`) is used **exclusively for defining list values**. It is not a general-purpose assignment operator.
+  **Exception:** In the **alternative list syntax** (see Section 9.2), the colon (`:`) is used ** or object properties**. It is not a general-purpose assignment operator.
 
 **Examples:**
 ```yini
@@ -987,13 +987,13 @@ key3 = { a = 1, b = 2, }  # ❌ Error: Stray trailing comma
 
 ## 9. Object Literals
 ### 9.1. Objects (using `{` and `}`)
-YINI supports inline objects as a value type, allowing zero or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a standard YINI `key = value` pair, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
+YINI supports inline objects as a value type, allowing zero or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a YINI `key: value` definition, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
 
 An empty object `{ }` is allowed as well (both in lenient and strict-mode).
 
 An object in YINI  have the following form:
 ```txt
-<identifier> = { <key1> = <value1>, <key2> = <value2>, ... }
+<identifier> = { <key1>: <value1>, <key2>: <value2>, ... }
 ```
 
 - The **key** in each member follows the same rules as any YINI identifier.
@@ -1005,9 +1005,11 @@ The **value** in each member may be:
   * Another inline object (`{ ... }`).
   * An empty object `{ }` is allowed as well (both in lenient/strict-mode).
 
+**Note:** The equal sign `=` is never used between keys and values inside an object literal, always use `:` in objects.
+
 The following rules apply to objects in YINI:
 - Begins with `{` and ends with `}`.
-- Between `{` and `}`, write zero or more members (including no members at all is allowed both in lenient and strict mode) of the form `key = value` (a member), separated by commas.
+- Between `{` and `}`, write zero or more members (including no members at all is allowed both in lenient and strict mode) of the form `key: value` (definition), separated by commas.
 - Optionally and only in lenient-mode, after a value allow a trailing comma before the closing `}`
 - Whitespace (spaces, tabs, newlines) is ignored except inside quoted strings.
 - Comments (e.g. `// ...` or `# ...`) may appear anywhere whitespace is allowed.
@@ -1016,26 +1018,36 @@ The following rules apply to objects in YINI:
 
 Grammar rule:
 ```
-member-list := member ("," member)* ("," )?  // Any trailing is comma dropped.
-member      := IDENTIFIER "=" value
+objectMemberList
+  : objectMember ( COMMA NL* objectMember )* ( COMMA )?
+  | empty_object NL*
+  ;
+    
+objectMember
+  : KEY WS? COLON NL* value
+  ;
 ```
 
 **Example:**
 ```yini
+// ✅ Valid.
 ^ section
-object = { member1 = "value1", member2 = "value2" }
+object = { member1: "value1", member2: "value2" }
+
+// ❌ Invalid: Never use = inside object
+obj = { a = 1, b = 2 }
 ```
 
 More Example:
 ```
 # In lenient mode:
-obj1 = { a = 1, b = 2, }   # → {a: 1, b: 2} ✅
-obj2 = { a = 1,, b = 2 }   # → ❌ Parse error or warning (double comma)
-obj3 = { , a = 1 }         # → ❌ Parse error (leading comma not allowed)
+obj1 = { a: 1, b: 2, }     # → {a: 1, b: 2} ✅
+obj2 = { a: 1,, b: 2 }     # → ❌ Parse error or warning (double comma)
+obj3 = { , a: 1 }          # → ❌ Parse error (leading comma not allowed)
 obj4 = { }                 # → {} ✅
 
 # In strict mode:
-obj1 = { a = 1, b = 2, }   # → ❌ Error: trailing comma not allowed in strict mode
+obj1 = { a: 1, b: 2, }     # → ❌ Error: trailing comma not allowed in strict mode
 obj4 = { }                 # → {} ✅
 ```
 
@@ -1202,13 +1214,15 @@ The following characters are reserved by the YINI syntax and must not be used im
 
 | Character	| Usage Context	| Description |
 |-----------|---------------|-------------|
-| `=` | Assignment  | Separates key from value |
+| `=` | Assignment  | Assign to key at root/section level |
 | `^` | Section header | Used to denote section start |
+| `:` | (1) Alternative list notation <br/> (2) Define a property inside an object | (1) Alternative list notation <br/> (2) Define a value to a key inside an inline object |
 | `,` | Item separator | Used in lists |
 | `<` | Section header (alternative) | Used to denote section start |
+| `§` | Section header (alternative) |   |
+| `€` | Section header (alternative) |   |
 | `%` | Binary prefix | Begins binary number |
 | `;` | Full-line comment |   |
-| `:` | Alternative list notation | Outer list without brackets  |
 | `#` | Hexadecimal prefix | Begins hexadecimal number |
 | `# ` | Inline comment (alternative) | Comment, if starts with `#` followed by at least one space or tab, due to `#` without space is reserved for hex literals (e.g. #FF00FF) |
 | `//` | Inine comment |   |
@@ -1338,14 +1352,14 @@ list_colon:
   "one",
   "two",                     # ✅ → ["one", "two"] (trailing comma dropped)
 
-object1 = { a = 1, b = 2, }  # ✅ → {a: 1, b: 2} (trailing comma dropped)
+object1 = { a: 1, b: 2, }    # ✅ → {a: 1, b: 2} (trailing comma dropped)
 
 ; Strict mode examples:
 list_bracketed2 = [1, 2, ]   # ❌ Error: Stray trailing comma
-object2 = { a = 1, b = 2, }  # ❌ Error: Stray trailing comma
+object2 = { a: 1, b: 2, }    # ❌ Error: Stray trailing comma
 
 list_bracketed3 = [1, 2]     # ✅ OK
-object3 = { a = 1, b = 2 }   # ✅ OK
+object3 = { a: 1, b: 2 }     # ✅ OK
 ```
 
 ### 12.3.1. Table: Lenient vs. Strict Mode
@@ -1424,7 +1438,7 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 ### 13.5. Objects
 Any empty slot inside `{ ... }` e.g.:
 ```
-object = { a = 1, , b = 2 }
+object = { a: 1, , b: 2 }
 ```
 
 is error in strict-mode or at least a warning (in lenient-mode).
@@ -1580,13 +1594,14 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 
 **Table: Correspondence Between YINI and JSON**
 
-| Entity             | → JSON                         | → YINI                          | Notes |
-|--------------------|---------------------------------|----------------------------------|-------|
-| Structure Mapping  | ✅ Yes (sections become objects) | ✅ Yes (objects become sections)|   |
-| Types Mapping      | ✅ Yes (direct type mapping)     | ✅ Yes (direct type mapping)    |   |
-| Identifiers (Keys) | ✅ Yes (must always be quoted)    | ✅ Yes (backticks if needed)   |   |
-| Comments           | 🚫 No (discarded)                | -                               | Comments are dropped during JSON conversion.|
-| Terminator         | 🚫 No (ignored)                  | -                               | Terminator must be appended when converting to YINI.|
+| Entity / Feature    | To YINI                                             | To JSON                               | Notes                                                                             |
+|---------------------|----------------------------------------------------|--------------------------------------|-----------------------------------------------------------------------------------|
+| Structure Mapping   | ✅ Yes (sections become objects)                   | ✅ Yes (objects, nested)              | Each YINI section is mapped to a JSON object.                                     |
+| Types Mapping       | ✅ Yes (direct type mapping)                       | ✅ Yes (direct type mapping)          | All core types (string, number, bool, null, object, list) are preserved.          |
+| Key/Value Syntax    | ✅ Top-level: `key = value`<br>Object: `key: value`| ✅ Keys always quoted, `:` for objects| YINI uses `=` for top-level, `:` for object members.                              |
+| Identifiers (Keys)  | ✅ Unquoted, or backticked if needed               | ✅ Must always be quoted              | Backticks in YINI for special chars; JSON always quotes keys.                     |
+| Comments            | ✅ Supported (full-line, inline, or multi-line)                 | 🚫 Not supported (discarded)          | Comments are dropped when converting to JSON.                                     |
+| Terminator          | ✅ Optional (for doc-ending)                       | 🚫 Not supported (ignored)            | YINI document terminator (`/END`) is ignored in JSON.                              |
 
 ### See also:
 See Sections 14.3 and 14.4 for examples of YINI ⇆ JSON mappings.
@@ -1870,6 +1885,7 @@ Notes:
 - Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".
 - Discontinued alternative marker character `~` (visually ambiguous) in favor of `<`.
 - Promoted the section markers `§` and `€` to "Experimental" from only being "Reserved".
+- Droped the use of `=` in object literals, objects now use `:` (similar as to JSON, etc).
 
 v1.0.0 Beta 7, 2025-06-12
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
