@@ -10,13 +10,13 @@
 name     = "MyApp"
 version  = "1.2.3"
 database = {
-    host     = "db.example.com",
-    port     = 5432,
-    username = "dbuser",
-    password = "s3cr3t",
-    options  = {
-        ssl        = true,
-        maxRetries = 5,
+    host     : "db.example.com",
+    port     : 5432,
+    username : "dbuser",
+    password : "s3cr3t",
+    options  : {
+        ssl        : true,
+        maxRetries : 5,
     },
 }
 

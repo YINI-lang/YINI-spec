@@ -4,16 +4,20 @@
 
 ---
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
-![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
+![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Version:** v1.0.0 Beta 7 (Latest published release)
+**Version:** 1.0.0-RC.1 (Latest published release)
 
 **Status:** Beta Release
 
 ---
 
-- ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (ToC)
-- ➡️ [Why YINI, why another format!?](./RATIONALE.md) (Rationale)
+- ➡️ [Why YINI? Why another format!?](./RATIONALE.md) (rationale)
+- ➡️ [Intro to YINI Config Format](https://github.com/YINI-lang/yini-parser-typescript?tab=readme-ov-file#intro-to-yini-config-format) (learn YINI)
+- ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (spec)
+- ➡️ [Official YINI Parser on npm](https://www.npmjs.com/package/yini-parser) (npm)
+- ➡️ [YINI Parser GitHub Repo](https://github.com/YINI-lang/yini-parser-typescript) (GitHub)
+- ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/blob/develop/Docs/Examples%20of%20YINI%20vs%20Other%20Formats.md)
 
 ---
 
@@ -26,6 +30,42 @@ YINI is clean, consistent, and structured — easy for humans to write and machi
 > YINI aims to hit the sweet spot between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
 
 Inspired by including INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
+
+## ✨ YINI Parser Now Available!
+
+Open-source **YINI parser for Node.js & TypeScript** is available:
+
+- **GitHub:** [yini-parser-typescript](https://github.com/YINI-lang/yini-parser-typescript)
+- **npm:** [yini-parser](https://www.npmjs.com/package/yini-parser)
+
+You can use this package to parse YINI files in your own projects!
+
+```sh
+npm install yini-parser
+```
+
+### Quick Code Example
+Example in JavaScript:
+```js
+import YINI from 'yini-parser';
+
+const config = YINI.parse(`
+    ^ App
+    title = "My App"
+`);
+
+console.log(config);
+```
+
+The above variable `config` now has the following object:
+```js
+// JS object
+{
+    App: { title: 'My App' } 
+}
+```
+
+- ➡️ [Parser usage & documentation](https://github.com/YINI-lang/yini-parser-typescript#usage)
 
 ## 🔥 Why YINI
 There are already many configuration formats — INI, JSON, YAML, TOML — but none hit the sweet spot of balance YINI was aiming for.
@@ -247,7 +287,7 @@ YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON �
 The format is defined by a formal grammar. See [Specification](./YINI-Specification.md) for:
 - Syntax and types
 - Section nesting
-- Wscape rules
+- Escape rules
 - Comment behavior
 - Strict vs lenient mode
 - Validation rules
@@ -261,9 +301,10 @@ But WHY another format, exactly?? [Read the Rationale](./RATIONALE.md) - it cove
 
 - Currently in ***Beta stage***.
 - (Implementation libraries or parsers can follow once the specification stabilizes a bit more.)
-- A TypeScript-based YINI parser is about to start development:
+- A TypeScript-based YINI parser is in development:
 https://github.com/YINI-lang/yini-parser-typescript
-- Feedback welcome 💬 — open a Discussion or an Issue.
+- YINI parser release on NPM: https://www.npmjs.com/package/yini-parser
+- Feedback welcome 💬 — open an Issue or a Discussion.
 
 ### 🚀 Future
 The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
