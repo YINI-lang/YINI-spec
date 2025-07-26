@@ -8,7 +8,7 @@
 
 **Version:** 1.0.0-RC.1 +UPDATES (Latest published release)
 
-**Status:** Beta Release
+**Status:** Release Candidate
 
 ---
 
