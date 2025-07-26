@@ -5,8 +5,6 @@
 
 ---
 
-Even though `YINI-spec` is still in beta, your feedback, suggestions, and contributions are highly valued. 
-
 If you find any bugs or errors in the `YINI` specification, grammar, or elsewhere, feel free to add a new issue or make a PR :)
 
 ## Quick Start
