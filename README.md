@@ -4,9 +4,9 @@
 
 ---
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
-![Status: Beta](https://img.shields.io/badge/status-beta-yellow)
+![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Version:** 1.0.0-rc.1 (Latest published release)
+**Version:** 1.0.0-RC.1 (Latest published release)
 
 **Status:** Beta Release
 
