@@ -5,6 +5,8 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## --Upcoming--
+- Updated lexer and parser files with updated grammar rules to catch and handle invalid syntax
+in YINI files, specifically related to bad syntax members.
 
 ## 2025 Jul (v1.0.0-rc.1)
 - In spec, clarified "Abort Sensitivity Levels" and added it can also be called (or be known as) "Bail Sensitivity Levels".

@@ -1,0 +1,8 @@
+/*
+    corrupt.yini
+
+    In strict should throw error, while lenient should pass.
+*/
+^ Section
+key = 123
+= "missing key name"
