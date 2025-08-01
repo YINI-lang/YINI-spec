@@ -18,6 +18,7 @@
 - ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (spec)
 - ➡️ [YINI Parser GitHub Repo](https://github.com/YINI-lang/yini-parser-typescript) (GitHub)
 - ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/blob/develop/Docs/Examples%20of%20YINI%20vs%20Other%20Formats.md)
+- ➡️ [YINI Project](https://github.com/YINI-lang) (home)
 
 ---
 
