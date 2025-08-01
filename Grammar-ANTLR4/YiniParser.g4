@@ -15,7 +15,8 @@
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
  
- http://yini-lang.org
+ GitHub:   https://github.com/YINI-lang
+ Homepage: http://yini-lang.org
  */
 
 parser grammar YiniParser;
