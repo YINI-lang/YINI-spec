@@ -6,16 +6,16 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Version:** 1.0.0-RC.1 (Latest published release)
+**Package Version:** 1.0.0-RC.2 (Latest published release)
 
-**Status:** Beta Release
+**Status:** Release Candidate
 
 ---
 
+- ➡️ [Official YINI Parser on npm](https://www.npmjs.com/package/yini-parser) (npm)
 - ➡️ [Why YINI? Why another format!?](./RATIONALE.md) (rationale)
 - ➡️ [Intro to YINI Config Format](https://github.com/YINI-lang/yini-parser-typescript?tab=readme-ov-file#intro-to-yini-config-format) (learn YINI)
 - ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (spec)
-- ➡️ [Official YINI Parser on npm](https://www.npmjs.com/package/yini-parser) (npm)
 - ➡️ [YINI Parser GitHub Repo](https://github.com/YINI-lang/yini-parser-typescript) (GitHub)
 - ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/blob/develop/Docs/Examples%20of%20YINI%20vs%20Other%20Formats.md)
 
@@ -105,7 +105,17 @@ Definitions for rules in strict-mode (lenient is default).
 - **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
 - **Enhanced robustness** in strict-mode — if you cut a YINI file into two halves, both halves will be rendered invalid by the rules.
 
- ---
+---
+
+## Version Mapping
+
+| Date     | Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
+|----------|-----------------|--------------|--------------|---------------|
+| 2025 Jul     | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
+| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.1   | 1.0.0-RC.2   | 1.0.0-RC.2    |
+| …        | …               | …            | …            | …             |
+
+---
 
 ## 🧠 Quick Examples
 
