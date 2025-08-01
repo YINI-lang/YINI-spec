@@ -6,7 +6,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Package Version:** 1.0.0-RC.2 (Latest published release) => Version Table (./README.md#version-mapping)
+**Package Version:** 1.0.0-RC.2 (Latest published release) => [Version Table](./README.md#version-mapping)
 
 **Status:** Release Candidate
 
