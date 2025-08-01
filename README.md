@@ -12,10 +12,10 @@
 
 ---
 
+- ➡️ [Official YINI Parser on npm](https://www.npmjs.com/package/yini-parser) (npm)
 - ➡️ [Why YINI? Why another format!?](./RATIONALE.md) (rationale)
 - ➡️ [Intro to YINI Config Format](https://github.com/YINI-lang/yini-parser-typescript?tab=readme-ov-file#intro-to-yini-config-format) (learn YINI)
 - ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (spec)
-- ➡️ [Official YINI Parser on npm](https://www.npmjs.com/package/yini-parser) (npm)
 - ➡️ [YINI Parser GitHub Repo](https://github.com/YINI-lang/yini-parser-typescript) (GitHub)
 - ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/blob/develop/Docs/Examples%20of%20YINI%20vs%20Other%20Formats.md)
 
