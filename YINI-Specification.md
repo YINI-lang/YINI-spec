@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \< YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.1
+**Version:** 1.0.0-rc.1 + --UPDATES--
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -1880,6 +1880,9 @@ A running log of changes and updates **to this YINI specification**.
 Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
+
+1.0.0-rc.1 + --UPDATES--
+-
 
 v1.0.0 RC 1, 2025-07-26
 - Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".

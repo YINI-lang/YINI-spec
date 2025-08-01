@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- 1.0.0-rc.1
+ 1.0.0-rc.1x
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -42,6 +42,7 @@ member:
 	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
 	| member_colon_list
 	| SECTION_HEAD section_members?
+	| bad_member
 	;
 
 member_colon_list: KEY COLON WS? elements? NL+;
@@ -88,3 +89,6 @@ boolean_literal: BOOLEAN_FALSE | BOOLEAN_TRUE;
 
 empty_object: EMPTY_OBJECT | '{' NL* '}';
 empty_list: EMPTY_LIST | '[' NL* ']';
+
+// For catching bad member syntax.
+bad_member:  WS? (REST|value)? WS? EQ (value|REST) NL?;
