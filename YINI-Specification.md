@@ -21,17 +21,23 @@ See the full license text at the end of this document.
 ## Preface
 **YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility. It aims to stay minimal, yet flexible enough to express a wide range of configuration needs.
 
-That said, there are already many excellent configuration formats out there, and most are great at what they do. **YINI isn't trying to replace them** — it's intended as a complement to existing formats.
+That said, there are already many excellent configuration formats out there, and they are great at what they do. **YINI isn't trying to replace them** — it was created to fill a specific niche, and, in all honesty, partly just for the fun of it.
 
-YINI was initially developed to fill gaps encountered in another project where INI, JSON, or YAML each fell short. See [A.1. Why was YINI created?](./RATIONALE.md) for background.
+The idea started as a personal project — a search for something a bit more readable than JSON, a bit more structured than INI, and a bit less surprising than YAML. It grew from there into a format that aims to be:
+- Minimal, but expressive.
+- Structured, but not rigid.
+- Easy to hand-edit, and just formal enough to support tooling and validation.
 
-While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces a clean, minimalistic design **focused on human readability**, **structural clarity**, and extensibility for the future.  
+YINI aims to embrace simplicity as a strength, offering just enough rules to stay consistent while remaining forgiving enough for practical use. One of its key strengths is the intuitive way it handles nested sections — allowing for structured configuration without relying on indentation rules or verbose syntax.
+
+See [A.1. Why was YINI created?](./RATIONALE.md) for background.
+
+While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces its own principles: consistent grammar, clear typing, and readable structure — with human readability and developer experience in mind.  
 One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing complex structures to be expressed in a simple, natural, and visually clear way — without the strict indentation rules or syntax overhead found in some other formats.
 
-YINI embraces simplicity as a strength, offering just enough rules to stay consistent, while staying forgiving enough for real-world use.
-
-This specification defines the YINI format with care and clarity, aiming to serve both casual users and implementers seeking a robust, reliable configuration format.  
-Above all, YINI remains true to its founding goal: **make configuration effortless**.
+This specification defines YINI with care and clarity, aiming to serve both casual users and implementers looking for a clean, predictable format.
+Above all, YINI remains true to its founding goal:
+make configuration effortless — and maybe even enjoyable.
 
 (See more in section 1.2.1, "The # Marker as a Comment Symbol".)
 
@@ -219,7 +225,7 @@ YINI aims to prioritize **human readability, clarity, and clean syntax**.
 - **Clear End of Document:** YINI supports (only in stict-mode) a clear document terminator marker (`/END`).
 
 ## 1.5. Terminology
-The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI’s grammar, structure, and semantics.
+The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI's grammar, structure, and semantics.
 
 | Term                     | Definition |
 |---------------------------|------------|
@@ -957,7 +963,7 @@ The engine should convert the literal value to the corresponding Boolean value i
 Value/literal `NULL` (NON CASE-SENSITIVE). 
 
 - Empty or missing value in section-top-level key-value pair (member outside any list or object), is treated as NULL in lenient-mode, error in strict-mode.
-  If written `key = `with nothing after `=`, that member’s value is `null` (lenient only; strict mode requires explicitly `key = null`).
+  If written `key = `with nothing after `=`, that member's value is `null` (lenient only; strict mode requires explicitly `key = null`).
 - Note: At top level (outside any `[ ]` or `{ }`), `key =` with nothing after `=` → `key = null` in lenient mode; in strict mode that is a syntax error unless you write `key = null` explicitly.
   
   Invalid Examples (both strict and lenient):
@@ -1184,7 +1190,7 @@ linkItems:
 The following features are reserved for potential support in future versions of the YINI specification. They are **not currently active** in this version, but their syntax and keywords **are reserved**.
 
 #### 11.1.1. Anchors and Aliases
-YINI may introduce a mechanism similar to YAML’s anchors and aliases. These constructs would allow users to define reusable fragments within a configuration.
+YINI may introduce a mechanism similar to YAML's anchors and aliases. These constructs would allow users to define reusable fragments within a configuration.
 
   - **Anchors (`@`):** Or some other token, to assign a name to a key, section, or structure.
   - **Aliases (`use`):** Reference a previously defined anchor using the use keyword.

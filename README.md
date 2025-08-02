@@ -305,7 +305,7 @@ YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON �
 | Minimal Syntax Noise     | ✔️   | ❌   | ➖   | ➖   | ✔️ |
 | Human-Focused by Default | ➖   | ❌   | ✔️   | ➖   | ✔️ |
 
-> YINI is for people who want clean, minimal, predictable config files that don’t fight back.
+> YINI is for people who want clean, minimal, predictable config files that don't fight back.
 
 ## 📘 Read the Spec
 
