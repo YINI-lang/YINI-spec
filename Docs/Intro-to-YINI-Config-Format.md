@@ -224,7 +224,7 @@ userList = ["alice", "bob", "carol"]
 - ➡️ [YINI Parser on GitHub](https://github.com/YINI-lang/yini-parser-typescript)  
   *TypeScript source code, issue tracker, and contributing guide.*
 
-- ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/blob/release/docs/Compare.md)  
+- ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/tree/release#-summary-difference-with-other-formats)  
   *How does YINI differ: comparison with INI, YAML, and JSON.*
   
 - ➡️ [Why YINI? (Project Rationale)](https://github.com/YINI-lang/YINI-spec/blob/release/RATIONALE.md)  
