@@ -59,6 +59,8 @@ YINI is clean, consistent, and structured — easy for humans to write and machi
 
 Inspired by including INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
 
+---
+
 ## ✨ YINI Parser Now Available!
 
 Open-source **YINI parser for Node.js & TypeScript** is available:
@@ -95,6 +97,8 @@ The above variable `config` now has the following object:
 
 - ➡️ [Parser usage & documentation](https://github.com/YINI-lang/yini-parser-typescript#usage)
 
+---
+
 ## 🔥 Why YINI
 There are already many configuration formats — INI, JSON, YAML, TOML — but none hit the sweet spot of balance YINI was aiming for.
 
@@ -111,6 +115,8 @@ YINI was created out of practical necessity: during the development of another p
 **TL;DR:**
 - ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
 - ✅ **Minimal syntax, maximal readability** — aiming for clarity over cleverness.
+
+---
 
 ## ✨ Key Features
 YINI aims to prioritize **human readability, clarity, and clean syntax**.
