@@ -1,6 +1,6 @@
 # \~ YINI Specification ≡
 
-**YINI is a lightweight, human-friendly configuration format — simpler than YAML, and more expressive than INI.**
+**YINI is a simple, minimal, structured, and human-readable configuration format — less verbose than JSON, less complex than YAML, and more expressive than INI.**
 
 ---
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
@@ -36,21 +36,21 @@
 ---
 
 ## 🙋‍♀️ Why YINI?
-- **YINI is an alternative** to other great config formats like INI, JSON, YAML, XML, and TOML — designed for clarity, simplicity, and straightforward section nesting.
+- **YINI is an alternative** to other great config formats like INI, JSON, YAML, XML, and TOML — designed for clarity, simplicity, minimalism, and straightforward section nesting.
 - **Started as a personal project and a research challenge:** Provides structure similar to INI, with features inspired by JSON and YAML.
 - **Built for clarity:**
-    * Uses minimal syntax for humans, especially for nested sections.
-    * Uses a concise syntax, aims to not have too much syntax noise.
-    * Supports commonly used configuration structures.
+    * Uses minimal, concise syntax, especially for nested sections.
+    * Supports commonly used configuration data structures.
+    * Flexibel commenting styles, and the spec supports for both lenient and strict mode.
 - *Originated from practical needs **for configuration clarity, simplicity, minimalism, and flexibility**.
 
 ---
 
 ## 🚀 What is YINI?
 
-**YINI (Yet another INI)** is a minimal and human-readable configuration file format with a formally defined grammar and a specification. It was designed for clarity and simplicity, offering features that improve on classic INI while avoiding the complexity of formats like YAML - yet being less noisy than JSON and TOML.
+**YINI (Yet another INI)** is a minimal and human-readable configuration file format with a formally defined grammar and a specification. It was designed for straightforward configuration, with improvements over classic INI and a simpler structure than YAML, JSON, or TOML.
 
-YINI is clean, consistent, and structured — easy for humans to write and machines to parse.
+YINI aims to be clean, consistent, and structured — Intended for both manual and programmatic editing.
 
 > YINI aims to hit the sweet spot between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
 
@@ -99,7 +99,7 @@ The above variable `config` now has the following object:
 ## 🔥 Why YINI
 There are already many configuration formats — INI, JSON, YAML, TOML — but none hit the sweet spot of balance YINI was aiming for.
 
-> Too often, config formats are either too limiting (like INI), too verbose (like JSON or TOML), or too quirky (like YAML).
+> Humble opinion: Too often, config formats are either too limiting (like INI), too verbose (like JSON or TOML), or too quirky (like YAML).
 
 YINI exists because:
 - JSON is structured and predictable, but too verbose and strict (and lacks comments 😤).
@@ -110,8 +110,8 @@ YINI exists because:
 YINI was created out of practical necessity: during the development of another project, none of the existing formats felt right. YINI reflects the same spirit as the project that inspired it — structured, flexible, and predictable — yet simple, human-friendly, and clear.
 
 **TL;DR:**
-- ✅ **Combines structure and simplicity** — more expressive than INI, less verbose than JSON, YAML, or TOML. 
-- ✅ **Minimal syntax, maximal readability** — aiming for clarity over cleverness.
+- ✅ **Combines structure and simplicity** — aims to be more expressive than INI, less verbose than JSON, YAML, or TOML. 
+- ✅ **Minimal syntax, maximal readability** — strives for clarity over cleverness.
 
 ---
 
@@ -311,7 +311,7 @@ are preserved exactly, without escapes.
 
 ## 🔍 Summary: Difference with Other Formats
 
-YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON — while offering more clarity than TOML.
+YINI seeks to provide a minimal configuration format, inspired by INI, YAML, JSON, and TOML, with a focus on straightforward structure and readability.
 
 | Feature                  | INI  | JSON | YAML | TOML | YINI |
 |--------------------------|:----:|:----:|:----:|:----:|:----:|
