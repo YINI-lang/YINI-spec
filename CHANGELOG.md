@@ -4,6 +4,9 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 ### Feedback Acknowledgments
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
+## --dev/upcoming--
+- Added new doc "Intro to YINI Config Format" in docs, moved from yini-parser-typescript.
+
 ## 2025 Aug (v1.0.0-rc.2)
 - Updated lexer and parser files with updated grammar rules to catch and handle invalid syntax
 in YINI files, specifically related to bad syntax members.
@@ -98,6 +101,6 @@ in YINI files, specifically related to bad syntax members.
 ---
 
 **~ YINI ≡**  
-> A Clean, Readable, and Human-friendly configuration format.  
+> Aims to be a Clean, Readable, and Human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org)
+[github.com/YINI-lang](https://github.com/YINI-lang)

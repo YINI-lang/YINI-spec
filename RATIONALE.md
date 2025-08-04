@@ -198,6 +198,6 @@ Big thanks to readers and contributors on Reddit, Medium, and other platforms â€
 ---
 
 **~ YINI â‰¡**  
-> A Clean, Readable, and Human-friendly configuration format.  
+> Aims to be a Clean, Readable, and Human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org)
+[github.com/YINI-lang](https://github.com/YINI-lang)
