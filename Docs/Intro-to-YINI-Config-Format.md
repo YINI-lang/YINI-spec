@@ -218,16 +218,16 @@ userList = ["alice", "bob", "carol"]
 - ➡️ [YINI Parser on npm](https://www.npmjs.com/package/yini-parser)  
   *Install and view package details.*
 
-- ➡️ [Read the YINI Specification](https://github.com/YINI-lang/yini-spec/YINI-Specification.md#table-of-contents)  
+- ➡️ [Read the YINI Specification](https://github.com/YINI-lang/YINI-spec/blob/release/YINI-Specification.md#table-of-contents)  
   *Full formal spec for the YINI format, including syntax and features.*
 
 - ➡️ [YINI Parser on GitHub](https://github.com/YINI-lang/yini-parser-typescript)  
   *TypeScript source code, issue tracker, and contributing guide.*
 
-- ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/yini-spec/docs/Compare.md)  
+- ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/blob/release/docs/Compare.md)  
   *How does YINI differ: comparison with INI, YAML, and JSON.*
   
-- ➡️ [Why YINI? (Project Rationale)](https://github.com/YINI-lang/yini-spec/RATIONALE.md)  
+- ➡️ [Why YINI? (Project Rationale)](https://github.com/YINI-lang/YINI-spec/blob/release/RATIONALE.md)  
   *Learn about the motivations and design decisions behind YINI.*
 
 ---
