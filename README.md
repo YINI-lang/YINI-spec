@@ -12,13 +12,26 @@
 
 ---
 
-- ➡️ [Official YINI Parser on npm](https://www.npmjs.com/package/yini-parser) (npm)
-- ➡️ [Why YINI? Why another format!?](./RATIONALE.md) (rationale)
-- ➡️ [Intro to YINI Config Format](https://github.com/YINI-lang/yini-parser-typescript?tab=readme-ov-file#intro-to-yini-config-format) (learn YINI)
-- ➡️ [Read the YINI Specification](./YINI-Specification.md#table-of-contents) (spec)
-- ➡️ [YINI Parser GitHub Repo](https://github.com/YINI-lang/yini-parser-typescript) (GitHub)
-- ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/blob/develop/Docs/Examples%20of%20YINI%20vs%20Other%20Formats.md)
-- ➡️ [YINI Project](https://github.com/YINI-lang) (home)
+- ➡️ [Getting Started: Intro to YINI Config Format](https://github.com/YINI-lang/YINI-spec/blob/develop/Docs/Intro-to-YINI-Config-Format.md)  
+  *Beginner-friendly walkthrough and basic usage examples.*
+
+- ➡️ [YINI Parser on npm](https://www.npmjs.com/package/yini-parser)  
+  *Install and view package details.*
+
+- ➡️ [Read the YINI Specification](https://github.com/YINI-lang/YINI-spec/blob/release/YINI-Specification.md#table-of-contents)  
+  *Full formal spec for the YINI format, including syntax and features.*
+
+- ➡️ [YINI Parser on GitHub](https://github.com/YINI-lang/yini-parser-typescript)  
+  *TypeScript source code, issue tracker, and contributing guide.*
+
+- ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/tree/release#-summary-difference-with-other-formats)  
+  *How does YINI differ: comparison with INI, YAML, and JSON.*
+  
+- ➡️ [Why YINI? (Project Rationale)](https://github.com/YINI-lang/YINI-spec/blob/release/RATIONALE.md)  
+  *Learn about the motivations and design decisions behind YINI.*
+
+- ➡️ [YINI Project](https://github.com/YINI-lang)  
+  *YINI home.*
 
 ---
 
@@ -306,6 +319,8 @@ YINI aims to be minimal like INI, cleaner than YAML, and less noisy than JSON �
 | Human-Focused by Default | ➖   | ❌   | ✔️   | ➖   | ✔️ |
 
 > YINI is for people who want clean, minimal, predictable config files that don't fight back.
+
+*--TODO: Link: Examples of YINI vs Other Formats.md--*
 
 ## 📘 Read the Spec
 
