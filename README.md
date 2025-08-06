@@ -3,6 +3,7 @@
 **YINI is a simple, minimal, structured, and human-readable configuration format — less verbose than JSON, less complex than YAML, and more expressive than INI.**
 
 ---
+
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
