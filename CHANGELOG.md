@@ -5,6 +5,7 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## --dev/upcoming--
+- Updated lexer that fixes issues with negative values and edge cases for integers, floats, and exponential numbers.
 - Added new doc "Intro to YINI Config Format" in docs, moved from yini-parser-typescript.
 
 ## 2025 Aug (v1.0.0-rc.2)
