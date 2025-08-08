@@ -29,7 +29,7 @@ Minimalism, human readability, lenient vs. strict, etc.
 What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 
 &nbsp;&nbsp;&nbsp;&nbsp;C.1. Why Not Existing Formats?  
-&nbsp;&nbsp;&nbsp;&nbsp;C.2. 📊 Comparison: YINI vs Other Formats  
+&nbsp;&nbsp;&nbsp;&nbsp;C.2. Comparison: YINI vs Other Formats  
 
 ---
 
@@ -47,7 +47,7 @@ What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 ### A.1. Why was YINI created?
 The motivation for YINI arose during another (personal) project, where a configuration format was needed in the spirit of INI — but with a well-defined specification (something INI lacks) and a few modern features.
 
-None of the existing configuration formats truly seemed to fit the spirit or requirements of that (personal hobby) project. INI was too limited. YAML seemed too flexible and ambiguous. JSON's types and structure are fairly close but JSON felt too noisy and strict. TOML is quite solid, but ultimately felt a bit too verbose and noisy.
+None of the existing configuration formats truly seemed to fit the spirit or requirements of that (personal hobby) project. For the needs and wishes of this project — INI felt sometime too limited. YAML seemed too flexible and ambiguous. JSON's types and structure are fairly close but JSON felt too noisy and strict. TOML is quite solid, but ultimately felt a bit too verbose and noisy.
 
 YINI was born from the desire for a configuration format that is:
 - **Simple** enough for humans to edit without friction.
@@ -55,7 +55,7 @@ YINI was born from the desire for a configuration format that is:
 - **Clean** in structure, but not overly forgiving (permissive).
 - **Modern**, but respectful of INI's readability and legacy.
 
-And, honestly — it was also created partly for the fun of it. Exploring the edge between structure and simplicity became an enjoyable challenge in itself. If others find value in it too, that's a welcome bonus. 🙂
+It was also an enjoyable technical challenge to design. Exploring the edge between structure and simplicity became an enjoyable challenge in itself. If others find value in it too, that's a welcome bonus. 🙂
 
 It's a format that aims to put **clarity** and **developer experience (DX)** first — balancing readability with formal grammar rules to enable robust tooling and validation.
 
@@ -116,8 +116,8 @@ This design choice was made because `\NNN` provides no clear indication of the n
 |--------------|---------------|---------------|---------|
 | `^`          | Official/main | `^^ Section2` | Always supported  |
 | `<`          | Alternative   | `<< Section2` | Easy to count, replaced `~` |
-| `§`          | Experimental  | `§§ Section2` | For enhanced readability, may get promoted in future |
-| `€`          | Experimental  | `€€ Section2` | For enhanced readability, may get promoted in future  |
+| `§`          | Experimental  | `§§ Section2` | For enhanced readability, may be promoted in the future |
+| `€`          | Experimental  | `€€ Section2` | For enhanced readability, may be promoted in the future  |
 | `~`          | Discontinued  | `~~ Section2` | Hard to count when repeated, phased out      |
 | `>`          | Discontinued  | `>> Section2` | Was easy to confuse with reply in forums, etc   |
 
@@ -127,13 +127,16 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 
 | Format | Why Not? |
 |---|---|
-| INI   | Too limited, no nesting, inconsistent comment support, lacks formal spec.
-| JSON  | No comments, too noisy, unfriendly for hand-editing.
-| YAML  | Too permissive, whitespace-sensitive, ambiguous edge cases.
-| TOML  | Clear and strict, but verbose, rigid, and not very human-friendly in deep nesting.
+| INI   | Limited in features, no nesting, inconsistent comment support, lacks formal spec.
+| JSON  | No comments, sometimes too verbose (keys require quotes), unfriendly for hand-editing.
+| YAML  | Highly permissive, whitespace-sensitive, ambiguous edge cases.
+| TOML  | Clear and strict, sometimes pretty verbose (with long dotted keys), rigid, and less human-friendly in deep nesting.
 | JSON5 | Adds flexibility to JSON, but lacks formal standardization (?) and is still slightly too noisy for hand-edited configs.
 
-### C.2. 📊 Comparison: YINI vs Other Formats
+### C.2. Comparison: YINI vs Other Formats
+
+**The following table is with respect to YINI's design goals:**
+
 | Feature                       | INI | JSON | YAML | TOML | **YINI** |
 |-------------------------------|:---:|:----:|:----:|:----:|:--------:|
 | Typing (bool, list, null)     | ❌  | ✅   | ✅   | ✅   | ✅ |
@@ -161,7 +164,7 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 
 ## D. Reflections and Acknowledgments
 ### D.1. Summary
-YINI isn't trying to reinvent the wheel — just make it **smoother, lighter, and easier to steer**.
+YINI isn't trying to reinvent the wheel — just make it **easier to use, maintain, and integrate into tooling**.
 
 It's a configuration format that's:
 - **Intuitive for humans**

@@ -26,7 +26,7 @@
   *TypeScript source code, issue tracker, and contributing guide.*
 
 - ➡️ [YINI vs Other Formats](https://github.com/YINI-lang/YINI-spec/tree/release#-summary-difference-with-other-formats)  
-  *How does YINI differ: comparison with INI, YAML, and JSON.*
+  *How does YINI differ: comparison with INI, YAML, and JSON.* (illustrative examples)
   
 - ➡️ [Why YINI? (Project Rationale)](https://github.com/YINI-lang/YINI-spec/blob/release/RATIONALE.md)  
   *Learn about the motivations and design decisions behind YINI.*
@@ -53,7 +53,7 @@
 
 YINI aims to be clean, consistent, and structured — Intended for both manual and programmatic editing.
 
-> YINI aims to hit the sweet spot between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
+> YINI aims to hit a fine balance between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
 
 Inspired by including INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
 
@@ -97,13 +97,13 @@ The above variable `config` now has the following object:
 
 ---
 
-## 🔥 Why YINI
-There are already many configuration formats — INI, JSON, YAML, TOML — but none hit the sweet spot of balance YINI was aiming for.
+## Why YINI
+There are already many configuration formats — INI, JSON, YAML, TOML, XML — each with its strengths and trade-offs. YINI was designed to provide a balanced alternative that combines structure, readability, and simplicity.
 
-> Humble opinion: Too often, config formats are either too limiting (like INI), too verbose (like JSON or TOML), or too quirky (like YAML).
+> Too often, config formats come with their own trade-offs — INI can be limiting, JSON or TOML more verbose, and YAML has quirks related to whitespace and parsing.
 
 YINI exists because:
-- JSON is structured and predictable, but too verbose and strict (and lacks comments 😤).
+- JSON is structured and predictable, but can be verbose (with all keys required to be quoted), strict in structure, and lacks support for comments.
 - YAML is powerful but too permissive, error-prone, and has significant whitespace.
 - TOML is fine, but sometimes gets too verbose too quickly.
 - INI is simple and friendly, but too limited and lacks specification.
@@ -112,7 +112,7 @@ YINI was created out of practical necessity: during the development of another p
 
 **TL;DR:**
 - ✅ **Combines structure and simplicity** — aims to be more expressive than INI, less verbose than JSON, YAML, or TOML. 
-- ✅ **Minimal syntax, maximal readability** — strives for clarity over cleverness.
+- ✅ **Minimal syntax, maximal readability** — strives to prioritize readability and straightforward syntax.
 
 ---
 
@@ -314,6 +314,8 @@ are preserved exactly, without escapes.
 
 YINI seeks to provide a minimal configuration format, inspired by INI, YAML, JSON, and TOML, with a focus on straightforward structure and readability.
 
+### Illustrative Examples
+
 | Feature                  | INI  | JSON | YAML | TOML | YINI |
 |--------------------------|:----:|:----:|:----:|:----:|:----:|
 | Comments                 | ✔️   | ❌   | ✔️   | ✔️   | ✔️ |
@@ -322,7 +324,7 @@ YINI seeks to provide a minimal configuration format, inspired by INI, YAML, JSO
 | Minimal Syntax Noise     | ✔️   | ❌   | ➖   | ➖   | ✔️ |
 | Human-Focused by Default | ➖   | ❌   | ✔️   | ➖   | ✔️ |
 
-> YINI is for people who want clean, minimal, predictable config files that don't fight back.
+> YINI is for people who want clean, minimal, predictable config files that are easy to work with.
 
 *--TODO: Link: Examples of YINI vs Other Formats.md--*
 
