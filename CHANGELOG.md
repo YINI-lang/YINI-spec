@@ -7,6 +7,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 ## --dev/upcoming--
 - Updated lexer that fixes issues with negative values and edge cases for integers, floats, and exponential numbers.
 - Added new doc "Intro to YINI Config Format" in docs, moved from yini-parser-typescript.
+- Updated lexer to support doz numbers with A and B too // x = A = 10, e = B = 11.
 
 ## 2025 Aug (v1.0.0-rc.2)
 - Updated lexer and parser files with updated grammar rules to catch and handle invalid syntax
