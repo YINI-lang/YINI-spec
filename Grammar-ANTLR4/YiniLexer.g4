@@ -192,7 +192,7 @@ fragment DIGIT: [0-9];
 
 fragment BIN_DIGIT: '0' | '1';
 fragment OCT_DIGIT: [0-7];
-fragment DUO_DIGIT: DIGIT | [xe] | [XE]; // x = 10, e = 11.
+fragment DUO_DIGIT: DIGIT | [xeab] | [XEAB]; // x = A = 10, e = B = 11.
 fragment HEX_DIGIT: DIGIT | [a-f] | [A-F];
 
 fragment FRACTION: '.' DIGIT+;
