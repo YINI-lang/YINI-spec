@@ -143,7 +143,7 @@ Definitions for rules in strict-mode (lenient is default).
 
 | Date     | Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
 |----------|-----------------|--------------|--------------|---------------|
-| 2025 Jul     | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
+| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
 | 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.1   | 1.0.0-RC.2   | 1.0.0-RC.2    |
 | …        | …               | …            | …            | …             |
 

@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \< YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.1
+**Version:** 1.0.1-RC.1
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -939,7 +939,7 @@ Note, binary and hexadecimal values also allow **alternative notations** for con
 | `3e4` | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
 | `0b1010` | `%1010` | Binary number | 2-base | Digits: `0` and `1` only
 | `0o7477` | - | Octal number | 8-base | Digits: `0`–`7`
-| `0z2Ex9` | - | Duodecimal (dozenal) | 12-base | `x` = 10, `e` = 11
+| `0z2EX9` | `0z2BA9` | Duodecimal (dozenal) | 12-base | `X` = `A` = 10, `E` = `B` = 11 (case-insensitive)
 | `0xF390` | `#F390` | Hexadecimal number | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15
 
 **Note:** All prefix-based number formats in YINI are case-insensitive. For example, `0xF390`, `0XF390`, `0xf390`, `0Xf390`, and `#f390` are all valid hexadecimal literals.
@@ -1886,6 +1886,9 @@ A running log of changes and updates **to this YINI specification**.
 Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
+
+v1.0.1 RC 1, 2025-08-11
+- Added case-insensitive support for digits `A` (10) and `B` (11) as alternative syntax in duodecimal (base-12) notation.
 
 v1.0.0 RC 1, 2025-07-26
 - Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".
