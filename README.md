@@ -43,7 +43,7 @@
     * Uses minimal, concise syntax, especially for nested sections.
     * Supports commonly used configuration data structures.
     * Flexibel commenting styles, and the spec supports for both lenient and strict mode.
-- *Originated from practical needs **for configuration clarity, simplicity, minimalism, and flexibility**.
+- Originated from practical needs **for configuration clarity, simplicity, minimalism, and flexibility**.
 
 ---
 
@@ -59,12 +59,13 @@ Inspired by including INI, JSON, Python, and Markdown. YINI keeps things minimal
 
 ---
 
-## ✨ YINI Parser Now Available!
+## ✨ YINI CLI and Parser Now Available!
 
 Open-source **YINI parser for Node.js & TypeScript** is available:
 
 - **GitHub:** [yini-parser-typescript](https://github.com/YINI-lang/yini-parser-typescript)
 - **npm:** [yini-parser](https://www.npmjs.com/package/yini-parser)
+- **npm:** [yini-cli](https://www.npmjs.com/package/yini-cli) (run from CLI/terminal)
 
 You can use this package to parse YINI files in your own projects!
 
@@ -78,18 +79,61 @@ Example in JavaScript:
 import YINI from 'yini-parser';
 
 const config = YINI.parse(`
-    ^ App
-    title = "My App"
+    // This is a comment in YINI
+    // YINI is a simple, human-readable configuration file format.
+
+    // Note: In YINI, spaces and tabs don't change meaning - indentation is just
+    // for readability.
+
+    /*  This is a block comment
+
+        In YINI, section headers use repeated characters "^" at the start to
+        show their level: (Section header names are case-sensitive.)
+
+        ^ SectionLevel1
+        ^^ SectionLevel2
+        ^^^ SectionLevel3
+    */
+
+    ^ App                           // Definition of section (group) "App" 
+      title = 'My App'
+      items = 25
+      debug = ON                    // "true" and "YES" works too
+
+    ^ Server                        // Definition of section (group) "Server"
+      host = 'localhost'
+      port = 8080
+      useTLS = OFF                  // "false" and "NO" works too
+
+        // Sub-section of "Server"
+        ^^ Login
+          username = 'user_name'
+          password = 'your_password_here'
+    
+    /END
 `);
 
 console.log(config);
 ```
 
-The above variable `config` now has the following object:
+The above variable `config` now outputs:
 ```js
 // JS object
 {
-    App: { title: 'My App' } 
+    App: {
+        title: 'My App', 
+        items: 25, 
+        debug: true
+    },
+    Server: {
+        host: 'localhost',
+        port: 8080,
+        useTLS: false,
+        Login: { 
+            username: 'user_name', 
+            password: 'your_password_here'
+        }
+    }
 }
 ```
 
