@@ -74,7 +74,7 @@ npm install yini-parser
 ```
 
 ### Quick Code Example
-Example in JavaScript:
+Example in JavaScript/TypeScript:
 ```js
 import YINI from 'yini-parser';
 
