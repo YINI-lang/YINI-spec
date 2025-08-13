@@ -5,6 +5,7 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## --dev/upcoming--
+- Implemented a utility (Node.js project) to generate a PDF file from the YINI specification file. 
 - Updated lexer that fixes issues with negative values and edge cases for integers, floats, and exponential numbers.
 - Added new doc "Intro to YINI Config Format" in docs, moved from yini-parser-typescript.
 - Updated spec and lexer to support doz numbers with A and B too // x = A = 10, e = B = 11.
