@@ -42,8 +42,8 @@
 - **Built for clarity:**
     * Uses minimal, concise syntax, especially for nested sections.
     * Supports commonly used configuration data structures.
-    * Flexibel commenting styles, and the spec supports for both lenient and strict mode.
-- Originated from practical needs **for configuration clarity, simplicity, minimalism, and flexibility**.
+    * Flexible commenting styles, and the spec supports both lenient and strict modes (though, enforced by the parser).
+- Created out of a practical need for configuration that is **clear, simple, minimal, and flexible**.
 
 ---
 
@@ -95,11 +95,6 @@ const config = YINI.parse(`
         ^^^ SectionLevel3
     */
 
-    ^ App                           // Definition of section (group) "App" 
-      title = 'My App'
-      items = 25
-      debug = ON                    // "true" and "YES" works too
-
     ^ Server                        // Definition of section (group) "Server"
       host = 'localhost'
       port = 8080
@@ -120,11 +115,6 @@ The above variable `config` now outputs:
 ```js
 // JS object
 {
-    App: {
-        title: 'My App', 
-        items: 25, 
-        debug: true
-    },
     Server: {
         host: 'localhost',
         port: 8080,
@@ -141,7 +131,7 @@ The above variable `config` now outputs:
 
 ---
 
-## Why YINI
+## Why YINI?
 There are already many configuration formats — INI, JSON, YAML, TOML, XML — each with its strengths and trade-offs. YINI was designed to provide a balanced alternative that combines structure, readability, and simplicity.
 
 > Too often, config formats come with their own trade-offs — INI can be limiting, JSON or TOML more verbose, and YAML has quirks related to whitespace and parsing.
@@ -370,8 +360,6 @@ YINI seeks to provide a minimal configuration format, inspired by INI, YAML, JSO
 
 > YINI is for people who want clean, minimal, predictable config files that are easy to work with.
 
-*--TODO: Link: Examples of YINI vs Other Formats.md--*
-
 ## 📘 Read the Spec
 
 The format is defined by a formal grammar. See [Specification](./YINI-Specification.md) for:
@@ -387,14 +375,20 @@ But WHY another format, exactly?? [Read the Rationale](./RATIONALE.md) - it cove
 
 ---
 
-## 📦 Status and Roadmap
+## 📦 Status and Support
 
-- Currently in ***Beta stage***.
+- The spec is currently in ***Release Candidate*** stage.
 - (Implementation libraries or parsers can follow once the specification stabilizes a bit more.)
-- A TypeScript-based YINI parser is in development:
+
+### Parsers/Readers
+- A TypeScript-based YINI parser:  
 https://github.com/YINI-lang/yini-parser-typescript
-- YINI parser release on NPM: https://www.npmjs.com/package/yini-parser
-- Feedback welcome 💬 — open an Issue or a Discussion.
+- YINI parser released on NPM: https://www.npmjs.com/package/yini-parser
+
+| Language | Repo | Notes |
+|----------|------|-------|
+| C++      | https://github.com/zKiwiko/yini-cpp | Header only YINI parser for C++ |
+| Rust     | https://github.com/zKiwiko/yini-rs | YINI parser and writer in Rust, [yini-rs on crates.io](https://crates.io/crates/yini-rs) |
 
 ### 🚀 Future
 The specification still needs more testing — especially regarding string concatenation and deeply nested arrays. Further adjustments and refinements may follow in both the spec and grammar.
@@ -403,6 +397,9 @@ The specification still needs more testing — especially regarding string conca
 YINI has grown and improved thanks to the insights, questions, and thoughtful feedback from the community. Much of the specification — and this repository — reflects that shared input.
 
 For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
+
+## 💬 Feedback
+Feedback is welcome — open an Issue or a Discussion.
 
 ## 🧾 License
 
