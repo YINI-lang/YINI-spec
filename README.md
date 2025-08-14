@@ -198,16 +198,6 @@ The above variable `config` now outputs:
 
 ---
 
-## Version Mapping Table
-
-| Date     | Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
-|----------|-----------------|--------------|--------------|---------------|
-| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
-| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.1   | 1.0.0-RC.2   | 1.0.0-RC.2    |
-| …        | …               | …            | …            | …             |
-
----
-
 ## 🧠 Quick Examples
 
 ### Before (YAML)
@@ -429,6 +419,16 @@ For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in 
 
 ## 💬 Feedback
 We welcome feedback — feel free to open an Issue or start a Discussion.
+
+---
+
+## Version Mapping Table
+
+| Date     | Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
+|----------|-----------------|--------------|--------------|---------------|
+| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
+| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.1   | 1.0.0-RC.2   | 1.0.0-RC.2    |
+| …        | …               | …            | …            | …             |
 
 ---
 
