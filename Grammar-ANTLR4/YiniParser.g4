@@ -27,7 +27,6 @@ options {
 
 yini:
 	SHEBANG? INLINE_COMMENT* NL* 
-	YINI_MARKER? INLINE_COMMENT* NL* 
 	section+ NL* terminal_line? EOF?;
 
 section: SECTION_HEAD? section_members;
@@ -36,13 +35,16 @@ terminal_line: TERMINAL_TOKEN (NL+ | INLINE_COMMENT? NL*);
 
 section_members: member+;
 
-// -----------------------
-// Key–Value Assignment
-// -----------------------
+/** -----------------------
+ * Key–Value Assignment
+ * @note Grammar made be less strict about the YINI marker, enabling
+ * easier error detection in the implementing parser.
+ * -----------------------*/
 member:
 	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
 	| member_colon_list
 	| SECTION_HEAD section_members?
+	| YINI_MARKER	// Note: The implementing parser is responsible for enforcing YINI marker constraints.
 	| bad_member
 	;
 
