@@ -29,7 +29,8 @@ yini:
 	SHEBANG? INLINE_COMMENT* NL* 
 	section+ NL* terminal_line? EOF?;
 
-section: SECTION_HEAD? section_members;
+section: YINI_MARKER? INLINE_COMMENT* NL+ // Note: The implementing parser is responsible for enforcing YINI marker constraints.
+        | SECTION_HEAD? section_members;
 
 terminal_line: TERMINAL_TOKEN (NL+ | INLINE_COMMENT? NL*);
 
@@ -44,7 +45,6 @@ member:
 	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
 	| member_colon_list
 	| SECTION_HEAD section_members?
-	| YINI_MARKER	// Note: The implementing parser is responsible for enforcing YINI marker constraints.
 	| bad_member
 	;
 
