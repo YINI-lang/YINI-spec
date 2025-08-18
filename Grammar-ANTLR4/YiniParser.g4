@@ -81,14 +81,19 @@ assignment
 
 /* KEY = value  (value may be empty in lenient-mode -> NULL by convention,
  * enforced and validated in host code, not here.)
+ * @note (!) KEY, EQ, and value MUST be on the same line!
  */
 member:
   KEY WS? EQ WS? value? // Empty value is treated as NULL.
   ;
 
-/* KEY : elements  (colon-form lists) */
+/* KEY: [NL|eol] elements  (colon-form lists)
+ * @note (!) KEY and COLON MUST be on the same line, the elements MAY
+ * optionally start on next line!
+ */
 listAfterColon
-  : KEY WS? COLON WS? elements? eol
+  //: KEY WS? COLON WS? elements? eol
+  : KEY WS? COLON (eol | WS+)* elements (eol | WS+)* eol
   ;
 
 /* -------- Values -------- */
