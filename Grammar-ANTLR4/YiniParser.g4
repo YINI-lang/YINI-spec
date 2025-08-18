@@ -132,7 +132,10 @@ list_literal
 /* Folded, comma-separated values; commas optional only between elements */
 elements
   : value (NL* COMMA NL* value)* COMMA?
+  //: element COMMA? | element COMMA elements
   ;
+  
+ //element: NL* value NL* | NL* list_literal NL*;
 
 /* -------- Terminals forwarded from the lexer -------- */
 
@@ -148,3 +151,4 @@ boolean_literal  : BOOLEAN_TRUE | BOOLEAN_FALSE;	// NOTE: Booleans are case-inse
 bad_member
   : WS? (REST | value)? WS? EQ (value | REST) eol?
   ;
+  

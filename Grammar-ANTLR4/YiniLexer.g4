@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- 1.0.0-rc.2x - 2025 Aug.
+ 1.1.0-rc.1 - 2025 Aug.
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -27,7 +27,8 @@ YINI_MARKER options {
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
-SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
+//SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
+SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
 
 // Section markers: '^', '<', '§', '€'.
 // – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
@@ -81,7 +82,7 @@ DOLLAR: '$';
 // ASTERIX: '*';
 PC: '%'; // PerCent sign.
 AT: '@';
-SEMICOLON: ';';
+//SEMICOLON: ';';
 
 BOOLEAN_FALSE options {
 	caseInsensitive = true;
@@ -217,20 +218,24 @@ BLOCK_COMMENT:
 	'/*' .*? '*/' -> skip; // Block AKA Multi-line comment.
 	
 COMMENT: LINE_COMMENT | INLINE_COMMENT | BLOCK_COMMENT;
+
+fragment DISABLE_LINE_MARKER: '--';
+
 /*
  FULL_LINE_COMMENT:
  Remains in input, but hidden
  (doesn't interfere with parsing).
  */
-LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
+//LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
+LINE_COMMENT
+  : {getCharPositionInLine()==0}? [ \t]* (DISABLE_LINE_MARKER | ';') ~[\r\n]* -> skip
+  ;
 
 /*
  INLINE_COMMENT: 
  Remains in input, but hidden (doesn't interfere with parsing).
  */
 INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> skip;
-
-fragment DISABLE_LINE: ('--' ~[\r\n]*);
 
 IDENT_INVALID
     : [0-9][a-zA-Z0-9_]*
