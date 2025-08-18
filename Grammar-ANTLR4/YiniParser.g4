@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- 1.0.0-rc.2 - 2025 Aug.
+ 1.1.0-rc.1 - 2025 Aug.
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -20,78 +20,126 @@
  */
 
 parser grammar YiniParser;
+
 options {
-	tokenVocab = YiniLexer;
-	caseInsensitive = false;
+  tokenVocab = YiniLexer;
+  caseInsensitive = false;
 }
 
-yini:
-	SHEBANG? INLINE_COMMENT* NL* 
-	section+ NL* terminal_line? EOF?;
+/*
+  High-level idea:
+  - Parse a tolerant, flat stream of statements.
+  - SECTION_HEAD tokens signal section headers (with level encoded by the lexer).
+  - The host parser (visitor) maintains a section stack to build the final tree.
+  - Marker (@yini etc.) constraints are validated in host code, not here.
+*/
 
-section: YINI_MARKER? INLINE_COMMENT* NL+ // Note: The implementing parser is responsible for enforcing YINI marker constraints.
-        | SECTION_HEAD? section_members;
-
-terminal_line: TERMINAL_TOKEN (NL+ | INLINE_COMMENT? NL*);
-
-section_members: member+;
-
-/** -----------------------
- * Key–Value Assignment
- * @note Grammar made be less strict about the YINI marker, enabling
- * easier error detection in the implementing parser.
- * -----------------------*/
-member:
-	KEY WS? EQ WS? value? NL+ // Empty value is treated as NULL.
-	| member_colon_list
-	| SECTION_HEAD section_members?
-	| bad_member
-	;
-
-member_colon_list: KEY COLON WS? elements? NL+;
-
-value:
-	null_literal // NOTE: In specs NULL should be case-insensitive.
-	| string_literal
-	| number_literal
-	| boolean_literal
-	| list_in_brackets
-	| object_literal;
-
-object_literal
-  : OC NL* objectMemberList NL* CC NL*
-  | empty_object NL*
+yini
+  : prolog? stmt* terminal? EOF
   ;
 
-// A memberList is one or more key=value pairs separated by commas.
-objectMemberList
-    : objectMember ( COMMA NL* objectMember )* ( COMMA )?
-	| empty_object NL*
-    ;
-    
-objectMember
-    : KEY WS? COLON NL* value
-    ;
+/* -------- Prolog / terminal -------- */
 
-list: elements | list_in_brackets;
+prolog
+  : SHEBANG eol*       // shebang present
+  | eol+               // or at least one blank/comment line
+  ;
 
-list_in_brackets: OB NL* elements NL* CB | empty_list NL*;
+terminal
+  //: TERMINAL_TOKEN (eol | INLINE_COMMENT? NL*) // '/END' line, allow trailing comments/blank
+  : TERMINAL_TOKEN ( eol | INLINE_COMMENT )? NL*
+  ;
 
-elements: element COMMA? | element COMMA elements;
+/* -------- Statements (flat) -------- */
 
-element: NL* value NL* | NL* list_in_brackets NL*;
+stmt
+  : eol				// BlankOrComment
+  | SECTION_HEAD	// SectionHeader
+  | assignment		// KeyValue
+  | listAfterColon	// ListAfterColon
+  | marker_stmt     // Note: The implementing parser is responsible for enforcing YINI marker constraints.
+  | bad_member      // BadMember
+  ;
 
-number_literal: NUMBER;
-null_literal: NULL;
+marker_stmt
+  : YINI_MARKER eol
+  ;
 
-string_literal: STRING string_concat*;
-string_concat: NL* PLUS NL* STRING;
+/* A single physical "end-of-line" unit (blank or comment then NL).
+   Use this everywhere instead of sprinkling NL* / INLINE_COMMENT* */
+eol
+  : INLINE_COMMENT? NL+
+  ;
 
-// NOTE: In specs boolean literals should be case-insensitive.
-boolean_literal: BOOLEAN_FALSE | BOOLEAN_TRUE;
+/* -------- Members / assignments -------- */
 
-empty_object: EMPTY_OBJECT | '{' NL* '}';
-empty_list: EMPTY_LIST | '[' NL* ']';
+/* Assignment is always: KEY = value/literal */
+assignment
+//  : KEY WS? EQ WS? value? eol
+  : member eol
+  ;
 
-// For catching bad member syntax.
-bad_member:  WS? (REST|value)? WS? EQ (value|REST) NL?;
+/* KEY = value  (value may be empty in lenient-mode -> NULL by convention,
+ * enforced and validated in host code, not here.)
+ */
+member:
+  KEY WS? EQ WS? value? // Empty value is treated as NULL.
+  ;
+
+/* KEY : elements  (colon-form lists) */
+listAfterColon
+  : KEY WS? COLON WS? elements? eol
+  ;
+
+/* -------- Values -------- */
+value
+  : null_literal
+  | string_literal
+  | number_literal
+  | boolean_literal
+  | list_literal
+  | object_literal
+  ;
+
+/* Object_literal is defined with object members such as { key: value, ... }
+ * with optional trailing comma and newlines tolerated 
+ */
+object_literal
+  : OC NL* object_members? NL* CC NL*
+  | EMPTY_OBJECT NL*
+  ;
+
+// A object_members is one or more key=value pairs separated by commas.
+object_members
+  : object_member (COMMA NL* object_member)* COMMA?
+  ;
+
+object_member
+  : KEY WS? COLON NL* value
+  ;
+
+/* [ value, ... ] with optional trailing comma and newlines tolerated */
+list_literal
+  : OB NL* elements? NL* CB NL*
+  | EMPTY_LIST NL*
+  ;
+
+/* Folded, comma-separated values; commas optional only between elements */
+elements
+  : value (NL* COMMA NL* value)* COMMA?
+  ;
+
+/* -------- Terminals forwarded from the lexer -------- */
+
+number_literal   : NUMBER;
+null_literal     : NULL;							// NOTE: NULL is case-insensitive.
+string_literal   : STRING string_concat*;
+string_concat    : NL* PLUS NL* STRING;
+boolean_literal  : BOOLEAN_TRUE | BOOLEAN_FALSE;	// NOTE: Booleans are case-insensitive.
+
+/* For catching bad member syntax.
+ * Keep a narrow error production, don't over-greedy-capture.
+ */
+bad_member
+  : WS? (REST | value)? WS? EQ (value | REST) eol?
+  ;
