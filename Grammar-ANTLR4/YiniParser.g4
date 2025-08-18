@@ -35,17 +35,17 @@ options {
 */
 
 yini
-  : prolog? stmt* terminal? EOF
+  : prolog? stmt* terminal_stmt? EOF
   ;
 
-/* -------- Prolog / terminal -------- */
+/* -------- Prolog / terminal_stmt -------- */
 
 prolog
   : SHEBANG eol*       // shebang present
   | eol+               // or at least one blank/comment line
   ;
 
-terminal
+terminal_stmt
   //: TERMINAL_TOKEN (eol | INLINE_COMMENT? NL*) // '/END' line, allow trailing comments/blank
   : TERMINAL_TOKEN ( eol | INLINE_COMMENT )? NL*
   ;
@@ -151,4 +151,3 @@ boolean_literal  : BOOLEAN_TRUE | BOOLEAN_FALSE;	// NOTE: Booleans are case-inse
 bad_member
   : WS? (REST | value)? WS? EQ (value | REST) eol?
   ;
-  

@@ -21,6 +21,11 @@
 
 lexer grammar YiniLexer;
 
+@members {
+  // Below is TypeScript code:
+  public atLineStart(): boolean { return this.column === 0; }
+}
+
 YINI_MARKER options {
 	caseInsensitive = true;
 }: '@yini';
@@ -228,7 +233,7 @@ fragment DISABLE_LINE_MARKER: '--';
  */
 //LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
 LINE_COMMENT
-  : {getCharPositionInLine()==0}? [ \t]* (DISABLE_LINE_MARKER | ';') ~[\r\n]* -> skip
+  : {this.atLineStart()}? [ \t]* (DISABLE_LINE_MARKER | ';') ~[\r\n]* -> skip
   ;
 
 /*
