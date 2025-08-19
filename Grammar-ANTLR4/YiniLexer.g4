@@ -87,7 +87,7 @@ DOLLAR: '$';
 // ASTERIX: '*';
 PC: '%'; // PerCent sign.
 AT: '@';
-//SEMICOLON: ';';
+SEMICOLON: ';';
 
 BOOLEAN_FALSE options {
 	caseInsensitive = true;
@@ -233,7 +233,7 @@ fragment DISABLE_LINE_MARKER: '--';
  */
 //LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
 LINE_COMMENT
-  : {this.atLineStart()}? [ \t]* (DISABLE_LINE_MARKER | ';') ~[\r\n]* -> skip
+  : {this.atLineStart()}? [ \t]* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
   ;
 
 /*
