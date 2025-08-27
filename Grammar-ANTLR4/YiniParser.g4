@@ -61,7 +61,7 @@ stmt
   | bad_member      // BadMember
   ;
 
-// Any tokens starting with AT (@).
+// Any tokens starting with an AT (@).
 meta_command
   : directive
   | pre_processing_command
@@ -76,6 +76,10 @@ directive
   : YINI_TOKEN eol
   ;
 
+/*
+ * Pre-processing directives: instructions that modify the document itself
+ * by including or transforming content before/while parsing.
+ */
 pre_processing_command
   : INCLUDE_TOKEN WS* string_literal? eol
   ;
