@@ -26,9 +26,14 @@ lexer grammar YiniLexer;
   public atLineStart(): boolean { return this.column === 0; }
 }
 
-YINI_MARKER options {
+YINI_TOKEN options {
 	caseInsensitive = true;
 }: '@yini';
+
+// Experimental / for future.
+INCLUDE_TOKEN options {
+	caseInsensitive = true;
+}: '@include';
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
@@ -248,8 +253,10 @@ IDENT_INVALID
 
 // For matching bad character.
 fragment REST_CHAR:
-    ~([ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+    ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
     ;
 
 // For catching bad content.
-REST: REST_CHAR REST_CHAR*;
+REST: REST_CHAR (REST_CHAR)*;
+
+META_INVALID: AT WS? REST REST*;

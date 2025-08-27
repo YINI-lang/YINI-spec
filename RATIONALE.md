@@ -201,15 +201,15 @@ Big thanks to readers and contributors on Reddit, Medium, and other platforms â€
 ### D.4. Future Considerations
 In future, MAYBE adding support for e.g.: `@yini strict`, `@yini version 1.0`, `@include somefile.yini`, and/or `@deprecated`, `@experimental`.
 
-Suggested terminology split in YINI spec
+#### Suggested terminology split in YINI spec
 
 Directives (pragmas): parser hints that affect mode/behavior but donâ€™t change document content.
 
-For example: `@yini strict`, `@yini version 1.0`.
+For example: `@yini strict`, `@ver 1.0`, `@version 1.0`.
 
 Pre-processing directives: instructions that modify the document itself by including or transforming content before/while parsing.
 
-For example: `@include somefile.yini`.
+For example: `@include 'somefile.yini'`.
 
 Annotations: (potentially future) metadata attached to a section/key, influencing validation or semantics but not structure.
 

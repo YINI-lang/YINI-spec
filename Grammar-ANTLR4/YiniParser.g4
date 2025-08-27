@@ -57,12 +57,27 @@ stmt
   | SECTION_HEAD	// SectionHeader
   | assignment		// key = value
   | colon_list_decl	// ListAfterColon
-  | marker_stmt     // Note: The implementing parser is responsible for enforcing YINI marker constraints.
+  | meta_command     // Note: The implementing parser is responsible for enforcing YINI marker constraints.
   | bad_member      // BadMember
   ;
 
-marker_stmt
-  : YINI_MARKER eol
+// Any tokens starting with AT (@).
+meta_command
+  : directive
+  | pre_processing_command
+  | bad_meta_text eol
+  ;
+
+/*
+ * Directives (pragmas): parser hints that affect mode/behavior but
+ * don't change document content.
+ */
+directive
+  : YINI_TOKEN eol
+  ;
+
+pre_processing_command
+  : INCLUDE_TOKEN WS* string_literal? eol
   ;
 
 /* A single physical "end-of-line" unit (blank or comment then NL).
@@ -75,7 +90,6 @@ eol
 
 /* Assignment is always: KEY = value/literal */
 assignment
-//  : KEY WS? EQ WS? value? eol
   : member eol
   ;
 
@@ -152,6 +166,10 @@ null_literal     : NULL;							// NOTE: NULL is case-insensitive.
 string_literal   : STRING string_concat*;
 string_concat    : NL* PLUS NL* STRING;
 boolean_literal  : BOOLEAN_TRUE | BOOLEAN_FALSE;	// NOTE: Booleans are case-insensitive.
+
+bad_meta_text
+  : META_INVALID
+  ;
 
 /* For catching bad member syntax.
  * Keep a narrow error production, don't over-greedy-capture.
