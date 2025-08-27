@@ -57,12 +57,12 @@ stmt
   | SECTION_HEAD	// SectionHeader
   | assignment		// key = value
   | colon_list_decl	// ListAfterColon
-  | meta_command     // Note: The implementing parser is responsible for enforcing YINI marker constraints.
+  | meta_stmt       // Note: The implementing parser is responsible for enforcing YINI marker constraints.
   | bad_member      // BadMember
   ;
 
-// Any tokens starting with an AT (@).
-meta_command
+// Any tokens and statements starting with an AT (@).
+meta_stmt
   : directive
   | pre_processing_command
   | bad_meta_text eol
