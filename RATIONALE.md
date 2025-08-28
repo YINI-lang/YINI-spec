@@ -205,7 +205,7 @@ In future, MAYBE adding support for e.g.: `@yini strict`, `@yini version 1.0`, `
 
 Directives (pragmas): parser hints that affect mode/behavior but don’t change document content.
 
-For example: `@yini strict`, `@ver 1.0`, `@version 1.0`.
+For example: `@yini strict`, `@mode lenient`, `@ver 1.0`, `@version 1.0`.
 
 Pre-processing directives: instructions that modify the document itself by including or transforming content before/while parsing.
 

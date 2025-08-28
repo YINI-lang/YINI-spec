@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- 1.1.0-rc.1 - 2025 Aug.
+ 1.0.1-rc.1 - 2025 Aug.
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -30,10 +30,15 @@ YINI_TOKEN options {
 	caseInsensitive = true;
 }: '@yini';
 
-// Experimental / for future.
+// @note Experimental / for future / testing.
 INCLUDE_TOKEN options {
 	caseInsensitive = true;
 }: '@include';
+
+// @note Experimental / for future / testing.
+DEPRECATED_TOKEN options {
+	caseInsensitive = true;
+}: '@deprecated';
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
@@ -53,10 +58,10 @@ fragment SECTION_MARKER
 // this check is deferred to the parser, which
 // gives more control and enables better user feedback
 fragment SECTION_MARKER_BASIC_REPEAT
-    : CARET+   // up to 6 carets (parser will reject more than 6)
-    | LT+      // up to 6 LS characters
-    | SS+      // up to 6 '§' characters
-    | EUR+     // up to 6 '€' characters
+    : CARET+   // Up to 6 carets (implemented parser must reject more than 6)
+    | LT+      // Up to 6 LS characters
+    | SS+      // Up to 6 '§' characters
+    | EUR+     // Up to 6 '€' characters
     ;
 
 // Shorthand: a single marker followed by a positive integer (1 or larger).
@@ -214,7 +219,6 @@ fragment SIGN: ('+' | '-');
 
 NL: ( WS* COMMENT* SINGLE_NL COMMENT*);
 SINGLE_NL: ('\r' '\n'? | '\n');
-//NL: WS*('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
 
@@ -259,4 +263,5 @@ fragment REST_CHAR:
 // For catching bad content.
 REST: REST_CHAR (REST_CHAR)*;
 
+// For catching bad meta commands.
 META_INVALID: AT WS? REST REST*;

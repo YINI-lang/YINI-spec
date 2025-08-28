@@ -10,7 +10,7 @@
 /* 
  This grammar aims to follow, as closely as possible,
  the YINI format specification version:
- 2.0.0-rc.1 - 2025 Aug.
+ 1.1.0-rc.1 - 2025 Aug.
  
  Feedback, bug reports and improvements are welcomed here
  https://github.com/YINI-lang/YINI-spec
@@ -64,24 +64,37 @@ stmt
 // Any tokens and statements starting with an AT (@).
 meta_stmt
   : directive
-  | pre_processing_command
+  | annotation
   | bad_meta_text eol
   ;
 
 /*
  * Directives (pragmas): parser hints that affect mode/behavior but
- * don't change document content.
+ * don't change document content. Must appear at top before any
+ * sections or members.
  */
 directive
   : YINI_TOKEN eol
+  | INCLUDE_TOKEN WS* string_literal? eol
   ;
 
 /*
  * Pre-processing directives: instructions that modify the document itself
  * by including or transforming content before/while parsing.
  */
-pre_processing_command
-  : INCLUDE_TOKEN WS* string_literal? eol
+// pre_processing_command
+//   : INCLUDE_TOKEN WS* string_literal? eol
+//   ;
+
+/*
+ * Metadata attached to a specific element (key, section, function,
+ * class, variable). Does not change source, but adds semantic
+ * meaning or tooling hints.
+ *
+ * @note Experimental / for future / testing.
+ */
+annotation
+  : DEPRECATED_TOKEN eol
   ;
 
 /* A single physical "end-of-line" unit (blank or comment then NL).
@@ -116,7 +129,6 @@ member:
  *       value or literal, it is only valid as a member of a section.
  */
  colon_list_decl
-  //: KEY WS? COLON WS? elements? eol
   : KEY WS? COLON (eol | WS+)* elements (eol | WS+)* eol
   ;
 
@@ -158,10 +170,8 @@ list_literal
  */
 elements
   : value (NL* COMMA NL* value)* COMMA?
-  //: element COMMA? | element COMMA elements
   ;
   
- //element: NL* value NL* | NL* list_literal NL*;
 
 /* -------- Terminals forwarded from the lexer -------- */
 
