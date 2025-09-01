@@ -12,6 +12,8 @@ A clean, minimal, and structured configuration format with a formal grammar.
 
 **Status:** Release Candidate
 
+[Latest updates/changes in this package](/CHANGELOG.md)  
+
 ---
 
 ## 🙋‍♀️ Why another Format?
