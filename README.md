@@ -52,13 +52,49 @@ You can use this package to parse YINI files in your own projects!
 ---
 
 ## 🚀 Quick Start
-Install the parser from npm:
+### Test parsing from the terminal with `yini-cli`
+1. **Install it globally from npm — (requires Node.js)**  
+    Open your terminal and run:
+    ```
+    npm install -g yini-cli
+    ```
+
+2. **Create a YINI file**  
+    Create a simple test file, for example: `config.yini`:
+    ```yini
+    ^ App
+      name = "My App Title"
+      version = "1.2.3"
+      pageSize = 25
+      darkTheme = off
+    ```
+
+3. **Parse the file with `yini-cli`**  
+    Then run:
+    ```bash
+    yini parse config.yini
+    ```
+
+    Expected result, your CLI should output a parsed version of the config and output something similar to:
+    ```js
+    {
+        App: {
+            name: 'My App Title',
+            version: '1.2.3',
+            pageSize: 25,
+            darkTheme: false
+        }
+    }    
+    ```
+---
+
+### Install Node.js parser from npm:
 
 ```sh
 npm install yini-parser
 ```
 
-Parse a simple YINI config:
+Parse a simple YINI config (with [YINI Parser for Node.js](https://github.com/YINI-lang/yini-parser-typescript)):
 ```js
 import YINI from 'yini-parser';
 
