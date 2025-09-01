@@ -1,23 +1,28 @@
 /*
- YINI grammar in ANTLR 4.
+  YINI grammar in ANTLR 4.
  
- Apache License, Version 2.0, January 2004,
- http://www.apache.org/licenses/
- Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
- Finland).
- */
+  Apache License, Version 2.0, January 2004,
+  http://www.apache.org/licenses/
+  Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
+  Finland).
+*/
 
 /* 
- This grammar aims to follow, as closely as possible,
- the YINI format specification version:
- 1.0.1-rc.1 - 2025 Aug.
- 
- Feedback, bug reports and improvements are welcomed here
- https://github.com/YINI-lang/YINI-spec
- 
- GitHub:   https://github.com/YINI-lang
- Homepage: http://yini-lang.org
- */
+  This LEXER grammar aims to follow, as closely as possible (*),
+  the YINI format specification version:
+  1.1.0-rc.1 - 2025 Sep.
+
+  *) NOTE: Some rules are intentionally more permissive than the specification
+  requires. This relaxation allows the host parser to detect syntax errors
+  esier and provide clearer, more meaningful error messages. In the end, it is
+  the responsibility of the implementing parser to fully enforce all rules of
+  the YINI specification.
+
+  Feedback, bug reports and improvements are welcomed here:
+
+  GitHub:   https://github.com/YINI-lang
+  Homepage: http://yini-lang.org
+*/
 
 lexer grammar YiniLexer;
 
