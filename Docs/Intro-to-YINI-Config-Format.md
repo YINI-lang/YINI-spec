@@ -150,7 +150,7 @@ End a file explicitly with:
 ^ App
 title = "MyTitle"
 
-/END    // Must be included in strict mode.
+/END    // Is only optional.
 ```
 
 ## 8. Disabled Lines
@@ -208,7 +208,7 @@ port     = 5432
 --user   = "secret"  # This line is disabled due to --.
 userList = ["alice", "bob", "carol"]
 
-/END
+/END // (optional)
 ```
 
 ---
