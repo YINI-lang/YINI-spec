@@ -13,5 +13,3 @@ Password = "secret"
         ^^^ RotationSettings
         MaxLogCount = 5
         RotationInterval = "daily"
-
-/END

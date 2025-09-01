@@ -1,0 +1,16 @@
+{
+    "name": "YINI Spec MD to PDF",
+    "version": "1.0.0",
+    "description": "Make a PDF-file from the YINI-Specification.md file.",
+    "main": "index.js",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "start": "node index.js"
+    },
+    "dependencies": {
+        "github-markdown-css": "^5.8.1",
+        "markdown-it": "^14.1.0",
+        "puppeteer": "^24.16.1"
+    }
+}

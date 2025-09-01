@@ -6,4 +6,4 @@
 
 name = "My Program Name"
 
-/END // End of YINI doc in strict mode.
+/END // End of YINI doc (optional).

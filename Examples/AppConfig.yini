@@ -4,7 +4,6 @@
     - Booleans via `YES` / `NO`.
     - Strings with quotes.
     - Lists via `:` and comma-separated values.
-    - `/END` line with a comment.
 */
 
 ^ AppConfig

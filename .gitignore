@@ -7,3 +7,5 @@
 .metadata
 
 *.temp
+
+*.local
