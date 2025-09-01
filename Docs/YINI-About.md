@@ -35,3 +35,10 @@ In the beginning, `YINI` was known by its working name `MINI`, which later evolv
 
 ## License
 This project is licensed under the Apache-2.0 license.
+
+---
+
+**~ YINI ≡**  
+> Aims to be a Clean, Readable, and Human-friendly configuration format.  
+
+[github.com/YINI-lang](https://github.com/YINI-lang)

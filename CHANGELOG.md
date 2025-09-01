@@ -4,6 +4,15 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 ### Feedback Acknowledgments
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
+## 2025 Sep (v1.0.0-rc.3)
+- Spec update: The `/END` document terminator is now optional everywhere, it's no longer required in strict mode.
+- Updated the ANTLR4 lexer and parser to 1.1.0-RC.1: The parser has been completely refactored to use a flat structure, simplifying host parser integration and improving maintainability. The lexer has also been updated to support these changes.
+- Implemented a utility (Node.js project) to generate a PDF file from the YINI specification file. 
+- Updated lexer that fixes issues with negative values and edge cases for integers, floats, and exponential numbers.
+- Added new doc "Intro to YINI Config Format" in docs, moved from yini-parser-typescript.
+- Updated spec and lexer to support doz numbers with A and B too // x = A = 10, e = B = 11.
+
+
 ## 2025 Aug (v1.0.0-rc.2)
 - Updated lexer and parser files with updated grammar rules to catch and handle invalid syntax
 in YINI files, specifically related to bad syntax members.
@@ -98,6 +107,6 @@ in YINI files, specifically related to bad syntax members.
 ---
 
 **~ YINI ≡**  
-> A Clean, Readable, and Human-friendly configuration format.  
+> Aims to be a Clean, Readable, and Human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org)
+[github.com/YINI-lang](https://github.com/YINI-lang)
