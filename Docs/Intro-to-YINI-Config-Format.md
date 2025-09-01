@@ -143,7 +143,7 @@ fruits:
 > You can use either single or double quotes for string values in YINI.
 
 ## 7. Document Terminator (strict mode)
-The `/END` marker is required only in strict mode, and optional in lenient (default) mode.
+The `/END` marker is optional in both lenient (default) and in strict mode.
 
 End a file explicitly with:
 ```yini

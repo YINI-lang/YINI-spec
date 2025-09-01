@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \< YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** 1.0.1-RC.1
+**Version:** 1.0.0-RC.3
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
@@ -222,7 +222,7 @@ YINI aims to prioritize **human readability, clarity, and clean syntax**.
 
 - **Multi-line and Nested Data:** The format supports multi-line strings and nested sections, providing the ability to express more complex configurations while maintaining readability.
 
-- **Clear End of Document:** YINI supports (only in stict-mode) a clear document terminator marker (`/END`).
+- **Clear End of Document:** YINI supports (optional in both lenient/strict-mode) a clear document terminator marker (`/END`).
 
 ## 1.5. Terminology
 The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI's grammar, structure, and semantics.
@@ -231,7 +231,7 @@ The following key terms are used consistently throughout this specification. Und
 |---------------------------|------------|
 | Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
 | Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
-| Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document (only required in strict mode). |
+| Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document (optional in both lenient/strict-mode). |
 | Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys MUST be unique within their section (and depth/level). |
@@ -441,7 +441,7 @@ An _**identifier**_ can be one of two forms below:
 ### 3.5 Document Terminator
 **Note:** The document terminator is only optional in lenient (non-strict) mode. Lenient mode is the default parser mode.
 
-A YINI document in strict mode **MUST always end with a terminator line**.
+A YINI document **MAY end with a terminator line**.
 
 The document terminator explicitly marks the end of the configuration content and prevents ambiguity about whether the document was fully read.
 
@@ -1172,9 +1172,11 @@ name = "John"  // ✅ A single string value.
 **Termination Rule**
 
 A colon-based multi-line list ends when **one of the following** is encountered:
-- a new key assignment (`key = ...` or `key: ...`)
-- a new section header (simple or backticked)
-- a document terminator marker (`/END`)
+- a new key assignment (`key = ...` or `key: ...`).
+- a new section header (simple or backticked).
+- a document terminator marker (`/END`).
+
+The document terminator is optional in both lenient/strict-mode.
 
 **Nested Lists with `:` Notation**
 
@@ -1257,7 +1259,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
-- The document terminator (`/END`) is **mandatory in strict mode** and **ignored in lenient mode**.
+- The document terminator (`/END`) is **optional in both lenient/strict-mode**.
 
 #### 11.2.2. Character Encoding
 Files **MUST** be encoded as **UTF-8 without BOM**.
@@ -1272,9 +1274,9 @@ Files **MUST** be encoded as **UTF-8 without BOM**.
 - Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
 
 #### 11.2.5. Document Terminator
-- The terminator is only required in strict-mode.
+- The terminator is optional in both lenient/strict-mode.
 - See Section 3.5, "Document Terminator" for terminator syntax.
-- A valid YINI file, in Strict-mode, MUST end with the terminator marker (`/END`).
+- A valid YINI file, MAY end with the terminator marker (`/END`).
 - Only one terminator is permitted per file.
 - Missing terminators:
   - **In lenient mode:** No error or warning.
@@ -1285,12 +1287,9 @@ Files **MUST** be encoded as **UTF-8 without BOM**.
 | Mode | Terminator Requirement |
 |---|---|
 | Lenient | Optional (*) |
-| Strict | Yes (mandatory) |
+| Strict  | Optional (*) |
 
-(*) In systems that value deterministic parsing, even lenient mode SHOULD favor explicit termination.
-
-##### Rationale
-The document terminator ensures robust parsing boundaries, improves multi-file safety, and aids debugging.
+(*) In systems that value deterministic parsing, MAY favor explicit termination.
 
 #### 11.2.6. Escaping and String Literals
 - Escape sequences are **ONLY allowed** in in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
@@ -1301,26 +1300,14 @@ The document terminator ensures robust parsing boundaries, improves multi-file s
   - ✅ In strict mode, the following is the shortest valid YINI document **with a member**:
     ```yini
     ^T
-    /END
     ```
     **Note:** A section heading named `T`, without any members.
 
 - **Invalid short documents:**
-  - ❌ Invalid: missing the /END terminator:
-    ```yini
-    ^ Title
-    ```
-
   - ❌  Invalid: no title section present:
     ```yini
     /END
     ```
-
-  - ❌ The following empty file (with only a comment) is also invalid:
-    ```yini
-    // Invalid empty YINI document in strict mode, the required document terminator (`/END`) is missing.
-    ```
-    **Note:** Invalid: file contains only a comment and lacks both `/END` and title section.
 
 ### 12.3. Lenient vs. Strict Modes _(Optional Feature)_
 Non-strict mode (lenient mode) is the default mode of operation. Parsers SHOULD operate in this mode by default unless explicitly configured otherwise to operate in fully strict mode.
@@ -1329,7 +1316,7 @@ Some YINI parsers may support multiple **validation modes**:
 
 - **Lenient Mode:** 
   - Permissive with minor errors (e.g., trailing commas after last value/member (are ignored), mixed line endings).
-  - The document terminator (`/END`) is **optional** in lenient mode and may be omitted entirely.
+  - The document terminator (`/END`) is **optional** in both lenient and strict modes and MAY be omitted entirely.
   - All typing rules still apply — for example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
   - Empty values are allowed ONLY in members in section-top-levels:
     - Missing/empty value (ONLY outside lists and objects) are treated as `Null`.
@@ -1339,11 +1326,12 @@ Some YINI parsers may support multiple **validation modes**:
   - Enforces full well-formedness.
   - No empty values are allowed, MUST always be explicitly with `Null`. 
   - No (stray) trailing commas (after last value/member) inside lists and object permitted.
-  - Strict mode requires both a **title section header** (a level 1 header) and the **document terminator** (`/END`).
+  - Strict mode requires a **title section header** (a level 1 header).
     
-    These constraints provide increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
+    If also using the OPTIONAL document terminator `/END` then these
+    constraints will provide increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
     * The **first half** is invalid because it is missing the required `/END` marker.
-    * The **second half** is invalid because it lacks the required level 1 section header (e.g., `^ Title`).
+    * The **second half** is invalid because it lacks the required single level 1 section header (e.g., `^ Title`).
   - Disallows trailing commas.
     * Empty values are disallowed — they MUST be explicitly typed as `null`, `Null`, or `NULL` (case-insensitive), although empty sections (with no members) are allowed.
   - For production and tool-chain use.
@@ -1375,7 +1363,7 @@ object3 = { a: 1, b: 2 }     # ✅ OK
 | Empty sections allowed                | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
 | Duplicate keys or sections   | ❌ (may warn) | ❌ | And never overwrite existing keys/sections.  |
 | Required one single level-1 section header            | ❌ | ✅ | AKA _Title Section_.  |
-| `/END` required                       | ❌ | ✅ |   |
+| `/END` is optional                       | ✅ | ✅ |   |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient-mode the comma is ignored, error in strict-mode  |
 | Missing (empty) value (only in section-top-level)| ✅ | ❌ | Will result in a `Null` value in lenient-mode  |
 | Missing (empty) value before comma | - | ❌ | In lenient-mode SHOULD warn or make error  |
@@ -1887,7 +1875,10 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.1 RC 1, 2025-08-11
+v1.0.0 RC 3, 2025-09-01
+- The specification has been revised to clarify that the document terminator `/END` is no longer a mandatory requirement in strict mode. The terminator is now defined as optional in both lenient and strict parsing modes. Implementing parsers MAY optionally provide an option to require this in both lenient and strict mode.
+
+v1.0.0 RC 2, 2025-08-11
 - Added case-insensitive support for digits `A` (10) and `B` (11) as alternative syntax in duodecimal (base-12) notation.
 
 v1.0.0 RC 1, 2025-07-26

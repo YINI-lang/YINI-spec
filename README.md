@@ -8,7 +8,7 @@ A clean, minimal, and structured configuration format with a formal grammar.
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Package Version:** 1.0.0-RC.2 (Latest published release) => [Version Table](./README.md#version-mapping-table)
+**Package Version:** 1.0.0-RC.3 (Latest published release) => [Version Table](./README.md#version-mapping-table)
 
 **Status:** Release Candidate
 
@@ -135,7 +135,7 @@ Definitions for rules in strict-mode (lenient is default).
 - Formal grammar for reliable parsing.
 - **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs. Read more in 11.3.1 in the specification, "Table: Lenient vs. Strict Mode".
 - Explicit string quoting — no ambiguity over strings.
-- **Optional document terminator** `/END` for clear file boundaries and parser certainty in **strict-mode**.
+- **Optional document terminator** `/END` for clear file boundaries and parser certainty in both **lenient-mode** and in **strict-mode**.
 - **Enhanced robustness** in strict-mode — if you cut a YINI file into two halves, both halves will be rendered invalid by the rules.
 
 ---
@@ -172,7 +172,7 @@ const config = YINI.parse(`
           username = 'user_name'
           password = 'your_password_here'
     
-    /END
+    /END // (only optional)
 `);
 
 console.log(config);
@@ -427,8 +427,8 @@ We welcome feedback — feel free to open an Issue or start a Discussion.
 | Date     | Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
 |----------|-----------------|--------------|--------------|---------------|
 | 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
-| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.1   | 1.0.0-RC.2   | 1.0.0-RC.2    |
-| 2025 Sep | 1.0.0-RC.3      | 1.0.0-RC.1   | 1.1.0-RC.1   | 1.1.0-RC.1    |
+| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   | 1.0.0-RC.2   | 1.0.0-RC.2    |
+| 2025 Sep | 1.0.0-RC.3      | 1.0.0-RC.3   | 1.1.0-RC.1   | 1.1.0-RC.1    |
 | …        | …               | …            | …            | …             |
 
 ---

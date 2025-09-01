@@ -39,5 +39,3 @@ License = "MIT"
     ^^ AppSettings
     `VersionString` = "v1.0.0"
     `HomePageURL` = "https://myapp.example.com"
-
-/END
