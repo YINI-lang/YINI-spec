@@ -31,5 +31,3 @@
         Your productivity companion.
     """
     error = "Something went wrong. Please try again."
-
-/END // End of YINI doc in strict mode.
