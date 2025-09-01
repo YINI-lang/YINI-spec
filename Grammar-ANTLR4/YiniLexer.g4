@@ -1,33 +1,54 @@
 /*
- YINI grammar in ANTLR 4.
+  YINI grammar in ANTLR 4.
  
- Apache License, Version 2.0, January 2004,
- http://www.apache.org/licenses/
- Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
- Finland).
- */
+  Apache License, Version 2.0, January 2004,
+  http://www.apache.org/licenses/
+  Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
+  Finland).
+*/
 
 /* 
- This grammar aims to follow, as closely as possible,
- the YINI format specification version:
- 1.0.0-rc.2x - 2025 Aug.
- 
- Feedback, bug reports and improvements are welcomed here
- https://github.com/YINI-lang/YINI-spec
- 
- GitHub:   https://github.com/YINI-lang
- Homepage: http://yini-lang.org
- */
+  This LEXER grammar aims to follow, as closely as possible (*),
+  the YINI format specification version:
+  1.1.0-rc.1 - 2025 Sep.
+
+  *) NOTE: Some rules are intentionally more permissive than the specification
+  requires. This relaxation allows the host parser to detect syntax errors
+  esier and provide clearer, more meaningful error messages. In the end, it is
+  the responsibility of the implementing parser to fully enforce all rules of
+  the YINI specification.
+
+  Feedback, bug reports and improvements are welcomed here:
+
+  GitHub:   https://github.com/YINI-lang
+  Homepage: http://yini-lang.org
+*/
 
 lexer grammar YiniLexer;
 
-YINI_MARKER options {
+@members {
+  // Below is TypeScript code:
+  public atLineStart(): boolean { return this.column === 0; }
+}
+
+YINI_TOKEN options {
 	caseInsensitive = true;
 }: '@yini';
 
+// @note Experimental / for future / testing.
+INCLUDE_TOKEN options {
+	caseInsensitive = true;
+}: '@include';
+
+// @note Experimental / for future / testing.
+DEPRECATED_TOKEN options {
+	caseInsensitive = true;
+}: '@deprecated';
+
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
-SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
+//SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
+SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
 
 // Section markers: '^', '<', '§', '€'.
 // – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
@@ -42,10 +63,10 @@ fragment SECTION_MARKER
 // this check is deferred to the parser, which
 // gives more control and enables better user feedback
 fragment SECTION_MARKER_BASIC_REPEAT
-    : CARET+   // up to 6 carets (parser will reject more than 6)
-    | LT+      // up to 6 LS characters
-    | SS+      // up to 6 '§' characters
-    | EUR+     // up to 6 '€' characters
+    : CARET+   // Up to 6 carets (implemented parser must reject more than 6)
+    | LT+      // Up to 6 LS characters
+    | SS+      // Up to 6 '§' characters
+    | EUR+     // Up to 6 '€' characters
     ;
 
 // Shorthand: a single marker followed by a positive integer (1 or larger).
@@ -203,7 +224,6 @@ fragment SIGN: ('+' | '-');
 
 NL: ( WS* COMMENT* SINGLE_NL COMMENT*);
 SINGLE_NL: ('\r' '\n'? | '\n');
-//NL: WS*('\r' '\n'? | '\n');
 
 WS: [ \t]+ -> skip;
 
@@ -217,12 +237,18 @@ BLOCK_COMMENT:
 	'/*' .*? '*/' -> skip; // Block AKA Multi-line comment.
 	
 COMMENT: LINE_COMMENT | INLINE_COMMENT | BLOCK_COMMENT;
+
+fragment DISABLE_LINE_MARKER: '--';
+
 /*
  FULL_LINE_COMMENT:
  Remains in input, but hidden
  (doesn't interfere with parsing).
  */
-LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
+//LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
+LINE_COMMENT
+  : {this.atLineStart()}? [ \t]* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
+  ;
 
 /*
  INLINE_COMMENT: 
@@ -230,16 +256,17 @@ LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
  */
 INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> skip;
 
-fragment DISABLE_LINE: ('--' ~[\r\n]*);
-
 IDENT_INVALID
     : [0-9][a-zA-Z0-9_]*
     ;
 
 // For matching bad character.
 fragment REST_CHAR:
-    ~([ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+    ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
     ;
 
 // For catching bad content.
-REST: REST_CHAR REST_CHAR*;
+REST: REST_CHAR (REST_CHAR)*;
+
+// For catching bad meta commands.
+META_INVALID: AT WS? REST REST*;
