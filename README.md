@@ -52,14 +52,15 @@ You can use this package to parse YINI files in your own projects!
 ---
 
 ## 🚀 Quick Start
-Try out parsing with `yini-cli`
+**Try parsing with the CLI (`yini-cli`)**
+
 1. **Install globally (requires Node.js)**  
     Open your terminal and run:
     ```
     npm install -g yini-cli
     ```
 
-2. **Create your first YINI file**  
+2. **Create a YINI file**  
     Save the following to a file called `config.yini`:
     ```yini
     ^ App
