@@ -27,7 +27,7 @@ A clean, minimal, and structured configuration format with a formal grammar.
 
 ---
 
-## 🚀 What is YINI?
+## ℹ️ What is YINI?
 
 **YINI (Yet another INI)** is a minimal and human-readable configuration file format with a formally defined grammar and a specification. It was designed for straightforward configuration, with improvements over classic INI and a simpler structure than YAML, JSON, or TOML.
 
@@ -52,15 +52,15 @@ You can use this package to parse YINI files in your own projects!
 ---
 
 ## 🚀 Quick Start
-### Test parsing from the terminal with `yini-cli`
-1. **Install it globally from npm — (requires Node.js)**  
+Try out parsing with `yini-cli`
+1. **Install globally (requires Node.js)**  
     Open your terminal and run:
     ```
     npm install -g yini-cli
     ```
 
-2. **Create a YINI file**  
-    Create a simple test file, for example: `config.yini`:
+2. **Create your first YINI file**  
+    Save the following to a file called `config.yini`:
     ```yini
     ^ App
       name = "My App Title"
@@ -69,13 +69,13 @@ You can use this package to parse YINI files in your own projects!
       darkTheme = off
     ```
 
-3. **Parse the file with `yini-cli`**  
-    Then run:
+3. **Parse it with the CLI**  
+    Run:
     ```bash
     yini parse config.yini
     ```
 
-    Expected result, your CLI should output a parsed version of the config and output something similar to:
+    You should see a parsed JS object printed to the console, similar to:
     ```js
     {
         App: {
@@ -86,28 +86,36 @@ You can use this package to parse YINI files in your own projects!
         }
     }    
     ```
----
 
-### Install Node.js parser from npm:
+### Use the Node.js parser in your project
 
-```sh
-npm install yini-parser
-```
+1. **Install the package**  
+    ```sh
+    npm install yini-parser
+    ```
 
-Parse a simple YINI config (with [YINI Parser for Node.js](https://github.com/YINI-lang/yini-parser-typescript)):
-```js
-import YINI from 'yini-parser';
+2. **Parse an inline config**  
+    ```js
+    import YINI from 'yini-parser';
 
-const config = YINI.parse(`
-^ Server
-  host = 'localhost'
-  port = 8080
-  useTLS = OFF
-`);
+    const config = YINI.parse(`
+      ^ Server
+        host = 'localhost'
+        port = 8080
+        useTLS = OFF
+    `);
 
-console.log(config);
-// { Server: { host: 'localhost', port: 8080, useTLS: false } }
-```
+    console.log(config);
+    // { Server: { host: 'localhost', port: 8080, useTLS: false } }
+    ```
+
+3. **Or parse directly from a file**
+    ```js
+    import YINI from 'yini-parser';
+
+    const fileConfig = YINI.parseFile('config.yini');
+    console.log(fileConfig);
+    ```
 
 ---
 
