@@ -34,3 +34,10 @@ Making a release into the branch `production`.
 1. **Backmerge staging into develop:** The env `staging` into `develop` (as develop as the base).
 2. **Patch/mark verstring for new cycle:** Now on develop, patch all version strings (except in Changes and in CHANGELOG.md) with ` + Updates` after each verstring.
    - E.g. `v1.0.0 Beta 4` to `v1.0.0 Beta 4 + Updates`.
+
+---
+
+**^YINI ≡**  
+> A simple, structured, and human-friendly configuration format.  
+
+[yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang)  

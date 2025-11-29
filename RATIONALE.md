@@ -217,7 +217,7 @@ For example: `@deprecated`, `@experimental` on a key.
 
 ---
 
-**~ YINI ≡**  
-> Aims to be a Clean, Readable, and Human-friendly configuration format.  
+**^YINI ≡**  
+> A simple, structured, and human-friendly configuration format.  
 
-[github.com/YINI-lang](https://github.com/YINI-lang)
+[yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang)  

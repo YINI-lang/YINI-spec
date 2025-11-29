@@ -5,6 +5,7 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## 2025 Sep (v1.0.0-rc.3 + UPDATES)
+- Updated the footer snippet on most of the Markdown files.
 - Updated the explanation of YINI's name origin, moved it from the introduction to the preface, and removed the old slogan.
 
 ## 2025 Sep (v1.0.0-rc.3)
@@ -109,7 +110,7 @@ in YINI files, specifically related to bad syntax members.
 
 ---
 
-**~ YINI ≡**  
-> Aims to be a Clean, Readable, and Human-friendly configuration format.  
+**^YINI ≡**  
+> A simple, structured, and human-friendly configuration format.  
 
-[github.com/YINI-lang](https://github.com/YINI-lang)
+[yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang)  
