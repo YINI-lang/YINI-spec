@@ -486,5 +486,7 @@ YINI is licensed under the [Apache License 2.0](./LICENSE).
 
 ---
 
-> ^**YINI ≡** - _Aims to be a Clean, Readable, and Structured configuration format_  
-> [github.com/YINI-lang](https://github.com/YINI-lang)
+**^YINI ≡**  
+> Aims to be as Simple, Structured, and Human-friendly configuration format as possible.  
+
+[yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang)  
