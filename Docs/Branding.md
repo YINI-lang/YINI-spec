@@ -1,11 +1,6 @@
 # Branding
 
 ## YINI "Slogan"
-```yini
-~ YINI
-Yet_another = 'INI'
-/END
-```
 
 ---
 

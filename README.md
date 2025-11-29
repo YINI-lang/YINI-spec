@@ -29,7 +29,7 @@ A clean, minimal, and structured configuration format with a formal grammar.
 
 ## ℹ️ What is YINI?
 
-**YINI (Yet another INI)** is a minimal and human-readable configuration file format with a formally defined grammar and a specification. It was designed for straightforward configuration, with improvements over classic INI and a simpler structure than YAML, JSON, or TOML.
+**YINI** is a minimal and human-readable configuration file format with a formally defined grammar and a specification. It was designed for straightforward configuration, with improvements over classic INI and a simpler structure than YAML, JSON, or TOML. YINI stands for *"Yet another INI"* — a nod to its inspiration from the familiar INI style.
 
 YINI aims to be clean, consistent, and structured — Intended for both manual and programmatic editing.
 

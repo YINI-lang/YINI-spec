@@ -29,7 +29,7 @@ Mr. Seppänen has been programming since the mid-80s, starting with languages li
 
 ## Trivia
 ### The Name
-In the beginning, `YINI` was known by its working name `MINI`, which later evolved into `MINI-CONFIG` / `miniCONFIG` standing for Minimalistic INI Configuration Object Notation File. Initially, the "M" in `MINI` represented Marko (after the author), but this was later changed to represent **Minimalistic**. As the specification matured beyond the draft stage, it was renamed to simply `YINI`, which stands for **Yet another INI**.
+In the beginning, `YINI` was known by its working name `MINI`, which later evolved into `MINI-CONFIG` / `miniCONFIG` standing for Minimalistic INI Configuration Object Notation File. Initially, the "M" in `MINI` represented Marko (after the author), but this was later changed to represent **Minimalistic**. As the specification matured beyond the draft stage, it was renamed to simply `YINI`, which come from **Yet another INI** (to keep it simple).
 
 ---
 

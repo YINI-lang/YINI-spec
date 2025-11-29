@@ -4,6 +4,9 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 ### Feedback Acknowledgments
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
+## 2025 Sep (v1.0.0-rc.3 + UPDATES)
+- Updated the explanation of YINI's name origin, moved it from the introduction to the preface, and removed the old slogan.
+
 ## 2025 Sep (v1.0.0-rc.3)
 - Spec update: The `/END` document terminator is now optional everywhere, it's no longer required in strict mode.
 - Updated the ANTLR4 lexer and parser to 1.1.0-RC.1: The parser has been completely refactored to use a flat structure, simplifying host parser integration and improving maintainability. The lexer has also been updated to support these changes.

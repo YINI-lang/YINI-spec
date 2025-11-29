@@ -3,14 +3,10 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 > \< YINI ≡
 ---
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.3
+**Version:** 1.0.0-RC.3xx
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
 
-```yini
-< YINI
-Yet_another = 'INI'
-```
 © 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
 See the full license text at the end of this document.
 
@@ -20,6 +16,7 @@ See the full license text at the end of this document.
 
 ## Preface
 **YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility. It aims to stay minimal, yet flexible enough to express a wide range of configuration needs.
+The name *YINI* originates from "Yet another INI", reflecting its inspiration from the traditional INI format.
 
 That said, there are already many excellent configuration formats out there, and they are great at what they do. **YINI isn't trying to replace them** — it was created to fill a specific niche, and, in all honesty, partly just for the fun of it.
 
@@ -175,7 +172,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 ## 1. Introduction
 ### 1.1. What is YINI?
-**YINI (Yet another INI)** is a lightweight, human-readable configuration file format—defined by a formal grammar—designed to provide simplicity, flexibility, and clear separation of concerns in configuration data. Its syntax is inspired by widely-used configuration file formats like INI and YAML, but also by JSON, C, and Python. YINI aims to offer a more consistent and intuitive structure, allowing for easy parsing and editing by both humans and machines.
+**YINI** is a lightweight, human-readable configuration file format—defined by a formal grammar—designed to provide simplicity, flexibility, and clear separation of concerns in configuration data. Its syntax is inspired by widely-used configuration file formats like INI and YAML, but also by JSON, C, and Python. YINI aims to offer a more consistent and intuitive structure, allowing for easy parsing and editing by both humans and machines.
 
 YINI is particularly targeted at users who need a straightforward format for storing and organizing configuration data, where human readability and ease of use are paramount. YINI is flexible enough to handle a wide range of use cases—from simple key-value pairs to nested and structured data—making it an effective choice for everything from application preferences and program settings to complex system configuration files.
 
@@ -246,7 +243,7 @@ The following key terms are used consistently throughout this specification. Und
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
 | YINI file                 | A complete YINI configuration. In this specification, "file" and "document" mean the same thing. |
-| YINI                      | Short for "Yet another INI", a human-readable configuration format blending INI-style sections with modern typing and structure. |
+| YINI                      | YINI is a human-readable configuration format blending INI-style sections with modern typing and structure. |
 
 ## 2. File Structure
 The structure of a YINI file is designed to be simple, clear, and highly readable. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
