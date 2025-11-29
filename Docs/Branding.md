@@ -1,70 +1,144 @@
 # Branding
 
-## YINI "Slogan"
+- YINI Headline: The main, dominant statement usually in big text.
+- YINI Tagline: A short supporting phrase that sits under or near the headline.
 
 ---
 
-## YINI Taglines
+## Footer Snippet
+
+```md
+---
+
+**^YINI ≡**  
+> A simple, structured, and human-friendly configuration format.  
+
+[yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang)  
+```
+
+Should use it on:
+- ✅ Specification files (PDF/Markdown)
+- ✅ Detailed docs
+- ✅ Long-form guides
+- ✅ YINI ecosystem repos (parser, CLI, homepage, etc.)
+- ✅ Branding.md (after cleanup)
+- ✅ Dev.to articles
+- ✅ Discussions pinned posts
+
+But not on:
+- ❌ README.md of tiny repos
+- ❌ main homepage
+- ❌ npm package descriptions
+- ❌ Code files
+
+---
+
+## Gfx Logo
+
+Primary Colors:
+- Cyan
+- Dark Gray
+
+---
+
+## Minimal Char logo/icon
+
+> ^Y
+
+---
+
+## YINI Headline
+
+Headline is used only on the homepage hero section.
+
+Main:
+- YINI — Simple, Structured Config
+  
+Alternatives:
+- YINI — A Clear Way to Write Configs
+- YINI — Configuration Made Understandable
+- YINI — Clean, Predictable Configuration
+- YINI — A Better Way to Structure Config Files
+- YINI — Simple Syntax, Real Structure
+- YINI — Human-Readable. Machine-Friendly.
+- YINI — Modern Configuration Without the Noise
+- YINI — Lightweight Syntax. Powerful Structure.
+- YINI — The Config Format That Makes Sense
+- YINI — Clean Configs for Modern Projects
+
+---
+
+## YINI Tagline
+
+Tagline may be used:
+- under logo
+- GitHub repo subtitle
+- documentation cover
+
+> A human-friendly config format with real structure and clean syntax.
 
 Below is good for logo area, headers, or minimal contexts (e.g., website banner, favicon tooltip, GitHub repo subtitle):
-
 > _YINI: Clean. Readable. Structured._
-
----
-
-Below is excellent for README intros, specification headers, professional documents:
-
-> _YINI: A lightweight configuration file format — clean, readable, structured._
-
----
-
-Below is good for footers:
-
-**~ YINI ≡**  
-> A Clean, Readable, and Human-friendly configuration format.  
 
 [yini-lang.org](https://yini-lang.org)
 
 ---
 
-## YINI Logo Suggiestions
-Suggiestions for a "logo" for YINI.
+## YINI "Slogan"
+--deleted--
 
-### Option/Suggiestions 1a
+---
+
+## YINI Character Logo Suggestions
+Suggestions for a "logo" for YINI.
+
+### Option/Suggestions 1d
+> \^YINI ≡
+
+✅ Currently a strong candidate.
+
+### Option/Suggestions 1a
 > \^ YINI ≡
 
 ✅ Currently a strong candidate.
 
-### Option/Suggiestions 1b
+### Option/Suggestions 1c
+> \^YINI≡
+
+### Option/Suggestions 1b
 > \~ YINI ≡
 
-✅ Currently a strong candidate.
-
-### Option/Suggiestions 2
+### Option/Suggestions 2
 > \^ Y I N I ≡
 
-### Option/Suggiestions 3
+### Option/Suggestions 3
+<strike>
 > \^ Y ≡
+</strike>
 
-### Option/Suggiestions 3
+### Option/Suggestions 3
+<strike>
 ```
 ^ Y
 ^^ I
 ^^^ N
 ^^^^ I
 ```
+</strike>
 
-### Option/Suggiestions 5
+### Option/Suggestions 5
+<strike>
 ```
 ^    Y
 ^^   I
 ^^^  N
 ^^^^ I
 ```
+</strike>
 
 ---
 
-**~ YINI ≡**  
-> Aims to be a Clean, Readable, and Human-friendly configuration format.  
+**^YINI ≡**  
+> A simple, structured, and human-friendly configuration format.  
 
-[github.com/YINI-lang](https://github.com/YINI-lang)
+[yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang)  
