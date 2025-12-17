@@ -1,7 +1,7 @@
 # YINI Specification ≡
-A clean, minimal, and structured configuration format with a formal grammar.
+A clean, structured configuration format with a formal grammar.
 
-> YINI is a simple, minimal, structured, and human-readable configuration format — less verbose than JSON, less complex than YAML, and more expressive than INI.
+> YINI is an INI-inspired, human-readable configuration format designed for simple nesting and predictable parsing.
 
 ---
 
