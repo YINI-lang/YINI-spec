@@ -172,9 +172,15 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 ## 1. Introduction
 ### 1.1. What is YINI?
-**YINI** is a lightweight, human-readable configuration file format—defined by a formal grammar—designed to provide simplicity, flexibility, and clear separation of concerns in configuration data. Its syntax is inspired by widely-used configuration file formats like INI and YAML, but also by JSON, C, and Python. YINI aims to offer a more consistent and intuitive structure, allowing for easy parsing and editing by both humans and machines.
+**YINI** is a human-readable text format for representing structured information.  
+It is designed to be clear, predictable, and easy for humans to read and write, and is defined by a formal grammar that provides simplicity, flexibility, and a clear separation of concerns for configuration data.  
 
-YINI is particularly targeted at users who need a straightforward format for storing and organizing configuration data, where human readability and ease of use are paramount. YINI is flexible enough to handle a wide range of use cases—from simple key-value pairs to nested and structured data—making it an effective choice for everything from application preferences and program settings to complex system configuration files.
+Its syntax is inspired by widely used configuration formats such as INI and YAML, as well as general-purpose languages and data notations including JSON, C, and Python.  
+YINI aims to offer a consistent and intuitive structure that is easy to parse and edit by both humans and machines.  
+
+YINI is targeted at users who require a straightforward format for storing and organizing data—such as configuration files, application settings, and other general data storage—where human readability and ease of use are of primary importance.
+
+YINI is flexible enough to support a wide range of use cases, from simple key-value pairs to deeply nested structured data, making it suitable for everything from basic application preferences to complex system configuration.
 
 ### 1.2. Purpose and Design Goals
 

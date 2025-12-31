@@ -1,7 +1,8 @@
-# YINI Specification ≡
-A clean, structured configuration format with a formal grammar.
+# YINI Specification
 
-> YINI is an INI-inspired, human-readable configuration format designed for simple nesting and predictable parsing.
+**YINI is a clear and predictable text-based configuration format with formal grammar and real structure, designed to be easy for humans to read and write.**
+
+> YINI is an INI-inspired, human-readable format for representing structured information. It is suitable for configuration files, application settings, and general data-storage use cases.
 
 ---
 
