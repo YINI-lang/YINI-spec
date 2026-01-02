@@ -14,6 +14,8 @@
 **Status:** Release Candidate
 
 [Latest updates/changes in this package](/CHANGELOG.md)  
+[YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/YINI-Downloads)  
+[YINI Homepage](https://yini-lang.org)  
 
 ---
 
@@ -37,18 +39,6 @@ YINI aims to be clean, consistent, and structured — Intended for both manual a
 > YINI aims to hit a fine balance between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
 
 Inspired by including INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
-
----
-
-## ✨ YINI CLI and Parser Now Available!
-
-Open-source **YINI parser for Node.js & TypeScript** is available:
-
-- **GitHub:** [yini-parser-typescript](https://github.com/YINI-lang/yini-parser-typescript)
-- **npm:** [yini-parser](https://www.npmjs.com/package/yini-parser)
-- **npm:** [yini-cli](https://www.npmjs.com/package/yini-cli) (run from CLI/terminal)
-
-You can use this package to parse YINI files in your own projects!
 
 ---
 
