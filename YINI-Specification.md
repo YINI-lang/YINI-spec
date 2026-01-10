@@ -1,7 +1,7 @@
 _YINI: A lightweight configuration file format — clean, readable, structured._
 
-> \< YINI ≡
 ---
+
 # Specification for the YINI Format
 **Version:** 1.0.0-RC.3xx
 
@@ -15,32 +15,31 @@ See the full license text at the end of this document.
 [⇨ Table of Contents](./YINI-Specification.md#table-of-contents)
 
 ## Preface
-**YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility. It aims to stay minimal, yet flexible enough to express a wide range of configuration needs.
-The name *YINI* originates from "Yet another INI", reflecting its inspiration from the traditional INI format.
+**YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.  
+It aims to remain minimal while still being expressive enough to support a wide range of configuration needs.  
+The name *YINI* originates from "Yet another INI", reflecting its inspiration from the traditional INI format.  
 
-That said, there are already many excellent configuration formats out there, and they are great at what they do. **YINI isn't trying to replace them** — it was created to fill a specific niche, and, in all honesty, partly just for the fun of it.
+That said, there are already many excellent configuration formats out there, and they are great at what they do. **YINI is not intended to replace existing formats** — it was created to fill a specific niche and, in part, out of personal curiosity and exploration.  
 
-The idea started as a personal project — a search for something a bit more readable than JSON, a bit more structured than INI, and a bit less surprising than YAML. It grew from there into a format that aims to be:
+The idea started as a personal project — a search for something a bit more readable than JSON, a bit more structured than INI, and a bit less surprising than YAML. It gradually evolved into a format that aims to be:  
 - Minimal, but expressive.
 - Structured, but not rigid.
-- Easy to hand-edit, and just formal enough to support tooling and validation.
+- Easy to hand-edit, and just formal enough to support tooling and validation.  
 
-YINI aims to embrace simplicity as a strength, offering just enough rules to stay consistent while remaining forgiving enough for practical use. One of its key strengths is the intuitive way it handles nested sections — allowing for structured configuration without relying on indentation rules or verbose syntax.
+YINI aims to embrace simplicity as a strength, offering just enough rules to stay consistent while remaining forgiving enough for practical use.  
 
-See [A.1. Why was YINI created?](./RATIONALE.md) for background.
+See [A.1. Why was YINI created?](./RATIONALE.md) for background.  
 
 While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces its own principles: consistent grammar, clear typing, and readable structure — with human readability and developer experience in mind.  
-One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing complex structures to be expressed in a simple, natural, and visually clear way — without the strict indentation rules or syntax overhead found in some other formats.
+One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing structured configuration without relying on indentation rules or verbose syntax, while remaining visually clear and easy to scan — without the strict indentation rules or syntax overhead found in some other formats.  
 
-This specification defines YINI with care and clarity, aiming to serve both casual users and implementers looking for a clean, predictable format.
-Above all, YINI remains true to its founding goal:
-make configuration effortless — and maybe even enjoyable.
+This specification defines YINI with care and clarity, aiming to serve both casual users and implementers looking for a clean, predictable format.  
 
-(See more in section 1.2.1, "The # Marker as a Comment Symbol".)
+Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community.  
 
-Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community.
+For more feedback details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.  
 
-For more feedback details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
+Above all, YINI remains true to its founding goal: make configuration effortless — and maybe even enjoyable.  
 
 ---
 
@@ -128,7 +127,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;12.2. Well-Formedness Requirements  
 &nbsp;&nbsp;&nbsp;&nbsp;12.3. Lenient vs. Strict Modes _(Optional Feature)_  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;11.3.1. Table: Lenient vs. Strict Mode
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.3.1. Table: Lenient vs. Strict Mode
 
 **13. Implementation Notes** ([Link ⇨](./YINI-Specification.md#13-implementation-notes))  
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Top-Level Sections and Implicit Root  
@@ -158,6 +157,8 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;15.2. Realistic Config Use Cases  
 &nbsp;&nbsp;&nbsp;&nbsp;15.3. Examples of YINI → JSON Mapping  
 &nbsp;&nbsp;&nbsp;&nbsp;15.4. Examples of JSON → YINI Mapping  
+&nbsp;&nbsp;&nbsp;&nbsp;15.5. Large-Scale Real-World Configuration Example A: Corporate SaaS Platform  
+&nbsp;&nbsp;&nbsp;&nbsp;15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System  
 
 **16. Appendices and Reserved Areas** ([Link ⇨](./YINI-Specification.md#16-appendices-and-reserved-areas))  
 &nbsp;&nbsp;&nbsp;&nbsp;16.1. License  
@@ -207,6 +208,8 @@ The YINI format was created with the following key design goals in mind:
 
 - **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
 
+- **Deterministic parsing in strict mode:** Strict mode requires a single root section and prohibits ambiguous document endings.
+- 
 ### 1.3. Background and Intent
 YINI was created to serve as a clean, minimal, and predictable configuration format that balances readability with structure. For a deeper look into the motivation and design philosophy, see [Why YINI?](./RATIONALE.md).
 
@@ -218,6 +221,7 @@ YINI aims to prioritize **human readability, clarity, and clean syntax**.
 - **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers are marked with the symbol `^` (or `<` as an alternative).
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
+  - **Inline objects & lists** — expressive nested data using `{}` and `[]` without indentation sensitivity.
 
 - **Type Inference:** There is no need to declare types explicitly — the parser determines the value type by how it is written (e.g., quotes, brackets, keywords).
 
@@ -240,7 +244,7 @@ The following key terms are used consistently throughout this specification. Und
 | Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys MUST be unique within their section (and depth/level). |
 | Lenient Mode         | This is the default parsing mode in YINI. |
 | List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
-| Member                    | A key-value pair, such as `key = value`, representing a single entry within a section or root. |
+| Member                    | A key-value pair entry, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
 | Section                   | A logical grouping of members, introduced by a header using a section marker like `^`, `<`. |
 | Section Marker            | A special character (`^`, alternative is `<`) that denotes a new section header. |
@@ -319,7 +323,7 @@ YINI files consist of a series of **sections, members** (key-value pairs), and o
 
 Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
 
-**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed characters (commonly `^`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
+**Sections:** YINI files support sections, which groups related members. A section begins with a section header, marked by one of the allowed characters (commonly `^`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
 
 **Example of a section:**
 ```yini
@@ -334,7 +338,7 @@ key = value
 key = value
 ```
 
-**Comments:** YINI primarly followes C-style commenting rules using `//` and `/* ... */`. Alternative inline `#` comments, and full-line `;` comments are supported too. These are ignored by parsers and exist solely for human readability.
+**Comments:** YINI primarly follows C-style commenting rules using `//` and `/* ... */`. Alternative inline `#` comments, and full-line `;` comments are supported too. These are ignored by parsers and exist solely for human readability.
 
 **Example:**
 ```ini
@@ -368,6 +372,10 @@ YINI supports **three types of comments**:
 | Full-line comment | `;` | Start of line ONLY |
 
 While both `//` and `#` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
+
+**Rule Summary — `#` Interpretation**
+- `#` followed by a space or tab → **comment**.
+- `#` followed by anything else → **hex literal**.
 
 See also Section 3.6, "Disable Line", for a related mechanism used to deactivate valid lines of configuration.
 
@@ -617,8 +625,6 @@ Supported markers:
   - `<` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
   - `§` (experimental, for enhanced readability, may get promoted in future)
   - `€` (experimental, for enhanced readability, may get promoted in future)
-  - `~` (discontinued, was visually ambiguous)
-  - `>` (discontinued, was easy to confuse with reply)
 
 **When using a repeated marker to indicate nesting, a maximum of six (`6`) repeated markers is allowed.**  
 
@@ -1047,7 +1053,7 @@ object = { member1: "value1", member2: "value2" }
 obj = { a = 1, b = 2 }
 ```
 
-More Example:
+More Examples:
 ```
 # In lenient mode:
 obj1 = { a: 1, b: 2, }     # → {a: 1, b: 2} ✅
@@ -1058,6 +1064,32 @@ obj4 = { }                 # → {} ✅
 # In strict mode:
 obj1 = { a: 1, b: 2, }     # → ❌ Error: trailing comma not allowed in strict mode
 obj4 = { }                 # → {} ✅
+```
+
+A Complete YINI Example:
+```
+// Section at level-1 starts here
+^ System
+
+// Withing the section "System", inline object "config" starts here
+config = {
+    name: "production",
+      services: {
+          web: {
+              ports: [80, 443],
+              routes: [
+                  { path: "/", secure: true },
+                  { path: "/api", secure: false }
+              ]
+          },
+          database: {
+              replicas: [
+                  { host: "db1", role: "primary" },
+                  { host: "db2", role: "secondary" }
+              ]
+        }
+    }
+}
 ```
 
 ## 10. List Literals
@@ -1615,7 +1647,7 @@ enabled = true
 ```
 
 **Explanation:**
-  - Begins with a single section `# Prefs`.
+  - Begins with a single section `^ Prefs`.
   - Contains three keys (`name`, `entries`, `enabled`) with string, number, and boolean values, respectively.
 
 ### 15.2. Realistic Config Use Cases
@@ -1851,6 +1883,362 @@ version = "2.5"
 hosts = ["alpha.local", "beta.local", "gamma.local"]
 ```
 
+### 15.5. Large-Scale Real-World Configuration Example A: Corporate SaaS Platform  
+```yini
+@YINI
+
+// Example A: Corporate SaaS Platform.
+/*
+  Covers:
+  - Sections & deep nesting
+  - Real-world domain structure
+  - Objects in arrays
+  - Arrays of objects
+  - Scalars of every type
+  - Complex policy logic
+  - Auth & security modeling
+  - Unicode in strings.
+  - Strings in double quotes.
+  - Large but readable
+ */
+
+^ App
+name = "Acme Platform"      // Example Platform
+description = "The word “Acme” has been used for over 100 years in technical and business examples."
+meaning = "It comes from Greek akmḗ (ἀκμή), meaning “the highest point” or “best”."
+version = "2.3.1"
+debug = OFF
+environment = "production"
+maintainers = ["ops@acme.com", "dev@acme.com"]
+
+    ^^ Features
+    enableSearch = true
+    enablePayments = true
+    enableAnalytics = false
+    experimental = ["new-ui", "streaming-api"]
+
+    ^^ Limits
+    maxUsers = 50000
+    requestTimeoutMs = 3500
+    retryPolicy = { maxRetries: 5, backoff: "exponential" }
+
+    ^^ Database
+    engine = "postgres"
+    host = "db.internal.acme.com"
+    port = 5432
+    ssl = true
+    pool = { min: 5, max: 50 }
+
+        ^^^ Credentials
+        username = "app_user"
+        password = "****"
+        rotateEveryDays = 90
+
+    ^^ API
+    baseUrl = "https://api.acme.com"
+    publicEndpoints = ["/health", "/status"]
+    internalEndpoints = ["/admin", "/metrics"]
+
+        ^^^ Auth
+        provider = "oauth2"
+        tokenTTLSeconds = 3600
+        scopes = ["read", "write", "admin"]
+
+                ^^^^ Clients
+                web = { clientId: "web-123", redirectUri: "https://acme.com/callback" }
+                mobile = { clientId: "mob-456", redirectUri: "acme://auth" }
+
+^ Logging
+level = "info"
+format = "json"
+outputs = ["stdout", "file"]
+
+    ^^ File
+    path = "/var/log/acme/app.log"
+    maxSizeMB = 100
+    rotate = true
+    keepFiles = 10
+
+    ^^ Metrics
+    enabled = true
+    endpoint = "/metrics"
+    sampleRate = 0.25
+
+^ Services
+enabled = true
+
+    ^^ Email
+    provider = "smtp"
+    host = "smtp.acme.com"
+    port = 587
+    secure = false
+    from = "no-reply@acme.com"
+
+        ^^^ Credentials
+        user = "mailer"
+        pass = "mailer-secret"
+
+    ^^ Cache
+    type = "redis"
+    host = "cache.internal.acme.com"
+    port = 6379
+    ttlSeconds = 600
+
+        ^^^ Cluster
+        nodes = [
+          { host: "cache-1.internal", port: 6379 },
+          { host: "cache-2.internal", port: 6379 },
+          { host: "cache-3.internal", port: 6379 }
+        ]
+
+^ Observability
+tracing = true
+tracingProvider = "opentelemetry"
+traceSampleRate = 0.1
+
+    ^^ Exporters
+    jaeger = { enabled: true, endpoint: "http://jaeger:14268/api/traces" }
+    prometheus = { enabled: true, endpoint: "http://prom:9090" }
+
+^ Security
+allowedIPs = ["10.0.0.0/8", "192.168.0.0/16"]
+blockedCountries = ["KP", "SD"]
+
+    ^^ Policies
+    passwordMinLength = 14
+    require2FA = true
+    sessionTTLMinutes = 120
+
+        ^^^ Lockout
+        maxAttempts = 5
+        lockoutMinutes = 30
+```
+
+15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System  
+```yini
+@YINI
+
+// Example B: High-Security Distributed Control System.
+/*
+  Covers:
+  - Nested arrays inside inline objects.
+  - Sections & deep nesting.
+  - Real-world domain structure.
+  - Objects in arrays.
+  - Arrays of objects.
+  - Scalars of every type.
+  - Complex policy logic.
+  - Auth & security modeling.
+  - Unicode in strings.
+  - Strings in single quotes.
+  - Large but readable.
+ */
+
+^ App
+name = 'Nebula Control Suite'
+description = 'A distributed operations platform for autonomous systems and edge analytics.'
+meaning = 'Nebula comes from Latin "nebula" meaning mist or cloud.'
+version = '5.0.0-rc.4'
+debug = ON
+environment = 'staging'
+maintainers = ['infra@nebula.io', 'platform@nebula.io', 'secops@nebula.io']
+
+    ^^ Features
+    enableSearch = false
+    enablePayments = false
+    enableAnalytics = true
+    experimental = ['vector-engine', 'adaptive-ui', 'ai-routing']
+
+    ^^ Limits
+    maxUsers = 120000
+    requestTimeoutMs = 7200
+    retryPolicy = {
+        maxRetries: 9,
+        backoff: 'fibonacci',
+        retryOn: ['timeout', '5xx', 'throttle'],
+        schedule: [
+            { attempt: 1, delayMs: 80 },
+            { attempt: 2, delayMs: 160 },
+            { attempt: 3, delayMs: 320 },
+            { attempt: 4, delayMs: 640 },
+            { attempt: 5, delayMs: 1280 }
+        ]
+    }
+
+    ^^ Database
+    engine = 'cockroachdb'
+    host = 'cluster.db.nebula.io'
+    port = 26257
+    ssl = true
+    pool = {
+        min: 12,
+        max: 120,
+        warmup: {
+            enabled: true,
+            strategy: 'aggressive',
+            steps: [10, 25, 50, 75, 100],
+            healthChecks: [
+                { name: 'connectivity', timeoutMs: 300 },
+                { name: 'replication', maxLagMs: 200 },
+                { name: 'quorum', minNodes: 3 }
+            ]
+        }
+    }
+
+        ^^^ Credentials
+        username = 'nebula_app'
+        password = '****'
+        rotateEveryDays = 45
+        history = [
+            { rotatedAt: '2025-05-10', reason: 'scheduled' },
+            { rotatedAt: '2025-03-02', reason: 'key-compromise' },
+            { rotatedAt: '2024-12-15', reason: 'policy-change' }
+        ]
+
+    ^^ API
+    baseUrl = 'https://api.nebula.io'
+    publicEndpoints = ['/health', '/status', '/version']
+    internalEndpoints = ['/admin', '/metrics', '/orchestrator', '/scheduler']
+
+        ^^^ Auth
+        provider = 'oidc'
+        tokenTTLSeconds = 5400
+        scopes = ['read', 'write', 'deploy', 'audit']
+
+            ^^^^ Clients
+            web = {
+                clientId: 'nebula-web-prod',
+                redirectUri: 'https://nebula.io/auth/callback',
+                allowedOrigins: ['https://nebula.io', 'https://console.nebula.io'],
+                secrets: [
+                    { id: 'alpha', value: 'QX7faP9', active: true },
+                    { id: 'beta', value: 'LM8KdW2', active: true },
+                    { id: 'legacy', value: 'OLD-KEY-DO-NOT-USE', active: false }
+                ]
+            }
+
+            mobile = {
+                clientId: 'nebula-mobile',
+                redirectUri: 'nebula://auth',
+                platforms: [
+                    { name: 'ios', minVersion: '15.2', enabled: true },
+                    { name: 'android', minVersion: '11', enabled: true },
+                    { name: 'harmonyos', minVersion: '4', enabled: false }
+                ],
+                refreshPolicy: {
+                    enabled: true,
+                    limits: { perHour: 60, perDay: 600 },
+                    audit: [
+                        { event: 'refresh', severity: 'info' },
+                        { event: 'suspicious-location', severity: 'warning' },
+                        { event: 'credential-stuffing', severity: 'critical' }
+                    ]
+                }
+            }
+
+^ Logging
+level = 'debug'
+format = 'ndjson'
+outputs = ['stdout', 'file', 'syslog']
+
+    ^^ File
+    path = '/srv/log/nebula/nebula.log'
+    maxSizeMB = 250
+    rotate = true
+    keepFiles = 30
+
+    ^^ Metrics
+    enabled = true
+    endpoint = '/internal/metrics'
+    sampleRate = 0.75
+
+^ Services
+enabled = true
+
+    ^^ Email
+    provider = 'ses'
+    host = 'email.nebula.io'
+    port = 465
+    secure = true
+    from = 'system@nebula.io'
+
+        ^^^ Credentials
+        user = 'mailer-nebula'
+        pass = 'MAIL-SEC-9921'
+
+    ^^ Cache
+    type = 'keydb'
+    host = 'cache.nebula.internal'
+    port = 6380
+    ttlSeconds = 1800
+
+        ^^^ Cluster
+        nodes = [
+            { host: 'cache-a.nebula', port: 6380, role: 'primary', zones: ['eu-north-1a'] },
+            { host: 'cache-b.nebula', port: 6380, role: 'replica', zones: ['eu-north-1b'] },
+            { host: 'cache-c.nebula', port: 6380, role: 'replica', zones: ['eu-north-1c'] },
+            { host: 'cache-d.nebula', port: 6380, role: 'observer', zones: ['eu-north-1a'] }
+        ]
+
+        ^^^ Failover
+        strategy = {
+            mode: 'predictive',
+            thresholds: { errorRate: 0.08, latencyMs: 180 },
+            actions: [
+                { step: 'drain-traffic', timeoutMs: 1500 },
+                { step: 'promote-replica', timeoutMs: 2000 },
+                { step: 'resync', propagate: true },
+                { step: 'notify', channels: ['pagerduty', 'slack', 'email'] }
+            ]
+        }
+
+^ Observability
+tracing = true
+tracingProvider = 'tempo'
+traceSampleRate = 0.35
+
+    ^^ Exporters
+    jaeger = {
+        enabled: false,
+        endpoint: 'http://jaeger.internal/api/traces',
+        tags: {
+            region: 'eu-north',
+            environment: 'staging',
+            build: { version: '5.0.0-rc.4', commit: 'c8f91d2', dirty: true }
+        }
+    }
+
+    prometheus = {
+        enabled: true,
+        endpoint: 'http://prometheus.nebula:9090',
+        scrapeIntervals: [2, 5, 10, 30],
+        retention: { days: 90, maxSeries: 3500000 }
+    }
+
+^ Security
+allowedIPs = ['172.16.0.0/12', '100.64.0.0/10']
+blockedCountries = ['KP', 'NG', 'BY']
+
+    ^^ Policies
+    passwordMinLength = 18
+    require2FA = true
+    sessionTTLMinutes = 45
+
+        ^^^ Lockout
+        maxAttempts = 4
+        lockoutMinutes = 60
+        escalation = {
+            enabled: true,
+            notify: ['security@nebula.io', 'ciso@nebula.io'],
+            rules: [
+                { attempts: 3, action: 'captcha' },
+                { attempts: 4, action: 'temporary-block', minutes: 120 },
+                { attempts: 6, action: 'account-freeze' },
+                { attempts: 9, action: 'permanent-block' }
+            ]
+        }
+```
+
 ## 16. Appendices and Reserved Areas
 ### 16.1. License
 Apache License, Version 2.0, January 2004,
@@ -1878,6 +2266,15 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
+v1.0.0 RC 3xx, 2026-xx-xx
+- Corrected an error in Example 15.1.
+- Added two large real-world configuration examples (A and B), featuring nested inline objects, lists, and complex structures.
+  - See Sections **15.5** and **15.6**.
+  - The full YINI and JSON versions of these examples are also included under  
+    [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
+- Added clarifying bullets to Sections 1.2 and 1.4.
+- Fixed a few typos and made various minor wording and consistency improvements.
+
 v1.0.0 RC 3, 2025-09-01
 - The specification has been revised to clarify that the document terminator `/END` is no longer a mandatory requirement in strict mode. The terminator is now defined as optional in both lenient and strict parsing modes. Implementing parsers MAY optionally provide an option to require this in both lenient and strict mode.
 
@@ -1888,7 +2285,7 @@ v1.0.0 RC 1, 2025-07-26
 - Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".
 - Discontinued alternative marker character `~` (visually ambiguous) in favor of `<`.
 - Promoted the section markers `§` and `€` to "Experimental" from only being "Reserved".
-- Droped the use of `=` in object literals, objects now use `:` (similar as to JSON, etc).
+- Dropped the use of `=` in object literals, objects now use `:` (similar as to JSON, etc).
 
 v1.0.0 Beta 7, 2025-06-12
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
@@ -1996,7 +2393,7 @@ Below is a categorized list of Unicode whitespace characters recognized as withi
 
 ---
 
-**^YINI Specification ≡**  
+**^ YINI Specification ≡**  
 > A simple, structured, and human-friendly configuration format.  
 
 [yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang)  
