@@ -13,9 +13,9 @@
 
 **Status:** Release Candidate
 
-[Latest updates/changes in this package](/CHANGELOG.md)  
-[YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/YINI-Downloads)  
-[YINI Homepage](https://yini-lang.org)  
+- [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
+- [Latest updates/changes in this package](/CHANGELOG.md)  
+- [YINI Homepage](https://yini-lang.org)  
 
 ---
 
