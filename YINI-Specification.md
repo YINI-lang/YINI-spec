@@ -2255,9 +2255,13 @@ For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in 
 This specification is created and maintained by Marko K. Seppänen.
 
 #### Creator
-First authored in 2024, Gothenburg, by Marko K. Seppänen (Sweden via Finland).
+First authored in **2024 in Gothenburg, Sweden,** by **Marko K. Seppänen** (Sweden via Finland).
 
-Mr. Seppänen has been programming since the mid-80s, starting with languages like BASIC, C, Java, and Assembler. He studied Computer Science and Master's in Software Development with a focus on Programming Languages, at Chalmers University of Technology (Gothenburg, Sweden). Professionally, he has many years of experience in software development, especially with TypeScript, JavaScript, PHP, and full-stack web development.
+Mr. Seppänen has been programming since the **mid-1980s**, starting with platforms and languages such as **BASIC and various BASIC dialects, C, Java, and Assembler**, and later programming across both mainstream and more niche languages — from **C#** to **Haskell** and **Erlang**.  
+
+He studied **Computer Science & Technology** and **Master's in Software Development** with a focus on **Programming Languages**, at **Chalmers University of Technology** (Gothenburg, Sweden).  
+
+Professionally, he has **decades of experience in software development and engineering**, particularly in **TypeScript, JavaScript, Python, PHP,** and **full-stack web development**, as well as **tooling and both user- and developer-focused systems**.
 
 ### 16.4. Spec Changes
 A running log of changes and updates **to this YINI specification**.
