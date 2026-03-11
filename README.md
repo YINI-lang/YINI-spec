@@ -431,5 +431,7 @@ YINI is licensed under the [Apache License 2.0](./LICENSE).
 
 **^YINI ≡**  
 > Designed to be simple, structured, and human-friendly.  
+> 
+> Readable like INI. Structured like JSON. No indentation surprises.  
 
 [yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=readme_footer) · [YINI on GitHub](https://github.com/YINI-lang)  
