@@ -4,8 +4,7 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 ### Feedback Acknowledgments
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
-## 2026 Jan (v1.0.0-rc.3 + UPDATES)
-v1.0.0 RC 3xx, 2026-xx-xx
+## 2026 Mar (v1.0.0-rc.4)
 - **Removed:** In the Spec, support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
 - **Clarified:** In the Spec, lists in YINI are defined only with `=` and square brackets `[ ... ]`.
 - **Rationale:** In the Spec, the colon-list syntax added convenience but did not add core expressive power, and - - **Changed:** In the Spec, removed support for the additional alternative section marker `€`, due to no clear practical benefit compared to the existing markers.
