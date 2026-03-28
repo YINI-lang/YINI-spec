@@ -1,6 +1,10 @@
 # Rationale
 
+**Applies to:** YINI Specification v1.0.0-RC.4
+
 This document outlines the **background**, **design motivations**, and **format comparisons** that led to the creation of YINI. It aims to explain **why YINI exists**, what problems it solves, and how its structure and features were shaped by practical needs, lessons from other formats, and from community feedback.
+
+This document may evolve alongside the YINI specification as design decisions are refined.
 
 ---
 
@@ -37,8 +41,9 @@ What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 
 &nbsp;&nbsp;&nbsp;&nbsp;D.1. Summary  
 &nbsp;&nbsp;&nbsp;&nbsp;D.2. Acknowledgments & Special Thanks  
-&nbsp;&nbsp;&nbsp;&nbsp;D.3. Rejected Ideas or Alternatives _(TODO)_  
-&nbsp;&nbsp;&nbsp;&nbsp;D.4. Future Considerations _(TODO)_  
+&nbsp;&nbsp;&nbsp;&nbsp;D.3. Rejected Ideas or Alternatives  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.3.1. Why colon-based lists were removed  
+&nbsp;&nbsp;&nbsp;&nbsp;D.4. Future Considerations  
 
 ---
 
@@ -107,17 +112,16 @@ This design choice was made because `\NNN` provides no clear indication of the n
 #### B.2.3. Summary of Marker Characters
   - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
   - `<` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
+  - `€` (Dropped after v1.0.0-rc.3, due to no clear practical benefit compared to the existing markers.)
   - `~` (discontinued, was visually ambiguous)
   - `>` (discontinued, was easy to confuse with reply)
   - Reserved: `§` (experimental, maybe in future, for enhanced readability)
-  - Reserved: `€` (experimental, maybe in future, for enhanced readability)
 
 | Marker Char. | Status         | Example        | Notes |
 |--------------|---------------|---------------|---------|
 | `^`          | Official/main | `^^ Section2` | Always supported  |
 | `<`          | Alternative   | `<< Section2` | Easy to count, replaced `~` |
 | `§`          | Experimental  | `§§ Section2` | For enhanced readability, may be promoted in the future |
-| `€`          | Experimental  | `€€ Section2` | For enhanced readability, may be promoted in the future  |
 | `~`          | Discontinued  | `~~ Section2` | Hard to count when repeated, phased out      |
 | `>`          | Discontinued  | `>> Section2` | Was easy to confuse with reply in forums, etc   |
 
@@ -198,6 +202,24 @@ Big thanks to readers and contributors on Reddit, Medium, and other platforms �
 * User _cat_in_the_wall_ (Reddit) — support and encouragement.
 * ...and anyone else I may have forgotten. **Your contributions are appreciated.**
 
+### D.3. Rejected Ideas or Alternatives
+#### D.3.1. Why colon-based lists were removed
+
+YINI is designed to be as simple and intuitive as possible. Its syntax aims to be minimal, expressive, and consistent, with clear conventions for defining sections, keys, values, and lists. A core principle of YINI is to **prioritize clarity over cleverness**.
+
+Earlier drafts of YINI experimented with an alternative colon-based syntax for lists. While this shorthand could be convenient in some cases, it did not add any expressive capability beyond the standard bracketed list syntax.
+
+In practice, supporting colon-based lists introduced additional grammar rules, more edge cases, and a second mental model for representing the same data. This worked against several of YINI’s central design goals: clarity, predictability, minimalism, and a smaller, more consistent syntax surface.
+
+By removing colon-based lists, YINI keeps a clearer and more uniform structure:
+- Values are assigned with `=`.
+- Lists are written with `[ ... ]`.
+- `:` remains reserved for object members only.
+
+This change was made because colon-based lists did not add enough practical value to justify their extra complexity. Although they offered a small syntax convenience, they also introduced more ambiguity, encouraged multiple ways of expressing the same structure, and increased the risk of unnecessary feature growth. Their removal gives YINI a clearer mental model, a more obvious way to write arrays, and a simpler specification and grammar.
+
+Overall, this makes both the language and its parser implementations easier to understand, easier to maintain, and more predictable to use.
+
 ### D.4. Future Considerations
 In future, MAYBE adding support for e.g.: `@yini strict`, `@yini version 1.0`, `@include somefile.yini`, and/or `@deprecated`, `@experimental`.
 
@@ -217,7 +239,7 @@ For example: `@deprecated`, `@experimental` on a key.
 
 ---
 
-**~ YINI ≡**  
-> Aims to be a Clean, Readable, and Human-friendly configuration format.  
+**^YINI ≡**  
+> A simple, structured, and human-friendly configuration format.  
 
-[github.com/YINI-lang](https://github.com/YINI-lang)
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer) · [YINI on GitHub](https://github.com/YINI-lang)  
