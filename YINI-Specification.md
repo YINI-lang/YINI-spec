@@ -2194,7 +2194,7 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.0 RC 3xx, 2026-xx-xx
+v1.0.0 RC 4, 2026-03-29
 - **Removed:** Support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
 - **Clarified:** Lists in YINI are defined only with `=` and square brackets `[ ... ]`.
 - **Rationale:** The colon-list syntax added convenience but did not add core expressive power, and its removal improves clarity, predictability, and grammar simplicity.
