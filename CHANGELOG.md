@@ -6,7 +6,9 @@ More details of feedback, see section D.2, _“Acknowledgments & Special Thanks�
 
 ## 2026 Jan (v1.0.0-rc.3 + UPDATES)
 v1.0.0 RC 3xx, 2026-xx-xx
-- **Changed:** In the Spec, removed support for the additional alternative section marker `€`, due to no clear practical benefit compared to the existing markers.
+- **Removed:** In the Spec, support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
+- **Clarified:** In the Spec, lists in YINI are defined only with `=` and square brackets `[ ... ]`.
+- **Rationale:** In the Spec, the colon-list syntax added convenience but did not add core expressive power, and - - **Changed:** In the Spec, removed support for the additional alternative section marker `€`, due to no clear practical benefit compared to the existing markers.
 - **Clarified:** In the Spec, the supported section markers are now explicitly `^` (primary), `<`, and `§`.
 - **Fixed:** In the Spec, corrected an error in Example 15.1.
 - **Updated:** In the Spec, added two large real-world configuration examples (A and B), featuring nested inline objects, lists, and complex structures.

@@ -37,8 +37,9 @@ What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 
 &nbsp;&nbsp;&nbsp;&nbsp;D.1. Summary  
 &nbsp;&nbsp;&nbsp;&nbsp;D.2. Acknowledgments & Special Thanks  
-&nbsp;&nbsp;&nbsp;&nbsp;D.3. Rejected Ideas or Alternatives _(TODO)_  
-&nbsp;&nbsp;&nbsp;&nbsp;D.4. Future Considerations _(TODO)_  
+&nbsp;&nbsp;&nbsp;&nbsp;D.3. Rejected Ideas or Alternatives  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.3.1. Why colon-based lists were removed  
+&nbsp;&nbsp;&nbsp;&nbsp;D.4. Future Considerations  
 
 ---
 
@@ -196,6 +197,24 @@ Big thanks to readers and contributors on Reddit, Medium, and other platforms �
 * User _tonyp7_ (Reddit) — support and encouragement.
 * User _cat_in_the_wall_ (Reddit) — support and encouragement.
 * ...and anyone else I may have forgotten. **Your contributions are appreciated.**
+
+### D.3. Rejected Ideas or Alternatives
+#### D.3.1. Why colon-based lists were removed
+
+YINI is designed to be as simple and intuitive as possible. Its syntax aims to be minimal, expressive, and consistent, with clear conventions for defining sections, keys, values, and lists. A core principle of YINI is to **prioritize clarity over cleverness**.
+
+Earlier drafts of YINI experimented with an alternative colon-based syntax for lists. While this shorthand could be convenient in some cases, it did not add any expressive capability beyond the standard bracketed list syntax.
+
+In practice, supporting colon-based lists introduced additional grammar rules, more edge cases, and a second mental model for representing the same data. This worked against several of YINI’s central design goals: clarity, predictability, minimalism, and a smaller, more consistent syntax surface.
+
+By removing colon-based lists, YINI keeps a clearer and more uniform structure:
+- Values are assigned with `=`.
+- Lists are written with `[ ... ]`.
+- `:` remains reserved for object members only.
+
+This change was made because colon-based lists did not add enough practical value to justify their extra complexity. Although they offered a small syntax convenience, they also introduced more ambiguity, encouraged multiple ways of expressing the same structure, and increased the risk of unnecessary feature growth. Their removal gives YINI a clearer mental model, a more obvious way to write arrays, and a simpler specification and grammar.
+
+Overall, this makes both the language and its parser implementations easier to understand, easier to maintain, and more predictable to use.
 
 ### D.4. Future Considerations
 In future, MAYBE adding support for e.g.: `@yini strict`, `@yini version 1.0`, `@include somefile.yini`, and/or `@deprecated`, `@experimental`.

@@ -61,7 +61,6 @@ stmt
   : eol				// BlankOrComment
   | SECTION_HEAD	// SectionHeader
   | assignment		// key = value
-  | colon_list_decl	// ListAfterColon
   | meta_stmt       // Note: The implementing parser is responsible for enforcing YINI marker constraints.
   | bad_member      // BadMember
   ;
@@ -123,20 +122,6 @@ member:
   KEY WS? EQ WS? value? // Empty value is treated as NULL.
   ;
 
-/**
- * Declaration of a colon list:
- *   KEY: [NL|EOL] elements   (colon-form lists)
- *
- * @note KEY and the colon (:) must appear on the same line. The list
- *       elements may optionally start on the following line.
- *
- * @note A colon list declaration cannot appear inline inside another
- *       value or literal, it is only valid as a member of a section.
- */
- colon_list_decl
-  : KEY WS? COLON (eol | WS+)* elements (eol | WS+)* eol
-  ;
-
 /* -------- Values -------- */
 value
   : null_literal
@@ -170,8 +155,8 @@ list_literal
   | EMPTY_LIST NL*
   ;
 
-/** Folded, comma-separated values, commas optional only between elements
- *  @note Any value in elements can not be a colon_list_decl!
+/** Folded, comma-separated values (list elements), for bracketed lists.
+ *  Elements are regular values only.
  */
 elements
   : value (NL* COMMA NL* value)* COMMA?

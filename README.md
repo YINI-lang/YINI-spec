@@ -17,6 +17,12 @@
 - [Latest updates/changes in this package](/CHANGELOG.md)  
 - [YINI Homepage](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=readme)  
 
+### Recent syntax changes
+- Colon-based list syntax has been removed.
+- Lists are defined only with `=` and square brackets `[ ... ]`.
+- The `€` character is no longer supported as a section marker.
+- Supported section markers are `^` (primary), `<`, and `§`.
+
 ---
 
 ## 🙋‍♀️ Why another Format?
@@ -34,11 +40,11 @@
 
 **YINI** is a minimal and human-readable configuration file format with a formally defined grammar and a specification. It was designed for straightforward configuration, with improvements over classic INI and a simpler structure than YAML, JSON, or TOML. YINI stands for *"Yet another INI"* — a nod to its inspiration from the familiar INI style.
 
-YINI aims to be clean, consistent, and structured — Intended for both manual and programmatic editing.
+YINI aims to be clean, consistent, and structured — suitable for both manual and programmatic editing.
 
 > YINI aims to hit a fine balance between human-friendly simplicity and reliable structure — without the noise of JSON or the quirks of YAML.
 
-Inspired by including INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
+Inspired by INI, JSON, Python, and Markdown. YINI keeps things minimal and consistent — with **structured sections**, **multiple comment styles**, and a **formal grammar**.
 
 ---
 
@@ -118,7 +124,7 @@ There are already many configuration formats — INI, JSON, YAML, TOML, XML — 
 
 YINI exists because:
 - JSON is structured and predictable, but can be verbose (with all keys required to be quoted), strict in structure, and lacks support for comments.
-- YAML is powerful but too permissive, error-prone, and has significant whitespace.
+- YAML is powerful but can be too permissive, error-prone, and sensitive to whitespace.
 - TOML is fine, but sometimes gets too verbose too quickly.
 - INI is simple and friendly, but too limited and lacks specification.
 
@@ -134,21 +140,22 @@ YINI was created out of practical necessity: during the development of another p
 YINI aims to prioritize **human readability, clarity, and clean syntax**.
 
 - ✔️ **Clean and minimalistic syntax** — avoids visual noise, easy to write and read.
-- ✔️ **Typing support** for: Strings, Numbers, Booleans, Lists (Arrays), and Nulls.
-- ✔️ **Easy section nesting** Markdown-style section levels: `^`, `^^`, `^^^` ...
+- ✔️ **Typing support** for: Strings, Numbers, Booleans, Lists (similar to arrays), and Nulls.
+- ✔️ **Easy section nesting** — section headers use `^` as the primary marker, with `<` and `§` supported as alternatives.
 - ✔️ **Indentation-independent structure** — no indentation pitfalls.
 - ✔️ **Flexible Commenting styles** — C-style commenting rules using `//` and `/* ... */`. Supports `#` and `;` commenting styles too. 
 - ✔️ **Flexible Literals:**
   * Including booleans: `true`, `false`, `on`, `off`, `yes`, `no` (all case-insensitive).
   * Numeric notations with base and exponent support.
 - ✔️ **Human readability first** — prioritizes clarity over cleverness — yet machine-friendly.
+- ✔️ **One clear list syntax** — lists are written using `=` and square brackets `[ ... ]`.
 
 ### Additional Features
 Definitions for rules in strict-mode (lenient is default).
 - Formal grammar for reliable parsing.
-- **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs. Read more in 11.3.1 in the specification, "Table: Lenient vs. Strict Mode".
+- **Strict and lenient parsing modes** — suitable for both tooling and hand-edited configs. Read more in 12.3.1 of the specification, "Table: Lenient vs. Strict Mode".
 - Explicit string quoting — no ambiguity over strings.
-- **Optional document terminator** `/END` for clear file boundaries and parser certainty in both **lenient-mode** and in **strict-mode**.
+- **Optional document terminator** `/END` for clear file boundaries and improved parser certainty, especially in strict mode.
 - **Enhanced robustness** in strict-mode — if you cut a YINI file into two halves, both halves will be rendered invalid by the rules.
 
 ---
@@ -254,6 +261,7 @@ server:
 > - All strings must be enclosed in quotes (`'` or `"`).
 > - Natural, readable keys and values separated by (`=`).
 > - Strong typing without heavy syntax.
+> - In YINI, `:` is not an assignment operator; use `=` for both single values and lists.
 
 ### With Alternative Indentation (YINI)
 ```yini
@@ -296,7 +304,7 @@ code = "dev"
 ```
 
 ### After (YINI)
-```js
+```yini
 ^ Service                   // Defines a section named Server.
 Enabled = true
 
@@ -313,7 +321,7 @@ code = "dev"
 ```
 
 💡 Notes:
-> - Using multiple `^` to indicate section nesting depth (Markdown-style section levels).
+> - Multiple `^` characters indicate section nesting depth (similar in principle to Markdown-style heading levels).
 > - **One** `^` = top-level section.
 > - **Two** `^^` = nested section under previous.
 > - **Three** `^^^` = sub-subsection.
@@ -327,9 +335,10 @@ Nesting sections can be done easily by adding one extra section marker (e.g. `^^
 
 ## Comments
 YINI supports **three types of comments**:
-- **Inline comments:** `//` (or commenting using `#`)
+- **Inline comments:** `//` or `#`
 - **Block comments:**  `/* multi-line */`
-- **Full-line comments:** Starting with `;`, `//` or `#`
+- **Full-line comments:** `;`  
+- A line may also contain only an inline comment.
 
 Note: `#` must be followed by a space or tab to be recognized as a comment (to avoid clashes with hex values like `#FF0033`).
 

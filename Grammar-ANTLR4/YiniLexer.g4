@@ -132,11 +132,15 @@ NUMBER:
 
 KEY: IDENT;
 
+// NOTE: Intentionally allowing `.` even though the spec says simple
+// identifiers must not contain periods. Validation of illegal `.` is
+// deferred to the parser so the error can be reported there with a
+// more user-friendly message.
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
 		| 'A' ..'Z'
 		| '0' ..'9'
-		| '_' | '.'
+		| '_' | '.' // NOTE: Allowing . on purpose!
 
 	)*
 	| IDENT_BACKTICKED

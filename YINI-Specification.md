@@ -5,7 +5,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 # Specification for the YINI Format
 **Version:** 1.0.0-RC.3xx
 
-> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 13.2, "Versioning Strategy").
+> **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 14.2, "Versioning Strategy").
 
 © 2025 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
 See the full license text at the end of this document.
@@ -114,7 +114,6 @@ Above all, YINI remains true to its founding goal: make configuration effortless
 
 **10. List Literals** ([Link ⇨](./YINI-Specification.md#10-list-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Bracketed Lists (using `=`)  
-&nbsp;&nbsp;&nbsp;&nbsp;10.2. Colon-Based List (using `:`)
 
 **11. Advanced Constructs** ([Link ⇨](./YINI-Specification.md#11-advanced-constructs))  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Future / Reserved Features _(For Future Use)_  
@@ -241,9 +240,9 @@ The following key terms are used consistently throughout this specification. Und
 | Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document (optional in both lenient/strict-mode). |
 | Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
-| Key                       | An identifier on the left side of an assignment (`=` (or the alternative `:` list notation)). Keys MUST be unique within their section (and depth/level). |
-| Lenient Mode         | This is the default parsing mode in YINI. |
-| List                      | Lists also known as Arrays. A compound value type consisting of zero or more comma-separated items, defined with either `=` and `[]` (or `:` and line-separated values). |
+| Key                       | An identifier on the left side of an assignment (`=`). Keys MUST be unique within their section (and depth/level). |
+| Lenient Mode              | This is the default parsing mode in YINI. |
+| List                      | Lists, also known as Arrays, are a compound value type consisting of zero or more comma-separated items enclosed in square brackets and assigned using `=`. |
 | Member                    | A key-value pair entry, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
 | Section                   | A logical grouping of members, introduced by a header using a section marker such as `^`, `<`, or `§`. |
@@ -514,8 +513,6 @@ A **key** is an identifier used to reference a specific value in a member (a `ke
 - Keys MUST be **unique** within the same section and nesting level. 
 - Keys are assigned values using `=` operator.
   
-  **Exception:** In the **alternative list syntax** (see Section 9.2), the colon (`:`) is used ** or object properties**. It is not a general-purpose assignment operator.
-
 **Examples:**
 ```yini
 username = "admin"
@@ -545,8 +542,7 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
 ### 4.3. Type Rules
 This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
 
-**Note:** In addition to standard `=` assignments, YINI supports a colon-based list syntax where **`:` is used exclusively for defining lists**.
-The colon (`:`) is not a general-purpose assignment operator and MUST not be used for single-value (of simple type) members.
+**Note:** In YINI, values are assigned using `=`. The colon (`:`) is not an assignment operator and MUST not be used to define members or lists.
 
 #### Strings
 If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`).
@@ -1096,14 +1092,10 @@ config = {
 ## 10. List Literals
 Lists in YINI correspond to what are called _Arrays_ in JSON and serve the same purpose as arrays in many programming languages (e.g., in JavaScript).
 
-YINI supports two ways to define lists:
-- **Bracketed List Notation** - A single-line style using `=` and square brackets `[ ]`, similar as in JSON.
-- **Colon-Based List Notation** - A more human-friendly, optionally multi-line style using `:` and no brackets.
-
-Note: Only lists can use the alternative notation using `:`.
+YINI defines lists using bracketed list notation with `=` and square brackets `[ ]`, similar to JSON.
 
 ### 10.1. Bracketed Lists (using `=`)
-A list can be assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
+A list is assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
 
@@ -1157,72 +1149,6 @@ linkItems = [
 ]
 ```
 
-### 10.2. Colon-Based List (using `:`)
-Exclusively for lists, YINI allows an alternative syntax using a colon (`:`) instead of `=`. This style omits square brackets and is intended to improve readability in configurations with list-like values.
-
-Note: Commas are mandatory after items (except after the last item), even in multi-line forms in this notation.
-
-```yini
-list1: "oranges", "bananas", "peaches"  // List with three items.
-
-list2:  // An empty list.
-```
-
-**Multi-line List Syntax:**
-Each item in the list may optionally appear on its own line for better readability.
-
-**Commas are required between values**, and a **trailing comma** on the last item is allowed.
-
-```yini
-list1:
-  "oranges",
-  "bananas",
-  "peaches"
-
-list2:
-  "oranges",
-  "bananas",
-  "peaches",  // Trailing comma is valid here, and is ignored. (Only in lenient-mode.)
-```
-**Note:** This colon-based list syntax is only valid for lists.
-It MUST not be used for single values or key-value assignments.
-The trailing comma is ignored in lists (and objects) ONLY in lenient-mode.
-
-⚠️ **Common Pitfall**
-```yini
-name: "John"  // ⚠️ Interpreted as a list with one string item!
-```
-This is **NOT equivalent** to:
-```yini
-name = "John"  // ✅ A single string value.
-```
-
-**Colon (`:`) is not a substitute for `=`** and MUST not be used for regular member (non list) assignments.
-
-**Trailing Comma Behavior**
-- In objects, a **trailing comma is ignored** (only in lenient-mode, parse error in strict-mode).
-- In colon-based lists, a **trailing comma is ignored** (only in lenient-mode, parse error in strict-mode).
-- In bracketed lists (`[ ... ]`), a **trailing comma is ignored** (only in lenient-mode, parse error in strict-mode).
-  
-
-**Termination Rule**
-
-A colon-based multi-line list ends when **one of the following** is encountered:
-- a new key assignment (`key = ...` or `key: ...`).
-- a new section header (simple or backticked).
-- a document terminator marker (`/END`).
-
-The document terminator is optional in both lenient/strict-mode.
-
-**Nested Lists with `:` Notation**
-
-Colon-based lists may contain bracketed sub-lists:
-```yini
-linkItems:
-	["stylesheet", "css/general.css"],
-	["stylesheet", "css/themes.css"]
-```
-
 ## 11. Advanced Constructs
 ### 11.1. Future / Reserved Features _(For Future Use)_
 The following features are reserved for potential support in future versions of the YINI specification. They are **not currently active** in this version, but their syntax and keywords **are reserved**.
@@ -1260,7 +1186,7 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 |-----------|---------------|-------------|
 | `=` | Assignment  | Assign to key at root/section level |
 | `^` | Section header | Used to denote section start |
-| `:` | (1) Alternative list notation <br/> (2) Define a property inside an object | (1) Alternative list notation <br/> (2) Define a value to a key inside an inline object |
+| `:` | Define a property inside an object | Defines a value for a key inside an inline object |
 | `,` | Item separator | Used in lists |
 | `<` | Section header (alternative) | Used to denote section start |
 | `§` | Section header (alternative) |   |
@@ -1377,9 +1303,6 @@ Example:
 ```yini
 ; Lenient mode examples:
 list_bracketed1 = [1, 2, ]   # ✅ → [1, 2]
-list_colon:
-  "one",
-  "two",                     # ✅ → ["one", "two"] (trailing comma dropped)
 
 object1 = { a: 1, b: 2, }    # ✅ → {a: 1, b: 2} (trailing comma dropped)
 
@@ -2271,6 +2194,9 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 v1.0.0 RC 3xx, 2026-xx-xx
+- **Removed:** Support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
+- **Clarified:** Lists in YINI are defined only with `=` and square brackets `[ ... ]`.
+- **Rationale:** The colon-list syntax added convenience but did not add core expressive power, and its removal improves clarity, predictability, and grammar simplicity.
 - **Changed:** Removed support for the additional alternative section marker `€`, due to no clear practical benefit compared to the existing markers.
 - **Clarified:** The supported section markers are now explicitly `^` (primary), `<`, and `§`.
 - **Fixed:** Corrected an error in Example 15.1.
@@ -2355,12 +2281,9 @@ Note: Trailing commas (after any value/member) inside list or objects, does neve
 ✅ YINI Syntax Cheatsheet – Common Confusions
 | **Element**       | **Correct Syntax**              | **Common Mistake**              | **Clarification** |
 |-------------------|----------------------------------|----------------------------------|--------------------|
-| Key–Value pair     | `name = "John"`                 | `name: "John"`                   | `:` creates a list — use `=` for single values. |
+| Key–Value pair / List | `name = "John"` / `items = ["a", "b", "c"]` | `name: "John"` / `items:` | `:` is not valid assignment syntax in YINI; use `=` for both single values and lists. |
 | Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | Line break after `=` causes the value of `items` to be parsed as null. |
-| Colon-Based List   | `items: "a", "b", "c"`          | `items: "a" "b" "c"`             | Items MUST be comma-separated — just like bracketed lists. |
-| Colon + Single Item| _Don't use_ `name: "John"`      | Same as left                    | Interpreted as a list with one string item — use `=` instead. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
-| Trailing comma (colon)  | `list:` <br> `"a", "b", "c",` | —                            | ✅ OK — trailing commas in colon-based lists, are ignored. |
 | Comments           | `# Comment` or `// Comment`     | `#Comment`                      | `#` MUST be followed by **space or tab** to be recognized as a comment. |
 | Hex values         | `color = #FF0033`               | Assumed to be a comment         | Without space after `#`, this is a valid hex value. |
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
