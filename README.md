@@ -397,7 +397,7 @@ YINI is a minimal, human-friendly **text-based configuration format** inspired b
 ---
 
 ## ⬇️ YINI Downloads
-- [⬇️ YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/YINI-Downloads)  
+- [⬇️ YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
   *This page lists available YINI parsers, tools, and related implementations across different languages and platforms.*
 
 ---
