@@ -3,14 +3,14 @@
  
   Apache License, Version 2.0, January 2004,
   http://www.apache.org/licenses/
-  Copyright 2024-2025 Gothenburg, Marko K. S. (Sweden via
+  Copyright 2024-2026 Gothenburg, Marko K. S. (Sweden via
   Finland).
 */
 
 /* 
   This LEXER grammar aims to follow, as closely as possible (*),
   the YINI format specification version:
-  1.1.0-rc.1 - 2025 Sep.
+  1.2.0-rc.1 - 2026 Mar.
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -50,9 +50,9 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 //SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
 SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
 
-// Section markers: '^', '<', '§', '€'.
+// Section markers: '^', '<', '§'.
 // – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
-// – For levels beyond 6, use the numeric shorthand form (e.g. ^7, <12, §100, €42).
+// – For levels beyond 6, use the numeric shorthand form (e.g. ^7, <12, §100).
 fragment SECTION_MARKER
     : SECTION_MARKER_BASIC_REPEAT // Classic/repeating marker section headers (e.g. ^^ SectionName).
     | SECTION_MARKER_SHORTHAND // Numeric shorthand section headers (e.g. ^7 SectionName.
@@ -66,17 +66,16 @@ fragment SECTION_MARKER_BASIC_REPEAT
     : CARET+   // Up to 6 carets (implemented parser must reject more than 6)
     | LT+      // Up to 6 LS characters
     | SS+      // Up to 6 '§' characters
-    | EUR+     // Up to 6 '€' characters
     ;
 
 // Shorthand: a single marker followed by a positive integer (1 or larger).
-// Examples: ^7, <12, §100, €42
+// Examples: ^7, <12, §100
 fragment SECTION_MARKER_SHORTHAND
-    : (CARET | LT | SS | EUR) [1-9] DIGIT*
+    : (CARET | LT | SS) [1-9] DIGIT*
     ;
 
 fragment SECTION_MARKER_INVALID
-    : (CARET | LT | SS | EUR)+ DIGIT+
+    : (CARET | LT | SS)+ DIGIT+
     ;
 
 TERMINAL_TOKEN options {
@@ -84,7 +83,6 @@ TERMINAL_TOKEN options {
 }: '/END';
 
 SS: '\u00A7'; // Section sign §.
-EUR: '\u20AC'; // Euro sign €.
 CARET: '^';
 GT: '>'; // Greater Than.
 LT: '<'; // Less Than.
@@ -134,11 +132,15 @@ NUMBER:
 
 KEY: IDENT;
 
+// NOTE: Intentionally allowing `.` even though the spec says simple
+// identifiers must not contain periods. Validation of illegal `.` is
+// deferred to the parser so the error can be reported there with a
+// more user-friendly message.
 IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
 		'a' ..'z'
 		| 'A' ..'Z'
 		| '0' ..'9'
-		| '_' | '.'
+		| '_' | '.' // NOTE: Allowing . on purpose!
 
 	)*
 	| IDENT_BACKTICKED
