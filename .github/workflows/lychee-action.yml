@@ -1,0 +1,23 @@
+name: Dead-link Checker
+
+on:
+    workflow_dispatch:
+    push:
+        branches: [main, develop]
+    pull_request:
+        branches: [main, develop]
+    schedule:
+        - cron: '0 4 * * 1' # run weekly on Mondays at 04:00 UTC
+
+jobs:
+    link-check:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Run lychee (check for dead links in README.md)
+              uses: lycheeverse/lychee-action@v1
+              with:
+                  args: --verbose --no-progress ./README.md
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
