@@ -1,6 +1,6 @@
 # About the YINI Format
 
-YINI is a configuration and settings file format (similar but not identical to INI-files) for computer software that consists of plain text with a very simple structure and notation, consisting of Key–Value pairs and Key-List pairs, grouped into sections.
+YINI is a human-readable configuration and settings file format (similar but not identical to INI files) for computer software that consists of plain text with a very simple structure and notation, consisting of Key–Value pairs, grouped into sections.
 
 `YINI` (also `yINI`, `Yini` or `yini`)
 ## So, what is special about YINI?
@@ -10,10 +10,9 @@ In YINI:
   ```yini
   description = """This is a multi-line
   string in YINI format."""
-- Key-**Value** pairs are separated by an equals sign `=`.
+  ```
+- **Key-Value** pairs are separated by an equals sign `=`.
   
---EXPAND--
-
 ## Links
 * **Specification:**
 The actual YINI Specification can be found here: **[YINI spec](<../YINI-Specification.md>)**.
