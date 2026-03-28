@@ -4,6 +4,9 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 ### Feedback Acknowledgments
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
+## XXXX Xxx (v1.0.0-rc.4 + UPDATES)
+- ..
+  
 ## 2026 Mar (v1.0.0-rc.4)
 - **Removed:** In the Spec, support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
 - **Clarified:** In the Spec, lists in YINI are defined only with `=` and square brackets `[ ... ]`.
