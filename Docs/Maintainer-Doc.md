@@ -16,7 +16,7 @@ Making a release into the branch `production`.
      - Check that CHANGELOG.md is up to date.
      - Do any commits directly on staging. 
    - **2.B. Then generate the new PDF:**  
-     - Open dir `Utils/Make-PDF-of-Spec/`
+     - In the terminal, go to the dir `Utils/Make-PDF-of-Spec/`
      - Then run: `npm i`
      - Then run: `npm start` to make the actual PDF
      - Then check the PDF is up-to-date with correct version string, etc
