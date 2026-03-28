@@ -1,6 +1,6 @@
 # About the YINI Format
 
-YINI is a configuration and settings file format (similar but not identical to INI-files) for computer software that consists of plain text with a very simple structure and notation, consisting of Key–Value pairs and Key-List pairs, grouped into sections.
+YINI is a human-readable configuration and settings file format (similar but not identical to INI files) for computer software that consists of plain text with a very simple structure and notation, consisting of Key–Value pairs, grouped into sections.
 
 `YINI` (also `yINI`, `Yini` or `yini`)
 ## So, what is special about YINI?
@@ -10,10 +10,9 @@ In YINI:
   ```yini
   description = """This is a multi-line
   string in YINI format."""
-- Key-**Value** pairs are separated by an equals sign `=`.
+  ```
+- **Key-Value** pairs are separated by an equals sign `=`.
   
---EXPAND--
-
 ## Links
 * **Specification:**
 The actual YINI Specification can be found here: **[YINI spec](<../YINI-Specification.md>)**.
@@ -29,7 +28,7 @@ Mr. Seppänen has been programming since the mid-80s, starting with languages li
 
 ## Trivia
 ### The Name
-In the beginning, `YINI` was known by its working name `MINI`, which later evolved into `MINI-CONFIG` / `miniCONFIG` standing for Minimalistic INI Configuration Object Notation File. Initially, the "M" in `MINI` represented Marko (after the author), but this was later changed to represent **Minimalistic**. As the specification matured beyond the draft stage, it was renamed to simply `YINI`, which stands for **Yet another INI**.
+In the beginning, `YINI` was known by its working name `MINI`, which later evolved into `MINI-CONFIG` / `miniCONFIG` standing for Minimalistic INI Configuration Object Notation File. Initially, the "M" in `MINI` represented Marko (after the author), but this was later changed to represent **Minimalistic**. As the specification matured beyond the draft stage, it was renamed to simply `YINI`, which come from **Yet another INI** (to keep it simple).
 
 ---
 
@@ -38,7 +37,7 @@ This project is licensed under the Apache-2.0 license.
 
 ---
 
-**~ YINI ≡**  
-> Aims to be a Clean, Readable, and Human-friendly configuration format.  
+**^YINI ≡**  
+> A simple, structured, and human-friendly configuration format.  
 
-[github.com/YINI-lang](https://github.com/YINI-lang)
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer) · [YINI on GitHub](https://github.com/YINI-lang)  

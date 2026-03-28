@@ -1,0 +1,116 @@
+{
+    "App": {
+        "name": "Acme Platform",
+        "description": "The word “Acme” has been used for over 100 years in technical and business examples.",
+        "meaning": "It comes from Greek akmḗ (ἀκμή), meaning “the highest point” or “best”.",
+        "version": "2.3.1",
+        "debug": false,
+        "environment": "production",
+        "maintainers": ["ops@acme.com", "dev@acme.com"],
+        "Features": {
+            "enableSearch": true,
+            "enablePayments": true,
+            "enableAnalytics": false,
+            "experimental": ["new-ui", "streaming-api"]
+        },
+        "Limits": {
+            "maxUsers": 50000,
+            "requestTimeoutMs": 3500,
+            "retryPolicy": { "maxRetries": 5, "backoff": "exponential" }
+        },
+        "Database": {
+            "engine": "postgres",
+            "host": "db.internal.acme.com",
+            "port": 5432,
+            "ssl": true,
+            "pool": { "min": 5, "max": 50 },
+            "Credentials": {
+                "username": "app_user",
+                "password": "****",
+                "rotateEveryDays": 90
+            }
+        },
+        "API": {
+            "baseUrl": "https://api.acme.com",
+            "publicEndpoints": ["/health", "/status"],
+            "internalEndpoints": ["/admin", "/metrics"],
+            "Auth": {
+                "provider": "oauth2",
+                "tokenTTLSeconds": 3600,
+                "scopes": ["read", "write", "admin"],
+                "Clients": {
+                    "web": {
+                        "clientId": "web-123",
+                        "redirectUri": "https://acme.com/callback"
+                    },
+                    "mobile": {
+                        "clientId": "mob-456",
+                        "redirectUri": "acme://auth"
+                    }
+                }
+            }
+        }
+    },
+    "Logging": {
+        "level": "info",
+        "format": "json",
+        "outputs": ["stdout", "file"],
+        "File": {
+            "path": "/var/log/acme/app.log",
+            "maxSizeMB": 100,
+            "rotate": true,
+            "keepFiles": 10
+        },
+        "Metrics": {
+            "enabled": true,
+            "endpoint": "/metrics",
+            "sampleRate": 0.25
+        }
+    },
+    "Services": {
+        "enabled": true,
+        "Email": {
+            "provider": "smtp",
+            "host": "smtp.acme.com",
+            "port": 587,
+            "secure": false,
+            "from": "no-reply@acme.com",
+            "Credentials": { "user": "mailer", "pass": "mailer-secret" }
+        },
+        "Cache": {
+            "type": "redis",
+            "host": "cache.internal.acme.com",
+            "port": 6379,
+            "ttlSeconds": 600,
+            "Cluster": {
+                "nodes": [
+                    { "host": "cache-1.internal", "port": 6379 },
+                    { "host": "cache-2.internal", "port": 6379 },
+                    { "host": "cache-3.internal", "port": 6379 }
+                ]
+            }
+        }
+    },
+    "Observability": {
+        "tracing": true,
+        "tracingProvider": "opentelemetry",
+        "traceSampleRate": 0.1,
+        "Exporters": {
+            "jaeger": {
+                "enabled": true,
+                "endpoint": "http://jaeger:14268/api/traces"
+            },
+            "prometheus": { "enabled": true, "endpoint": "http://prom:9090" }
+        }
+    },
+    "Security": {
+        "allowedIPs": ["10.0.0.0/8", "192.168.0.0/16"],
+        "blockedCountries": ["KP", "SD"],
+        "Policies": {
+            "passwordMinLength": 14,
+            "require2FA": true,
+            "sessionTTLMinutes": 120,
+            "Lockout": { "maxAttempts": 5, "lockoutMinutes": 30 }
+        }
+    }
+}
