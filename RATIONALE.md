@@ -107,17 +107,16 @@ This design choice was made because `\NNN` provides no clear indication of the n
 #### B.2.3. Summary of Marker Characters
   - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
   - `<` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
+  - `€` (Dropped after v1.0.0-rc.3, due to no clear practical benefit compared to the existing markers.)
   - `~` (discontinued, was visually ambiguous)
   - `>` (discontinued, was easy to confuse with reply)
   - Reserved: `§` (experimental, maybe in future, for enhanced readability)
-  - Reserved: `€` (experimental, maybe in future, for enhanced readability)
 
 | Marker Char. | Status         | Example        | Notes |
 |--------------|---------------|---------------|---------|
 | `^`          | Official/main | `^^ Section2` | Always supported  |
 | `<`          | Alternative   | `<< Section2` | Easy to count, replaced `~` |
 | `§`          | Experimental  | `§§ Section2` | For enhanced readability, may be promoted in the future |
-| `€`          | Experimental  | `€€ Section2` | For enhanced readability, may be promoted in the future  |
 | `~`          | Discontinued  | `~~ Section2` | Hard to count when repeated, phased out      |
 | `>`          | Discontinued  | `>> Section2` | Was easy to confuse with reply in forums, etc   |
 

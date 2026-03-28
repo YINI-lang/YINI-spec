@@ -6,15 +6,17 @@ More details of feedback, see section D.2, _“Acknowledgments & Special Thanks�
 
 ## 2026 Jan (v1.0.0-rc.3 + UPDATES)
 v1.0.0 RC 3xx, 2026-xx-xx
-- Corrected an error in Example 15.1.
-- Added two large real-world configuration examples (A and B), featuring nested inline objects, lists, and complex structures.
+- **Changed:** In the Spec, removed support for the additional alternative section marker `€`, due to no clear practical benefit compared to the existing markers.
+- **Clarified:** In the Spec, the supported section markers are now explicitly `^` (primary), `<`, and `§`.
+- **Fixed:** In the Spec, corrected an error in Example 15.1.
+- **Updated:** In the Spec, added two large real-world configuration examples (A and B), featuring nested inline objects, lists, and complex structures.
   - See Sections **15.5** and **15.6**.
   - The full YINI and JSON versions of these examples are also included under  
     [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
-- Updated the footer snippet on most of the Markdown files.
-- Updated the explanation of YINI's name origin, moved it from the introduction to the preface, and removed the old slogan.
-- Added clarifying bullets to Sections 1.2 and 1.4.
-- Fixed a few typos and made various wording and consistency improvements.
+- **Updated:** Updated the footer snippet on most of the Markdown files.
+- **Updated:** Updated the explanation of YINI's name origin, moved it from the introduction to the preface, and removed the old slogan.
+- **Clarified:** In the Spec, added clarifying bullets to Sections 1.2 and 1.4.
+- **Fixed:** In the Spec, fixed a few typos and made various minor wording and consistency improvements.
 
 ## 2025 Sep (v1.0.0-rc.3)
 - Spec update: The `/END` document terminator is now optional everywhere, it's no longer required in strict mode.
