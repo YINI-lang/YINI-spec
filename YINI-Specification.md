@@ -16,7 +16,7 @@ See the full license text at the end of this document.
 [⇨ Table of Contents](./YINI-Specification.md#table-of-contents)
 
 ## Preface
-**YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.  
+**YINI (by the YINI-lang project) was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.  
 It aims to remain minimal while still being expressive enough to support a wide range of configuration needs.  
 The name *YINI* originates from "Yet another INI", reflecting its inspiration from the traditional INI format.  
 
