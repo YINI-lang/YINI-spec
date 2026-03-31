@@ -10,7 +10,7 @@
 /* 
   This LEXER grammar aims to follow, as closely as possible (*),
   the YINI format specification version:
-  1.2.0-rc.1 - 2026 Mar.
+  1.2.0-rc.1x - 2026 Mar.
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -47,7 +47,8 @@ DEPRECATED_TOKEN options {
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
-//SECTION_HEAD: [ \t]* SECTION_MARKER [ \t]* WS* IDENT NL+;
+BAD_SECTION_HEAD_W_DOT_NAME: SECTION_MARKER [ \t]* WS* DOTTED_COMPOUND_NAME NL+;
+
 SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
 
 // Section markers: '^', '<', '§'.
@@ -132,21 +133,27 @@ NUMBER:
 
 KEY: IDENT;
 
-// NOTE: Intentionally allowing `.` even though the spec says simple
-// identifiers must not contain periods. Validation of illegal `.` is
-// deferred to the parser so the error can be reported there with a
-// more user-friendly message.
-IDENT: ('a' ..'z' | 'A' ..'Z' | '_') (
-		'a' ..'z'
-		| 'A' ..'Z'
-		| '0' ..'9'
-		| '_' | '.' // NOTE: Allowing . on purpose!
-
-	)*
+fragment IDENT
+  : IDENT_SIMPLE
 	| IDENT_BACKTICKED
 	| IDENT_INVALID;
 
-IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
+// NOTE: This rule is to indentify the use of DOTTED_COMPOUND_NAME, that is invalid in YINI spec.
+// Example:
+//     key.two
+//     main.`illegal key`
+//     another.key.2
+//     `yet another`.illegal.key
+fragment DOTTED_COMPOUND_NAME
+  : (IDENT_SIMPLE | IDENT_BACKTICKED) ('.' (IDENT_SIMPLE | IDENT_BACKTICKED))+
+  ;
+
+fragment IDENT_SIMPLE_START : [a-zA-Z_];
+fragment IDENT_SIMPLE_CHAR  : [a-zA-Z0-9_];
+fragment IDENT_SIMPLE       : IDENT_SIMPLE_START IDENT_SIMPLE_CHAR*;
+
+// IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
+fragment IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
 
 // Illegal prefix characters and characters inside strings are deferred to the
 // parser, which gives more control and enables better user feedback (e.g.,
