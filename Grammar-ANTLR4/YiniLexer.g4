@@ -47,9 +47,17 @@ DEPRECATED_TOKEN options {
 
 fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
-BAD_SECTION_HEAD_W_DOT_NAME: SECTION_MARKER [ \t]* WS* DOTTED_COMPOUND_NAME NL+;
+fragment HSPACE : [ \t];
 
-SECTION_HEAD: SECTION_MARKER [ \t]* WS* IDENT NL+;
+// BAD_SECTION_HEAD_W_DOT_NAME: SECTION_MARKER HSPACE* WS* DOTTED_COMPOUND_NAME NL+;
+BAD_SECTION_HEAD_W_DOT_NAME
+  : SECTION_MARKER HSPACE* DOTTED_COMPOUND_NAME NL+
+  ;
+
+// SECTION_HEAD: SECTION_MARKER HSPACE* WS* IDENT NL+;
+SECTION_HEAD
+  : SECTION_MARKER HSPACE* SECTION_NAME_PART NL+
+  ;
 
 // Section markers: '^', '<', '§'.
 // – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
@@ -131,12 +139,20 @@ NUMBER:
 		| HEX_INTEGER
 	);
 
-KEY: IDENT;
+// KEY: IDENT;
+KEY
+  : SECTION_NAME_PART
+  | IDENT_INVALID
+  ;
 
-fragment IDENT
+// fragment IDENT
+//   : IDENT_SIMPLE
+// 	| IDENT_BACKTICKED
+// 	| IDENT_INVALID;
+fragment SECTION_NAME_PART
   : IDENT_SIMPLE
-	| IDENT_BACKTICKED
-	| IDENT_INVALID;
+  | IDENT_BACKTICKED
+  ;
 
 // NOTE: This rule is to indentify the use of DOTTED_COMPOUND_NAME, that is invalid in YINI spec.
 // Example:
@@ -144,8 +160,11 @@ fragment IDENT
 //     main.`illegal key`
 //     another.key.2
 //     `yet another`.illegal.key
+// fragment DOTTED_COMPOUND_NAME
+//   : (IDENT_SIMPLE | IDENT_BACKTICKED) ('.' (IDENT_SIMPLE | IDENT_BACKTICKED))+
+//   ;
 fragment DOTTED_COMPOUND_NAME
-  : (IDENT_SIMPLE | IDENT_BACKTICKED) ('.' (IDENT_SIMPLE | IDENT_BACKTICKED))+
+  : SECTION_NAME_PART ('.' SECTION_NAME_PART)+
   ;
 
 fragment IDENT_SIMPLE_START : [a-zA-Z_];
@@ -234,7 +253,7 @@ fragment SIGN: ('+' | '-');
 NL: ( WS* COMMENT* SINGLE_NL COMMENT*);
 SINGLE_NL: ('\r' '\n'? | '\n');
 
-WS: [ \t]+ -> skip;
+WS: HSPACE+ -> skip;
 
 /*
  BLOCK_COMMENT:
@@ -256,14 +275,14 @@ fragment DISABLE_LINE_MARKER: '--';
  */
 //LINE_COMMENT: ((DISABLE_LINE|';') ~[\r\n]*) -> skip;
 LINE_COMMENT
-  : {this.atLineStart()}? [ \t]* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
+  : {this.atLineStart()}? HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
   ;
 
 /*
  INLINE_COMMENT: 
  Remains in input, but hidden (doesn't interfere with parsing).
  */
-INLINE_COMMENT: ('//' | '#' [ \t]+) ~[\r\n]* -> skip;
+INLINE_COMMENT: ('//' | '#' HSPACE+) ~[\r\n]* -> skip;
 
 IDENT_INVALID
     : [0-9][a-zA-Z0-9_]*
