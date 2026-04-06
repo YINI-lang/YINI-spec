@@ -4,7 +4,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 
 # Specification for the YINI Format
 **Version:** 1.0.0-RC.4 + UPDATES
-**Date:** 2026-03
+**Date:** 2026-04
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 14.2, "Versioning Strategy").
 
@@ -319,11 +319,11 @@ The syntax of YINI is designed to be minimalistic and human-readable while offer
 ### 3.1. General Syntax Rules
 YINI files consist of a series of **sections, members** (key-value pairs), and optional **comments**. The following rules define the basic structure of a valid YINI file:
 
-**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure, except in section headers, where spacing (tabs or spaces) is required between the section marker and the section name. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
+**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure. In section headers, whitespace between the marker and the section name is optional in repeated/basic form, but required in numeric shorthand form (to make it clear where the marker ends and where the name starts). Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
 
 Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
 
-**Sections:** YINI files support sections, which groups related members. A section begins with a section header, marked by one of the allowed characters (commonly `^`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
+**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed section markers (commonly `^`) or by a numeric shorthand form. In the repeated/basic form, whitespace between the marker and the section name is optional. In the numeric shorthand form, at least one space or tab is required after the number.
 
 **Example of a section:**
 ```yini
@@ -355,8 +355,9 @@ key3 = "Peach"  // This is also an inline comment.
 ```
 
 ### 3.2. Whitespace and Indentation
-While YINI is not indentation-sensitive, the following whitespace `<WS>` behaviors are defined:
+While YINI is not indentation-sensitive, at least one space or tab is required between a numeric shorthand section marker (such as `^7`) and the section name, so it becomes e.g. `^7 Section`.
 
+The following whitespace `<WS>` behaviors are defined:
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
 - Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are ignored outside of strings and section headers.
 - Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
@@ -592,26 +593,26 @@ mixed = ["Arial", 12, true]    // List (mixed types)
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
 
 ### 5.1. Syntax
-A _**section header**_ starts a new logical grouping of members. Section headers MUST ALWAYS appear on their own line.
+A section header is a line that:
+
+- Starts with one or more section marker characters (`^`, `<`, or `§`), or with a numeric shorthand such as `^7`.
+- Is followed by a section name, which may be either a simple identifier or a backticked identifier.
+- Ends at the newline.
+
+**Spacing rules:**
+- In the repeated/basic form, no space is required between the marker and the section name.
+- In the numeric shorthand form, at least one horizontal space is required after the number before the section name.
+
+**Examples:**
 ```yini
-// A section header with a simple identifier.
+^SectionName
 ^ SectionName
+^^Database
+^^ Database
 
-// A section header with a backticked identifier.
-^ `Section name`
-
-// Backticked identifiers can include other special symbols too.
-^ `Section-name`
-```
-
-- A section header begins with a **section marker**, it is recommended (but not required) that it is followed by **one or more whitespace (space or tab) characters**, then the section name.
-- The section name MUST be a **valid identifier**, either a **simple identifier** or a **backticked identifier** (enclosed in backticks).
-- **Backticks (backticked identifier) are only required** when the identifier contains spaces, punctuation, or other special characters. 
-- The section header ends at the newline. There may follow a comment on the same line, but this will get ignored by the parser.
-```yini
-^ UserSettings
-username = "alice"
-theme = "dark"
+^7 DeepSection
+<12 Title
+§100 `Very Deep Section`
 ```
 
 ### 5.2. Section Markers (`^`, `<`, `§`)
@@ -689,9 +690,9 @@ Optionally, indentation may be omitted:
 Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `<`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers are RECOMMENDED but not required).
 
 For example:
-- To go from depth 6 to depth 7: write `^7`.  
-- To go from depth 7 to depth 8: write `^8`.  
-- To go from depth 8 to depth 9: write `^9`.  
+- To go from depth 6 to depth 7: write `^7 SectionName`.  
+- To go from depth 7 to depth 8: write `^8 SectionName`.  
+- To go from depth 8 to depth 9: write `^9 SectionName`.  
 - And so on...
 
 This prevents arbitrarily long runs of the same marker. When ascending (moving to a shallower level), you may skip multiple levels at once (e.g., from `^9` back to `^^`).  
@@ -705,6 +706,7 @@ This prevents arbitrarily long runs of the same marker. When ascending (moving t
 ^^^^^  Level5      # Five carets  → depth 5
 ^^^^^^ Level6      # Six carets   → depth 6
 ^7     Level7      # Shorthand    → depth 7
+^7Level7           # ❌ Invalid: shorthand requires at least one space or tab after the number
 ^8     Level8      # Shorthand    → depth 8
 ^9     Level9      # Shorthand    → depth 9
 ^10    Level10     # Shorthand    → depth 10
@@ -1217,7 +1219,8 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 - A file may consist of zero or more **sections**.
 - A file may consist of zero or more valid key-value pairs (members).
 - Section headers MUST begin with a valid marker (`^`, `<`).
-- At least one space or tab is required between a section marker and the section name.
+- In repeated/basic section headers, whitespace between the marker and the section name is optional.
+- In numeric shorthand section headers, at least one space or tab is required after the number before the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
@@ -1397,25 +1400,15 @@ object = { a: 1, , b: 2 }
 is error in strict-mode or at least a warning (in lenient-mode).
 
 ### 13.6. Lists
-* Two syntaxes are valid for lists:
-  - **(a) Bracketed form (preferred):**
-    ```yini
-    items = ["a", "b", "c"]
-    ```
-      * A bracketed list line MUST not begin with a comma.
-      * A trailing comma in `[ ]` is ignored.
-  - **(b) Unbracketed multiline:**
-    ```yini
-    items1: "a", "b", "c"
+The syntax for list:
+  **(a) Bracketed form (preferred):**
+  ```yini
+  items = ["a", "b", "c"]
+  ```
+  * A bracketed list line MUST not begin with a comma.
+  * A trailing comma in `[ ]` is ignored.
 
-    items2:
-    "a",
-    "b",
-    "c"
-    ```
-    * Trailing commas are allowed in unbracketed lists (form b).
-
-**Bracketed lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the value is interpreted as `null`, not a list):
+**Lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the value is interpreted as `null`, not a list):
   ```yini
   invalidList = // NULL!
   [1, 2, 3]     // Not parsed as a list!
@@ -2194,6 +2187,9 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
+v1.0.0 RC 4 + UPDATES, 2026-03-29 + xxx
+- **Clarified:** Repeated/basic section headers do not require a space before the section name, but numeric shorthand headers (such as `^7`) do.
+
 v1.0.0 RC 4, 2026-03-29
 - **Removed:** Support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
 - **Clarified:** Lists in YINI are defined only with `=` and square brackets `[ ... ]`.
@@ -2326,5 +2322,5 @@ Below is a categorized list of Unicode whitespace characters recognized as withi
 **^ YINI Specification ≡**  
 > A simple, structured, and human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang/?utm_content=spec_footer)  
+[yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang/?utm_content=spec_footer)  
 
