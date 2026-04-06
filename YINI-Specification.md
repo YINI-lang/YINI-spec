@@ -249,7 +249,7 @@ The following key terms are used consistently throughout this specification. Und
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
 | Section                   | A logical grouping of members, introduced by a header using a section marker such as `^`, `<`, or `§`. |
 | Section Marker            | A special character used to denote a new section header. Supported section markers are `^`, `<`, and `§`; `^` is the primary and recommended marker. |
-| Strict Mode               | An optional parsing mode where all structural and validation rules (incl. the document terminator) are strictly enforced. Not the default. |
+| Strict Mode               | An optional parsing mode that enforces stricter structural validation, including exactly one explicit top-level section and prohibition of top-level orphan members. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
@@ -1216,10 +1216,12 @@ Use of these keywords outside their defined roles may result in a parse error.
 ### 12.2. Well-Formedness Requirements
 A YINI file is considered **well-formed** if it adheres to the core syntactic and structural rules defined in this specification.
 
-#### 11.2.1. Structural Requirements
+#### 12.2.1. Structural Requirements
+Note: In lenient mode, top-level members outside any section may be accepted. In strict mode, the document structure is further restricted; see Section 12.3 and Section 13.1.
+
 - A file may consist of zero or more **sections**.
 - A file may consist of zero or more valid key-value pairs (members).
-- Section headers MUST begin with a valid marker (`^`, `<`).
+- Section headers MUST begin with a valid marker (`^`, `<`, or `§`).
 - In repeated/basic section headers, whitespace between the marker and the section name is optional.
 - In numeric shorthand section headers, at least one space or tab is required after the number before the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
@@ -1227,19 +1229,19 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
 - The document terminator (`/END`) is **optional in both lenient/strict-mode**.
 
-#### 11.2.2. Character Encoding
+#### 12.2.2. Character Encoding
 Files **MUST** be encoded as **UTF-8 without BOM**.
 
-#### 11.2.3. Line Endings
+#### 12.2.3. Line Endings
 - Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>` line endings.
 - Mixed line endings are discouraged but tolerated in lenient mode.
   
-#### 11.2.4. Valid Value Types
+#### 12.2.4. Valid Value Types
 - Values MUST be one of the supported data types: **String**, **Number**, **Boolean**, **Null**, **List**, or **Object**.
 - Boolean values are **case-insensitive**: `True`, `On`, `Yes`, etc.
 - Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
 
-#### 11.2.5. Document Terminator
+#### 12.2.5. Document Terminator
 - The terminator is optional in both lenient/strict-mode.
 - See Section 3.5, "Document Terminator" for terminator syntax.
 - A valid YINI file, MAY end with the terminator marker (`/END`).
@@ -1257,11 +1259,11 @@ Files **MUST** be encoded as **UTF-8 without BOM**.
 
 (*) In systems that value deterministic parsing, MAY favor explicit termination.
 
-#### 11.2.6. Escaping and String Literals
+#### 12.2.6. Escaping and String Literals
 - Escape sequences are **ONLY allowed** in in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-quoted strings MUST use `"""` for both opening and closing (`'''` is not supported).
 
-#### 11.2.7. Shortest Valid YINI Documents in Strict Mode
+#### 12.2.7. Shortest Valid YINI Documents in Strict Mode
 - **Valid short documents in strict mode:**
   - ✅ In strict mode, the following is the shortest valid YINI document **with a member**:
     ```yini
@@ -1292,7 +1294,7 @@ Some YINI parsers may support multiple **validation modes**:
   - Enforces full well-formedness.
   - No empty values are allowed, MUST always be explicitly with `Null`. 
   - No (stray) trailing commas (after last value/member) inside lists and object permitted.
-  - Strict mode requires a **title section header** (a level 1 header).
+  - Strict mode requires exactly one explicit top-level section. Any additional sections MUST appear only as subsections nested within that section. Top-level orphan members are not allowed in strict mode. Otherwise, an error MUST be reported.  
     
     If also using the OPTIONAL document terminator `/END` then these
     constraints will provide increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
@@ -1325,7 +1327,8 @@ object3 = { a: 1, b: 2 }     # ✅ OK
 | Explicit string quoting               | ✅ | ✅ | All strings MUST be enclosed with `"` or `'` — no ambiguity over strings.|
 | Empty sections allowed                | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
 | Duplicate keys or sections   | ❌ (may warn) | ❌ | And never overwrite existing keys/sections.  |
-| Required one single level-1 section header            | ❌ | ✅ | AKA _Title Section_.  |
+| Exactly one explicit top-level section required            | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
+| Top-level orphan members allowed | ✅ | ❌ | In lenient mode they may be mounted at root or under implicit base. |
 | `/END` is optional                       | ✅ | ✅ |   |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient-mode the comma is ignored, error in strict-mode  |
 | Missing (empty) value (only in section-top-level)| ✅ | ❌ | Will result in a `Null` value in lenient-mode  |
@@ -1353,12 +1356,30 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 
 ### 13.1. Top-Level Sections and Implicit Root
 
-* If a document contains **multiple top-level sections** (i.e., multiple level-1 sections), they SHOULD be considered **children of an implicit root**.
-* The implicit root section:
-  - **Has no name**, or may be labeled "`base`", "`root`" or similar (implementation-defined).
-* Section hierarchy MUST be respected:
-  - A level-3 section **MUST follow** a level-2 section.
-  - Skipping levels (e.g., directly from level-1 to level-3) is invalid.
+A YINI document may contain both explicit top-level sections and, in lenient mode only, top-level members that are not placed inside any explicit section. Such members are referred to here as **orphan members**.
+
+#### 13.1.1. Lenient Mode: Orphan Members
+In lenient mode, orphan members MAY be accepted.  
+NOTE: In strict mode orphan members are forbidden.
+
+In lenient mode only, an implementation MUST expose accepted orphan members in a well-defined way. The preferred behavior is to mount orphan members directly onto the parsed result, alongside explicitly defined top-level sections. If the underlying platform, host language, or target representation does not allow this cleanly, orphan members MUST instead be placed under an implicit section named base. Any collision between an orphan member name and an explicitly defined top-level section name MUST result in an error.
+
+- The name `base` is reserved for that purpose in this context.
+- The implementation SHOULD document this behavior clearly.
+
+#### 13.1.2. Top-Level Section Mounting
+Explicitly defined top-level sections are mounted directly onto the parsed result. Their hierarchy MUST still be respected: descending into deeper nesting may not skip intermediate levels.
+
+Their hierarchy MUST still be respected:
+- A level-3 section MUST follow a level-2 section.
+- Skipping levels when descending (for example, level 1 directly to level 3) is invalid.
+
+#### 13.1.3. Strict Mode
+In strict mode, there MUST be exactly one explicit top-level section.
+
+Any additional sections MUST appear only as subsections nested within that section.
+Top-level orphan members are not allowed in strict mode.
+Otherwise, an error MUST be reported.
 
 ### 13.2. Line Handling and Whitespace
 
@@ -2460,6 +2481,7 @@ Notes:
 
 v1.0.0 RC 4 + UPDATES, 2026-03-29 + xxx
 - **Clarified:** Repeated/basic section headers do not require a space before the section name, but numeric shorthand headers (such as `^7`) do.
+- **Clarified:** Defined top-level structure rules for lenient and strict mode. In lenient mode, orphan members may be exposed at the root or under an implicit base section; in strict mode, exactly one explicit top-level section is allowed, all additional sections MUST be nested beneath it, and top-level orphan members are forbidden.
 - **Updated:** Added a third large real-world configuration example (C) for parsing in strict mode.
   - See Section **15.7**.
   - The full YINI and JSON versions of these examples are also included under  

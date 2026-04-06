@@ -6,6 +6,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 
 ## 2026 Mar + xxx (v1.0.0-rc.4 + UPDATES)
 - **Clarified:** In the Spec, repeated/basic section headers do not require a space before the section name, but numeric shorthand headers (such as `^7`) do.
+- **Clarified:** In the Spec, clarified top-level section rules in lenient and strict mode. Lenient mode allows orphan members at the root (or under implicit `base`), while strict mode requires exactly one top-level section.
 - **Updated:** In the Spec, added a third large real-world configuration example (C) for parsing in strict mode.
   - See Section **15.7**.
   - The full YINI and JSON versions of these examples are also included under  
