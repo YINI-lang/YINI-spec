@@ -10,7 +10,7 @@
 /* 
   This PARSER grammar aims to follow, as closely as possible (*),
   the YINI format specification version:
-  1.2.0-rc.1x - 2026 Mar.
+  1.2.0-rc.1x - 2026 Apr.
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -59,7 +59,6 @@ terminal_stmt
 
 stmt
   : eol				// BlankOrComment
-  | BAD_SECTION_HEAD_W_DOT_NAME	// If detected, should show error.
   | SECTION_HEAD	// SectionHeader
   | assignment		// key = value
   | meta_stmt       // Note: The implementing parser is responsible for enforcing YINI marker constraints.

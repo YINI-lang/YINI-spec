@@ -10,7 +10,7 @@
 /* 
   This LEXER grammar aims to follow, as closely as possible (*),
   the YINI format specification version:
-  1.2.0-rc.1x - 2026 Mar.
+  1.2.0-rc.1x - 2026 Apr.
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -49,14 +49,10 @@ fragment EBD: ('0' | '1') ('0' | '1') ('0' | '1');
 
 fragment HSPACE : [ \t];
 
-// BAD_SECTION_HEAD_W_DOT_NAME: SECTION_MARKER HSPACE* WS* DOTTED_COMPOUND_NAME NL+;
-BAD_SECTION_HEAD_W_DOT_NAME
-  : SECTION_MARKER HSPACE+ DOTTED_COMPOUND_NAME NL+
-  ;
-
 // SECTION_HEAD: SECTION_MARKER HSPACE* WS* IDENT NL+;
 SECTION_HEAD
-  : SECTION_MARKER HSPACE+ SECTION_NAME_PART NL+
+  // : SECTION_MARKER HSPACE+ SECTION_NAME_PART NL+ // Requires hor-WS between marker and name.
+  : SECTION_MARKER HSPACE* SECTION_NAME_PART NL+   // Does NOT require hor-WS between marker and name.
   ;
 
 // Section markers: '^', '<', '§'.
@@ -80,7 +76,7 @@ fragment SECTION_MARKER_BASIC_REPEAT
 // Shorthand: a single marker followed by a positive integer (1 or larger).
 // Examples: ^7, <12, §100
 fragment SECTION_MARKER_SHORTHAND
-    : (CARET | LT | SS) [1-9] DIGIT*
+    : (CARET | LT | SS) [1-9] DIGIT* HSPACE
     ;
 
 fragment SECTION_MARKER_INVALID
@@ -150,26 +146,33 @@ KEY
 // 	| IDENT_BACKTICKED
 // 	| IDENT_INVALID;
 fragment SECTION_NAME_PART
-  : IDENT_SIMPLE
+  : IDENT_SIMPLE_LX
   | IDENT_BACKTICKED
   ;
 
-// NOTE: This rule is to indentify the use of DOTTED_COMPOUND_NAME, that is invalid in YINI spec.
-// Example:
+// fragment DOTTED_COMPOUND_NAME
+//   : (IDENT_SIMPLE | IDENT_BACKTICKED) ('.' (IDENT_SIMPLE | IDENT_BACKTICKED))+
+//   ;
+
+fragment IDENT_SIMPLE_START : [a-zA-Z_];
+fragment IDENT_SIMPLE_CHAR  : [a-zA-Z0-9_];
+
+// fragment IDENT_SIMPLE       : IDENT_SIMPLE_START IDENT_SIMPLE_CHAR*;
+
+// NOTE: This lexer rule is intentionally relaxed to allow `.` as well.
+// This makes it possible for the parser (or later validation step) to detect
+// dotted compound names and report a more user-friendly error message, even
+// though such names are invalid in the YINI specification.
+//
+// IMPORTANT: The parser/validator must still check identifiers for illegal
+// characters and reject invalid dotted names accordingly.
+//
+// Examples of invalid dotted compound names:
 //     key.two
 //     main.`illegal key`
 //     another.key.2
 //     `yet another`.illegal.key
-// fragment DOTTED_COMPOUND_NAME
-//   : (IDENT_SIMPLE | IDENT_BACKTICKED) ('.' (IDENT_SIMPLE | IDENT_BACKTICKED))+
-//   ;
-fragment DOTTED_COMPOUND_NAME
-  : SECTION_NAME_PART ('.' SECTION_NAME_PART)+
-  ;
-
-fragment IDENT_SIMPLE_START : [a-zA-Z_];
-fragment IDENT_SIMPLE_CHAR  : [a-zA-Z0-9_];
-fragment IDENT_SIMPLE       : IDENT_SIMPLE_START IDENT_SIMPLE_CHAR*;
+fragment IDENT_SIMPLE_LX       : IDENT_SIMPLE_START (IDENT_SIMPLE_CHAR | '.')*;
 
 // IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
 fragment IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
