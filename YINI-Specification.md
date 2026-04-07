@@ -8,7 +8,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 14.2, "Versioning Strategy").
 
-© 2026 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
+© 2024-2026 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
 See the full license text at the end of this document.
 
 ---
@@ -606,10 +606,10 @@ A section header is a line that:
 
 **Examples:**
 ```yini
-^SectionName
 ^ SectionName
-^^Database
+^SectionName2
 ^^ Database
+^^Database2
 
 ^7 DeepSection
 <12 Title
@@ -620,9 +620,9 @@ A section header is a line that:
 YINI allows a limited set of _**section markers**_ to identify section headers. These markers help visually and semantically distinguish section starts from key-value members or comments.
 
 Supported markers:
-  - `^` (Primary and recommended section marker, within the 7-bit ASCII range for maximum compatibility.)
-  - `<` (Alternative section marker (if `^` causes issues somehow), within the 7-bit ASCII range for maximum compatibility.)
-  - `§` (Alternative section marker; supported, but less portable than ASCII-only markers.)
+  - `^` — Primary and recommended section marker, within the 7-bit ASCII range for maximum compatibility.
+  - `<` — Alternative 7-bit ASCII section marker, intended as a fallback if `^` is unsuitable in a given environment.
+  - `§` — Supported alternative section marker, but potentially less portable because it lies outside the 7-bit ASCII range.
 
 Note: The `€` character is no longer supported as a valid section marker in YINI.
 
@@ -638,8 +638,8 @@ That is, the following denote nesting levels 1–6:
 ^^^^^^  ← level 6
 ```
 
-**Using seven or more of the same marker in succession (e.g. `^^^^^^^`) is invalid.**
-To represent nesting deeper than level 6, switch to the **numeric shorthand section header** syntax (see Section 5.3.1).
+**Using seven or more of the same marker in succession (for example, `^^^^^^^`) is invalid.**
+For nesting levels deeper than 6, the **numeric shorthand section header** syntax MUST be used (see Section 5.3.1).
 
 ### 5.3. Nested Sections
 To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
@@ -2480,7 +2480,7 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 v1.0.0 RC 4 + UPDATES, 2026-03-29 + xxx
-- **Clarified:** Repeated/basic section headers do not require a space before the section name, but numeric shorthand headers (such as `^7`) do.
+- **Clarified:** Clarified whitespace rules for section headers: repeated/basic section headers do not require a space before the section name, while numeric shorthand headers (such as `^7`) do.
 - **Clarified:** Defined top-level structure rules for lenient and strict mode. In lenient mode, orphan members may be exposed at the root or under an implicit base section; in strict mode, exactly one explicit top-level section is allowed, all additional sections MUST be nested beneath it, and top-level orphan members are forbidden.
 - **Updated:** Added a third large real-world configuration example (C) for parsing in strict mode.
   - See Section **15.7**.
