@@ -548,7 +548,7 @@ This section describes how values (on the right-hand side of `=`) are interprete
 **Note:** In YINI, values are assigned using `=`. The colon (`:`) is not an assignment operator and MUST not be used to define members or lists.
 
 #### Strings
-If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`).
+If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`) — even in lenient mode.
 
 **ONLY when quoted**, (even in non-strict mode) the value is considered to be of type **String**.
 
@@ -732,7 +732,7 @@ Prefix letters are **case-insensitive**, e.g. lowercase `h` behaves identically 
 
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
-String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You MAY use whichever is preferred or most appropriate for the context.
+String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
 
 **Note:** If a string is not quoted, it's not a string — period.
 
@@ -2479,7 +2479,7 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.0 RC 4 + UPDATES, 2026-03-29 + xxx
+v1.0.0 RC 4 + UPDATES, 2026-04-07 + xxx
 - **Clarified:** Clarified whitespace rules for section headers: repeated/basic section headers do not require a space before the section name, while numeric shorthand headers (such as `^7`) do.
 - **Clarified:** Defined top-level structure rules for lenient and strict mode. In lenient mode, orphan members may be exposed at the root or under an implicit base section; in strict mode, exactly one explicit top-level section is allowed, all additional sections MUST be nested beneath it, and top-level orphan members are forbidden.
 - **Updated:** Added a third large real-world configuration example (C) for parsing in strict mode.
