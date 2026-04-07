@@ -1,6 +1,6 @@
 # YINI Specification ≡  
 
-**YINI is a human-readable configuration format designed for clarity, structure, and predictable parsing, with simple syntax and a formal specification and grammar.**
+**YINI is a human-readable configuration format designed for clarity, structure, and predictable parsing, with simple syntax, a formal specification, and a defined grammar.**
 
 > YINI (by the YINI-lang project) is an INI-inspired format for representing structured information. It is suitable for configuration files, application settings, and general data storage use cases.
 
@@ -20,7 +20,7 @@
 ---
 
 ## 🙋‍♀️ A Quick YINI Example
-Below is what YINI syntax looks like:
+Here is a small example of YINI syntax:
 ```yini
 ^ App
 name = "Demo App"
@@ -36,51 +36,66 @@ tags = ["web", "api"]
 ---
 
 ## ℹ️ Why YINI?
-Why another format? – Consider the following points:
-- **INI** is simple, but too limited for structured configuration.
-- **JSON** is predictable, but can be verbose and is comment-free.
+There are already many good configuration formats out there, each with its own trade-offs.
+
+- **INI** is simple, but limited for structured configuration and lacks a single widely adopted formal specification.
+- **JSON** is predictable, but can be verbose and does not support comments.
 - **YAML** is flexible, but can be fragile and indentation-sensitive.
-  
-- YINI aims to be **clear, structured, and predictable,** while remaining practical and still offering some flexibility.
+- **TOML** is well-defined, but can become verbose as files grow.
+- **XML** is highly structured and expressive, but often has too much syntax overhead for human-edited configuration.
+
+**So, why another format?**  
+YINI aims to offer a practical middle ground: **familiar**, **clear**, and **structured**, while also being **predictable** and flexible enough for real-world configuration.
+
+**TL;DR:**
+- ✅ **Combines simplicity and structure** — aims to be more expressive than INI, while often remaining less verbose than JSON, YAML, or TOML.
+- ✅ **Designed for clarity** — aims to prioritize readability, straightforward syntax, and predictable parsing.
 
 ---
 
 ## 🚀 Quick Start
-**Try parsing with the CLI (`yini-cli`)**
 
-1. **Install globally (requires Node.js)**  
-    Open your terminal and run:
-    ```
-    npm install -g yini-cli
-    ```
+Want to try YINI quickly? Parse a small config in seconds with the CLI (`yini-cli`).
 
-2. **Create a YINI file**  
+### Option 1: Run with `npx` (no global install)
+1. **Create a YINI file**  
     Save the following to a file called `config.yini`:
     ```yini
     ^ App
-      name = "My App Title"
-      version = "1.2.3"
-      pageSize = 25
-      darkTheme = off
+    name = "My App Title"
+    version = "1.2.3"
+    pageSize = 25
+    darkTheme = off
+    ```
+2. **Parse it with `npx`**
+    Run:
+    ```bash
+    npx yini-cli parse config.yini
     ```
 
-3. **Parse it with the CLI**  
-    Run:
+### Option 2: Install globally
+1. **Install the CLI globally**  (requres Node.js)
+    ```bash
+    npm install -g yini-cli
+    ```
+
+2. **Parse the file**  
     ```bash
     yini parse config.yini
     ```
 
-    You should see a parsed JS object printed to the console, similar to:
-    ```js
-    {
-        App: {
-            name: 'My App Title',
-            version: '1.2.3',
-            pageSize: 25,
-            darkTheme: false
-        }
-    }    
-    ```
+### Result
+You should see JSON output printed to the console, similar to:
+```json
+{
+    "App": {
+        "name": "My App Title",
+        "version": "1.2.3",
+        "pageSize": 25,
+        "darkTheme": false
+    }
+}    
+```
 
 ### Use the Node.js parser in your project
 
@@ -100,8 +115,8 @@ Why another format? – Consider the following points:
         useTLS = OFF
     `);
 
-    console.log(config);
-    // { Server: { host: 'localhost', port: 8080, useTLS: false } }
+    console.log(config.Server.host); // localhost
+    console.log(config); // { Server: { host: 'localhost', port: 8080, useTLS: false } }
     ```
 
 3. **Or parse directly from a file**
@@ -109,27 +124,9 @@ Why another format? – Consider the following points:
     import YINI from 'yini-parser';
 
     const fileConfig = YINI.parseFile('config.yini');
+    
     console.log(fileConfig);
     ```
-
----
-
-## Why YINI?
-There are already many configuration formats — INI, JSON, YAML, TOML, XML — each with its strengths and trade-offs. YINI was designed to provide a balanced alternative that combines structure, readability, and simplicity.
-
-> Too often, config formats come with their own trade-offs — INI can be limiting, JSON or TOML more verbose, and YAML has quirks related to whitespace and parsing.
-
-YINI exists because:
-- JSON is structured and predictable, but can be verbose (with all keys required to be quoted), strict in structure, and lacks support for comments.
-- YAML is powerful but can be too permissive, error-prone, and sensitive to whitespace.
-- TOML is fine, but sometimes gets too verbose too quickly.
-- INI is simple and friendly, but too limited and lacks specification.
-
-YINI was created out of practical necessity: during the development of another project, none of the existing formats felt right. YINI reflects the same spirit as the project that inspired it — structured, flexible, and predictable — yet simple, human-friendly, and clear.
-
-**TL;DR:**
-- ✅ **Combines structure and simplicity** — aims to be more expressive than INI, less verbose than JSON, YAML, or TOML. 
-- ✅ **Minimal syntax, maximal readability** — strives to prioritize readability and straightforward syntax.
 
 ---
 
@@ -139,13 +136,13 @@ YINI aims to prioritize **human readability, clarity, and clean syntax**.
 - ✔️ **Simple section-based structure** with clear visual nesting.
 - ✔️ **Explicit value syntax** for strings, numbers, booleans, null, lists (AKA arrays), and inline objects.
 - ✔️ **Indentation-independent parsing** — without indentation pitfalls.
-- ✔️ **Formal grammar and specification.**
+- ✔️ **Formal specification and grammar.**
 - ✔️ **Strict and lenient parsing modes.**
 - ✔️ **Multiple comment styles** — C-style commenting rules using `//` and `/* ... */`. Supports `#` and `;` commenting styles too. 
 - ✔️ **Minimal syntax noise** — avoids visual noise, easy to write and read.
 - ✔️ **Flexible booleans** with `true`/`false`, `on`/`off`, `yes`/`no` (all case-insensitive).
 - ✔️ **Common number literals**  — supports decimal, base-prefixed, and exponent notation.
-- ✔️ **Human readability first** — Prioritizes clarity over cleverness — yet machine-friendly.
+- ✔️ **Prioritizes clarity over cleverness** — yet machine-friendly.
 - ✔️ **Flexible strings** using single or double quotes.
 - ✔️ **Supports the `null` value type.**
 
