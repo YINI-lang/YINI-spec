@@ -12,4 +12,4 @@ notes       = H"
     newlines.
 "
 
-/END // (optional)
+/END // (required in strict mode)
