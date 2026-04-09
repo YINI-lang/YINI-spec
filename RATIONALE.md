@@ -71,7 +71,8 @@ The core motivations behind YINI include:
 - **Support for modern needs** — Structured sections, clear value types, multiline strings, inline comments, and formal grammar. (Note: while date/time objects are common in other formats, this is not yet addressed in YINI — it may be considered in future versions.)
 - **Predictability** — A small set of rules that always work the same way, regardless of platform or parser.
 - **Minimalist syntax** — Fewer surprises. YINI avoids magic behaviors and favors explicitness.
-
+- **Explicit completeness in strict mode** — In validation-oriented scenarios, relying on end-of-file alone can be too implicit. YINI strict mode uses a required `/END` terminator to make document completion explicit and easier to validate.
+- 
 ## B. Design Goals and Philosophy
 ### B.1. What inspired its design?
 YINI was mainly inspired by formats such as INI, JSON, Python, Markdown, and C — borrowing good ideas while introducing its own principles.
@@ -102,7 +103,7 @@ These values guide YINI's syntax, structure, and behavior — making it reliable
 - This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
 - Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also is within 7-bit ASCII).
 
-In v1.0.0 Alpha 8, the section marker character `~` (due to visually ambiguous) was replaced by `<`, which is also 7-bit ASCII.
+In v1.0.0 Alpha 8, the section marker character `~` was replaced by `<` because repeated tildes were judged visually ambiguous.
 
 #### B.2.2. Non-standard Octal Escape
 Octal escapes in YINI use the `\oNNN` format, which differs from the traditional `\NNN` style used in C and Python. 
@@ -119,11 +120,26 @@ This design choice was made because `\NNN` provides no clear indication of the n
 
 | Marker Char. | Status         | Example        | Notes |
 |--------------|---------------|---------------|---------|
-| `^`          | Official/main | `^^ Section2` | Always supported  |
-| `<`          | Alternative   | `<< Section2` | Easy to count, replaced `~` |
-| `§`          | Experimental  | `§§ Section2` | For enhanced readability, may be promoted in the future |
+| `^`          | Official/main | `^^ Section2` | Always supported (7-bit ASCII)  |
+| `<`          | Fallback   | `<< Section2` |  (7-bit ASCII) Easy to count, replaced `~` |
+| `§`          | Alternative  | `§§ Section2` | For enhanced readability, may be promoted in the future |
 | `~`          | Discontinued  | `~~ Section2` | Hard to count when repeated, phased out      |
 | `>`          | Discontinued  | `>> Section2` | Was easy to confuse with reply in forums, etc   |
+
+#### B.2.4. Why strict mode requires `/END`
+Strict mode in YINI is intended for cases where the parser should be strict on purpose — for example in validation-oriented (checking and verification) use cases, deterministic (predictable and consistent) parsing, safer tooling, CI pipelines, generated configuration, and other environments where ambiguity (uncertainty or unclear meaning) should be minimized.
+
+For that reason, strict mode requires the document terminator `/END`.
+
+With /END, the document does not just stop — it explicitly says that it is finished. This makes the end of the document clearer and reduces guesswork for both parsers and humans. The parser does not have to assume that the file ended correctly; instead, the document itself explicitly declares: “this document is complete.”
+
+This also makes it easier to detect documents that have been truncated, only partly copied, or cut off too early — including during transfer, file copy, manual copy-and-paste, embedding, or other situations where the content may end up incomplete.
+
+This works especially well together with strict mode's other structural rules, such as requiring exactly one explicit top-level section. Together, these rules improve robustness (reliability) and make strict mode better suited for validation-heavy (strictly checked) environments and safer tooling. If a strict-mode document is accidentally split, cut, or copied only in part, the resulting fragments are much more likely to be rejected as invalid rather than silently accepted as complete.
+
+This requirement was chosen not to make YINI more complicated in general, but to make strict mode more reliable, more predictable, and more trustworthy where correctness matters most.
+
+The other choice is to parse in lenient-mode, where the document terminator `/END` is not required.
 
 ## C. YINI vs Other Formats
 ### C.1. Why Not Existing Formats?
@@ -209,7 +225,7 @@ YINI is designed to be as simple and intuitive as possible. Its syntax aims to b
 
 Earlier drafts of YINI experimented with an alternative colon-based syntax for lists. While this shorthand could be convenient in some cases, it did not add any expressive capability beyond the standard bracketed list syntax.
 
-In practice, supporting colon-based lists introduced additional grammar rules, more edge cases, and a second mental model for representing the same data. This worked against several of YINI’s central design goals: clarity, predictability, minimalism, and a smaller, more consistent syntax surface.
+In practice, supporting colon-based lists introduced additional grammar rules, more edge cases, and a second mental model for representing the same data. This worked against several of YINI's central design goals: clarity, predictability, minimalism, and a smaller, more consistent syntax surface.
 
 By removing colon-based lists, YINI keeps a clearer and more uniform structure:
 - Values are assigned with `=`.
@@ -225,7 +241,7 @@ In future, MAYBE adding support for e.g.: `@yini strict`, `@yini version 1.0`, `
 
 #### Suggested terminology split in YINI spec
 
-Directives (pragmas): parser hints that affect mode/behavior but don’t change document content.
+Directives (pragmas): parser hints that affect mode/behavior but don't change document content.
 
 For example: `@yini strict`, `@mode lenient`, `@ver 1.0`, `@version 1.0`.
 

@@ -5,12 +5,15 @@ Edits and updates **in this repository**. (Very minor changes are not listed.)
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## 2026 Mar + xxx (v1.0.0-rc.4 + UPDATES)
+- **Changed:** In the Spec, the document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
+- **Clarified:** In the Spec, updated the specification text, validation rules, and strict/lenient mode table to reflect that strict mode requires `/END` at the end of the document.
 - **Clarified:** In the Spec, repeated/basic section headers do not require a space before the section name, but numeric shorthand headers (such as `^7`) do.
 - **Clarified:** In the Spec, clarified top-level section rules in lenient and strict mode. Lenient mode allows orphan members at the root (or under implicit `base`), while strict mode requires exactly one top-level section.
 - **Updated:** In the Spec, added a third large real-world configuration example (C) for parsing in strict mode.
   - See Section **15.7**.
   - The full YINI and JSON versions of these examples are also included under  
     [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
+- **Improved:** Cleaned up and reorganized the ANTLR4 lexer and parser grammar files (`.g4`) for better clarity, consistency, and maintainability.
   
 ## 2026 Mar (v1.0.0-rc.4)
 - **Removed:** In the Spec, support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
