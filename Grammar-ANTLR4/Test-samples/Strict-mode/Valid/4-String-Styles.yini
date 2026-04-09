@@ -20,3 +20,5 @@ tripleC    = C"""
 LineA\n
   LineB\tTabbed
 """
+
+/END // (required in strict mode)

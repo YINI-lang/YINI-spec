@@ -32,26 +32,3 @@
 			["stylesheet", "css/themes.css"]    /* Last element. */
 		]
 
-
-	/* List
-		without
-			brackets. */
-
-	^^ ListWithoutBrackets
-
-		/**	List
-			without 
-			brackets.
-		*/
-		listOfLists:
-			["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
-			/* Ignore this comment. */ ["stylesheet", "css/general.css"],
-			
-			["stylesheet", "css/themes.css"]    /* This is the
-				last element. */
-
-
-
-
-
-
