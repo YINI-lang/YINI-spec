@@ -1,6 +1,6 @@
 # Rationale
 
-**Applies to:** YINI Specification v1.0.0-RC.4 + UPDATES
+**Applies to:** YINI Specification v1.0.0-RC.5
 
 This document outlines the **background**, **design motivations**, and **format comparisons** that led to the creation of YINI. It aims to explain **why YINI exists**, what problems it solves, and how its structure and features were shaped by practical needs, lessons from other formats, and from community feedback.
 

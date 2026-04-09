@@ -3,8 +3,8 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.4 + UPDATES
-**Date:** 2026-04
+**Version:** 1.0.0-RC.5
+**Date:** 2026-05
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 14.2, "Versioning Strategy").
 
@@ -2477,7 +2477,7 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.0 RC 4 + UPDATES, 2026-04-07 + xxx
+v1.0.0 RC 5, 2026-04-09
 - **Changed:** The document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
 - **Clarified:** Updated the specification text, validation rules, and strict/lenient mode table to reflect that strict mode requires `/END` at the end of the document.
 - **Clarified:** Clarified whitespace rules for section headers: repeated/basic section headers do not require a space before the section name, while numeric shorthand headers (such as `^7`) do.
@@ -2503,7 +2503,7 @@ v1.0.0 RC 4, 2026-03-29
 
 v1.0.0 RC 3, 2025-09-01
 - Changed at that time: The document terminator `/END` was made optional in both lenient and strict mode.
-- Note: This was later revised again in v1.0.0 RC 4 + UPDATES, where `/END` became required in strict mode.
+- Note: This was later revised again in v1.0.0 RC 5, where `/END` became required in strict mode.
 
 v1.0.0 RC 2, 2025-08-11
 - Added case-insensitive support for digits `A` (10) and `B` (11) as alternative syntax in duodecimal (base-12) notation.

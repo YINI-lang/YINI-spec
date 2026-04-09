@@ -9,8 +9,8 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Package Version:** 1.0.0-RC.4 + UPDATES (Latest published release) => [Version Table](./README.md#version-mapping-table)
-**Date:** 2026-04
+**Package Version:** 1.0.0-RC.5 (Latest published release) => [Version Table](./README.md#version-mapping-table)
+**Date:** 2026-05
 **Status:** Release Candidate
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
@@ -417,6 +417,7 @@ For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in 
 | 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   | 1.0.0-RC.2   | 1.0.0-RC.2    |
 | 2025 Sep | 1.0.0-RC.3      | 1.0.0-RC.3   | 1.1.0-RC.1   | 1.1.0-RC.1    |
 | 2026 Mar | 1.0.0-RC.4      | 1.0.0-RC.4   | 1.2.0-RC.1   | 1.2.0-RC.1    |
+| 2026 Apr | 1.0.0-RC.5      | 1.0.0-RC.5   | 1.2.0-RC.2   | 1.2.0-RC.2    |
 | …        | …               | …            | …            | …             |
 
 ---
