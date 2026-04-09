@@ -25,7 +25,7 @@ Making a release into the branch `production`.
    - Note: There shall not be any commits needed in env production, they should be made in staging already.
   
 4. **Create a New Release In GitHub:** In GitHub, create a new **Production**.
-   - Create new tag to the new version string above: E.g. `v1.0.0-beta.4`.
+   - Create new tag to the new version string above: E.g. `v1.0.0-beta.4` or `v1.0.0-rc.4`.
    - Give a title in the form: `YINI Specification-v1.0.0 Beta 4`.
    - Fill rest of field, and then press Publish.
 
@@ -40,4 +40,4 @@ Making a release into the branch `production`.
 **^YINI ≡**  
 > A simple, structured, and human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer) · [YINI on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

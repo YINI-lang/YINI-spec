@@ -31,3 +31,5 @@
         Your productivity companion.
     """
     error = "Something went wrong. Please try again."
+
+/END // (Required in strict mode)

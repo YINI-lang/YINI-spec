@@ -3,12 +3,12 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.4
-**Date:** 2026-03
+**Version:** 1.0.0-RC.5
+**Date:** 2026-05
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 14.2, "Versioning Strategy").
 
-© 2026 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
+© 2024-2026 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
 See the full license text at the end of this document.
 
 ---
@@ -16,7 +16,7 @@ See the full license text at the end of this document.
 [⇨ Table of Contents](./YINI-Specification.md#table-of-contents)
 
 ## Preface
-**YINI was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.  
+**YINI (by the YINI-lang project) was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.  
 It aims to remain minimal while still being expressive enough to support a wide range of configuration needs.  
 The name *YINI* originates from "Yet another INI", reflecting its inspiration from the traditional INI format.  
 
@@ -159,6 +159,7 @@ Above all, YINI remains true to its founding goal: make configuration effortless
 &nbsp;&nbsp;&nbsp;&nbsp;15.4. Examples of JSON → YINI Mapping  
 &nbsp;&nbsp;&nbsp;&nbsp;15.5. Large-Scale Real-World Configuration Example A: Corporate SaaS Platform  
 &nbsp;&nbsp;&nbsp;&nbsp;15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System  
+&nbsp;&nbsp;&nbsp;&nbsp;15.7. Large-Scale Real-World Configuration Example C: Industrial Monitoring & Automation Platform  
 
 **16. Appendices and Reserved Areas** ([Link ⇨](./YINI-Specification.md#16-appendices-and-reserved-areas))  
 &nbsp;&nbsp;&nbsp;&nbsp;16.1. License  
@@ -208,8 +209,8 @@ The YINI format was created with the following key design goals in mind:
 
 - **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
 
-- **Deterministic parsing in strict mode:** Strict mode requires a single root section and prohibits ambiguous document endings.
-- 
+- **Deterministic parsing in strict mode:** Strict mode requires exactly one explicit top-level section and a terminating `/END`, reducing ambiguity around **truncated, partially copied, or otherwise incomplete documents.**
+  
 ### 1.3. Background and Intent
 YINI was created to serve as a clean, minimal, and predictable configuration format that balances readability with structure. For a deeper look into the motivation and design philosophy, see [Why YINI?](./RATIONALE.md).
 
@@ -229,7 +230,7 @@ YINI aims to prioritize **human readability, clarity, and clean syntax**.
 
 - **Multi-line and Nested Data:** The format supports multi-line strings and nested sections, providing the ability to express more complex configurations while maintaining readability.
 
-- **Clear End of Document:** YINI supports (optional in both lenient/strict-mode) a clear document terminator marker (`/END`).
+- **Clear End of Document:** YINI supports a clear document terminator marker (`/END`). It is optional in lenient mode and required in strict mode.
 
 ## 1.5. Terminology
 The following key terms are used consistently throughout this specification. Understanding these terms will help interpret YINI's grammar, structure, and semantics.
@@ -238,7 +239,7 @@ The following key terms are used consistently throughout this specification. Und
 |---------------------------|------------|
 | Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
 | Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
-| Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document (optional in both lenient/strict-mode). |
+| Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document. It is optional in lenient mode and required in strict mode. |
 | Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=`). Keys MUST be unique within their section (and depth/level). |
@@ -248,7 +249,7 @@ The following key terms are used consistently throughout this specification. Und
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
 | Section                   | A logical grouping of members, introduced by a header using a section marker such as `^`, `<`, or `§`. |
 | Section Marker            | A special character used to denote a new section header. Supported section markers are `^`, `<`, and `§`; `^` is the primary and recommended marker. |
-| Strict Mode               | An optional parsing mode where all structural and validation rules (incl. the document terminator) are strictly enforced. Not the default. |
+| Strict Mode               | An optional parsing mode that enforces stricter structural validation, including exactly one explicit top-level section and prohibition of top-level orphan members. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
@@ -319,11 +320,11 @@ The syntax of YINI is designed to be minimalistic and human-readable while offer
 ### 3.1. General Syntax Rules
 YINI files consist of a series of **sections, members** (key-value pairs), and optional **comments**. The following rules define the basic structure of a valid YINI file:
 
-**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure, except in section headers, where spacing (tabs or spaces) is required between the section marker and the section name. Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
+**Whitespace:** Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure. In section headers, whitespace between the marker and the section name is optional in repeated/basic form, but required in numeric shorthand form (to make it clear where the marker ends and where the name starts). Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
 
 Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
 
-**Sections:** YINI files support sections, which groups related members. A section begins with a section header, marked by one of the allowed characters (commonly `^`), and then at least one space or tab, followed by the section name. Before a section header there may exist indentation and spacing for human readability.
+**Sections:** YINI files support sections, which group related members. A section begins with a section header, marked by one of the allowed section markers (commonly `^`) or by a numeric shorthand form. In the repeated/basic form, whitespace between the marker and the section name is optional. In the numeric shorthand form, at least one space or tab is required after the number.
 
 **Example of a section:**
 ```yini
@@ -355,8 +356,9 @@ key3 = "Peach"  // This is also an inline comment.
 ```
 
 ### 3.2. Whitespace and Indentation
-While YINI is not indentation-sensitive, the following whitespace `<WS>` behaviors are defined:
+While YINI is not indentation-sensitive, at least one space or tab is required between a numeric shorthand section marker (such as `^7`) and the section name, so it becomes e.g. `^7 Section`.
 
+The following whitespace `<WS>` behaviors are defined:
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
 - Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are ignored outside of strings and section headers.
 - Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
@@ -450,15 +452,13 @@ An _**identifier**_ can be one of two forms below:
   `Amanda's Project`
   ```
 ### 3.5 Document Terminator
-**Note:** The document terminator is only optional in lenient (non-strict) mode. Lenient mode is the default parser mode.
+**Note:** The document terminator is optional in lenient (non-strict) mode, which is the default parser mode. In strict mode, the document terminator is required.
 
-A YINI document **MAY end with a terminator line**.
+A YINI document MAY end with a terminator line in lenient mode. In strict mode, a YINI document MUST end with a terminator line.
 
-The document terminator explicitly marks the end of the configuration content and prevents ambiguity about whether the document was fully read.
+The document terminator explicitly marks the end of the configuration content and reduces ambiguity about whether the document was fully read. In strict mode, this makes document completion explicit rather than relying on end-of-file alone, **which helps detect truncated, partially copied, or prematurely cut-off documents.**
 
-In other words, it acts as a clear, unambiguous signal that the document is complete — without relying on end-of-file (EOF) and leaving parsers **to "guess" whether the final section or member was fully parsed**.
-
-The **default and recommended** terminator is:
+The default and recommended terminator is:
 ```yini
 /END
 ```
@@ -546,7 +546,7 @@ This section describes how values (on the right-hand side of `=`) are interprete
 **Note:** In YINI, values are assigned using `=`. The colon (`:`) is not an assignment operator and MUST not be used to define members or lists.
 
 #### Strings
-If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`).
+If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`) — even in lenient mode.
 
 **ONLY when quoted**, (even in non-strict mode) the value is considered to be of type **String**.
 
@@ -592,35 +592,35 @@ mixed = ["Arial", 12, true]    // List (mixed types)
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
 
 ### 5.1. Syntax
-A _**section header**_ starts a new logical grouping of members. Section headers MUST ALWAYS appear on their own line.
+A section header is a line that:
+
+- Starts with one or more section marker characters (`^`, `<`, or `§`), or with a numeric shorthand such as `^7`.
+- Is followed by a section name, which may be either a simple identifier or a backticked identifier.
+- Ends at the newline.
+
+**Spacing rules:**
+- In the repeated/basic form, no space is required between the marker and the section name.
+- In the numeric shorthand form, at least one horizontal space is required after the number before the section name.
+
+**Examples:**
 ```yini
-// A section header with a simple identifier.
 ^ SectionName
+^SectionName2
+^^ Database
+^^Database2
 
-// A section header with a backticked identifier.
-^ `Section name`
-
-// Backticked identifiers can include other special symbols too.
-^ `Section-name`
-```
-
-- A section header begins with a **section marker**, it is recommended (but not required) that it is followed by **one or more whitespace (space or tab) characters**, then the section name.
-- The section name MUST be a **valid identifier**, either a **simple identifier** or a **backticked identifier** (enclosed in backticks).
-- **Backticks (backticked identifier) are only required** when the identifier contains spaces, punctuation, or other special characters. 
-- The section header ends at the newline. There may follow a comment on the same line, but this will get ignored by the parser.
-```yini
-^ UserSettings
-username = "alice"
-theme = "dark"
+^7 DeepSection
+<12 Title
+§100 `Very Deep Section`
 ```
 
 ### 5.2. Section Markers (`^`, `<`, `§`)
 YINI allows a limited set of _**section markers**_ to identify section headers. These markers help visually and semantically distinguish section starts from key-value members or comments.
 
 Supported markers:
-  - `^` (Primary and recommended section marker, within the 7-bit ASCII range for maximum compatibility.)
-  - `<` (Alternative section marker (if `^` causes issues somehow), within the 7-bit ASCII range for maximum compatibility.)
-  - `§` (Alternative section marker; supported, but less portable than ASCII-only markers.)
+  - `^` — Primary and recommended section marker, within the 7-bit ASCII range for maximum compatibility.
+  - `<` — Alternative 7-bit ASCII section marker, intended as a fallback if `^` is unsuitable in a given environment.
+  - `§` — Supported alternative section marker, but potentially less portable because it lies outside the 7-bit ASCII range.
 
 Note: The `€` character is no longer supported as a valid section marker in YINI.
 
@@ -636,8 +636,8 @@ That is, the following denote nesting levels 1–6:
 ^^^^^^  ← level 6
 ```
 
-**Using seven or more of the same marker in succession (e.g. `^^^^^^^`) is invalid.**
-To represent nesting deeper than level 6, switch to the **numeric shorthand section header** syntax (see Section 5.3.1).
+**Using seven or more of the same marker in succession (for example, `^^^^^^^`) is invalid.**
+For nesting levels deeper than 6, the **numeric shorthand section header** syntax MUST be used (see Section 5.3.1).
 
 ### 5.3. Nested Sections
 To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
@@ -689,9 +689,9 @@ Optionally, indentation may be omitted:
 Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `<`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers are RECOMMENDED but not required).
 
 For example:
-- To go from depth 6 to depth 7: write `^7`.  
-- To go from depth 7 to depth 8: write `^8`.  
-- To go from depth 8 to depth 9: write `^9`.  
+- To go from depth 6 to depth 7: write `^7 SectionName`.  
+- To go from depth 7 to depth 8: write `^8 SectionName`.  
+- To go from depth 8 to depth 9: write `^9 SectionName`.  
 - And so on...
 
 This prevents arbitrarily long runs of the same marker. When ascending (moving to a shallower level), you may skip multiple levels at once (e.g., from `^9` back to `^^`).  
@@ -705,6 +705,7 @@ This prevents arbitrarily long runs of the same marker. When ascending (moving t
 ^^^^^  Level5      # Five carets  → depth 5
 ^^^^^^ Level6      # Six carets   → depth 6
 ^7     Level7      # Shorthand    → depth 7
+^7Level7           # ❌ Invalid: shorthand requires at least one space or tab after the number
 ^8     Level8      # Shorthand    → depth 8
 ^9     Level9      # Shorthand    → depth 9
 ^10    Level10     # Shorthand    → depth 10
@@ -729,7 +730,7 @@ Prefix letters are **case-insensitive**, e.g. lowercase `h` behaves identically 
 
 YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
-String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""`. You MAY use whichever is preferred or most appropriate for the context.
+String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
 
 **Note:** If a string is not quoted, it's not a string — period.
 
@@ -1213,60 +1214,64 @@ Use of these keywords outside their defined roles may result in a parse error.
 ### 12.2. Well-Formedness Requirements
 A YINI file is considered **well-formed** if it adheres to the core syntactic and structural rules defined in this specification.
 
-#### 11.2.1. Structural Requirements
+#### 12.2.1. Structural Requirements
+Note: In lenient mode, top-level members outside any section may be accepted. In strict mode, the document structure is further restricted; see Section 12.3 and Section 13.1.
+
 - A file may consist of zero or more **sections**.
 - A file may consist of zero or more valid key-value pairs (members).
-- Section headers MUST begin with a valid marker (`^`, `<`).
-- At least one space or tab is required between a section marker and the section name.
+- Section headers MUST begin with a valid marker (`^`, `<`, or `§`).
+- In repeated/basic section headers, whitespace between the marker and the section name is optional.
+- In numeric shorthand section headers, at least one space or tab is required after the number before the section name.
 - Duplicate keys **within the same section and depth level** are not allowed.
   - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
-- The document terminator (`/END`) is **optional in both lenient/strict-mode**.
+- The document terminator (`/END`) is **optional in lenient mode and required in strict mode**.
 
-#### 11.2.2. Character Encoding
+#### 12.2.2. Character Encoding
 Files **MUST** be encoded as **UTF-8 without BOM**.
 
-#### 11.2.3. Line Endings
+#### 12.2.3. Line Endings
 - Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>` line endings.
 - Mixed line endings are discouraged but tolerated in lenient mode.
   
-#### 11.2.4. Valid Value Types
+#### 12.2.4. Valid Value Types
 - Values MUST be one of the supported data types: **String**, **Number**, **Boolean**, **Null**, **List**, or **Object**.
 - Boolean values are **case-insensitive**: `True`, `On`, `Yes`, etc.
 - Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
 
-#### 11.2.5. Document Terminator
-- The terminator is optional in both lenient/strict-mode.
-- See Section 3.5, "Document Terminator" for terminator syntax.
-- A valid YINI file, MAY end with the terminator marker (`/END`).
+#### 12.2.5. Document Terminator
+- In lenient mode, the terminator is optional.
+- In strict mode, the terminator is required.
+- See Section 3.5, "Document Terminator", for terminator syntax.
+- A valid YINI file in **strict mode** MUST end with the terminator marker (`/END`).
+- A valid YINI file in **lenient mode** MAY end with the terminator marker (`/END`).
 - Only one terminator is permitted per file.
 - Missing terminators:
-  - **In lenient mode:** No error or warning.
-  - **In strict mode:** Treated as an error.
+  * **In lenient mode:** No error is required.
+  * **In strict mode:** MUST be treated as an error.
 - After the terminator, only whitespaces and comments are allowed.
 
 ##### Table: Terminator Requirement by Mode
 | Mode | Terminator Requirement |
 |---|---|
-| Lenient | Optional (*) |
-| Strict  | Optional (*) |
+| Lenient | Optional |
+| Strict  | Required |
 
-(*) In systems that value deterministic parsing, MAY favor explicit termination.
-
-#### 11.2.6. Escaping and String Literals
+#### 12.2.6. Escaping and String Literals
 - Escape sequences are **ONLY allowed** in in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-quoted strings MUST use `"""` for both opening and closing (`'''` is not supported).
 
-#### 11.2.7. Shortest Valid YINI Documents in Strict Mode
+#### 12.2.7. Shortest Valid YINI Documents in Strict Mode
 - **Valid short documents in strict mode:**
-  - ✅ In strict mode, the following is the shortest valid YINI document **with a member**:
+  - ✅ In strict mode, the following is the shortest valid YINI document in strict mode:
     ```yini
     ^T
+    /END
     ```
-    **Note:** A section heading named `T`, without any members.
+    **Note:** This document contains a single explicit top-level section named T and the required document terminator.
 
 - **Invalid short documents:**
-  - ❌  Invalid: no title section present:
+  - ❌  Invalid: no title section present in strict mode:
     ```yini
     /END
     ```
@@ -1278,7 +1283,7 @@ Some YINI parsers may support multiple **validation modes**:
 
 - **Lenient Mode:** 
   - Permissive with minor errors (e.g., trailing commas after last value/member (are ignored), mixed line endings).
-  - The document terminator (`/END`) is **optional** in both lenient and strict modes and MAY be omitted entirely.
+  - The document terminator (`/END`) is optional in lenient mode and MAY be omitted entirely.
   - All typing rules still apply — for example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
   - Empty values are allowed ONLY in members in section-top-levels:
     - Missing/empty value (ONLY outside lists and objects) are treated as `Null`.
@@ -1288,10 +1293,9 @@ Some YINI parsers may support multiple **validation modes**:
   - Enforces full well-formedness.
   - No empty values are allowed, MUST always be explicitly with `Null`. 
   - No (stray) trailing commas (after last value/member) inside lists and object permitted.
-  - Strict mode requires a **title section header** (a level 1 header).
+  - Strict mode requires exactly one explicit top-level section. Any additional sections MUST appear only as subsections nested within that section. Top-level orphan members are not allowed in strict mode. Otherwise, an error MUST be reported.  
     
-    If also using the OPTIONAL document terminator `/END` then these
-    constraints will provide increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
+    Because strict mode also requires the document terminator `/END`, the end of the document is made explicit rather than being inferred from EOF alone. This improves deterministic parsing, reduces ambiguity about incomplete input, and makes **truncated, partially copied, or prematurely cut-off documents** easier to detect. Together with the requirement for exactly one explicit top-level section, this provides increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.  
     * The **first half** is invalid because it is missing the required `/END` marker.
     * The **second half** is invalid because it lacks the required single level 1 section header (e.g., `^ Title`).
   - Disallows trailing commas.
@@ -1321,8 +1325,9 @@ object3 = { a: 1, b: 2 }     # ✅ OK
 | Explicit string quoting               | ✅ | ✅ | All strings MUST be enclosed with `"` or `'` — no ambiguity over strings.|
 | Empty sections allowed                | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
 | Duplicate keys or sections   | ❌ (may warn) | ❌ | And never overwrite existing keys/sections.  |
-| Required one single level-1 section header            | ❌ | ✅ | AKA _Title Section_.  |
-| `/END` is optional                       | ✅ | ✅ |   |
+| Exactly one explicit top-level section required            | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
+| Top-level orphan members allowed | ✅ | ❌ | In lenient mode they may be mounted at root or under implicit base. |
+| `/END` required at end of document                       | ❌ | ✅ |   |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient-mode the comma is ignored, error in strict-mode  |
 | Missing (empty) value (only in section-top-level)| ✅ | ❌ | Will result in a `Null` value in lenient-mode  |
 | Missing (empty) value before comma | - | ❌ | In lenient-mode SHOULD warn or make error  |
@@ -1349,12 +1354,30 @@ See also [Section 11.2: Well-Formedness Requirements] for formal validation crit
 
 ### 13.1. Top-Level Sections and Implicit Root
 
-* If a document contains **multiple top-level sections** (i.e., multiple level-1 sections), they SHOULD be considered **children of an implicit root**.
-* The implicit root section:
-  - **Has no name**, or may be labeled "`base`", "`root`" or similar (implementation-defined).
-* Section hierarchy MUST be respected:
-  - A level-3 section **MUST follow** a level-2 section.
-  - Skipping levels (e.g., directly from level-1 to level-3) is invalid.
+A YINI document may contain both explicit top-level sections and, in lenient mode only, top-level members that are not placed inside any explicit section. Such members are referred to here as **orphan members**.
+
+#### 13.1.1. Lenient Mode: Orphan Members
+In lenient mode, orphan members MAY be accepted.  
+NOTE: In strict mode orphan members are forbidden.
+
+In lenient mode only, an implementation MUST expose accepted orphan members in a well-defined way. The preferred behavior is to mount orphan members directly onto the parsed result, alongside explicitly defined top-level sections. If the underlying platform, host language, or target representation does not allow this cleanly, orphan members MUST instead be placed under an implicit section named base. Any collision between an orphan member name and an explicitly defined top-level section name MUST result in an error.
+
+- The name `base` is reserved for that purpose in this context.
+- The implementation SHOULD document this behavior clearly.
+
+#### 13.1.2. Top-Level Section Mounting
+Explicitly defined top-level sections are mounted directly onto the parsed result. Their hierarchy MUST still be respected: descending into deeper nesting may not skip intermediate levels.
+
+Their hierarchy MUST still be respected:
+- A level-3 section MUST follow a level-2 section.
+- Skipping levels when descending (for example, level 1 directly to level 3) is invalid.
+
+#### 13.1.3. Strict Mode
+In strict mode, there MUST be exactly one explicit top-level section.
+
+Any additional sections MUST appear only as subsections nested within that section.
+Top-level orphan members are not allowed in strict mode.
+Otherwise, an error MUST be reported.
 
 ### 13.2. Line Handling and Whitespace
 
@@ -1397,25 +1420,15 @@ object = { a: 1, , b: 2 }
 is error in strict-mode or at least a warning (in lenient-mode).
 
 ### 13.6. Lists
-* Two syntaxes are valid for lists:
-  - **(a) Bracketed form (preferred):**
-    ```yini
-    items = ["a", "b", "c"]
-    ```
-      * A bracketed list line MUST not begin with a comma.
-      * A trailing comma in `[ ]` is ignored.
-  - **(b) Unbracketed multiline:**
-    ```yini
-    items1: "a", "b", "c"
+The syntax for list:
+  **(a) Bracketed form (preferred):**
+  ```yini
+  items = ["a", "b", "c"]
+  ```
+  * A bracketed list line MUST not begin with a comma.
+  * A trailing comma in `[ ]` is ignored.
 
-    items2:
-    "a",
-    "b",
-    "c"
-    ```
-    * Trailing commas are allowed in unbracketed lists (form b).
-
-**Bracketed lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the value is interpreted as `null`, not a list):
+**Lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the value is interpreted as `null`, not a list):
   ```yini
   invalidList = // NULL!
   [1, 2, 3]     // Not parsed as a list!
@@ -1554,7 +1567,7 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 | Key/Value Syntax    | ✅ Top-level: `key = value`<br>Object: `key: value`| ✅ Keys always quoted, `:` for objects| YINI uses `=` for top-level, `:` for object members.                              |
 | Identifiers (Keys)  | ✅ Unquoted, or backticked if needed               | ✅ Must always be quoted              | Backticks in YINI for special chars; JSON always quotes keys.                     |
 | Comments            | ✅ Supported (full-line, inline, or multi-line)                 | 🚫 Not supported (discarded)          | Comments are dropped when converting to JSON.                                     |
-| Terminator          | ✅ Optional (for doc-ending)                       | 🚫 Not supported (ignored)            | YINI document terminator (`/END`) is ignored in JSON.                              |
+| Terminator          | ✅ Supported in YINI (`/END`)                       | 🚫 Not supported in JSON            | YINI's document terminator has no JSON equivalent and is ignored when converting to JSON.                              |
 
 ### See also:
 See Sections 14.3 and 14.4 for examples of YINI ⇆ JSON mappings.
@@ -2163,6 +2176,276 @@ blockedCountries = ['KP', 'NG', 'BY']
         }
 ```
 
+15.7. Large-Scale Real-World Configuration Example C: Industrial Monitoring & Automation Platform  
+```yini
+@YINI
+
+// Example C: Industrial Monitoring & Automation Platform.
+/*
+  Covers:
+  - Strict-mode compatible single top-level section.
+  - Deep section nesting.
+  - Realistic industrial / factory domain modeling.
+  - Inline objects and nested inline objects.
+  - Arrays of scalars and arrays of objects.
+  - Strings, numbers, booleans, null.
+  - Scheduling, alerts, telemetry, maintenance, and safety rules.
+  - File paths, endpoints, and policy-style configuration.
+*/
+
+^ PlantOps
+systemName = 'Orion Manufacturing Grid'
+description = 'Central control and monitoring platform for production lines, machine telemetry, maintenance, and operator safety.'
+siteCode = 'SE-GOT-PLANT-07'
+environment = 'production'
+debug = false
+timezone = 'Europe/Stockholm'
+contacts = ['ops@orion-industries.io', 'maintenance@orion-industries.io', 'safety@orion-industries.io']
+
+    ^^ Identity
+    tenant = 'orion-industries'
+    region = 'eu-north-1'
+    cluster = 'plantops-main'
+    build = {
+        version: '3.2.1',
+        releaseChannel: 'stable',
+        commit: 'f7d23aa',
+        signed: true
+    }
+
+    ^^ Telemetry
+    enabled = true
+    ingestionMode = 'streaming'
+    retentionDays = 120
+    sampleIntervalsSeconds = [1, 5, 15, 60]
+    normalizeUnits = true
+    deadband = {
+        temperature: 0.2,
+        pressure: 0.05,
+        vibration: 0.01,
+        power: 0.5
+    }
+
+        ^^^ Buffers
+        memoryQueueSize = 50000
+        diskSpool = {
+            enabled: true,
+            path: '/srv/plantops/spool',
+            maxSizeGB: 120,
+            compression: 'zstd'
+        }
+        flushPolicy = {
+            maxBatchSize: 1000,
+            maxWaitMs: 750,
+            retry: {
+                maxRetries: 12,
+                backoffMs: [100, 250, 500, 1000, 2000]
+            }
+        }
+
+        ^^^ Sensors
+        sources = [
+            { id: 'temp-line-a', type: 'temperature', unit: 'C', enabled: true },
+            { id: 'press-line-a', type: 'pressure', unit: 'bar', enabled: true },
+            { id: 'vib-motor-12', type: 'vibration', unit: 'mm/s', enabled: true },
+            { id: 'power-feed-1', type: 'power', unit: 'kW', enabled: true },
+            { id: 'humidity-zone-3', type: 'humidity', unit: '%', enabled: false }
+        ]
+        qualityRules = {
+            rejectNegative: ['pressure', 'power', 'humidity'],
+            clamp: [
+                { metric: 'temperature', min: -40, max: 180 },
+                { metric: 'pressure', min: 0, max: 25 },
+                { metric: 'humidity', min: 0, max: 100 }
+            ]
+        }
+
+    ^^ Production
+    shifts = [
+        { name: 'morning', start: '06:00', end: '14:00' },
+        { name: 'evening', start: '14:00', end: '22:00' },
+        { name: 'night', start: '22:00', end: '06:00' }
+    ]
+    lines = [
+        { code: 'LINE-A', enabled: true, cells: 8 },
+        { code: 'LINE-B', enabled: true, cells: 6 },
+        { code: 'LINE-C', enabled: false, cells: 4 }
+    ]
+    scheduling = {
+        autoDispatch: true,
+        planningWindowHours: 48,
+        constraints: {
+            maxConcurrentChangeovers: 2,
+            requireQualifiedOperator: true,
+            pauseDuringMaintenance: true
+        }
+    }
+
+        ^^^ Recipes
+        defaultRecipe = 'steel-frame-v4'
+        available = [
+            { id: 'steel-frame-v4', revision: 12, active: true },
+            { id: 'aluminium-housing-v2', revision: 7, active: true },
+            { id: 'test-batch-calibration', revision: 3, active: false }
+        ]
+        validation = {
+            requireSignedRecipe: true,
+            checksumAlgorithm: 'sha256',
+            allowDowngrade: false
+        }
+
+        ^^^ Traceability
+        enabled = true
+        batchIdFormat = 'ORD-{date}-{line}-{seq}'
+        retainBatchHistoryDays = 3650
+        tags = {
+            useQr: true,
+            useRfid: true,
+            fallbackManualEntry: false
+        }
+
+    ^^ Maintenance
+    enabled = true
+    workOrderSystem = 'cmms'
+    defaultPriority = 'normal'
+    planners = ['planner-a', 'planner-b']
+    rules = {
+        createOnThresholdBreach: true,
+        requireApprovalForShutdown: true,
+        autoAssignByArea: true
+    }
+
+        ^^^ Preventive
+        windows = [
+            { assetGroup: 'motors', intervalHours: 500, durationMinutes: 90 },
+            { assetGroup: 'compressors', intervalHours: 1000, durationMinutes: 180 },
+            { assetGroup: 'conveyors', intervalHours: 750, durationMinutes: 120 }
+        ]
+        reminders = {
+            notifyBeforeHours: [72, 24, 4],
+            channels: ['email', 'dashboard']
+        }
+
+        ^^^ Predictive
+        enabled = true
+        models = [
+            { name: 'bearing-wear', minConfidence: 0.86, action: 'inspect' },
+            { name: 'seal-leakage', minConfidence: 0.81, action: 'schedule-service' },
+            { name: 'motor-overload', minConfidence: 0.90, action: 'slowdown-line' }
+        ]
+        suppression = {
+            cooldownMinutes: 180,
+            ignoreDuringManualService: true
+        }
+
+    ^^ Alerts
+    enabled = true
+    defaultSeverity = 'warning'
+    channels = ['dashboard', 'email', 'sms']
+    deduplicationWindowSeconds = 600
+    templates = {
+        subjectPrefix: '[PlantOps]',
+        includeAssetContext: true,
+        includeRunbookLink: true
+    }
+
+        ^^^ Routing
+        rules = [
+            { event: 'temperature-high', severity: 'warning', target: 'ops-team' },
+            { event: 'pressure-drop', severity: 'critical', target: 'maintenance-team' },
+            { event: 'guard-door-open', severity: 'critical', target: 'safety-team' },
+            { event: 'network-loss', severity: 'critical', target: 'infra-team' }
+        ]
+        escalation = {
+            enabled: true,
+            afterMinutes: [5, 15, 30],
+            steps: [
+                { level: 1, notify: ['shift-lead'] },
+                { level: 2, notify: ['plant-manager'] },
+                { level: 3, notify: ['regional-director'] }
+            ]
+        }
+
+        ^^^ QuietHours
+        enabled = true
+        start = '23:00'
+        end = '05:30'
+        suppressSeverities = ['info']
+        exceptions = ['critical', 'safety']
+
+    ^^ Safety
+    enabled = true
+    lockoutTagoutRequired = true
+    incidentWebhook = 'https://safety.orion-industries.io/hooks/incidents'
+    restrictedZones = ['robot-cell-4', 'robot-cell-5', 'laser-area-2']
+
+        ^^^ AccessControl
+        badgeRequired = true
+        biometricRequired = false
+        visitorsAllowed = false
+        roles = [
+            { role: 'operator', canAcknowledge: true, canOverride: false },
+            { role: 'supervisor', canAcknowledge: true, canOverride: true },
+            { role: 'auditor', canAcknowledge: false, canOverride: false }
+        ]
+
+        ^^^ Interlocks
+        active = true
+        checks = [
+            { name: 'guard-door', failMode: 'stop-line' },
+            { name: 'e-stop-circuit', failMode: 'shutdown-cell' },
+            { name: 'light-curtain', failMode: 'halt-motion' }
+        ]
+        overridePolicy = {
+            allowed: false,
+            emergencyContact: null
+        }
+
+    ^^ Integrations
+    erp = {
+        enabled: true,
+        endpoint: 'https://erp.orion-industries.io/api',
+        syncIntervalMinutes: 10
+    }
+    mes = {
+        enabled: true,
+        endpoint: 'https://mes.orion-industries.io/api',
+        timeoutMs: 5000
+    }
+    historian = {
+        enabled: true,
+        endpoint: 'opc.tcp://historian.orion.internal:4840',
+        namespace: 'urn:orion:plantops'
+    }
+
+    ^^ Logging
+    level = 'info'
+    format = 'json'
+    outputs = ['stdout', 'file']
+    file = {
+        path: '/srv/plantops/log/plantops.log',
+        rotateDaily: true,
+        keepDays: 21
+    }
+
+    ^^ Security
+    requireTls = true
+    minimumTlsVersion = '1.3'
+    apiKeys = [
+        { name: 'telemetry-writer', active: true, scope: 'ingest' },
+        { name: 'maintenance-sync', active: true, scope: 'workorders' },
+        { name: 'legacy-debug-client', active: false, scope: 'readonly' }
+    ]
+    audit = {
+        enabled: true,
+        retainDays: 730,
+        recordConfigChanges: true,
+        recordOperatorActions: true
+    }
+
+/END
+```
+
 ## 16. Appendices and Reserved Areas
 ### 16.1. License
 Apache License, Version 2.0, January 2004,
@@ -2194,7 +2477,17 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.0 RC 3xx, 2026-xx-xx
+v1.0.0 RC 5, 2026-04-09
+- **Changed:** The document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
+- **Clarified:** Updated the specification text, validation rules, and strict/lenient mode table to reflect that strict mode requires `/END` at the end of the document.
+- **Clarified:** Clarified whitespace rules for section headers: repeated/basic section headers do not require a space before the section name, while numeric shorthand headers (such as `^7`) do.
+- **Clarified:** Defined top-level structure rules for lenient and strict mode. In lenient mode, orphan members may be exposed at the root or under an implicit base section; in strict mode, exactly one explicit top-level section is allowed, all additional sections MUST be nested beneath it, and top-level orphan members are forbidden.
+- **Updated:** Added a third large real-world configuration example (C) for parsing in strict mode.
+  - See Section **15.7**.
+  - The full YINI and JSON versions of these examples are also included under  
+    [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
+
+v1.0.0 RC 4, 2026-03-29
 - **Removed:** Support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
 - **Clarified:** Lists in YINI are defined only with `=` and square brackets `[ ... ]`.
 - **Rationale:** The colon-list syntax added convenience but did not add core expressive power, and its removal improves clarity, predictability, and grammar simplicity.
@@ -2209,7 +2502,8 @@ v1.0.0 RC 3xx, 2026-xx-xx
 - **Fixed:** Fixed a few typos and made various minor wording and consistency improvements.
 
 v1.0.0 RC 3, 2025-09-01
-- The specification has been revised to clarify that the document terminator `/END` is no longer a mandatory requirement in strict mode. The terminator is now defined as optional in both lenient and strict parsing modes. Implementing parsers MAY optionally provide an option to require this in both lenient and strict mode.
+- Changed at that time: The document terminator `/END` was made optional in both lenient and strict mode.
+- Note: This was later revised again in v1.0.0 RC 5, where `/END` became required in strict mode.
 
 v1.0.0 RC 2, 2025-08-11
 - Added case-insensitive support for digits `A` (10) and `B` (11) as alternative syntax in duodecimal (base-12) notation.
@@ -2326,5 +2620,5 @@ Below is a categorized list of Unicode whitespace characters recognized as withi
 **^ YINI Specification ≡**  
 > A simple, structured, and human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org) · [YINI on GitHub](https://github.com/YINI-lang/?utm_content=spec_footer)  
+[yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang/?utm_content=spec_footer)  
 

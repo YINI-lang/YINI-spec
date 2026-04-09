@@ -11,9 +11,10 @@
 		maxCacheSize = 2048e6
 
 		^^^ cacheDirs
-		dirs: 
+		dirs = [ 
 			"/tmp",
 			"/media/work/tmp",
 			"/media/data/tmp",
+		]
 
 
