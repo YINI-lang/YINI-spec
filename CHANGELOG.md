@@ -13,6 +13,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
   - See Section **15.7**.
   - The full YINI and JSON versions of these examples are also included under  
     [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
+- **Improved:** Cleaned up and reorganized the ANTLR4 lexer and parser grammar files (`.g4`) for better clarity, consistency, and maintainability.
   
 ## 2026 Mar (v1.0.0-rc.4)
 - **Removed:** In the Spec, support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
