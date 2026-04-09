@@ -8,15 +8,17 @@
 name = "SomeName"
 description = "Some description of something."
 version = "1.8.4"
-authors:
+authors = [
     "Mark O. Smith",
     "Gandalf Olórin, the Grey<something@domain.com>",
     "Galadriel"
-exclude:
+]
+exclude = [
     "build",
     "docs",
     "examples",
     "packages"
+]
 
 ^ devDependencies
 tester = "bin/tester@1.1.4"

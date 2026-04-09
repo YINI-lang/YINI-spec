@@ -9,12 +9,13 @@
 
 /* 
   This PARSER grammar aims to follow, as closely as possible (*),
-  the YINI format specification version:
-  1.2.0-rc.1 - 2026 Mar.
+  the latest released version of the YINI format specification 1.0.0.
+  Version:
+  1.2.0-rc.2 - 2026 Apr.
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
-  esier and provide clearer, more meaningful error messages. In the end, it is
+  easier and provide clearer, more meaningful error messages. In the end, it is
   the responsibility of the implementing parser to fully enforce all rules of
   the YINI specification.
 
@@ -43,26 +44,34 @@ yini
   : prolog? stmt* terminal_stmt? EOF
   ;
 
-/* -------- Prolog / terminal_stmt -------- */
+/* ------------------------------------------------------------------
+ * Prolog / terminal
+ * ------------------------------------------------------------------ */
 
 prolog
-  : SHEBANG eol*       // shebang present
-  | eol+               // or at least one blank/comment line
+  : SHEBANG eol*
+  | eol+
   ;
 
 terminal_stmt
-  //: TERMINAL_TOKEN (eol | INLINE_COMMENT? NL*) // '/END' line, allow trailing comments/blank
-  : TERMINAL_TOKEN ( eol | INLINE_COMMENT )? NL*
+  : TERMINAL_TOKEN eol*
   ;
 
-/* -------- Statements (flat) -------- */
+/* ------------------------------------------------------------------
+ * Statements (flat)
+ * ------------------------------------------------------------------ */
 
 stmt
-  : eol				// BlankOrComment
-  | SECTION_HEAD	// SectionHeader
-  | assignment		// key = value
+  : eol             // BlankOrComment
+  | SECTION_HEAD    // SectionHeader
+  | invalid_section_stmt
+  | assignment      // key = value
   | meta_stmt       // Note: The implementing parser is responsible for enforcing YINI marker constraints.
   | bad_member      // BadMember
+  ;
+
+invalid_section_stmt
+  : INVALID_SECTION_HEAD
   ;
 
 // Any tokens and statements starting with an AT (@).
@@ -79,7 +88,7 @@ meta_stmt
  */
 directive
   : YINI_TOKEN eol
-  | INCLUDE_TOKEN WS* string_literal? eol
+  | INCLUDE_TOKEN string_literal? eol
   ;
 
 /*
@@ -87,7 +96,7 @@ directive
  * by including or transforming content before/while parsing.
  */
 // pre_processing_command
-//   : INCLUDE_TOKEN WS* string_literal? eol
+//   : INCLUDE_TOKEN string_literal? eol
 //   ;
 
 /*
@@ -101,13 +110,15 @@ annotation
   : DEPRECATED_TOKEN eol
   ;
 
-/* A single physical "end-of-line" unit (blank or comment then NL).
-   Use this everywhere instead of sprinkling NL* / INLINE_COMMENT* */
+/* A single physical "end-of-line" unit.
+   Use this everywhere instead of sprinkling NL* in statement rules. */
 eol
-  : INLINE_COMMENT? NL+
+  : NL+
   ;
 
-/* -------- Members / assignments -------- */
+/* ------------------------------------------------------------------
+ * Members / assignments
+ * ------------------------------------------------------------------ */
 
 /* Assignment is always: KEY = value/literal */
 assignment
@@ -116,13 +127,17 @@ assignment
 
 /* KEY = value  (value may be empty in lenient-mode -> NULL by convention,
  * enforced and validated in host code, not here.)
+ *
  * @note (!) KEY, EQ, and value MUST be on the same line!
  */
-member:
-  KEY WS? EQ WS? value? // Empty value is treated as NULL.
+member
+  : KEY EQ value? // Empty value is treated as NULL.
   ;
 
-/* -------- Values -------- */
+/* ------------------------------------------------------------------
+ * Values
+ * ------------------------------------------------------------------ */
+
 value
   : null_literal
   | string_literal
@@ -132,21 +147,21 @@ value
   | object_literal
   ;
 
-/* Object_literal is defined with object members such as { key: value, ... }
- * with optional trailing comma and newlines tolerated 
+/* Object literal is defined with object members such as { key: value, ... }
+ * with optional trailing comma and newlines tolerated.
  */
 object_literal
   : OC NL* object_members? NL* CC NL*
   | EMPTY_OBJECT NL*
   ;
 
-// A object_members is one or more key=value pairs separated by commas.
+// Object members are one or more key:value pairs separated by commas.
 object_members
   : object_member (COMMA NL* object_member)* COMMA?
   ;
 
 object_member
-  : KEY WS? COLON NL* value
+  : KEY COLON NL* value
   ;
 
 /* [ value, ... ] with optional trailing comma and newlines tolerated */
@@ -161,15 +176,35 @@ list_literal
 elements
   : value (NL* COMMA NL* value)* COMMA?
   ;
-  
 
-/* -------- Terminals forwarded from the lexer -------- */
+/* ------------------------------------------------------------------
+ * Terminals forwarded from the lexer
+ * ------------------------------------------------------------------ */
 
-number_literal   : NUMBER;
-null_literal     : NULL;							// NOTE: NULL is case-insensitive.
-string_literal   : STRING string_concat*;
-string_concat    : NL* PLUS NL* STRING;
-boolean_literal  : BOOLEAN_TRUE | BOOLEAN_FALSE;	// NOTE: Booleans are case-insensitive.
+number_literal
+  : NUMBER
+  ;
+
+null_literal
+  : NULL // NOTE: NULL is case-insensitive.
+  ;
+
+string_literal
+  : STRING string_concat*
+  ;
+
+string_concat
+  : NL* PLUS NL* STRING
+  ;
+
+boolean_literal
+  : BOOLEAN_TRUE
+  | BOOLEAN_FALSE // NOTE: Booleans are case-insensitive.
+  ;
+
+/* ------------------------------------------------------------------
+ * Error helpers
+ * ------------------------------------------------------------------ */
 
 bad_meta_text
   : META_INVALID
@@ -179,5 +214,5 @@ bad_meta_text
  * Keep a narrow error production, don't over-greedy-capture.
  */
 bad_member
-  : WS? (REST | value)? WS? EQ (value | REST) eol?
+  : (REST | value)? EQ (value | REST) eol?
   ;

@@ -2,3 +2,4 @@
 
 name = "My Program Name"
 
+/END // (Required in strict mode)

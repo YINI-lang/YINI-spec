@@ -6,7 +6,7 @@ AppName = "MyApplication"
 Version = 2.1
 IsBeta = OFF
 MaxUsers = 100
-SupportedLanguages: "en-US", "es-ES", "fr-FR"
+SupportedLanguages = ["en-US", "es-ES", "fr-FR"]
 
 ^ FilePaths
 DefaultDirectory = "C:\Users\John\Documents\"
