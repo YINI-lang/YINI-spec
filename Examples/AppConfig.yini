@@ -12,13 +12,13 @@
 AppName = "YINI Editor"
 Version = 1.0
 IsPortable = YES
-DefaultPaths: "C:\Program Files", "D:\Apps", "E:\Tools"
+DefaultPaths = ["C:\Program Files", "D:\Apps", "E:\Tools"]
 MaxRecentFiles = 15
 
 ^ UI
 Theme = "Dark"
 FontSize = 14
-Languages: "en-US", "fr-FR", "de-DE"
+Languages = ["en-US", "fr-FR", "de-DE"]
 
     ^^ Toolbar
     Visible = YES
@@ -44,7 +44,7 @@ Languages: "en-US", "fr-FR", "de-DE"
 
     ^^ Sidebar
     Visible = NO
-    Tabs: "Explorer", "Search", "Extensions"
+    Tabs = ["Explorer", "Search", "Extensions"]
 
 ^ Network
 UseProxy = YES
@@ -55,4 +55,4 @@ TimeoutSeconds = 30
 ^ Advanced
 EnableLogs = YES
 LogLevel = "DEBUG"
-IgnoredWarnings: 1001, 1002, 1050, 1100
+IgnoredWarnings = [1001, 1002, 1050, 1100]

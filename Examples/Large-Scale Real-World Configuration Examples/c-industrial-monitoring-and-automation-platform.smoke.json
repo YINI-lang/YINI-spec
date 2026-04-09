@@ -1,0 +1,411 @@
+{
+    "PlantOps": {
+        "systemName": "Orion Manufacturing Grid",
+        "description": "Central control and monitoring platform for production lines, machine telemetry, maintenance, and operator safety.",
+        "siteCode": "SE-GOT-PLANT-07",
+        "environment": "production",
+        "debug": false,
+        "timezone": "Europe/Stockholm",
+        "contacts": [
+            "ops@orion-industries.io",
+            "maintenance@orion-industries.io",
+            "safety@orion-industries.io"
+        ],
+        "Identity": {
+            "tenant": "orion-industries",
+            "region": "eu-north-1",
+            "cluster": "plantops-main",
+            "build": {
+                "version": "3.2.1",
+                "releaseChannel": "stable",
+                "commit": "f7d23aa",
+                "signed": true
+            }
+        },
+        "Telemetry": {
+            "enabled": true,
+            "ingestionMode": "streaming",
+            "retentionDays": 120,
+            "sampleIntervalsSeconds": [1, 5, 15, 60],
+            "normalizeUnits": true,
+            "deadband": {
+                "temperature": 0.2,
+                "pressure": 0.05,
+                "vibration": 0.01,
+                "power": 0.5
+            },
+            "Buffers": {
+                "memoryQueueSize": 50000,
+                "diskSpool": {
+                    "enabled": true,
+                    "path": "/srv/plantops/spool",
+                    "maxSizeGB": 120,
+                    "compression": "zstd"
+                },
+                "flushPolicy": {
+                    "maxBatchSize": 1000,
+                    "maxWaitMs": 750,
+                    "retry": {
+                        "maxRetries": 12,
+                        "backoffMs": [100, 250, 500, 1000, 2000]
+                    }
+                }
+            },
+            "Sensors": {
+                "sources": [
+                    {
+                        "id": "temp-line-a",
+                        "type": "temperature",
+                        "unit": "C",
+                        "enabled": true
+                    },
+                    {
+                        "id": "press-line-a",
+                        "type": "pressure",
+                        "unit": "bar",
+                        "enabled": true
+                    },
+                    {
+                        "id": "vib-motor-12",
+                        "type": "vibration",
+                        "unit": "mm/s",
+                        "enabled": true
+                    },
+                    {
+                        "id": "power-feed-1",
+                        "type": "power",
+                        "unit": "kW",
+                        "enabled": true
+                    },
+                    {
+                        "id": "humidity-zone-3",
+                        "type": "humidity",
+                        "unit": "%",
+                        "enabled": false
+                    }
+                ],
+                "qualityRules": {
+                    "rejectNegative": ["pressure", "power", "humidity"],
+                    "clamp": [
+                        {
+                            "metric": "temperature",
+                            "min": -40,
+                            "max": 180
+                        },
+                        {
+                            "metric": "pressure",
+                            "min": 0,
+                            "max": 25
+                        },
+                        {
+                            "metric": "humidity",
+                            "min": 0,
+                            "max": 100
+                        }
+                    ]
+                }
+            }
+        },
+        "Production": {
+            "shifts": [
+                {
+                    "name": "morning",
+                    "start": "06:00",
+                    "end": "14:00"
+                },
+                {
+                    "name": "evening",
+                    "start": "14:00",
+                    "end": "22:00"
+                },
+                {
+                    "name": "night",
+                    "start": "22:00",
+                    "end": "06:00"
+                }
+            ],
+            "lines": [
+                {
+                    "code": "LINE-A",
+                    "enabled": true,
+                    "cells": 8
+                },
+                {
+                    "code": "LINE-B",
+                    "enabled": true,
+                    "cells": 6
+                },
+                {
+                    "code": "LINE-C",
+                    "enabled": false,
+                    "cells": 4
+                }
+            ],
+            "scheduling": {
+                "autoDispatch": true,
+                "planningWindowHours": 48,
+                "constraints": {
+                    "maxConcurrentChangeovers": 2,
+                    "requireQualifiedOperator": true,
+                    "pauseDuringMaintenance": true
+                }
+            },
+            "Recipes": {
+                "defaultRecipe": "steel-frame-v4",
+                "available": [
+                    {
+                        "id": "steel-frame-v4",
+                        "revision": 12,
+                        "active": true
+                    },
+                    {
+                        "id": "aluminium-housing-v2",
+                        "revision": 7,
+                        "active": true
+                    },
+                    {
+                        "id": "test-batch-calibration",
+                        "revision": 3,
+                        "active": false
+                    }
+                ],
+                "validation": {
+                    "requireSignedRecipe": true,
+                    "checksumAlgorithm": "sha256",
+                    "allowDowngrade": false
+                }
+            },
+            "Traceability": {
+                "enabled": true,
+                "batchIdFormat": "ORD-{date}-{line}-{seq}",
+                "retainBatchHistoryDays": 3650,
+                "tags": {
+                    "useQr": true,
+                    "useRfid": true,
+                    "fallbackManualEntry": false
+                }
+            }
+        },
+        "Maintenance": {
+            "enabled": true,
+            "workOrderSystem": "cmms",
+            "defaultPriority": "normal",
+            "planners": ["planner-a", "planner-b"],
+            "rules": {
+                "createOnThresholdBreach": true,
+                "requireApprovalForShutdown": true,
+                "autoAssignByArea": true
+            },
+            "Preventive": {
+                "windows": [
+                    {
+                        "assetGroup": "motors",
+                        "intervalHours": 500,
+                        "durationMinutes": 90
+                    },
+                    {
+                        "assetGroup": "compressors",
+                        "intervalHours": 1000,
+                        "durationMinutes": 180
+                    },
+                    {
+                        "assetGroup": "conveyors",
+                        "intervalHours": 750,
+                        "durationMinutes": 120
+                    }
+                ],
+                "reminders": {
+                    "notifyBeforeHours": [72, 24, 4],
+                    "channels": ["email", "dashboard"]
+                }
+            },
+            "Predictive": {
+                "enabled": true,
+                "models": [
+                    {
+                        "name": "bearing-wear",
+                        "minConfidence": 0.86,
+                        "action": "inspect"
+                    },
+                    {
+                        "name": "seal-leakage",
+                        "minConfidence": 0.81,
+                        "action": "schedule-service"
+                    },
+                    {
+                        "name": "motor-overload",
+                        "minConfidence": 0.9,
+                        "action": "slowdown-line"
+                    }
+                ],
+                "suppression": {
+                    "cooldownMinutes": 180,
+                    "ignoreDuringManualService": true
+                }
+            }
+        },
+        "Alerts": {
+            "enabled": true,
+            "defaultSeverity": "warning",
+            "channels": ["dashboard", "email", "sms"],
+            "deduplicationWindowSeconds": 600,
+            "templates": {
+                "subjectPrefix": "[PlantOps]",
+                "includeAssetContext": true,
+                "includeRunbookLink": true
+            },
+            "Routing": {
+                "rules": [
+                    {
+                        "event": "temperature-high",
+                        "severity": "warning",
+                        "target": "ops-team"
+                    },
+                    {
+                        "event": "pressure-drop",
+                        "severity": "critical",
+                        "target": "maintenance-team"
+                    },
+                    {
+                        "event": "guard-door-open",
+                        "severity": "critical",
+                        "target": "safety-team"
+                    },
+                    {
+                        "event": "network-loss",
+                        "severity": "critical",
+                        "target": "infra-team"
+                    }
+                ],
+                "escalation": {
+                    "enabled": true,
+                    "afterMinutes": [5, 15, 30],
+                    "steps": [
+                        {
+                            "level": 1,
+                            "notify": ["shift-lead"]
+                        },
+                        {
+                            "level": 2,
+                            "notify": ["plant-manager"]
+                        },
+                        {
+                            "level": 3,
+                            "notify": ["regional-director"]
+                        }
+                    ]
+                }
+            },
+            "QuietHours": {
+                "enabled": true,
+                "start": "23:00",
+                "end": "05:30",
+                "suppressSeverities": ["info"],
+                "exceptions": ["critical", "safety"]
+            }
+        },
+        "Safety": {
+            "enabled": true,
+            "lockoutTagoutRequired": true,
+            "incidentWebhook": "https://safety.orion-industries.io/hooks/incidents",
+            "restrictedZones": ["robot-cell-4", "robot-cell-5", "laser-area-2"],
+            "AccessControl": {
+                "badgeRequired": true,
+                "biometricRequired": false,
+                "visitorsAllowed": false,
+                "roles": [
+                    {
+                        "role": "operator",
+                        "canAcknowledge": true,
+                        "canOverride": false
+                    },
+                    {
+                        "role": "supervisor",
+                        "canAcknowledge": true,
+                        "canOverride": true
+                    },
+                    {
+                        "role": "auditor",
+                        "canAcknowledge": false,
+                        "canOverride": false
+                    }
+                ]
+            },
+            "Interlocks": {
+                "active": true,
+                "checks": [
+                    {
+                        "name": "guard-door",
+                        "failMode": "stop-line"
+                    },
+                    {
+                        "name": "e-stop-circuit",
+                        "failMode": "shutdown-cell"
+                    },
+                    {
+                        "name": "light-curtain",
+                        "failMode": "halt-motion"
+                    }
+                ],
+                "overridePolicy": {
+                    "allowed": false,
+                    "emergencyContact": null
+                }
+            }
+        },
+        "Integrations": {
+            "erp": {
+                "enabled": true,
+                "endpoint": "https://erp.orion-industries.io/api",
+                "syncIntervalMinutes": 10
+            },
+            "mes": {
+                "enabled": true,
+                "endpoint": "https://mes.orion-industries.io/api",
+                "timeoutMs": 5000
+            },
+            "historian": {
+                "enabled": true,
+                "endpoint": "opc.tcp://historian.orion.internal:4840",
+                "namespace": "urn:orion:plantops"
+            }
+        },
+        "Logging": {
+            "level": "info",
+            "format": "json",
+            "outputs": ["stdout", "file"],
+            "file": {
+                "path": "/srv/plantops/log/plantops.log",
+                "rotateDaily": true,
+                "keepDays": 21
+            }
+        },
+        "Security": {
+            "requireTls": true,
+            "minimumTlsVersion": "1.3",
+            "apiKeys": [
+                {
+                    "name": "telemetry-writer",
+                    "active": true,
+                    "scope": "ingest"
+                },
+                {
+                    "name": "maintenance-sync",
+                    "active": true,
+                    "scope": "workorders"
+                },
+                {
+                    "name": "legacy-debug-client",
+                    "active": false,
+                    "scope": "readonly"
+                }
+            ],
+            "audit": {
+                "enabled": true,
+                "retainDays": 730,
+                "recordConfigChanges": true,
+                "recordOperatorActions": true
+            }
+        }
+    }
+}

@@ -4,3 +4,5 @@ dataDir      = "C:\Data\Projects"
 backupDirs   = ["C:\Backup1", "D:\Backup2"]
 allowedHosts = ["example.com", "api.example.com", null]
 notes        = null          # explicit null (empty value disallowed)
+
+/END // (required in strict mode)
