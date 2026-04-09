@@ -21,7 +21,7 @@ Main = "index.js"
 `mocha` = "^8.2.1"
 `chai` = "^4.2.0"
 
-Keywords: "node", "express", "web", "app", "backend"
+Keywords = ["node", "express", "web", "app", "backend"]
 
 Author = "Jane Doe"
 License = "MIT"

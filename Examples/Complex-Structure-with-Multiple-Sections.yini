@@ -3,10 +3,11 @@
 Name = "Jane Doe"
 Email = "jane.doe@example.com"
 Age = 32
-Preferences: 
+Preferences = [
   ["Theme", "light"],
   ["FontSize", 14],
   ["NotificationsEnabled", YES],
+]
 
 ^ SystemSettings
 SystemName = "MySystem"
@@ -16,4 +17,4 @@ IsActive = YES
 ^^ Paths
 LogFilePath = "/var/log/myapp.log"
 DatabasePath = "/mnt/db/"
-BackupPaths: "/mnt/backup1", "/mnt/backup2"
+BackupPaths = ["/mnt/backup1", "/mnt/backup2"]

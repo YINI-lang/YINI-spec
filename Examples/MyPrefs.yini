@@ -9,8 +9,8 @@
 	^^ General
 	IsDarkMode = YES
 	Buffers = 10
-	Themes: "Classic", "Modern"
-	Dirs: "C:\Users\", "D:\Work\Temp\", "E:\Data\Temp\"
+	Themes = ["Classic", "Modern"]
+	Dirs = ["C:\Users\", "D:\Work\Temp\", "E:\Data\Temp\"]
 
 	^^ Menu 
 	Id = "FILE"

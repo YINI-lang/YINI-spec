@@ -15,15 +15,3 @@
 		["stylesheet", "css/general.css"],
 		["stylesheet", "css/themes.css"]
 	]
-
-
-	^^ ListWithoutBrackets
-
-	// Alternative notation for a list without brackets,
-	// note the colon : instead of the equals character =.
-	colonList1: "Orange", "Banana", "Pear", "Peach"
-	colonList2: null
-	colonList3:	
-        ["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
-        ["stylesheet", "css/general.css"],
-        ["stylesheet", "css/themes.css"],		
