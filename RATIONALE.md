@@ -195,9 +195,9 @@ So, for this reason Triple-quoted strings are supported as well, and they are op
 
 ##### B.2.5.4. Hyper Strings
 
-> Hyper strings in YINI are multi-line strings prefixed with `H` or `h` that trims leading and trailing whitespace and normalizes internal whitespace and line breaks into single spaces.
+> Hyper strings in YINI are multi-line strings prefixed with `H` or `h` that trim leading and trailing whitespace and normalizes internal whitespace and line breaks into single spaces.
 
-Hyper string are:
+Hyper strings are:
 - multi-line input for humans
 - but normalized into a single clean text value
 
