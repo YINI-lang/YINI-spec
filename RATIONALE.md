@@ -47,7 +47,6 @@ What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 
 ---
 
-
 ## A. Background and Motivation
 ### A.1. Why was YINI created?
 The motivation for YINI arose during another (personal) project, where a configuration format was needed in the spirit of INI — but with a well-defined specification (something INI lacks) and a few modern features.
@@ -72,7 +71,9 @@ The core motivations behind YINI include:
 - **Predictability** — A small set of rules that always work the same way, regardless of platform or parser.
 - **Minimalist syntax** — Fewer surprises. YINI avoids magic behaviors and favors explicitness.
 - **Explicit completeness in strict mode** — In validation-oriented scenarios, relying on end-of-file alone can be too implicit. YINI strict mode uses a required `/END` terminator to make document completion explicit and easier to validate.
-- 
+  
+---
+
 ## B. Design Goals and Philosophy
 ### B.1. What inspired its design?
 YINI was mainly inspired by formats such as INI, JSON, Python, Markdown, and C — borrowing good ideas while introducing its own principles.
@@ -141,6 +142,90 @@ This requirement was chosen not to make YINI more complicated in general, but to
 
 The other choice is to parse in lenient-mode, where the document terminator `/END` is not required.
 
+#### B.2.5. String Type Motivations
+
+##### B.2.5.1. Raw Strings
+
+> Raw strings in YINI are quoted strings where the text is taken exactly as written, without interpreting escape sequences.
+
+Why Raw strings, and why it is the defaul string in YINI?
+
+They are the safest default for configuration because config files often contain text that should be taken literally, such as:
+- file paths
+- URLs
+- regex-like fragments
+- shell commands
+- identifiers
+- snippets with backslashes
+
+If raw strings are the default, users avoid the classic annoyance where `\n`, `\t`, or `\U` accidentally become something else.
+
+This fits a config format very well. This is also to reason why Raw string became and are the default in YINI.
+
+##### B.2.5.2. Classic Strings
+
+> Classic strings in YINI are quoted strings prefixed with `C` or `c` that interprets escape sequences such as `\n`, `\t`, and `\"`.
+
+A config format still needs some way to express things like:
+- newline inside a single-line literal
+- tab characters
+- quotes inside quotes
+- control characters
+- Unicode escapes when needed
+
+So having an explicit "escaped string" form is useful and reasonable.
+
+That said, Classic strings are optional, not the default.
+
+##### B.2.5.3. Triple-quoted Strings
+
+> Triple-quoted strings in YINI are strings enclosed in `""" ... """` that may span multiple lines and preserves its content exactly as written, unless prefixed with `C` to enable escape sequences.
+
+A config format may sometimes needs true multi-line literals, for example:
+- embedded text blocks
+- templates
+- SQL
+- prompts
+- email bodies
+- certificates
+- long descriptions
+- script fragments
+
+So, for this reason Triple-quoted strings are supported as well, and they are optional.
+
+##### B.2.5.4. Hyper Strings
+
+> Hyper strings in YINI are multi-line strings prefixed with `H` or `h` that trims leading and trailing whitespace and normalizes internal whitespace and line breaks into single spaces.
+
+Hyper string are:
+- multi-line input for humans
+- but normalized into a single clean text value
+
+That can be useful for things like:
+- long descriptions
+- UI labels
+- help text
+- summaries
+- human-written prose in config
+- documentation-ish text inside config
+- prompts where exact whitespace is not important
+
+Example idea:
+```yini
+description = H"
+  This service handles
+  authentication and
+  user session state.
+"
+```
+
+Result:
+```txt
+This service handles authentication and user session state.
+```
+
+---
+
 ## C. YINI vs Other Formats
 ### C.1. Why Not Existing Formats?
 Here's a quick summary of why YINI doesn't just use an existing format:
@@ -181,6 +266,8 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 - ✅ = Yes / Fully supported
 - ❌ = Not supported
 - ➖ = Partial, debated, or implementation-dependent
+
+---
 
 ## D. Reflections and Acknowledgments
 ### D.1. Summary
