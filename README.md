@@ -204,7 +204,7 @@ The resulting value o `config` is:
 }
 ```
 
-- ➡️ [Parser usage & documentation](https://github.com/YINI-lang/yini-parser-typescript#usage)
+- [Parser usage & documentation](https://github.com/YINI-lang/yini-parser-typescript#usage)
 
 ---
 
