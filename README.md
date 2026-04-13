@@ -425,9 +425,9 @@ For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in 
 
 ---
 
-## 🧾 License
+## License
 
-YINI is licensed under the [Apache License 2.0](./LICENSE).
+This project is licensed under the Apache License 2.0 — see the [LICENSE](./LICENSE) file for details.
 
 ---
 
