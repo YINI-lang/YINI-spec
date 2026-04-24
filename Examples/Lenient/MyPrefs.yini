@@ -20,10 +20,10 @@
 		Value = "New"
 		OnClick = "CreateDoc()"
 
-		^^^ MenuItem
+		^^^ MenuItem2
 		Value = "Open"
 		OnClick = "OpenDoc()"
 
-		^^^ MenuItem
+		^^^ MenuItem3
 		Value = "Save"
 		OnClick = "SaveDoc()"

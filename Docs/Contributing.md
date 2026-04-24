@@ -80,7 +80,7 @@ You can also provide another input file:
 
 ```sh
 task parse:tree INPUT=my-other-file.yini
-task parse:gui INPUT=../Examples/Short-1.yini
+task parse:gui INPUT=../Examples/Lenient/Short-1.yini
 ```
 
 ### What the tasks do
