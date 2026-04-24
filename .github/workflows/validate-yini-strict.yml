@@ -1,0 +1,33 @@
+# Note:
+# Validation in CI depends on the currently published yini-cli release.
+# Because the specification and grammar in this repository may evolve ahead of
+# the CLI implementation, some files may fail validation here even though they
+# are valid according to the latest repository version of the spec or grammar.
+
+name: Run yini-cli validation (strict)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - '**' # All branches.
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run yini-cli validation
+        run: |
+          npx yini-cli@latest validate --strict \
+            "./Examples/Strict" \
+            "./Grammar-ANTLR4/Test-samples/Strict-mode/Valid" \
+            "./Examples/Large-Scale Real-World Configuration Examples/c-industrial-monitoring-and-automation-platform.smoke.yini"

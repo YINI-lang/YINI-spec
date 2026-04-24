@@ -12,7 +12,7 @@
 #   task parse:tree
 #
 #   task parse:tree INPUT=my-other-file.yini
-#   task parse:gui INPUT=tests/example.yini
+#   task parse:gui INPUT=../Examples/Lenient/Short-1.yini
 
 version: '3'
 
