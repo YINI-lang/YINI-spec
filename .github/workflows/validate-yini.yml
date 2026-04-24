@@ -3,6 +3,9 @@
 # Because the specification and grammar in this repository may evolve ahead of
 # the CLI implementation, some files may fail validation here even though they
 # are valid according to the latest repository version of the spec or grammar.
+#
+# Though, even on validation fail, the validation output remains useful for
+# manual review and for spotting where CLI support has not yet caught up.
 
 name: Run yini-cli validation (lenient/default)
 
