@@ -11,9 +11,9 @@ name: Run yini-cli validation (lenient/default)
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - '**' # All branches.
+  # push:
+  #   branches:
+  #     - '**' # All branches.
 
 jobs:
   validate:
