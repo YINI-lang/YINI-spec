@@ -12,7 +12,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - Revised `Contributing.md` for clarity and consistency.
 - Restructured the `Examples` directory into **Lenient** and **Strict** subdirectories.
 - Added GitHub Actions workflows (CI) to validate example files with `yini-cli`.  
-  **Note:** Validation in CI depends on the currently published yini-cli release, so some files may fail there even when they are valid according to the latest specification or grammar in this repository. Even in such cases, the validation output remains useful for manual review and for spotting where CLI support has not yet caught up.
+  **Note:** Validation in CI depends on the currently published `yini-cli` release, so some files may fail there even when they are valid according to the latest specification or grammar in this repository. Even in such cases, the validation output remains useful for manual review and for spotting where CLI support has not yet caught up.
   
 ## Package 2026 Apr (spec: v1.0.0-rc.5)
 - **Changed:** In the Spec, the document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
