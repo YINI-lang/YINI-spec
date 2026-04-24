@@ -11,7 +11,7 @@
   This LEXER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Version:
-  1.2.0-rc.2 - 2026 Apr (v1.0.0-rc.5 YINI Spec Package).
+  1.2.0-rc.2 + UPDATES - 2026 Apr (v1.0.0-rc.5 YINI Spec Package).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -26,11 +26,6 @@
 */
 
 lexer grammar YiniLexer;
-
-@members {
-  // Below is TypeScript code:
-  public atLineStart(): boolean { return this.column === 0; }
-}
 
 /* ------------------------------------------------------------------
  * Fragments
@@ -319,11 +314,14 @@ fragment DISABLE_LINE_MARKER
 
 /*
  FULL_LINE_COMMENT:
- Remains in input, but hidden
- (doesn't interfere with parsing).
- */
-LINE_COMMENT
-  : {this.atLineStart()}? HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
+ This rule intentionally does not enforce "start of line" in the lexer.
+ The parser or later validation step must verify that FULL_LINE_COMMENT appears
+ only where a full-line comment is allowed.
+*/
+// todo: if it doesn't work, try delete skip
+FULL_LINE_COMMENT
+  : HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
+  //: ('\r\n' | '\r' | '\n') HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
   ;
 
 /*
