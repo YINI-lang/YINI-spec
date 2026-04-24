@@ -6,10 +6,12 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
-## 2026 xxx (v1.0.0-rc.5 + UPDATES)
-- Updated the lexer grammar to be target-independent by removing TypeScript-specific members and semantic predicates, enabling cross-language parser generation.
+## Package 2026 xxx + UPDATES (spec: v1.0.0-rc.5 + UPDATES)
+- Updated the lexer file in the grammar to be target-independent by removing TypeScript-specific members and semantic predicates, enabling cross-language parser generation.
+- In `Grammar-ANTLR4`, replaced Windows-specific .bat helper scripts with a language-agnostic `Taskfile.yaml`.
+- Revised `Contributing.md` for clarity and consistency.
   
-## 2026 Apr (v1.0.0-rc.5)
+## Package 2026 Apr (spec: v1.0.0-rc.5)
 - **Changed:** In the Spec, the document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
 - **Clarified:** In the Spec, updated the specification text, validation rules, and strict/lenient mode table to reflect that strict mode requires `/END` at the end of the document.
 - **Clarified:** In the Spec, repeated/basic section headers do not require a space before the section name, but numeric shorthand headers (such as `^7`) do.
