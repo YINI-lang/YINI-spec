@@ -13,6 +13,14 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Changed:** Restructured the `Examples` directory into **Lenient** and **Strict** subdirectories.
 - **Added:** Added GitHub Actions workflows (CI) to validate example files with `yini-cli`.  
   **Note:** Validation in CI depends on the currently published `yini-cli` release, so some files may fail there even when they are valid according to the latest specification or grammar in this repository. Even in such cases, the validation output remains useful for manual review and for spotting where CLI support has not yet caught up.
+- **Improved:** Clarified and updated the spec:
+  * UTF-8 with or without BOM?
+  * Duplicate key handling in lenient vs strict.
+  * Orphan member "base" section.
+  * Deep nesting jump rules - partially unclear.
+  * `/END` post-content behavior.
+  * Clarified/reworded parts to stay aligned with the actual design goals.
+  * Various fixes of typos and styling, etc.
 
 ## Package 2026 Apr (spec: v1.0.0-rc.5)
 - **Changed:** In the Spec, the document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
