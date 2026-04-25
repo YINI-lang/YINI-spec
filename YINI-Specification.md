@@ -1368,12 +1368,21 @@ A YINI document may contain both explicit top-level sections and, in lenient mod
 
 #### 13.1.1. Lenient Mode: Orphan Members
 In lenient mode, orphan members MAY be accepted.  
-NOTE: In strict mode orphan members are forbidden.
+NOTE: In strict mode, orphan members are forbidden.
 
-In lenient mode only, an implementation MUST expose accepted orphan members in a well-defined way. The preferred behavior is to mount orphan members directly onto the parsed result, alongside explicitly defined top-level sections. If the underlying platform, host language, or target representation does not allow this cleanly, orphan members MUST instead be placed under an implicit section named base. Any collision between an orphan member name and an explicitly defined top-level section name MUST result in an error.
+In lenient mode only, an implementation MUST expose accepted orphan members in a well-defined way. The preferred behavior is to mount orphan members directly onto the parsed result, alongside explicitly defined top-level sections. If the underlying platform, host language, or target representation does not allow this cleanly, orphan members MUST instead be placed under an implicit section named `base`.
 
-- The name `base` is reserved for that purpose in this context.
-- The implementation SHOULD document this behavior clearly.
+When the implicit `base` section strategy is used, `base` becomes a reserved top-level section name for that parsed document. Therefore, if orphan members are present, an explicitly defined top-level section named `base` MUST result in an error.
+
+If orphan members are not present, an explicitly defined top-level section named `base` is treated as an ordinary section name.
+
+Any collision between:
+- an orphan member name and an explicitly defined top-level section name, or
+- the implicit `base` section and an explicitly defined top-level section named `base`
+
+MUST result in an error.
+
+The implementation SHOULD document clearly which orphan-member strategy it uses.
 
 #### 13.1.2. Top-Level Section Mounting
 Explicitly defined top-level sections are mounted directly onto the parsed result. Their hierarchy MUST still be respected: descending into deeper nesting may not skip intermediate levels.
