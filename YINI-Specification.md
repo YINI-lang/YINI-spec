@@ -1232,8 +1232,11 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
 - Section headers MUST begin with a valid marker (`^`, `<`, or `§`).
 - In repeated/basic section headers, whitespace between the marker and the section name is optional.
 - In numeric shorthand section headers, at least one space or tab is required after the number before the section name.
-- Duplicate keys **within the same section and depth level** are not allowed.
-  - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
+- Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
+- Duplicate keys **within the same section and nesting level** are not allowed.  
+  1. In lenient mode, later duplicate keys MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
+  2. In strict mode, any duplicate key MUST result in an error.
+  3. In neither mode may an implementation silently overwrite an earlier key with a later one.
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
 - The document terminator (`/END`) is **optional in lenient mode and required in strict mode**.
 
@@ -1336,9 +1339,10 @@ object3 = { a: 1, b: 2 }     # ✅ OK
 |-------------------------|:----------------------:|:-----------:|-------|
 | Explicit string quoting               | ✅ | ✅ | All strings MUST be enclosed with `"` or `'` — no ambiguity over strings.|
 | Empty sections allowed                | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
-| Duplicate keys or sections   | ❌ (may warn) | ❌ | And never overwrite existing keys/sections.  |
-| Exactly one explicit top-level section required            | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
-| Top-level orphan members allowed | ✅ | ❌ | In lenient mode they may be mounted at root or under implicit base. |
+| Duplicate keys                        | ❌ | ❌ | In lenient mode, later duplicate keys MUST be ignored and MUST produce a warning diagnostic. In strict mode, any duplicate key MUST result in an error. |
+| Duplicate sections at same level      | ❌ | ❌ | Implementations MUST NOT silently overwrite or merge duplicate sections unless explicitly defined elsewhere. |
+| Exactly one explicit top-level section required | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
+| Top-level orphan members allowed      | ✅ | ❌ | In lenient mode they may be mounted at root or under implicit base. |
 | `/END` required at end of document                       | ❌ | ✅ |   |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient-mode the comma is ignored, error in strict-mode  |
 | Missing (empty) value (only in section-top-level)| ✅ | ❌ | Will result in a `Null` value in lenient-mode  |
@@ -1420,9 +1424,11 @@ Otherwise, an error MUST be reported.
   ```
   it MUST be interpreted as having a value of `null`.
 * Key uniqueness:
-  - Keys MUST be **unique within the same section and section level**.
-  - Duplicates in the same section are a **parse warning**.
-
+  - Keys MUST be unique within the same section and nesting level.
+  - In **lenient mode**, later duplicate keys MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
+  - In **strict mode**, any duplicate key MUST result in an error.
+  - In neither mode may an implementation silently overwrite an earlier key with a later one.
+  
 ### 13.4. Boolean Canonicalization
 
 * Boolean literals are **case-insensitive**.
