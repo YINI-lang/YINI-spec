@@ -270,11 +270,11 @@ The following key terms are used consistently throughout this specification. Und
 The structure of a YINI file is designed to be simple, clear, and highly readable. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
 
 ### 2.1. File Encoding
-YINI files MUST be encoded in **UTF-8**. This encoding ensures compatibility with most systems and applications, providing a consistent method for interpreting characters.
+YINI documents MUST be encoded in UTF-8.
 
-- **Mandatory Encoding:** All YINI files SHOULD be encoded using UTF-8 without a Byte Order Mark (BOM). This guarantees that the file content is universally readable across different platforms.
+- **Mandatory Encoding:** A UTF-8 byte order mark (BOM) SHOULD NOT be used. However, implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
 
-- **Character Set:** YINI files MUST use Unicode. Control characters and other non-printable characters SHOULD be avoided, except for spaces, tabs, and newlines. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-quoted strings.
+- **Character Set:** YINI documents use Unicode. Control characters and other non-printable characters SHOULD be avoided except where explicitly allowed, such as tabs, spaces, and line endings, or when represented through valid string literal forms. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-quoted strings.
 
 Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
 
@@ -1238,7 +1238,9 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
 - The document terminator (`/END`) is **optional in lenient mode and required in strict mode**.
 
 #### 12.2.2. Character Encoding
-Files **MUST** be encoded as **UTF-8 without BOM**.
+YINI documents (files) **MUST** be encoded as **UTF-8**.  
+
+A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
 
 #### 12.2.3. Line Endings
 - Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>` line endings.
@@ -1537,13 +1539,14 @@ Semantic Versioning:
 
 ### 14.3. Encoding Notes
 #### 14.3.1 Required Encoding
-- **UTF-8 without BOM** is the required and default encoding for YINI files.
-- Parsers SHOULD support UTF-8 fully.
-- Use of other encodings (e.g., UTF-16, Latin-1) is discouraged and not guaranteed to be portable.
+YINI documents MUST be encoded in UTF-8.
+
+- The canonical and recommended encoding is UTF-8 without BOM.
+- Use of other encodings (such as UTF-16 or Latin-1) is not supported by this specification and is not guaranteed to be portable.
 
 #### 14.3.2 Byte Order Mark (BOM)
-- A UTF-8 BOM (`0xEF 0xBB 0xBF`) is **not required** and **SHOULD be avoided**.
-- If present, parsers MUST detect and ignore the BOM without failing.
+- A UTF-8 BOM (`0xEF 0xBB 0xBF`) SHOULD NOT be used.
+- If present, for compatibility implementations MAY accept and ignore an initial UTF-8 BOM without failing.
 
 #### 14.3.3 Shebang Line (Optional)
 A shebang line may be used at the very top of the file:
