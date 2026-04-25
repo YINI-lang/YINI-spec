@@ -16,31 +16,34 @@ See the full license text at the end of this document.
 [⇨ Table of Contents](./YINI-Specification.md#table-of-contents)
 
 ## Preface
-**YINI (by the YINI-lang project) was designed with a simple idea in mind:** configuration files should be easy for humans to write, read, and understand — without sacrificing structure or future flexibility.  
-It aims to remain minimal while still being expressive enough to support a wide range of configuration needs.  
-The name *YINI* originates from "Yet another INI", reflecting its inspiration from the traditional INI format.  
+**YINI (by the YINI-lang project) was designed with a simple idea in mind:** configuration files should be clear to read, straightforward to edit, and predictable to interpret.  
+Its design emphasizes explicit structure and human-readable syntax, while remaining formal enough to support consistent parsing and reliable tooling.  
+The name *YINI* originates from "Yet another INI", reflecting its inspiration from the traditional INI format.
 
-That said, there are already many excellent configuration formats out there, and they are great at what they do. **YINI is not intended to replace existing formats** — it was created to fill a specific niche and, in part, out of personal curiosity and exploration.  
+There are already many established configuration formats, each with its own strengths. **YINI is not intended to replace existing formats**; it was created to explore a different balance of clarity, readability, structure, and predictability.
 
-The idea started as a personal project — a search for something a bit more readable than JSON, a bit more structured than INI, and a bit less surprising than YAML. It gradually evolved into a format that aims to be:  
-- Minimal, but expressive.
-- Structured, but not rigid.
-- Easy to hand-edit, and just formal enough to support tooling and validation.  
+The project began as a personal exploration: a search for a format that would remain more readable than JSON, more structured than traditional INI, and less dependent on indentation-sensitive rules than YAML. From that starting point, YINI gradually developed around a small set of core design goals:
 
-YINI aims to embrace simplicity as a strength, offering just enough rules to stay consistent while remaining forgiving enough for practical use.  
+- Clarity over cleverness.
+- Readability without sacrificing structure.
+- Simplicity with serious usability.
+- Predictability over magic.
+- Explicitness over hidden behavior.
+- Structure without visual clutter.
+- Human-friendly editing with deterministic parsing.
 
-See [A.1. Why was YINI created?](./RATIONALE.md) for background.  
+YINI is therefore intended to be simple, but not simplistic: explicit where structure matters, readable at a glance, and defined clearly enough to support robust implementations.
 
-While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI introduces its own principles: consistent grammar, clear typing, and readable structure — with human readability and developer experience in mind.  
-One of YINI's key strengths is its intuitive approach to **nesting sections**, allowing structured configuration without relying on indentation rules or verbose syntax, while remaining visually clear and easy to scan — without the strict indentation rules or syntax overhead found in some other formats.  
+See [A.1. Why was YINI created?](./RATIONALE.md) for background.
 
-This specification defines YINI with care and clarity, aiming to serve both casual users and implementers looking for a clean, predictable format.  
+While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI defines its own approach through explicit structure, clear typing rules, and predictable interpretation.  
+A central part of this approach is its handling of nested sections, which makes hierarchy visible without requiring indentation to define structure.
 
-Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community.  
+This specification defines YINI with the goal of serving both human authors and implementers by describing the format in a clear, precise, and consistent way.
 
-For more feedback details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.  
+Some parts of the YINI specification have benefited from valuable feedback and insights shared by users in the broader community.
 
-Above all, YINI remains true to its founding goal: make configuration effortless — and maybe even enjoyable.  
+For more feedback details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ---
 
@@ -195,24 +198,31 @@ YINI now treats `#` as a comment symbol (instead of being used as a section mark
 - **Note:** `##` is invalid, `# #` is valid as a comment.
 
 #### 1.2.2. Key Design Goals
-The YINI format was created with the following key design goals in mind:
+The YINI format was designed with the following philosophy and key goals in mind:
 
-- **Simplicity:** YINI is designed to be as simple and intuitive as possible. The syntax is minimalistic yet expressive, with clear conventions for defining sections, keys, and values. **Prioritize clarity over cleverness.**
+1. **Clarity over cleverness**  
+YINI is designed to favor clear and understandable syntax over compact, implicit, or surprising constructs. The format aims to reduce ambiguity and make both documents and rules easier to interpret correctly.
 
-- **Human Readability:** A core principle of YINI is that it SHOULD feel natural and intuitive for humans to work with. Its structure is designed to be clear and predictable, minimizing unnecessary complexity so that configuration files are easy to read, understand, write, and maintain—even for non-programmers.
+2. **Readability without sacrificing structure**  
+YINI is intended to remain easy for humans to read and follow, while still providing real structure for nested and non-trivial configuration data. Readability is treated as a primary requirement, not as an afterthought.
 
-- **Flexibility:** While simple, YINI is designed to accommodate a variety of data structures, including primitive values (strings, numbers, booleans, nulls) and more complex ones like lists and nested sections.
- 
-- **Compatibility:** YINI is meant to be compatible with a variety of tools and libraries, ensuring that it can be easily integrated into different programming languages and ecosystems.
-     
-> It also allows for optional extensions, enabling future enhancements without breaking backward compatibility.
+3. **Simplicity with serious usability**  
+YINI aims to keep the core syntax simple, consistent, and approachable, while still supporting practical configuration needs such as lists, objects, comments, and nested sections. The goal is to remain simple, but not simplistic.
 
-- **Extensibility:** The format is designed to be extendable, allowing for future features and syntax to be incorporated as needed, such as support for anchors, includes, or custom validation rules.
+4. **Predictability over hidden behavior**  
+YINI is designed so that the meaning of a document follows explicit and stable rules. It avoids relying on invisible or context-sensitive behavior where practical, so that users can more easily understand how a document will be interpreted.
 
-- **Deterministic parsing in strict mode:** Strict mode requires exactly one explicit top-level section and a terminating `/END`, reducing ambiguity around **truncated, partially copied, or otherwise incomplete documents.**
+5. **Explicit structure without visual clutter**  
+YINI is designed to represent hierarchy and grouping explicitly, without depending on indentation to define structure. The goal is to make structure visible and reliable while keeping the overall notation compact and readable.
+
+6. **Human-friendly editing**  
+YINI is intended to be comfortable for humans to write, review, and maintain. Its syntax is designed to support direct editing of configuration files without requiring excessive punctuation, ceremony, or visual noise.
+
+7. **Deterministic parsing**  
+YINI is designed to support deterministic parsing by implementations, especially in strict mode. This helps reduce ambiguity and improves robustness for validation, tooling, and long-term maintainability.
   
 ### 1.3. Background and Intent
-YINI was created to serve as a clean, minimal, and predictable configuration format that balances readability with structure. For a deeper look into the motivation and design philosophy, see [Why YINI?](./RATIONALE.md).
+YINI was created as a configuration format that emphasizes **clarity**, **readability**, and **predictability** while also providing **explicit structure**, **human-friendly editing**, and **deterministic parsing**. Its intent is to provide a format that remains easy to read and edit by hand, while being defined clearly enough to support consistent implementation and reliable tooling. For a deeper discussion of the motivation and design philosophy, see [Why YINI?](./RATIONALE.md).
 
 ### 1.4. Key Features
 **Note:** Unless explicitly stated otherwise, YINI parsers are expected to operate in lenient (non-strict) mode by default. Strict mode is optional and intended for validation-intensive environments.
@@ -315,7 +325,7 @@ key = value
 ```
 
 ## 3. Syntax Overview
-The syntax of YINI is designed to be minimalistic and human-readable while offering enough flexibility for structured data representation. This section provides an overview of the key syntax rules for YINI files.
+The syntax of YINI is designed to emphasize clarity, readability, predictability, and explicit structure in configuration files. This section provides a high-level overview of the principal syntax rules defined by the format.
 
 ### 3.1. General Syntax Rules
 YINI files consist of a series of **sections, members** (key-value pairs), and optional **comments**. The following rules define the basic structure of a valid YINI file:
@@ -1396,7 +1406,6 @@ Otherwise, an error MUST be reported.
 * If a key is assigned without a value (only in lenient-mode):
   ```yini
   key =          // NULL, same as: key = Null
-  key:           // NULL, same as: key = [Null]
   ```
   it MUST be interpreted as having a value of `null`.
 * Key uniqueness:
