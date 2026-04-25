@@ -7,13 +7,13 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## Package 2026 xxx + UPDATES (spec: v1.0.0-rc.5 + UPDATES)
-- Updated the lexer file in the grammar to be target-independent by removing TypeScript-specific members and semantic predicates, enabling cross-language parser generation.
-- In `Grammar-ANTLR4`, replaced Windows-specific .bat helper scripts with a language-agnostic `Taskfile.yaml`.
-- Revised `Contributing.md` for clarity and consistency.
-- Restructured the `Examples` directory into **Lenient** and **Strict** subdirectories.
-- Added GitHub Actions workflows (CI) to validate example files with `yini-cli`.  
+- **Improved:** Made the lexer grammar target-independent by removing TypeScript-specific members and semantic predicates, enabling cross-language parser generation.
+- **Changed:** In `Grammar-ANTLR4`, replaced Windows-specific .bat helper scripts with a language-agnostic `Taskfile.yaml`.
+- **Improved:** Revised `Contributing.md` for clarity and consistency.
+- **Changed:** Restructured the `Examples` directory into **Lenient** and **Strict** subdirectories.
+- **Added:** Added GitHub Actions workflows (CI) to validate example files with `yini-cli`.  
   **Note:** Validation in CI depends on the currently published `yini-cli` release, so some files may fail there even when they are valid according to the latest specification or grammar in this repository. Even in such cases, the validation output remains useful for manual review and for spotting where CLI support has not yet caught up.
-  
+
 ## Package 2026 Apr (spec: v1.0.0-rc.5)
 - **Changed:** In the Spec, the document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
 - **Clarified:** In the Spec, updated the specification text, validation rules, and strict/lenient mode table to reflect that strict mode requires `/END` at the end of the document.

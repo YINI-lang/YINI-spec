@@ -54,6 +54,20 @@ YINI is intended as a configuration format that emphasizes clarity, readability,
 
 ---
 
+## Design Goals
+
+YINI is designed around a small set of core goals:
+
+1. **Clarity over cleverness** — prefer syntax that is easy to understand correctly.
+2. **Readability without sacrificing structure** — remain easy to read while still supporting structured configuration.
+3. **Simplicity with serious usability** — keep the format simple, but not simplistic.
+4. **Predictability over magic** — favor explicit and stable interpretation rules.
+5. **Explicitness over hidden behavior** — make structure and meaning visible in the file itself.
+6. **Structure without visual clutter** — support hierarchy without relying on indentation semantics.
+7. **Human-friendly, parser-friendly** — support direct editing by humans and consistent parsing by tools.
+
+---
+
 ## 🚀 Quick Start
 
 You can try YINI with the CLI (`yini-cli`) by parsing a small configuration file.
