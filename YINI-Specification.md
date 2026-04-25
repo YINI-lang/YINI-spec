@@ -3,7 +3,7 @@ _YINI: A lightweight configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.5
+**Version:** 1.0.0-RC.5 + UPDATES
 **Date:** 2026-04
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 14.2, "Versioning Strategy").
@@ -142,8 +142,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;13.7. Strings Concatenation  
 &nbsp;&nbsp;&nbsp;&nbsp;13.8. String Literal Types  
 &nbsp;&nbsp;&nbsp;&nbsp;13.9. Comments  
-&nbsp;&nbsp;&nbsp;&nbsp;13.10. Error Handling Recommendations  
-&nbsp;&nbsp;&nbsp;&nbsp;13.11. Bonus Tips for Implementation
+&nbsp;&nbsp;&nbsp;&nbsp;13.10. Bonus Tips for Implementation
 
 **14. Compatibility and Versioning** ([Link ⇨](./YINI-Specification.md#14-compatibility-and-versioning))  
 &nbsp;&nbsp;&nbsp;&nbsp;14.1. Fallback Rules  
@@ -272,7 +271,7 @@ The structure of a YINI file is designed to be simple, clear, and highly readabl
 ### 2.1. File Encoding
 YINI documents MUST be encoded in UTF-8.
 
-- **Mandatory Encoding:** A UTF-8 byte order mark (BOM) SHOULD NOT be used. However, implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
+- **BOM Policy:** A UTF-8 byte order mark (BOM) SHOULD NOT be used. However, implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
 
 - **Character Set:** YINI documents use Unicode. Control characters and other non-printable characters SHOULD be avoided except where explicitly allowed, such as tabs, spaces, and line endings, or when represented through valid string literal forms. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-quoted strings.
 
@@ -551,7 +550,7 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
 - **Special type:**
   - NULL
 
-**Note:** Currently, YINI types map 1-to-1 to native JSON types. Constructs and objects like date-time, **SHOULD currently be expressed as strings**. See more in 10.1.3, "Date-time Type".
+**Note:** Currently, YINI value types map 1-to-1 to native JSON types. Constructs and objects like date-time, **SHOULD currently be expressed as strings**. See more in 10.1.3, "Date-time Type".
 
 ### 4.3. Type Rules
 This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
@@ -623,8 +622,8 @@ A section header is a line that:
 ^^Database2
 
 ^7 DeepSection
-<12 Title
 §100 `Very Deep Section`
+<12 Title
 ```
 
 ### 5.2. Section Markers (`^`, `§`, or `<`)
@@ -657,9 +656,9 @@ To place a section under another (i.e., to nest sections), repeat the section ma
 
 - Section heading markers (`^`, `§`, or `<`) may only be repeated up to six times — to level 6 (maximum).
 - Beyond level 6, the numeric shorthand section MUST be used (see section 5.3.1).
-- **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.
+- **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.  
+  This rule applies equally to **repeated marker** form and **numeric shorthand** form. Numeric shorthand does not permit skipping intermediate levels.
 - **Going shallower (decrease nesting):** May drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
-- When descending into deeper nesting, section levels MUST increase by exactly one level at a time. This rule applies equally to repeated marker form and numeric shorthand form. Numeric shorthand does not permit skipping intermediate levels.
 - Optionally the short-hand section notation may be used for any levels and that notation is the only way to define levels 7 or beyond.
 
 ```yini
@@ -1000,10 +999,10 @@ Value/literal `NULL` (NON CASE-SENSITIVE).
   Invalid Examples (both strict and lenient):
   ```yini
   ^ Section1
-  key = { a = }    # ❌ Missing value within object.
+  key = { a: }    # ❌ Missing value within object.
 
   ^ Section2
-  key = { a = , }  # ❌ Comma without preceding value.
+  key = { a: , }  # ❌ Comma without preceding value.
   ```
   👆 An isolated comma or missing value is never interpreted as `Null` inside `{ }`.
 
@@ -1011,15 +1010,15 @@ Examples:
 ```yini
 ^ Section1
 # In lenient-mode:
-key1 =                    # ✅ Lenient: key1 → null
-key2 = [1, 2, ]           # ✅ Lenient: [1, 2]
-key3 = { a = 1, b = 2, }  # ✅ Lenient: {a: 1, b: 2}
+key1 =                  # ✅ Lenient: key1 → null
+key2 = [1, 2, ]         # ✅ Lenient: [1, 2]
+key3 = { a: 1, b: 2, }  # ✅ Lenient: {a: 1, b: 2}
 
 ^ Section2
 # In Strict-mode:
-key1 =                    # ❌ Error: Missing value
-key2 = [1, 2, ]           # ❌ Error: Stray trailing comma
-key3 = { a = 1, b = 2, }  # ❌ Error: Stray trailing comma
+key1 =                  # ❌ Error: Missing value
+key2 = [1, 2, ]         # ❌ Error: Stray trailing comma
+key3 = { a: 1, b: 2, }  # ❌ Error: Stray trailing comma
 ```
 
 ## 9. Object Literals
@@ -1194,7 +1193,7 @@ These features, while not implemented in this version, are reserved and MUST not
 
 #### 11.1.3. Date-time Type
 
-Currently, the YINI types in the specification map 1-to-1 to native JSON types. With that said YINI does not currently support native date, time, or date-time types. All date and time values **SHOULD currently** be represented as strings.
+Currently, the YINI **value types** in the specification map 1-to-1 to native JSON types. With that said YINI does not currently support native date, time, or date-time types. All date and time values **SHOULD currently** be represented as strings.
 
 Support for standardized date-time literals may be considered in a future version, once the core specification is stable.
 
@@ -1240,7 +1239,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 #### 12.2.1. Structural Requirements
 Note: In lenient mode, top-level members outside any section may be accepted. In strict mode, the document structure is further restricted; see Section 12.3 and Section 13.1.
 
-- A file may consist of zero or more **sections**.
+- A file may consist of zero or more **sections** in lenient (default) mode. In strict mode, at least one section is required, and there MUST be **exactly one explicit top-level section**.
 - A file may consist of zero or more valid key-value pairs (members).
 - Section headers MUST begin with a valid marker (`^`, `§`, or `<`).
 - In repeated/basic section headers, whitespace between the marker and the section name is optional.
@@ -1251,7 +1250,7 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
   2. In strict mode, any duplicate key MUST result in an error.
   3. In neither mode may an implementation silently overwrite an earlier key with a later one.
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
-- The document terminator (`/END`) is **optional in lenient mode and required in strict mode**.
+- The document terminator (`/END`) is **optional in lenient (default) mode** and **required in strict mode**.
 
 #### 12.2.2. Character Encoding
 YINI documents (files) **MUST** be encoded as **UTF-8**.  
@@ -1509,18 +1508,7 @@ The syntax for list:
   - `;`at start of line is treated as full-line comments (there may appear only spaces or tabs before `;`).
   - **Nested block comments are not supported.**
 
-### 13.10. Error Handling Recommendations
-
-If the parser encounters:
-  * A **missing intermediate section level** (e.g., level 3 without level 2),
-  * A **duplicate key in the same section and section level**,
-  * A **malformed list or string**
-
-It SHOULD:
-* **Fail gracefully** and report an error, OR
-* **Use host-defined fallback logic**, if robustness is preferred.
-
-### 13.11 Bonus Tips for Implementation
+### 13.10 Bonus Tips for Implementation
 Developers are encouraged to implement the following features to improve parser robustness and developer experience:
 
 - Attach **position metadata** (line/column) to tokens for better diagnostics.
@@ -2491,11 +2479,11 @@ contacts = ['ops@orion-industries.io', 'maintenance@orion-industries.io', 'safet
 ### 16.1. License
 Apache License, Version 2.0, January 2004,
 http://www.apache.org/licenses/
-Copyright 2024-2025 Gothenburg, Marko K. Seppänen. (Sweden via
+Copyright 2024-2026 Gothenburg, Marko K. Seppänen. (Sweden via
 Finland).
 
 ### 16.2. Acknowledgments
-_YINI would not exist in this form and shape what it is today, without the many insights, challenges, and thoughtful, constructive feedback from the community.
+_YINI would not exist in this form and shape what it is today, without the many insights, challenges, and thoughtful, constructive feedback from the community._
 
 For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
