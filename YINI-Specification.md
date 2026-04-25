@@ -90,7 +90,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 **5. Section Headers** ([Link ⇨](./YINI-Specification.md#5-section-headers))  
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
-&nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `<`, `§`)  
+&nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `§`, or `<`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Short-hand Section Heading  
 
@@ -229,7 +229,7 @@ YINI was created as a configuration format that emphasizes **clarity**, **readab
 
 YINI aims to prioritize **human readability, clarity, and clean syntax**.
 
-- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers use `^` as the primary marker, with `<` and `§` supported as alternatives.
+- **Clear Sectioning:** Sections are clearly delineated, allowing for organized groupings of related configuration data. Section headers use `^` as the primary marker, with `§` and `<` supported as alternatives.
 
 - **Flexible Data Types:** YINI supports a variety of data types, including strings, numbers, booleans, nulls, and lists. This flexibility makes it suitable for both simple and complex configuration needs.
   - **Inline objects & lists** — expressive nested data using `{}` and `[]` without indentation sensitivity.
@@ -257,8 +257,8 @@ The following key terms are used consistently throughout this specification. Und
 | List                      | Lists, also known as Arrays, are a compound value type consisting of zero or more comma-separated items enclosed in square brackets and assigned using `=`. |
 | Member                    | A key-value pair entry, such as `key = value`, representing a single entry within a section or root. |
 | Raw String (R-String)      | A string literal that does not interpret escape sequences **(default type)**. |
-| Section                   | A logical grouping of members, introduced by a header using a section marker such as `^`, `<`, or `§`. |
-| Section Marker            | A special character used to denote a new section header. Supported section markers are `^`, `<`, and `§`; `^` is the primary and recommended marker. |
+| Section                   | A logical grouping of members, introduced by a header using a section marker such as `^`, `§`, or `<`. |
+| Section Marker            | A special character used to denote a new section header. Supported section markers are `^`, `§`, and `<`; `^` is the primary and recommended marker. |
 | Strict Mode               | An optional parsing mode that enforces stricter structural validation, including exactly one explicit top-level section and prohibition of top-level orphan members. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
 | Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
@@ -607,7 +607,7 @@ Sections in YINI are used to organize related members (key-value pairs) into log
 ### 5.1. Syntax
 A section header is a line that:
 
-- Starts with one or more section marker characters (`^`, `<`, or `§`), or with a numeric shorthand such as `^7`.
+- Starts with one or more section marker characters (`^`, `§`, or `<`), or with a numeric shorthand such as `^7`.
 - Is followed by a section name, which may be either a simple identifier or a backticked identifier.
 - Ends at the newline.
 
@@ -627,13 +627,13 @@ A section header is a line that:
 §100 `Very Deep Section`
 ```
 
-### 5.2. Section Markers (`^`, `<`, `§`)
+### 5.2. Section Markers (`^`, `§`, or `<`)
 YINI allows a limited set of _**section markers**_ to identify section headers. These markers help visually and semantically distinguish section starts from key-value members or comments.
 
 Supported markers:
   - `^` — Primary and recommended section marker, within the 7-bit ASCII range for maximum compatibility.
-  - `<` — Alternative 7-bit ASCII section marker, intended as a fallback if `^` is unsuitable in a given environment.
   - `§` — Supported alternative section marker, but potentially less portable because it lies outside the 7-bit ASCII range.
+  - `<` — Alternative 7-bit ASCII section marker, intended as a fallback if `^` is unsuitable in a given environment.
 
 Note: The `€` character is no longer supported as a valid section marker in YINI.
 
@@ -655,10 +655,11 @@ For nesting levels deeper than 6, the **numeric shorthand section header** synta
 ### 5.3. Nested Sections
 To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
 
-- Section heading markers (`^`,`<`, or `§`) may only be repeated up to six times — to level 6 (maximum).
+- Section heading markers (`^`, `§`, or `<`) may only be repeated up to six times — to level 6 (maximum).
 - Beyond level 6, the numeric shorthand section MUST be used (see section 5.3.1).
 - **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.
 - **Going shallower (decrease nesting):** May drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
+- When descending into deeper nesting, section levels MUST increase by exactly one level at a time. This rule applies equally to repeated marker form and numeric shorthand form. Numeric shorthand does not permit skipping intermediate levels.
 - Optionally the short-hand section notation may be used for any levels and that notation is the only way to define levels 7 or beyond.
 
 ```yini
@@ -699,7 +700,7 @@ Optionally, indentation may be omitted:
 #### 5.3.1. Short-hand Section Heading
 
 **Short-hand Section Headings:**
-Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `<`, etc.) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers are RECOMMENDED but not required).
+Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `<`) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers are RECOMMENDED but not required).
 
 For example:
 - To go from depth 6 to depth 7: write `^7 SectionName`.  
@@ -713,6 +714,7 @@ This prevents arbitrarily long runs of the same marker. When ascending (moving t
 ```yini
 ^      Level1      # One caret
 ^^     Level2      # Two carets   → depth 2
+^9     Level9      # ❌ Invalid: levels 3 through 8 were not explicitly defined
 ^^^    Level3      # Three carets → depth 3
 ^^^^   Level4      # Four carets  → depth 4
 ^^^^^  Level5      # Five carets  → depth 5
@@ -726,6 +728,14 @@ This prevents arbitrarily long runs of the same marker. When ascending (moving t
 ^     BackTo1      # Going back to level 1 (allowed)
 ^^    BackTo2      # Going back to level 2 (allowed)
 ```
+
+```txt
+^1     Level1      # ✅ Valid
+^2     Level2      # ✅ Valid
+^9     Level9      # ❌ Invalid: levels 3 through 8 were not explicitly defined
+```
+
+Numeric shorthand does not permit skipping intermediate nesting levels. It is only an alternative notation for expressing a section depth and a notation for going deeper than level 6. Therefore, a shorthand section at level `n` is valid only if level `n - 1` has already been explicitly established in the current nesting chain.
 
 ## 6. String Literals
 
@@ -1203,8 +1213,8 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `^` | Section header | Used to denote section start |
 | `:` | Define a property inside an object | Defines a value for a key inside an inline object |
 | `,` | Item separator | Used in lists |
-| `<` | Section header (alternative) | Used to denote section start |
-| `§` | Section header (alternative) |   |
+| `§` | Section header (alternative on high-end systems) |   |
+| `<` | Section header (escape hatch on low-end systems) | Used to denote section start |
 | `%` | Binary prefix | Begins binary number |
 | `;` | Full-line comment |   |
 | `#` | Hexadecimal prefix | Begins hexadecimal number |
@@ -1232,7 +1242,7 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
 
 - A file may consist of zero or more **sections**.
 - A file may consist of zero or more valid key-value pairs (members).
-- Section headers MUST begin with a valid marker (`^`, `<`, or `§`).
+- Section headers MUST begin with a valid marker (`^`, `§`, or `<`).
 - In repeated/basic section headers, whitespace between the marker and the section name is optional.
 - In numeric shorthand section headers, at least one space or tab is required after the number before the section name.
 - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
@@ -2523,7 +2533,7 @@ v1.0.0 RC 4, 2026-03-29
 - **Clarified:** Lists in YINI are defined only with `=` and square brackets `[ ... ]`.
 - **Rationale:** The colon-list syntax added convenience but did not add core expressive power, and its removal improves clarity, predictability, and grammar simplicity.
 - **Changed:** Removed support for the additional alternative section marker `€`, due to no clear practical benefit compared to the existing markers.
-- **Clarified:** The supported section markers are now explicitly `^` (primary), `<`, and `§`.
+- **Clarified:** The supported section markers are now explicitly `^` (primary), `§`, and `<`.
 - **Fixed:** Corrected an error in Example 15.1.
 - **Updated:** Added two large real-world configuration examples (A and B), featuring nested inline objects, lists, and complex structures.
   - See Sections **15.5** and **15.6**.
