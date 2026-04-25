@@ -478,6 +478,9 @@ Only **whitespaces or comments** may appear after the terminator.
 
 It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comments after the marker, these SHOULD be ignored.
 
+After the document terminator, only whitespaces and comments are permitted.  
+Any other content appearing after the terminator MUST result in an error.
+
 ### 3.6. Ignore / Disable Line
 A line that begins with a **double dash** (`--`) is treated as a **disabled line** and will be completely ignored by the YINI parser. Everything after `--` until the end of the line (`<NL>`) is disregarded — including any comments or syntactically valid members.
 
@@ -1265,6 +1268,7 @@ A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and
   * **In lenient mode:** No error is required.
   * **In strict mode:** MUST be treated as an error.
 - After the terminator, only whitespaces and comments are allowed.
+- Any other content appearing after the terminator MUST result in an error.
 
 ##### Table: Terminator Requirement by Mode
 | Mode | Terminator Requirement |
@@ -1298,7 +1302,7 @@ Some YINI parsers may support multiple **validation modes**:
 
 - **Lenient Mode:** 
   - Permissive with minor errors (e.g., trailing commas after last value/member (are ignored), mixed line endings).
-  - The document terminator (`/END`) is optional in lenient mode and MAY be omitted entirely.
+  - The document terminator (`/END`) is optional in lenient mode and MAY be omitted entirely. If   it's present, it marks the end of the YINI document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
   - All typing rules still apply — for example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
   - Empty values are allowed ONLY in members in section-top-levels:
     - Missing/empty value (ONLY outside lists and objects) are treated as `Null`.
@@ -1309,8 +1313,8 @@ Some YINI parsers may support multiple **validation modes**:
   - No empty values are allowed, MUST always be explicitly with `Null`. 
   - No (stray) trailing commas (after last value/member) inside lists and object permitted.
   - Strict mode requires exactly one explicit top-level section. Any additional sections MUST appear only as subsections nested within that section. Top-level orphan members are not allowed in strict mode. Otherwise, an error MUST be reported.  
-    
-    Because strict mode also requires the document terminator `/END`, the end of the document is made explicit rather than being inferred from EOF alone. This improves deterministic parsing, reduces ambiguity about incomplete input, and makes **truncated, partially copied, or prematurely cut-off documents** easier to detect. Together with the requirement for exactly one explicit top-level section, this provides increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.  
+  - The document terminator (`/END`) MUST be present in a YINI document in strict mode. It marks the end of the document. Any non-comment, non-whitespace content appearing after it MUST result in an error.  
+    **Note:** Because strict mode also requires the document terminator `/END`, the end of the document is made explicit rather than being inferred from EOF alone. This improves deterministic parsing, reduces ambiguity about incomplete input, and makes **truncated, partially copied, or prematurely cut-off documents** easier to detect. Together with the requirement for exactly one explicit top-level section, this provides increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.  
     * The **first half** is invalid because it is missing the required `/END` marker.
     * The **second half** is invalid because it lacks the required single level 1 section header (e.g., `^ Title`).
   - Disallows trailing commas.
