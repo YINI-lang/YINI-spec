@@ -6,10 +6,5 @@ port        = 8080
 useTls      = true
 maxClients  = 100
 retryDelay  = C"5\n"        # C-string with escape sequence
-notes       = H"
-    🧩 This is a multi-line hyper string.
-    It collapses internal whitespace and drops leading/trailing
-    newlines.
-"
 
 /END // (required in strict mode)
