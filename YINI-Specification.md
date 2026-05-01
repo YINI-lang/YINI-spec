@@ -485,6 +485,8 @@ A line that begins with a **double dash** (`--`) is treated as a **disabled line
 
 This mechanism is similar to a comment, but serves a **distinct purpose**: disabling or temporarily excluding valid configuration lines without deleting them.
 
+Disabled lines are ignored by the parser and do not count as meaningful document content when determining whether a document is effectively empty.
+
 **Example 1:**
 ```yini
 // The next line is ignored — even though it's valid syntax.
@@ -1251,6 +1253,8 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
   3. In neither mode may an implementation silently overwrite an earlier key with a later one.
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
 - The document terminator (`/END`) is **optional in lenient (default) mode** and **required in strict mode**.
+- **In lenient (default) mode, an empty document is permitted.** A document that contains only whitespace, comments, and/or disabled lines (`--`) is considered empty. In such cases, the parser MUST NOT fail; it SHOULD instead report a warning diagnostic indicating that the document appears empty or contains no meaningful content.
+- **In strict mode, an empty document is invalid.** A document that contains only whitespace, comments, and/or disabled lines (`--`) MUST result in an error.
 
 #### 12.2.2. Character Encoding
 YINI documents (files) **MUST** be encoded as **UTF-8**.  
@@ -1305,43 +1309,49 @@ A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and
     ```
 
 ### 12.3. Lenient vs. Strict Modes _(Optional Feature)_
-Non-strict mode (lenient mode) is the default mode of operation. Parsers SHOULD operate in this mode by default unless explicitly configured otherwise to operate in fully strict mode.
+
+Non-strict mode (lenient mode) is the default mode of operation. Parsers SHOULD operate in this mode by default unless explicitly configured to use strict mode.
 
 Some YINI parsers may support multiple **validation modes**:
 
-- **Lenient Mode:** 
-  - Permissive with minor errors (e.g., trailing commas after last value/member (are ignored), mixed line endings).
-  - The document terminator (`/END`) is optional in lenient mode and MAY be omitted entirely. If   it's present, it marks the end of the YINI document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
-  - All typing rules still apply — for example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
-  - Empty values are allowed ONLY in members in section-top-levels:
-    - Missing/empty value (ONLY outside lists and objects) are treated as `Null`.
-    - Trailing comma (after last value/member) inside lists and object - comma is ignored - ONLY in lenient-mode (parse error in strict-mode).
-  - Useful for hand-edited configuration files.
-- **Strict Mode:**
-  - Enforces full well-formedness.
-  - No empty values are allowed, MUST always be explicitly with `Null`. 
-  - No (stray) trailing commas (after last value/member) inside lists and object permitted.
-  - Strict mode requires exactly one explicit top-level section. Any additional sections MUST appear only as subsections nested within that section. Top-level orphan members are not allowed in strict mode. Otherwise, an error MUST be reported.  
-  - The document terminator (`/END`) MUST be present in a YINI document in strict mode. It marks the end of the document. Any non-comment, non-whitespace content appearing after it MUST result in an error.  
-    **Note:** Because strict mode also requires the document terminator `/END`, the end of the document is made explicit rather than being inferred from EOF alone. This improves deterministic parsing, reduces ambiguity about incomplete input, and makes **truncated, partially copied, or prematurely cut-off documents** easier to detect. Together with the requirement for exactly one explicit top-level section, this provides increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.  
-    * The **first half** is invalid because it is missing the required `/END` marker.
-    * The **second half** is invalid because it lacks the required single level 1 section header (e.g., `^ Title`).
-  - Disallows trailing commas.
-    * Empty values are disallowed — they MUST be explicitly typed as `null`, `Null`, or `NULL` (case-insensitive), although empty sections (with no members) are allowed.
-  - For production and tool-chain use.
+#### Lenient Mode
 
-**Note:** Implementations SHOULD clearly document the validation mode in use and detail which rules are fully enforced under strict parsing.
+- **Lenient mode** is the default mode of operation.
+  - Useful for hand-edited configuration files.
+  - Permissive with minor issues (for example, trailing commas after the last value/member are ignored, and mixed line endings are tolerated).
+  - The document terminator (`/END`) is optional in lenient mode and MAY be omitted entirely. If present, it marks the end of the YINI document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
+  - All typing rules still apply. For example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
+  - Empty values are allowed ONLY for members at section top level:
+    - A missing/empty value (ONLY outside lists and objects) is treated as `Null`.
+    - A trailing comma after the last value/member inside a list or object is ignored ONLY in lenient mode. In strict mode, it is a parse error.
+  - In lenient (default) mode, an empty document is permitted. For this purpose, a document containing only whitespace, comments, and/or disabled lines (`--`) is considered empty. An implementation MUST NOT treat such a document as a parse failure solely because it is empty; however, it SHOULD report a warning diagnostic indicating that the document appears empty or contains no meaningful content.
+
+#### Strict Mode
+
+- **Strict mode** is an optional mode with stricter rules.
+  - Intended for production and tool-chain use.
+  - Enforces full well-formedness.
+  - Empty values are not allowed; they MUST always be written explicitly as `null`, `Null`, or `NULL`.
+  - Stray trailing commas after the last value/member inside lists and objects are not permitted.
+  - Strict mode requires exactly one explicit top-level section. Any additional sections MUST appear only as subsections nested within that section. Top-level orphan members are not allowed in strict mode. Otherwise, an error MUST be reported.
+  - The document terminator (`/END`) MUST be present in a YINI document in strict mode. It marks the end of the document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
+    **Note:** Because strict mode also requires the document terminator `/END`, the end of the document is made explicit rather than being inferred from EOF alone. This improves deterministic parsing, reduces ambiguity about incomplete input, and makes **truncated, partially copied, or prematurely cut-off documents** easier to detect. Together with the requirement for exactly one explicit top-level section, this provides increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
+    * The **first half** is invalid because it is missing the required `/END` marker.
+    * The **second half** is invalid because it lacks the required single level-1 section header (for example, `^ Title`).
+  - Empty sections (with no members) are still allowed.
+  - In strict mode, an empty document is invalid. For this purpose, a document containing only whitespace, comments, and/or disabled lines (`--`) is considered empty. Parsing such a document MUST result in an error.
+
+**Note:** Implementations SHOULD clearly document the validation mode in use and describe which rules are fully enforced under strict parsing.
 
 Example:
 ```yini
 ; Lenient mode examples:
 list_bracketed1 = [1, 2, ]   # ✅ → [1, 2]
-
 object1 = { a: 1, b: 2, }    # ✅ → {a: 1, b: 2} (trailing comma dropped)
 
 ; Strict mode examples:
-list_bracketed2 = [1, 2, ]   # ❌ Error: Stray trailing comma
-object2 = { a: 1, b: 2, }    # ❌ Error: Stray trailing comma
+list_bracketed2 = [1, 2, ]   # ❌ Error: stray trailing comma
+object2 = { a: 1, b: 2, }    # ❌ Error: stray trailing comma
 
 list_bracketed3 = [1, 2]     # ✅ OK
 object3 = { a: 1, b: 2 }     # ✅ OK
@@ -2505,6 +2515,9 @@ A running log of changes and updates **to this YINI specification**.
 Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
+
+v1.0.0 RC 5 + UPDATES, 2026-xx-xx
+- **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 
 v1.0.0 RC 5, 2026-04-09
 - **Changed:** The document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
