@@ -221,7 +221,6 @@ TRIPLE_QUOTED_STRING
 
 SINGLE_OR_DOUBLE
   : R_AND_C_STRING
-  | HYPER_STRING
   ;
 
 /**
@@ -240,11 +239,11 @@ R_AND_C_STRING
   | [RrCc]? '"'  ('\\"'  | ~["\r\n])* '"'
   ;
 
-// Hyper string literal.
-HYPER_STRING
-  : [Hh] '\'' (~['])* '\''
-  | [Hh] '"'  (~["])* '"'
-  ;
+// // Hyper string literal.
+// HYPER_STRING
+//   : [Hh] '\'' (~['])* '\''
+//   | [Hh] '"'  (~["])* '"'
+//   ;
 
 // NOTE: NUMBER must come before KEY, IDENT, etc.
 NUMBER

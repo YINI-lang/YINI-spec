@@ -7,6 +7,7 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## Package 2026 xxx + UPDATES (spec: v1.0.0-rc.5 + UPDATES)
+- **Removed:** - Removed Hyper Strings (H-Strings). While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
 - **Improved:** Made the lexer grammar target-independent by removing TypeScript-specific members and semantic predicates, enabling cross-language parser generation.
 - **Changed:** In `Grammar-ANTLR4`, replaced Windows-specific .bat helper scripts with a language-agnostic `Taskfile.yaml`.
 - **Improved:** Revised `Contributing.md` for clarity and consistency.

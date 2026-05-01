@@ -323,6 +323,48 @@ This change was made because colon-based lists did not add enough practical valu
 
 Overall, this makes both the language and its parser implementations easier to understand, easier to maintain, and more predictable to use.
 
+### D.3.2. Hyper Strings (H-Strings)
+
+Hyper Strings, also called **H-Strings**, were previously defined as a special kind of string literal for writing longer human-authored text in a visually readable way. An H-String was prefixed with either `H` or `h`.
+
+The purpose of H-Strings was to make longer descriptive text blocks easier to write across multiple lines without preserving the exact line breaks and indentation used in the source file. They were intended for configuration values such as descriptions, labels, help text, messages, and other prose-like content where readable source formatting was more important than preserving whitespace exactly.
+
+Like raw strings, H-Strings treated backslashes as literal characters. Escape sequences were not interpreted.
+
+H-Strings were designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
+
+- `<NL>` refers to a newline or line break, represented by `CR`, `LF`, or `CRLF`.
+- `<Unicode-WS>` includes relevant Unicode whitespace characters, including the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` control characters, primarily from the C0 range (`U+0000–U+001F`). For the complete table, see Section 16.7, "Unicode Whitespace Characters".
+- H-Strings could span multiple lines, and indentation using `<Unicode-WS>` was allowed to improve human readability.
+- Multiple consecutive newlines (`<NL>`) and/or whitespace characters (`<Unicode-WS>`) were normalized into a single space (`U+0020`).
+- Leading and trailing `<NL>` and/or `<Unicode-WS>` were trimmed.
+- For the complete set of characters included in `<Unicode-WS>`, see Section 16.7, "Unicode Whitespace Characters".
+
+In practice, H-Strings behaved similarly to how prose is rendered in HTML: extra spacing, indentation, and line breaks were collapsed into clean, flowing text.
+
+The following:
+
+```yini
+H"My name is
+  John Doe,  
+  and this is a test string."
+```
+
+Would result in:
+```txt
+My name is John Doe, and this is a test string.
+```
+
+#### Why H-Strings Were Removed
+
+H-Strings were removed from the core specification to keep YINI smaller, clearer, and easier to learn, document, and implement.
+
+Although H-Strings provided a convenient way to write longer human-authored text blocks, they also introduced another string form with its own whitespace-normalization rules. This increased the conceptual surface area of the language, added parser complexity, expanded the documentation burden, and forced users to decide when to use H-Strings instead of other string forms such as raw strings or triple-quoted strings.
+
+The feature was useful, but not essential. Since most YINI files are expected to use ordinary strings, raw strings, and triple-quoted strings for the majority of practical configuration needs, H-Strings were judged to serve too narrow a use case to justify their inclusion in the core language.
+
+Removing H-Strings supports YINI’s broader design goals: clarity over cleverness, predictable parsing, a smaller syntax surface, and fewer overlapping ways to express the same kind of value.
+
 ### D.4. Future Considerations
 In future, MAYBE adding support for e.g.: `@yini strict`, `@yini version 1.0`, `@include somefile.yini`, and/or `@deprecated`, `@experimental`.
 

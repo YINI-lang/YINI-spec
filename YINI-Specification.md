@@ -98,11 +98,10 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
 &nbsp;&nbsp;&nbsp;&nbsp;6.2. Classic Strings (C-Strings)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.1. Escape Characters  
-&nbsp;&nbsp;&nbsp;&nbsp;6.3. Hyper Strings (H-Strings)  
-&nbsp;&nbsp;&nbsp;&nbsp;6.4. Triple-Quoted Strings  
-&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Types Summary  
-&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;6.7. String Type Mixing
+&nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
+&nbsp;&nbsp;&nbsp;&nbsp;6.4. String Types Summary  
+&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Type Mixing
 
 **7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
@@ -249,7 +248,6 @@ The following key terms are used consistently throughout this specification. Und
 | Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
 | Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
 | Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document. It is optional in lenient mode and required in strict mode. |
-| Hyper String (H-String)    | A multi-line string prefixed with `H` that normalizes whitespace and trims edges. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=`). Keys MUST be unique within their section (and depth/level). |
 | Lenient Mode              | This is the default parsing mode in YINI. |
@@ -273,7 +271,7 @@ YINI documents MUST be encoded in UTF-8.
 
 - **BOM Policy:** A UTF-8 byte order mark (BOM) SHOULD NOT be used. However, implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
 
-- **Character Set:** YINI documents use Unicode. Control characters and other non-printable characters SHOULD be avoided except where explicitly allowed, such as tabs, spaces, and line endings, or when represented through valid string literal forms. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-quoted strings.
+- **Character Set:** YINI documents use Unicode. Control characters and other non-printable characters SHOULD be avoided except where explicitly allowed, such as tabs, spaces, and line endings, or when represented through valid string literal forms. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-Quoted Strings.
 
 Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
 
@@ -371,7 +369,6 @@ The following whitespace `<WS>` behaviors are defined:
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
 - Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are ignored outside of strings and section headers.
 - Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
-- Note: In the context of strings, the term `<Unicode-WS>` is used to refer to a broader range of Unicode whitespace characters, beyond just tab and space. For a complete table, see more in section 16.7, "🧾 Unicode Whitespace Characters".
 
 ### 3.3. Comments
 YINI supports **three types of comments**:
@@ -742,30 +739,29 @@ Numeric shorthand does not permit skipping intermediate nesting levels. It is on
 
 **Prefix Glossary Table:**
 
-Prefix letters are **case-insensitive**, e.g. lowercase `h` behaves identically to `H`.
+Prefix letters are **case-insensitive**, e.g. lowercase `r` behaves identically to `R`.
 
 |Prefix| Type Name      | Behavior Summary|
 |------|----------------|---|
 |_none_| Raw String     | Raw (default) if no prefix is used |
 | R _(optional and has no functional effect)_   | Raw String     | No escapes, preserves text exactly (default) |
-| H    | Hyper String   | Multi-line, trims & normalizes whitespace |
 | C    | Classic String | Supports escape sequences like `\n`, `\t` |
 **Note:**  Prefix R is optional and has no functional effect — raw strings are the default.
 
-YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
+YINI has three types of string literals — Raw, Classic, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
 
 **Note:** If a string is not quoted, it's not a string — period.
 
-**YINI supports four types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for triple-quoted strings** `"""`, which do not support any prefix). YINI supports multi-line strings via Hyper Strings or triple-quoted strings.
+**YINI supports three types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for Triple-Quoted Strings** `"""`, which do not support any prefix). YINI supports multi-line strings via Triple-Quoted Strings.
 
 If no prefix is used, the string is treated as a **Raw string literal** by default.
 
-**Note:** Triple-quoted strings (`"""`) only support the `R` and `C` prefixes. If no prefix is given, a Triple-quoted string is treated as raw. 
+**Note:** Triple-Quoted Strings (`"""`) only support the `R` and `C` prefixes. If no prefix is given, a Triple-Quoted String is treated as raw. 
 
 **Rules and Behavior for Strings:**
-- All string literals **MUST start and finish on the same line**, except for **H-Strings** (see section 6.4.) and **Triple-Quoted Strings** (see section 6.3.), which can span multiple lines.
+- All string literals **MUST start and finish on the same line**, except for **Triple-Quoted Strings** (see section 6.3.), which can span multiple lines.
 - Multiple string literals can be **concatenated** to create longer strings (see section 6.6, "String Concatenation").
 
 **String Overview**
@@ -774,7 +770,6 @@ If no prefix is used, the string is treated as a **Raw string literal** by defau
 |------------------------|--------------------------|------------|---------|------------------|--------------------------------------|------------------------|
 | Raw String             | `'...'` or `"..."`       | ❌ No      | ❌ No   | ❌ No             | Simple 1-line literal                | Raw literal strings    |
 | Classic String (C)     | `C'...'` or `c"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
-| Hyper String (H)       | `H'...'` or `h"..."`      | ✅ Yes     | ❌ No   | ✅ Yes            | Clean multi-line text, trimmed       | HTML text flow         |
 | Triple-Quoted (Raw)    | `"""..."""`              | ✅ Yes     | ❌ No   | ❌ No             | Multi-line raw text                  | Python raw triple-quote |
 | C-Triple-Quoted        | `C"""..."""` or `c"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
 
@@ -783,7 +778,7 @@ In (Raw) strings, the backslash (`\`) is treated as a literal character — **it
 
 However, Raw strings **cannot contain newlines**, as they MUST appear on a single line.
 
-For multi-line Raw strings, see Triple-quoted string literals.
+For multi-line Raw strings, see Triple-Quoted String literals.
 
 Raw strings are particularly suitable for representing file paths and other literal text.
 >myPath = "C:\Users\John Smith\"  // Raw string
@@ -836,51 +831,21 @@ Where:
 
 Invalid escape sequences (e.g. `\z` or `\o378`) MUST result in a parse error unless explicitly allowed by a custom extension or parser configuration.
 
-### 6.3. Hyper Strings (H-Strings)
-YINI supports a special kind of string literal called a **Hyper String**, or **H-String** for short. These strings are prefixed with either `H` or `h`.
-
-Like raw strings, Hyper Strings treat backslashes as literal characters — escape sequences are not interpreted.
-
-Hyper Strings are designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
-
-- `<NL>` refers to newline/linebreak of in combination of `CR`, `LF`, or `CRLF`.
-`<Unicode-WS>` includes all relevant Unicode whitespace characters: the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` (control characters), primarily from the C0 range (`U+0000–U+001F`). For a complete table, see more in section 16.7, "🧾 Unicode Whitespace Characters".
-- Hyper Strings **can span multiple lines**, and indentation using `<Unicode-WS>` is allowed to improve human readability.
-- Multiple consecutive newlines (`<NL>`) and/or whitespace (`<Unicode-WS>`) are normalized into a **single space** (`U+0020`).
-- Leading and trailing `<NL>` and/or `<Unicode-WS>` are trimmed.
-- For the complete set of characters in <Unicode-WS>, refer to section 16.7 — [Unicode Whitespace Characters.](./YINI-Specification.md#157--unicode-whitespace-characters)
-
-Hyper Strings behave similarly to how text is rendered in HTML: extra spacing and line breaks are reduced to clean, flowing text.
-
-The following:
-
-```yini
-H"My name is
-  John Doe,  
-  and this is a test string."
-```
-
-Will result in:
-```txt
-My name is John Doe, and this is a test string.
-```
-
-### 6.4. Triple-Quoted Strings
+### 6.3. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
 - **Begins and ends** with three double-quote characters: `"""`.
 - **May span multiple lines**, including embedded newline characters.
 - **May contain any characters**, including quotes (`"`) and double quotes (`""`), **except** an unescaped sequence of three double quotes (`"""`), which ends the string.
 - **Preserves all content exactly as written**, including whitespace and line breaks (new lines) — unless escape sequences are enabled by prefixing the string with `C` or `c` (see below).
 - **Ends at the first unescaped** sequence of three double quotes  (`"""`).
-- **Does not support `H` prefixes**.
 
-By default, Triple-quoted strings are treated as **Raw** — escape sequences are not interpreted. To explicitly indicate that a Triple-quoted string is raw, a prefix `R` (or `r`) may optionally be used. This prefix is purely **syntactic sugar** and does not affect its default behavior.
+By default, Triple-Quoted Strings are treated as **Raw** — escape sequences are not interpreted. To explicitly indicate that a Triple-Quoted String is raw, a prefix `R` (or `r`) may optionally be used. This prefix is purely **syntactic sugar** and does not affect its default behavior.
 
 If **prefixed with `C` or `c`**, the string supports escape sequences, just like Classic Strings (C-Strings). This includes support for: `\n`, `\t`, `\\`, `\"`, `\xhh`, `\u1234`, `\o123`, etc.
 
 #### Examples
 
-Raw (default) triple-quoted strings:
+Raw (default) Triple-Quoted Strings:
 ```yini
 """This is a multiline
 string that spans
@@ -891,27 +856,26 @@ three lines."""
 """You can use double quotes (") inside."""
 ```
 
-C-Triple-quoted strings (with escapes enabled):
+C-Triple-Quoted Strings (with escapes enabled):
 ```yini
 C"""This spans multiple lines with a tab\tand newline\n"""
 
 C"""Quotes inside: "double" and 'single'"""
 ```
 
-**Note:** Triple-quoted strings always preserve their contents exactly — including all whitespace and line breaks (new lines) — unless prefixed with `C` (or `c`), in which case escape sequences are interpreted.
+**Note:** Triple-Quoted Strings always preserve their contents exactly — including all whitespace and line breaks (new lines) — unless prefixed with `C` (or `c`), in which case escape sequences are interpreted.
 
-### 6.5. String Types Summary
+### 6.4. String Types Summary
 **Summary**
 
 | String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes | Behavior Hint
 |---|---|---|---|---|---|---|
 | Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text | Simple raw, 1-line, no escapes
 | Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings | Behaves like C/JSON strings
-| Hyper Strings (H-Strings)  | `H' '` or `h" "` | ✅ Yes | ❌ No | ✅ Yes | Readable multi-line text, whitespace is normalized and trimmed | Behaves like HTML text flow
 | Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line literal string, Raw by default | Raw multiline, no escapes
 | C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
 
-### 6.6. String Concatenation
+### 6.5. String Concatenation
 Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
 
 **Example:**
@@ -925,8 +889,8 @@ greeting = "Hi, hello there"
 
 Concatenation is supported between all string types, but mixing different types (e.g., Raw + Classic) is discouraged unless necessary for special use cases.
 
-### 6.7. String Type Mixing
-Concatenation of string literals of different types (e.g., Raw + Classic, Classic + Hyper) is **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
+### 6.6. String Type Mixing
+Concatenation of string literals of different types (for example, Raw + Classic, Raw + Triple-Quoted, or Classic + C-Triple-Quoted) MUST be **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
 
 Engines SHOULD handle mixed-type concatenations correctly, but authors are encouraged to use consistent string types within concatenations to ensure clarity and predictable behavior.
 
@@ -1291,7 +1255,7 @@ A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and
 
 #### 12.2.6. Escaping and String Literals
 - Escape sequences are **ONLY allowed** in in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
-- Triple-quoted strings MUST use `"""` for both opening and closing (`'''` is not supported).
+- Triple-Quoted Strings MUST use `"""` for both opening and closing (`'''` is not supported).
 
 #### 12.2.7. Shortest Valid YINI Documents in Strict Mode
 - **Valid short documents in strict mode:**
@@ -1429,15 +1393,12 @@ Otherwise, an error MUST be reported.
 
 ### 13.2. Line Handling and Whitespace
 
-* Newline normalization is required:
+- Newline normalization is required:
   * Support all three forms: LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`.
-* Leading/trailing whitespaces (tabs or spaces):
+- Leading/trailing whitespaces (tabs or spaces):
   * Trim from section headers and keys.
-* Hyper Strings (H-Strings):
-  * Leading/trailing whitespaces (tabs or spaces) and newlines are trimmed.
-  * Inside a H-string, whitespaces (tabs or spaces) and newlines are normalized to one single space character.
-* Full-line and inline comments may follow key-value members or appear on separate lines.
-* Whitespace is permitted within lists, including across lines.
+- Full-line and inline comments may follow key-value members or appear on separate lines.
+- Whitespace is permitted within lists, including across lines.
 
 ### 13.3. Value and NULL Handling
 
@@ -1500,14 +1461,8 @@ The syntax for list:
 |------------------------|------------------|------------|----------|
 | (Raw) String           | _None_, `R`, or `r`| "Some text"| Text is as-is (raw), no escaping,  backslash is literal, preserves all whitespace|
 | Classic String         | `C` or `c`       | `C"..."`   | Escape sequences are interpreted|
-| Hyper String           | `H` or `h`       | `H"..."`   | (*) Multi-line, whitespace-collapsing, trimmed |
-| Triple-quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
-| C-Triple-quoted String | `C`, or `c`       | `C"""..."""`   | Can be multi-line, escapes interpreted, preserves all whitespace, including line breaks |
-
-(*) Hyper string behavior:
-  * Allow multi-line strings.
-  * Collapse sequences of whitespace and newlines into a single space.
-  * Trim leading/trailing whitespace.
+| Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
+| C-Triple-Quoted String | `C`, or `c`       | `C"""..."""`   | Can be multi-line, escapes interpreted, preserves all whitespace, including line breaks |
 
 ### 13.9. Comments
 
@@ -2517,6 +2472,7 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 v1.0.0 RC 5 + UPDATES, 2026-xx-xx
+- **Removed:** - Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 
 v1.0.0 RC 5, 2026-04-09
@@ -2560,7 +2516,7 @@ v1.0.0 Beta 7, 2025-06-12
 - Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
 - Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
 - Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
-- Added support for Triple-quoted strings with the prefix `C`, which interprets escape codes. Additionally, they can optionally be prefixed with `R` but this is not required since they are Raw by default.
+- Added support for Triple-Quoted strings with the prefix `C`, which interprets escape codes. Additionally, they can optionally be prefixed with `R` but this is not required since they are Raw by default.
 - Added "`base`"  as an alternative name for the implicit root section, in addition to the previously suggested "`root`".
 - Changed policy in 14.1, "Fallback Rules" to keep invalid key names or section headers as-is.
 - Added note about optional "Abort Sensitivity Levels" in parsing.
@@ -2630,7 +2586,9 @@ Note: Trailing commas (after any value/member) inside list or objects, does neve
 ---
 
 ### 16.7. 🧾 Unicode Whitespace Characters
-Below is a categorized list of Unicode whitespace characters recognized as within <Unicode-WS>, these are normalized or trimmed in Hyper Strings.
+*Informational / reserved for future*
+
+Below is a categorized list of Unicode whitespace characters recognized as within <Unicode-WS>.
 
 | Code Point | Character Name                | Abbreviation | Unicode Category | Notes                                 |
 |------------|-------------------------------|--------------|------------------|----------------------------------------|
