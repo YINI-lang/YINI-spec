@@ -188,12 +188,13 @@ YINI is flexible enough to support a wide range of use cases, from simple key-va
 ### 1.2. Purpose and Design Goals
 
 #### 1.2.1. The # Marker as a Comment Symbol
-In earlier drafts of YINI (up to Beta 5), the `#` character was temporarily used as a section header marker, inspired by Markdown-style headers. However, based on feedback and concerns about clarity, expectations from other formats, and common usage across tools and communities, this decision was revised.
+YINI treats `#` as a comment symbol (instead of being used as a section marker), aligning with conventions found in formats like classic INI, Bash, YAML, and various scripting environments. This change improves predictability for users familiar with other configuration file styles. See [A.4. Design Philosophy](./RATIONALE.md) for background.
 
-YINI now treats `#` as a comment symbol (instead of being used as a section marker), aligning with conventions found in formats like classic INI, Bash, YAML, and various scripting environments. This change improves predictability for users familiar with other configuration file styles. See [A.4. Design Philosophy](./RATIONALE.md) for background.
+- Outside string literals, the `#` character begins a comment.
+- Everything from `#` to the end of the line is ignored by the parser.
+- No whitespace is required before or after `#`.
 
-- The `#` starts a comment **only** when followed by a space or tab.
-- **Note:** `##` is invalid, `# #` is valid as a comment.
+Because `#` always begins a comment outside string literals, `#` is not valid as a hexadecimal number prefix. Hexadecimal values are written using `0x...` or the explicit `hex:` form.
 
 #### 1.2.2. Key Design Goals
 The YINI format was designed with the following philosophy and key goals in mind:
@@ -279,7 +280,7 @@ Exactly which control characters see more in section 3.2, "Whitespace and Indent
 YINI files SHOULD use the `.yini` file extension. This extension helps clearly identify the file type and ensures proper handling by tools and parsers designed for the YINI format.
 
 ### 2.3. Optional Shebang (`#!`)
-For Unix-based systems, a shebang (#!) is commonly used in script files to specify the interpreter. This feature is supported in YINI files, making it possible to use YINI documents as configuration files for scripts or command-line applications.
+For Unix-based systems, a shebang (#!) is commonly used in script files to specify the interpreter or tool to use. **The shebang is only special on the first line.** In all other positions, `#` begins a normal comment.
 
 **How to Use the Shebang:**
 - The **very first line** of the document may optionally begin with a Unix-style **shebang** (`#!`), which specifies the interpreter for the script.
@@ -375,40 +376,36 @@ YINI supports **three types of comments**:
 
 | Comment Type | Prefix | Position |
 |--------------|--------|----------|
-| Inline comment | `//` or `#` | At end of line |
+| Inline / line comment | `//` or `#` | Own line or after content |
 | Block comment | `/* ... */` | Anywhere (multi-line) |
 | Full-line comment | `;` | Start of line ONLY |
 
 While both `//` and `#` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
 
-**Rule Summary — `#` Interpretation**
-- `#` followed by a space or tab → **comment**.
-- `#` followed by anything else → **hex literal**.
-
 See also Section 3.6, "Disable Line", for a related mechanism used to deactivate valid lines of configuration.
 
 ### 3.3.1. Inline Comments
 YINI supports two syntaxes for inline comments.
-- **Double slash** `//` comments are the default:
+- **Double slash** `//` comments are the default — outside string literals, everything from `//` to the end of the line is treated as a comment:
     ```yini
-    // This is a single-line comment.
+    key = "value" // This is an inline comment.
+    key = true//This is also an inline comment.
     ```
-- **Hash `#` comments** are supported too — MUST be followed by **at least one space or tab** to be recognized:
+- **Hash `#` comments** are supported too — outside string literals, everything from `#` to the end of the line is treated as a comment:
     ```yini
-    # This is also a single-line comment.
+    key = "value" # This is an inline comment.
+    key = true#This is also an inline comment.
     ```
 
-This rule is a deliberate compromise to avoid ambiguity with hex-like values (e.g., `#FF0033`) commonly used in domains such as styling or color settings.
+Outside string literals, the `#` character always begins a comment. Everything from `#` to the end of the line is ignored by the parser. No whitespace is required before or after `#`.
 
   ✅ **Valid `#` comments:**
   - `# This is a comment`
   - `# Also valid`
   - `#\tTabbed too`
-
-  ❌ **Invalid `#` comments (not treated as comments):**
-  - `#FF9900` — Interpreted as a hex value.
-  - `#Invalid comment` — No space or tab after `#`.
-  - `##` — Not recognized as a valid comment, no space/tab follows the `#`.
+  - `#Comment too` — Valid with or without horizontal whitespace.
+  - `#FF9900` — Interpreted as a comment.
+  - `##` — Also a comment.
 
 ### 3.3.2. Multi-line Block Comments
 Multi-line (block) Comments.
@@ -564,6 +561,7 @@ If the value is meant to be a string, it MUST be quoted — either with single q
 #### Numbers
 - A sequence of digits **without a period** (`.`) is treated as a **Number** (integer).
 - A sequence of digits **with a period** (`.`) is treated as a **Number** (floating-point / float).
+- YINI also supports explicit base-prefixed number formats such as binary, octal, duodecimal, and hexadecimal literals. See Section 7.3, "Number Formats".
 
 #### Booleans
 If the value matches any of the following keywords `true`, `false`, `on`, `off`, `yes`, or `no` (case-insensitive) — it is interpreted as a **Boolean**. 
@@ -932,13 +930,31 @@ Note, binary and hexadecimal values also allow **alternative notations** for con
 
 | Number Format (case-insensitive) | Alternative Format | Description | Base | Notes
 |----------|--|---|---|---|
-| `3e4` | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
-| `0b1010` | `%1010` | Binary number | 2-base | Digits: `0` and `1` only
-| `0o7477` | - | Octal number | 8-base | Digits: `0`–`7`
-| `0z2EX9` | `0z2BA9` | Duodecimal (dozenal) | 12-base | `X` = `A` = 10, `E` = `B` = 11 (case-insensitive)
-| `0xF390` | `#F390` | Hexadecimal number | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15
+| `3e4`                   | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
+| `0b1010`                | `%1010` | Binary number | 2-base | Digits: `0` and `1` only
+| `0o7477`                | - | Octal number | 8-base | Digits: `0`–`7`
+| `0z2EX9`                | `0z2BA9` | Duodecimal (dozenal) | 12-base | `X` = `A` = 10, `E` = `B` = 11 (case-insensitive)
+| `hex:F390`, `hex: f390` | `0xF390` | Hexadecimal number | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15 
 
-**Note:** All prefix-based number formats in YINI are case-insensitive. For example, `0xF390`, `0XF390`, `0xf390`, `0Xf390`, and `#f390` are all valid hexadecimal literals.
+**Note:** All prefix-based number formats in YINI are case-insensitive. For example, `0xF390`, `0XF390`, `0xf390`, and `0Xf390` are all valid hexadecimal literals.
+
+The explicit hexadecimal form `hex:` is also case-insensitive and may be followed by optional horizontal whitespace:
+
+```yini
+color1 = hex:F390
+color2 = hex: F390
+color3 = HEX: f390
+```
+
+The `#` character is not a hexadecimal prefix in YINI. Outside string literals, `#` always begins a comment.
+
+In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits only. The `0x` prefix is not used inside the `hex:` form.
+
+```
+color = hex: FFAA00    # ✅ valid
+color = 0xFFAA00       # ✅ valid
+color = hex: 0xFFAA00  # ❌ invalid
+```
 
 ## 8. Boolean and Null Literals
 
@@ -1180,16 +1196,16 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `,` | Item separator | Used in lists |
 | `§` | Section header (alternative on high-end systems) |   |
 | `<` | Section header (escape hatch on low-end systems) | Used to denote section start |
-| `%` | Binary prefix | Begins binary number |
-| `;` | Full-line comment |   |
-| `#` | Hexadecimal prefix | Begins hexadecimal number |
-| `# ` | Inline comment (alternative) | Comment, if starts with `#` followed by at least one space or tab, due to `#` without space is reserved for hex literals (e.g. #FF00FF) |
-| `//` | Inine comment |   |
 | `/* */` | Block comment | Marks multi-line comment block |
-| `@` | Directive prefix | Reserved for future syntax |
+| `//` | Inine comment |   |
+| `#` | Comment | Begins a comment outside string literals; everything from `#` to the end of the line is ignored |
+| `;` | Full-line comment |   |
 | `[ ]` | List literal |  |
 | `{ }` | Object literal |  |
 | `--` | Line disabling | Experimental use (see Section 3.6) |
+| `%` | Binary prefix | Begins binary number |
+| `hex:` | Hexadecimal number prefix | Begins an explicit hexadecimal number literal; case-insensitive |
+| `@` | Directive prefix | Reserved for future syntax |
 
 #### 12.1.2. Reserved Keywords
 The following keywords are restricted and SHOULD not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
@@ -1466,11 +1482,11 @@ The syntax for list:
 
 ### 13.9. Comments
 
-* YINI supports:
-  - `//` for inline comments (rest of the line is ignored).
-  - `#` followed by at least one whitespace character (`SPACE` or `TAB`), for alternative inline comments (rest of the line is ignored).
+* YINI supports (outside string literals):
   - `/* ... */` for block (multi-line) comments (may span lines).
-  - `;`at start of line is treated as full-line comments (there may appear only spaces or tabs before `;`).
+  - `//` for inline comments (rest of the line is ignored).
+  - `#` for full-line or inline comments, everything from `#` to the end of the line is ignored. No whitespace is required before or after `#`.
+  - `;` at start of line is treated as full-line comments (there may appear only spaces or tabs before `;`).
   - **Nested block comments are not supported.**
 
 ### 13.10 Bonus Tips for Implementation
@@ -1526,7 +1542,8 @@ A shebang line may be used at the very top of the file:
 ```
 #!/usr/bin/env yini
 ```
-This line is ignored by YINI parsers but may affect script execution in Unix environments. It MUST be ignored by the YINI parser as a comment or metadata line.
+
+This line is ignored by YINI parsers but may affect script execution in Unix environments. It MUST be ignored as a shebang line when it appears as the first line of the document.
 
 ### 14.4. JSON Compatibility
 
@@ -2472,7 +2489,10 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 v1.0.0 RC 5 + UPDATES, 2026-xx-xx
-- **Removed:** - Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
+- **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
+- **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and may be followed by optional horizontal whitespace.
+- **Removed:** Support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
+- **Removed:** Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 
 v1.0.0 RC 5, 2026-04-09
@@ -2536,6 +2556,7 @@ v1.0.0 Beta 6, 2025-05-20
 - Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
   * **(An important caveat):** comments starting with `#` MUST be followed by a space or tab.
   * This requirement prevents clashes with hex-like values. Using `#` for hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise to align with conventions found in CSS (for color) and similar contexts. For example: `#FF0033` is a hex value, whereas `# FF0033` is treated as a comment.
+  * Note: This rule was later revised in v1.0.0 RC 6. `#` now always begins a comment outside string literals, and `#` is no longer valid as a hexadecimal number prefix.
 - Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and compatibility with the 7-bit ASCII range.
 - Added support for full line comment using `;` and disable line using `--`.
 - Added section 16.6, "Appendix C – Common Mistakes and Pitfalls".
@@ -2577,8 +2598,8 @@ Note: Trailing commas (after any value/member) inside list or objects, does neve
 | Key–Value pair / List | `name = "John"` / `items = ["a", "b", "c"]` | `name: "John"` / `items:` | `:` is not valid assignment syntax in YINI; use `=` for both single values and lists. |
 | Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | Line break after `=` causes the value of `items` to be parsed as null. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
-| Comments           | `# Comment` or `// Comment`     | `#Comment`                      | `#` MUST be followed by **space or tab** to be recognized as a comment. |
-| Hex values         | `color = #FF0033`               | Assumed to be a comment         | Without space after `#`, this is a valid hex value. |
+| Comments | `# Comment`, `#Comment`, or `// Comment` | Assuming `#Comment` is not a comment | Outside string literals, `#` always begins a comment. No whitespace is required. |
+| Hex values | `color = 0xFF0033` or `color = hex: FF0033` | `color = #FF0033` | `#` is not a hex prefix in YINI. It begins a comment outside string literals. |
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
 | List nesting       | `list = [[1, 2], [3, 4]]`       | Using inner lists without brackets | All nested lists MUST be bracketed explicitly. |
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |

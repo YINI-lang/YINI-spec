@@ -85,8 +85,8 @@ fragment DUO_INTEGER
   ;
 
 fragment HEX_INTEGER
-  : '0' [xX] HEX_DIGIT+
-  | '#' HEX_DIGIT+
+  : '0' [xX] HEX_DIGIT+                   // 0xFFAA00
+  | [hH] [eE] [xX] ':' HSPACE* HEX_DIGIT+ // hex:FFAA00, HEX: ffaa00
   ;
 
 // NOTE: This lexer rule is intentionally relaxed to allow `.` as well.
@@ -146,7 +146,8 @@ fragment SECTION_MARKER_INVALID
 
 // For matching bad character.
 fragment REST_CHAR
-  : ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+  // : ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+  :~([@# \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
   ;
 
 /* ------------------------------------------------------------------
@@ -262,7 +263,7 @@ GT: '>'; // Greater Than.
 LT: '<'; // Less Than.
 
 EQ: '=';
-HASH: '#';
+// NOTE: Do not include '#' here, because it would conflict with comment tokenization.
 COMMA: ',';
 COLON: ':';
 OB: '['; // Opening Bracket.
@@ -290,7 +291,7 @@ NL
 
 fragment SECTION_TAIL_COMMENT
   : '//' ~[\r\n]*
-  | '#' HSPACE+ ~[\r\n]*
+  | '#' ~[\r\n]*
   ;
 
 WS
@@ -328,7 +329,7 @@ FULL_LINE_COMMENT
  Remains in input, but hidden (doesn't interfere with parsing).
  */
 INLINE_COMMENT
-  : ('//' | '#' HSPACE+) ~[\r\n]* -> skip
+  : ('//' | '#') ~[\r\n]* -> skip
   ;
 
 /* ------------------------------------------------------------------
