@@ -125,7 +125,7 @@ assignment
   : member eol
   ;
 
-/* KEY = value  (value may be empty in lenient-mode -> NULL by convention,
+/* KEY = value  (value may be empty in lenient mode -> NULL by convention,
  * enforced and validated in host code, not here.)
  *
  * @note (!) KEY, EQ, and value MUST be on the same line!
@@ -147,21 +147,32 @@ value
   | object_literal
   ;
 
-/* Object literal is defined with object members such as { key: value, ... }
- * with optional trailing comma and newlines tolerated.
+/* Object literal.
+ * Canonical object members use `key: value`.
+ * In lenient mode, `key = value` may also be accepted.
+ * In strict mode, `=` inside inline objects is invalid and must be rejected
+ * by semantic validation.
  */
 object_literal
   : OC NL* object_members? NL* CC NL*
   | EMPTY_OBJECT NL*
   ;
 
-// Object members are one or more key:value pairs separated by commas.
+// Object members are one or more key/value entries separated by commas.
+// Canonical syntax uses `key: value`.
+// In lenient mode, `key = value` may also be accepted (in the host parser).
+// In the host parser, strict mode validation must reject `=` inside inline objects.
 object_members
   : object_member (COMMA NL* object_member)* COMMA?
   ;
 
 object_member
-  : KEY COLON NL* value
+  : KEY object_member_separator NL* value
+  ;
+
+object_member_separator
+  : COLON // The canonical form.
+  | EQ    // Optional ONLY in lenient mode.
   ;
 
 /* [ value, ... ] with optional trailing comma and newlines tolerated */
