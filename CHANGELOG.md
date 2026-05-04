@@ -21,6 +21,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
+- **Clarified:** Clarified string concatenation and scalar-to-string conversion rules: strict mode permits only string-literal concatenation, while lenient mode may allow non-string scalar operands. Numeric addition, lists, and inline objects remain invalid in concatenation expressions.
 - **Clarified:** In the spec, defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 - **Clarified:** Missing values vs trainling comma:
   * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.

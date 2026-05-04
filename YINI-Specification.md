@@ -101,7 +101,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
 &nbsp;&nbsp;&nbsp;&nbsp;6.4. String Types Summary  
 &nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;6.6. Scalar Conversion into String  
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. Scalar Conversion to Strings  
 
 **7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
@@ -945,7 +945,7 @@ C"""Quotes inside: "double" and 'single'"""
 | C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
 
 ### 6.5. String Concatenation
-YINI supports string **concatenation** using the plus sign (`+`). Concatenation joins two or more scalar operands into a single string value.
+YINI supports string **concatenation** using the plus sign (`+`). Concatenation joins two or more operands into a single string value.
 
 **Example:**
 ```yini
@@ -959,51 +959,59 @@ greeting = "Hi, hello there"
 
 The result of string concatenation is always a single string value.
 
-Concatenation is allowed ONLY between **simple/scalar types** and the **null type**:
+**In strict mode**, concatenation is allowed ONLY between string literals.
+
+**In lenient mode**, concatenation MAY accept operands of the **simple/scalar types** and the **null type**.
+
+This means the following operands MAY be accepted:
 - String literals.
-- Numbers literals.
-- Booleans literals.
-- Nulls
+- Number literals.
+- Boolean literals.
+- Null literals.
+
+At least one operand in a lenient-mode concatenation expression MUST be a string literal. YINI does not define numeric addition.
 
 Lists and inline objects MUST NOT be operands in concatenation expressions.
 
 Each string literal is interpreted according to its own string type before concatenation. For example, Classic Strings interpret escape sequences before being joined, while Raw Strings preserve backslashes literally.
 
+**Valid in both lenient and strict mode:**
+
 ```yini
-greeting = "Hi, " + "hello " + "there"
 escaped = C"Line 1\n" + "Line 2"
+```
+
+**Valid in lenient mode only:**
+
+```yini
 label = "port-" + 5432
 enabled_text = "enabled=" + true
 missing_text = "value=" + null
+x1 = "item " + 1
+x2 = 1 + " item"
 ```
 
-The first example is equivalent to:
+The following is invalid in both modes, because YINI does not define numeric addition:
 ```yini
-greeting = "Hi, hello there"
+x = 1 + 2  // ❌ Invalid, not a string concatenation!
 ```
 
-Concatenation SHOULD be written on a single logical line. Implementations MAY support line breaks around `+` in lenient mode, but strict mode MUST require concatenation expressions to remain on one logical line.
-
-Example accepted in lenient mode only, if supported by the implementation:
+The following is invalid in strict mode, because strict mode does not allow implicit string conversion:
 ```yini
-message = "Hello, "
-        + "world"
+label = "port-" + 5432
 ```
 
-The following concatenation is also allowed.
-```yini
-x = 1 + " item"
-```
+### 6.6. Scalar Conversion to Strings
 
-### 6.6. Scalar Conversion into String
+Scalar conversion to strings is allowed only in lenient-mode concatenation expressions.
 
-Non-string scalar operands are converted to strings before concatenation:
-- String → its interpreted string value
+In strict mode, implicit scalar-to-string conversion MUST NOT occur. Every operand in a concatenation expression MUST be a string literal.
+
+In lenient mode, non-string scalar operands are converted to strings before concatenation:
+- Strings use their interpreted string value.
 - Numbers are converted to their textual numeric representation.
 - Booleans are converted to `true` or `false`.
 - Null is converted to `null`.
-
-Lists and inline objects MUST NOT be used as operands in concatenation expressions.
 
 ## 7. Number Literals
 ### 7.1. Numbers
@@ -2777,6 +2785,11 @@ v1.0.0 RC 5 + UPDATES, 2026-xx-xx
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid, whether mixed with `:` or used consistently.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
+- **Clarified:** Clarified string concatenation rules for strict and lenient modes: strict mode now allows concatenation only between string literals, while lenient mode may allow scalar-to-string conversion for number, boolean, and null operands.
+- **Clarified:** Missing values vs trainling comma:
+  * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
+  * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
+- **Added:** Added explicit rules that concatenation always produces a string, does not define numeric addition, and never permits lists or inline objects as operands.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 
 v1.0.0 RC 5, 2026-04-09
