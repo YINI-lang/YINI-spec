@@ -43,6 +43,8 @@ What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 &nbsp;&nbsp;&nbsp;&nbsp;D.2. Acknowledgments & Special Thanks  
 &nbsp;&nbsp;&nbsp;&nbsp;D.3. Rejected Ideas or Alternatives  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.3.1. Why colon-based lists were removed  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.3.2. Why `#` as hexadecimal notation was removed  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.3.3. Hyper Strings (H-Strings)  
 &nbsp;&nbsp;&nbsp;&nbsp;D.4. Future Considerations  
 
 ---
@@ -81,11 +83,13 @@ YINI was mainly inspired by formats such as INI, JSON, Python, Markdown, and C �
 ### B.2. Design Philosophy
 YINI is built around a few core principles:
 
-- **Minimalism over complexity** — fewer rules, fewer surprises.
-- **Human readability first** — config files should be easy to write, read, and maintain.
-- **Formal grammar matters** — to ensure consistent, predictable behavior across implementations.
-- **No magic** — what you write is what you get: YINI avoids implicit coercion or guessing.
-- **Balance** — it aims to sit between the extremes: not too rigid, not too permissive.
+1. **Clarity over cleverness** — prefer syntax that is easy to understand correctly.
+2. **Readability without sacrificing structure** — remain easy to read while still supporting structured configuration.
+3. **Simplicity with serious usability** — keep the format simple, but not simplistic.
+4. **Predictability over magic** — favor explicit and stable interpretation rules.
+5. **Explicitness over hidden behavior** — make structure and meaning visible in the file itself.
+6. **Structure without visual clutter** — support hierarchy without relying on indentation semantics.
+7. **Human-friendly, parser-friendly** — support direct editing by humans and consistent parsing by tools.
 
 > <i>“I wanted something:
 > - Simple and lightweight
@@ -95,16 +99,53 @@ YINI is built around a few core principles:
 >
 > — Mr. Seppänen (creator of YINI)
 
-Nonetheless, some design choices may seem unconventional at first, and may initially raise questions as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts a C-style approach of using `//` for line comments, however `#` style comments are also supported — as long as the `#` is followed by a space or tab. This requirement prevents clashes with hex-like values. Using `#` to denote hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise, intended to align with conventions found in CSS (for color codes) and similar contexts.
-For example: #FF0033 is interpreted as a hex value, whereas # FF0033 is treated as a comment.
+Nonetheless, some design choices may seem unconventional at first, because they were carefully weighed against competing goals. One example is the treatment of the `#` character.
+
+Earlier drafts of YINI attempted to support both `#` comments and CSS-style hexadecimal values such as `#FF0033`. This required a whitespace-sensitive rule where `#` started a comment only when followed by a space or tab. In practice, that rule created an unnecessary distinction for readers and parsers.
+
+YINI now treats `#` as a comment marker whenever it appears outside string literals. This makes the rule simple and predictable: `#` always begins a comment, and hexadecimal values are written using `0x...` or the explicit `hex:` notation instead.
 
 These values guide YINI's syntax, structure, and behavior — making it reliable for both humans and machines.
 
 #### B.2.1. The `#` Marker as a Comment Symbol
-- This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
-- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also is within 7-bit ASCII).
 
-In v1.0.0 Alpha 8, the section marker character `~` was replaced by `<` because repeated tildes were judged visually ambiguous.
+YINI treats `#` as a comment marker outside string literals.
+
+This decision was made to align with common expectations from formats and environments such as INI-like files, shell scripts, YAML, scripting languages, and many developer tools. In these contexts, users commonly expect `#` to begin a comment.
+
+Earlier drafts of YINI attempted to make `#` serve two roles:
+
+- `#` followed by whitespace began a comment.
+- `#` followed by hexadecimal digits represented a hexadecimal number, similar to CSS color notation.
+
+Although this made CSS-like color values visually familiar, it introduced a context-sensitive distinction that worked against YINI's goals of clarity and predictable parsing. A reader had to inspect the character after `#` to know whether the line contained a comment or a value. This made the syntax more clever than clear.
+
+The revised rule is simpler:
+
+- Outside string literals, `#` always begins a comment.
+- No whitespace is required before or after `#`.
+- Hexadecimal numbers are written using `0x...` or the explicit `hex:` form.
+
+For example:
+
+```yini
+name = "YINI" # This is a comment
+enabled = true#This is also a comment
+path = "C:\#folder" # The # inside the string is not a comment
+
+color1 = 0xFF0033
+color2 = hex: FF0033
+```
+
+This supports YINI's broader design principles:
+- Clarity over cleverness.
+- Predictability over magic.
+- Explicitness over hidden behavior.
+- Human-friendly, parser-friendly syntax.
+
+The earlier CSS-style form `#FF0033` was therefore removed as hexadecimal notation. In current YINI, it is treated as a comment.
+
+The section marker history is separate from this decision. Earlier drafts experimented with other section marker characters, including `#`, `~`, and `>`. The caret (`^`) was eventually chosen as the primary section marker because it is visually distinct, easy to repeat for nesting, and available in the 7-bit ASCII range.
 
 #### B.2.2. Non-standard Octal Escape
 Octal escapes in YINI use the `\oNNN` format, which differs from the traditional `\NNN` style used in C and Python. 
@@ -112,18 +153,18 @@ Octal escapes in YINI use the `\oNNN` format, which differs from the traditional
 This design choice was made because `\NNN` provides no clear indication of the number base, unlike `\u` for Unicode (4-digit hex) and `\U` for extended Unicode (8-digit hex). The `\oNNN` format in YINI follows the same analogy, making the base explicit and the escape more readable and self-descriptive.
 
 #### B.2.3. Summary of Marker Characters
-  - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
-  - `<` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
+  - `^` (Default section marker, within the 7-bit ASCII range for maximum compatibility.)
+  - `§` (Supported alternative section marker, useful where enhanced readability is preferred.)
+  - `<` (Alternative section marker, within the 7-bit ASCII range for maximum compatibility.)
   - `€` (Dropped after v1.0.0-rc.3, due to no clear practical benefit compared to the existing markers.)
-  - `~` (discontinued, was visually ambiguous)
-  - `>` (discontinued, was easy to confuse with reply)
-  - Reserved: `§` (experimental, maybe in future, for enhanced readability)
+  - `~` (Discontinued, was visually ambiguous.)
+  - `>` (Discontinued, was easy to confuse with reply.)
 
 | Marker Char. | Status         | Example        | Notes |
 |--------------|---------------|---------------|---------|
 | `^`          | Official/main | `^^ Section2` | Always supported (7-bit ASCII)  |
+| `§`          | Alternative | `§§ Section2` | Supported alternative marker; less portable than ASCII markers |
 | `<`          | Fallback   | `<< Section2` |  (7-bit ASCII) Easy to count, replaced `~` |
-| `§`          | Alternative  | `§§ Section2` | For enhanced readability, may be promoted in the future |
 | `~`          | Discontinued  | `~~ Section2` | Hard to count when repeated, phased out      |
 | `>`          | Discontinued  | `>> Section2` | Was easy to confuse with reply in forums, etc   |
 
@@ -148,7 +189,7 @@ The other choice is to parse in lenient-mode, where the document terminator `/EN
 
 > Raw strings in YINI are quoted strings where the text is taken exactly as written, without interpreting escape sequences.
 
-Why Raw strings, and why it is the defaul string in YINI?
+Why Raw strings, and why it is the default string in YINI?
 
 They are the safest default for configuration because config files often contain text that should be taken literally, such as:
 - file paths
@@ -181,7 +222,7 @@ That said, Classic strings are optional, not the default.
 
 > Triple-quoted strings in YINI are strings enclosed in `""" ... """` that may span multiple lines and preserves its content exactly as written, unless prefixed with `C` to enable escape sequences.
 
-A config format may sometimes needs true multi-line literals, for example:
+A config format may sometimes need true multi-line literals, for example:
 - embedded text blocks
 - templates
 - SQL
@@ -192,37 +233,6 @@ A config format may sometimes needs true multi-line literals, for example:
 - script fragments
 
 So, for this reason Triple-quoted strings are supported as well, and they are optional.
-
-##### B.2.5.4. Hyper Strings
-
-> Hyper strings in YINI are multi-line strings prefixed with `H` or `h` that trim leading and trailing whitespace and normalizes internal whitespace and line breaks into single spaces.
-
-Hyper strings are:
-- multi-line input for humans
-- but normalized into a single clean text value
-
-That can be useful for things like:
-- long descriptions
-- UI labels
-- help text
-- summaries
-- human-written prose in config
-- documentation-ish text inside config
-- prompts where exact whitespace is not important
-
-Example idea:
-```yini
-description = H"
-  This service handles
-  authentication and
-  user session state.
-"
-```
-
-Result:
-```txt
-This service handles authentication and user session state.
-```
 
 ---
 
@@ -322,6 +332,83 @@ By removing colon-based lists, YINI keeps a clearer and more uniform structure:
 This change was made because colon-based lists did not add enough practical value to justify their extra complexity. Although they offered a small syntax convenience, they also introduced more ambiguity, encouraged multiple ways of expressing the same structure, and increased the risk of unnecessary feature growth. Their removal gives YINI a clearer mental model, a more obvious way to write arrays, and a simpler specification and grammar.
 
 Overall, this makes both the language and its parser implementations easier to understand, easier to maintain, and more predictable to use.
+
+### D.3.2. Why `#` as hexadecimal notation was removed
+
+Earlier versions of YINI supported CSS-style hexadecimal notation using `#`, for example:
+
+```yini
+color = #FF0033
+```
+
+This was intended to make color values familiar and compact for users coming from CSS, design systems, UI configuration, and similar domains.
+
+However, the same character was also useful and widely expected as a comment marker. To support both meanings, earlier drafts introduced a whitespace-sensitive rule:
+
+- `#` followed by a space or tab meant comment.
+- `#` followed by hexadecimal digits meant hexadecimal number.
+
+Although workable, this rule added unnecessary complexity. It required users and parsers to treat `#` differently depending on the following character. This made comments less obvious and introduced a small but real source of surprise:
+
+```yini
+# Comment
+#FF0033
+```
+
+Under the old rule, the first line was a comment, while the second line was a value-like hexadecimal token. This distinction was compact, but not especially clear.
+
+YINI now uses the simpler rule: outside string literals, `#` always begins a comment. Hexadecimal numbers are written using either the conventional programming-style `0x...` notation or the explicit `hex:` notation:
+
+```yini
+color1 = hex: FF0033
+color2 = 0xFF0033
+```
+
+The `hex:` form was added to preserve a readable, explicit alternative for users who prefer a word-based type cue. It also makes the value type visible without overloading a punctuation character.
+
+This change reduces syntax ambiguity, simplifies tokenization, and better supports YINI's design goals: clarity over cleverness, predictability over magic, and explicit structure without hidden behavior.
+
+### D.3.3. Hyper Strings (H-Strings)
+
+Hyper Strings, also called **H-Strings**, were previously defined as a special kind of string literal for writing longer human-authored text in a visually readable way. An H-String was prefixed with either `H` or `h`.
+
+The purpose of H-Strings was to make longer descriptive text blocks easier to write across multiple lines without preserving the exact line breaks and indentation used in the source file. They were intended for configuration values such as descriptions, labels, help text, messages, and other prose-like content where readable source formatting was more important than preserving whitespace exactly.
+
+Like raw strings, H-Strings treated backslashes as literal characters. Escape sequences were not interpreted.
+
+H-Strings were designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
+
+- `<NL>` refers to a newline or line break, represented by `CR`, `LF`, or `CRLF`.
+- `<Unicode-WS>` includes relevant Unicode whitespace characters, including the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` control characters, primarily from the C0 range (`U+0000–U+001F`). For the complete table, see Section 16.7, "Unicode Whitespace Characters".
+- H-Strings could span multiple lines, and indentation using `<Unicode-WS>` was allowed to improve human readability.
+- Multiple consecutive newlines (`<NL>`) and/or whitespace characters (`<Unicode-WS>`) were normalized into a single space (`U+0020`).
+- Leading and trailing `<NL>` and/or `<Unicode-WS>` were trimmed.
+- For the complete set of characters included in `<Unicode-WS>`, see Section 16.7, "Unicode Whitespace Characters".
+
+In practice, H-Strings behaved similarly to how prose is rendered in HTML: extra spacing, indentation, and line breaks were collapsed into clean, flowing text.
+
+The following:
+
+```yini
+H"My name is
+  John Doe,  
+  and this is a test string."
+```
+
+Would result in:
+```txt
+My name is John Doe, and this is a test string.
+```
+
+#### Why H-Strings Were Removed
+
+H-Strings were removed from the core specification to keep YINI smaller, clearer, and easier to learn, document, and implement.
+
+Although H-Strings provided a convenient way to write longer human-authored text blocks, they also introduced another string form with its own whitespace-normalization rules. This increased the conceptual surface area of the language, added parser complexity, expanded the documentation burden, and forced users to decide when to use H-Strings instead of other string forms such as raw strings or triple-quoted strings.
+
+The feature was useful, but not essential. Since most YINI files are expected to use ordinary strings, raw strings, and triple-quoted strings for the majority of practical configuration needs, H-Strings were judged to serve too narrow a use case to justify their inclusion in the core language.
+
+Removing H-Strings supports YINI’s broader design goals: clarity over cleverness, predictable parsing, a smaller syntax surface, and fewer overlapping ways to express the same kind of value.
 
 ### D.4. Future Considerations
 In future, MAYBE adding support for e.g.: `@yini strict`, `@yini version 1.0`, `@include somefile.yini`, and/or `@deprecated`, `@experimental`.

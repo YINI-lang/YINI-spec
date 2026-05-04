@@ -11,7 +11,7 @@
   This LEXER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Version:
-  1.2.0-rc.2 + UPDATES - 2026 Apr (v1.0.0-rc.5 YINI Spec Package).
+  1.2.0-rc.2xx + UPDATES - 2026 Apr (v1.0.0-rc.5 YINI Spec Package).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -85,8 +85,8 @@ fragment DUO_INTEGER
   ;
 
 fragment HEX_INTEGER
-  : '0' [xX] HEX_DIGIT+
-  | '#' HEX_DIGIT+
+  : '0' [xX] HEX_DIGIT+                   // 0xFFAA00
+  | [hH] [eE] [xX] ':' HSPACE* HEX_DIGIT+ // hex:FFAA00, HEX: ffaa00
   ;
 
 // NOTE: This lexer rule is intentionally relaxed to allow `.` as well.
@@ -146,7 +146,8 @@ fragment SECTION_MARKER_INVALID
 
 // For matching bad character.
 fragment REST_CHAR
-  : ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+  // : ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+  :~([@# \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
   ;
 
 /* ------------------------------------------------------------------
@@ -221,7 +222,6 @@ TRIPLE_QUOTED_STRING
 
 SINGLE_OR_DOUBLE
   : R_AND_C_STRING
-  | HYPER_STRING
   ;
 
 /**
@@ -240,11 +240,11 @@ R_AND_C_STRING
   | [RrCc]? '"'  ('\\"'  | ~["\r\n])* '"'
   ;
 
-// Hyper string literal.
-HYPER_STRING
-  : [Hh] '\'' (~['])* '\''
-  | [Hh] '"'  (~["])* '"'
-  ;
+// // Hyper string literal.
+// HYPER_STRING
+//   : [Hh] '\'' (~['])* '\''
+//   | [Hh] '"'  (~["])* '"'
+//   ;
 
 // NOTE: NUMBER must come before KEY, IDENT, etc.
 NUMBER
@@ -263,7 +263,7 @@ GT: '>'; // Greater Than.
 LT: '<'; // Less Than.
 
 EQ: '=';
-HASH: '#';
+// NOTE: Do not include '#' here, because it would conflict with comment tokenization.
 COMMA: ',';
 COLON: ':';
 OB: '['; // Opening Bracket.
@@ -291,7 +291,7 @@ NL
 
 fragment SECTION_TAIL_COMMENT
   : '//' ~[\r\n]*
-  | '#' HSPACE+ ~[\r\n]*
+  | '#' ~[\r\n]*
   ;
 
 WS
@@ -329,7 +329,7 @@ FULL_LINE_COMMENT
  Remains in input, but hidden (doesn't interfere with parsing).
  */
 INLINE_COMMENT
-  : ('//' | '#' HSPACE+) ~[\r\n]* -> skip
+  : ('//' | '#') ~[\r\n]* -> skip
   ;
 
 /* ------------------------------------------------------------------

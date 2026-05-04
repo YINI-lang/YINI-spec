@@ -354,7 +354,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### String Literals in YINI
-YINI defines four string literal forms: Raw, Classic, Hyper, and Triple-quoted. These forms differ in how they handle escape sequences, whitespace normalization, and multi-line content.
+YINI defines four string literal forms: Raw, Classic, and Triple-quoted. These forms differ in how they handle escape sequences, whitespace normalization, and multi-line content.
 
 💡 **Note:** YINI primarily follows C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 
 ```yini
@@ -365,13 +365,6 @@ String = "D:\folder\file"
 // Classic strings (C-Strings) are prefixed with C or c — they support
 // escape sequences.
 ClassicString = C"Hello\nWorld\n"
-
-; Hyper strings (H-Strings) are prefixed with H or h — they behave
-; similarly to HTML text: whitespace is normalized and edges are trimmed.
-HyperString = H"
-  This is a hyper string spanning multiple lines,
-  with trimmed edges and normalized whitespace.
-"
 
 /* Triple-quoted strings can span multiple lines and
    preserve all characters as-is, including tabs and newlines.

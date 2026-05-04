@@ -4,12 +4,6 @@ raw        = R"path\to\file.txt"    # or simply "path\to\file.txt"
 
 classic    = C"Line1\nLine2"         # escape processing
 
-hyper      = H"
-    👍A hyper string can
-    span multiple lines and
-    normalize whitespace.
-"
-
 tripleRaw  = """
 Exact
   indentation
