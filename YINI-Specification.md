@@ -261,7 +261,7 @@ The following key terms are used consistently throughout this specification. Und
 | Section Marker            | A special character used to denote a new section header. Supported section markers are `^`, `§`, and `<`; `^` is the primary and recommended marker. |
 | Strict Mode               | An optional parsing mode that enforces stricter structural validation, including exactly one explicit top-level section and prohibition of top-level orphan members. Not the default. |
 | Triple-Quoted String      | A string enclosed in `""" ... """`that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
-| Value                     | The data assigned to a key. Can be of type string, number, boolean, null, or list. |
+| Value | The data assigned to a key. Can be of type string, number, boolean, null, list, or object. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
 | YINI file                 | A complete YINI configuration. In this specification, "file" and "document" mean the same thing. |
 | YINI                      | YINI is a human-readable configuration format blending INI-style sections with modern typing and structure. |
@@ -296,7 +296,7 @@ Here's an example of a YINI document with a shebang that could be used in a Unix
 key = value
 ```
 ### 2.4. YINI Marker (`@yini`)
-The optional YINI marker (`@yini`) MAY be used and is RECOMMENDED for clarity and identification. If present, it MUST be added at the very top of a YINI file (if present, it MUST appear after any shebang line, or comments).
+The optional YINI marker (`@yini`) MAY be used and is RECOMMENDED for clarity and identification. If present, the YINI marker MUST appear before any meaningful YINI content. It MAY be preceded only by a shebang line, comments, or whitespace. (If both a shebang and a YINI marker are present, the shebang MUST appear first.)
 
 The marker is case-insensitive: `@yini`, `@YINI`, and `@Yini` are all valid.
 
@@ -367,7 +367,7 @@ In **lenient mode only**, `=` MAY also be accepted inside inline objects, but to
 
 #### Comments
 
-YINI primarly follows C-style commenting rules using `//` and `/* ... */`. Alternative inline `#` comments, and full-line `;` comments are supported too. These are ignored by parsers and exist solely for human readability.
+YINI primarily follows C-style commenting rules using `//` and `/* ... */`. Alternative inline `#` comments, and full-line `;` comments are supported too. These are ignored by parsers and exist solely for human readability.
 
 **Example:**
 ```ini
@@ -392,11 +392,12 @@ The following whitespace `<WS>` behaviors are defined:
 - Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
 
 ### 3.3. Comments
-YINI supports **three types of comments**:
+YINI supports three categories of comments, **using four comment syntaxes:**
 
 | Comment Type | Prefix | Position |
 |--------------|--------|----------|
-| Inline / line comment | `//` or `#` | Own line or after content |
+| Inline / line comment | `//` | Own line or after content |
+| Inline / line comment | `#`  | Own line or after content |
 | Block comment | `/* ... */` | Anywhere (multi-line) |
 | Full-line comment | `;` | Start of line ONLY |
 
@@ -475,9 +476,15 @@ An _**identifier**_ can be one of two forms below:
   `Amanda's Project`
   ```
 ### 3.5 Document Terminator
-**Note:** The document terminator is optional in lenient (non-strict) mode, which is the default parser mode. In strict mode, the document terminator is required.
+**Mode requirement:** The document terminator is optional in lenient mode and required in strict mode.
 
-A YINI document MAY end with a terminator line in lenient mode. In strict mode, a YINI document MUST end with a terminator line.
+| Mode | `/END` requirement |
+|---|---|
+| Lenient mode | Optional |
+| Strict mode | Required |
+
+A YINI document MAY end with a terminator line in lenient mode.  
+A YINI document MUST end with a terminator line in strict mode.
 
 The document terminator explicitly marks the end of the configuration content and reduces ambiguity about whether the document was fully read. In strict mode, this makes document completion explicit rather than relying on end-of-file alone, **which helps detect truncated, partially copied, or prematurely cut-off documents.**
 
@@ -592,7 +599,9 @@ If the value matches any of the following keywords `true`, `false`, `on`, `off`,
 If the value is a **bracketed sequence** (`[ ... ]`) of values (any of the supported YINI types: Numbers, Strings, Booleans, Lists, Nulls), separated by commas — the entire value is treated as a **List**.
 
 #### Null
-If the value is the keyword `null` (case-insensitive), or if the value is missing (e.g., blank after `=`, or a blank item within a bracketed sequence) — it is treated as **Null**.
+If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
+
+Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
 
 **Summary:**
 
@@ -996,7 +1005,7 @@ The engine SHOULD convert the literal value to the corresponding Boolean value i
 ### 8.2. Null Literal
 Value/literal `NULL` (NON CASE-SENSITIVE). 
 
-- Empty or missing value in section-top-level key-value pair (member outside any list or object), is treated as NULL in lenient mode, error in strict mode.
+- Empty or missing value in section/root-level key-value pair (member outside any list or object), is treated as NULL in lenient mode, error in strict mode.
   If written `key = `with nothing after `=`, that member's value is `null` (lenient only; strict mode requires explicitly `key = null`).
 - Note: At top level (outside any `[ ]` or `{ }`), `key =` with nothing after `=` → `key = null` in lenient mode; in strict mode that is a syntax error unless you write `key = null` explicitly.
   
@@ -1026,44 +1035,158 @@ key3 = { a: 1, b: 2, }  # ❌ Error: Stray trailing comma
 ```
 
 ## 9. Object Literals
+
 ### 9.1. Objects (using `{` and `}`)
-YINI supports inline objects as a value type, allowing zero or more key–value pairs to be nested inside braces `{` and `}`. An inline object behaves like a map or dictionary: each entry inside `{ ... }` is a YINI `key: value` definition, separated by commas. Objects may nest arbitrarily (an object value can itself contain another `{ ... }`).
 
-An empty object `{ }` is allowed as well (both in lenient and strict mode).
+YINI supports inline objects as a compound value type. An inline object contains zero or more object members enclosed in braces `{` and `}`.
 
-An object in YINI  have the following form:
+An inline object behaves like a map or dictionary. Each object member has a key and a value, and members are separated by commas. Objects may be nested; an object value may itself contain another inline object.
+
+An empty object `{ }` is valid in both lenient and strict mode.
+
+An object has the following canonical form:
+
 ```txt
 <identifier> = { <key1>: <value1>, <key2>: <value2>, ... }
 ```
 
-- The **key** in each member follows the same rules as any YINI identifier.
-The **value** in each member may be:
-  * A string (quoted with `'...'`).
-  * A number (integer or float).
-  * A boolean (true/false/on/off).
-  * A list (`[ ... ]`).
-  * Another inline object (`{ ... }`).
-  * An empty object `{ }` is allowed as well (both in lenient/strict mode).
+```yini
+settings = { enabled: true, retries: 3 }
+empty = { }
+```
 
-**Canonical form:** Inline object members use `:` as the member separator.
+The **key** in each object member follows the same identifier rules as any YINI key.
+
+The **value** in each object member may be any supported YINI value type:
+- String
+- Number
+- Boolean
+- Null
+- List
+- Inline object
+
+The following structural rules apply to inline objects:
+- An inline object begins with `{` and ends with `}`.
+- Between { and }, zero or more object members may appear.
+- Object members are separated by commas.
+- Leading commas are not allowed.
+- Empty member slots are not allowed.
+- In lenient mode only, a trailing comma after the last member is permitted and ignored.
+- In strict mode, trailing commas are invalid.
+- Whitespace is ignored except inside quoted strings.
+- Comments may appear anywhere whitespace is allowed.
+
+The **canonical object member separator is `:`.** See Section 9.2, "Object Member Separators", for the exact separator rules in lenient and strict mode.
+
+Examples:
+```yini
+# Valid in both lenient and strict mode.
+obj1_a = { a: 1, b: 2 }
+obj1_b = {
+    a: 1,
+    b: 2
+}
+
+# ✅ Valid in both lenient and strict mode.
+obj2 = { }
+
+# ✅ Lenient mode only: trailing comma is ignored.
+obj3_a = { a: 1, b: 2, }
+obj3_b = {
+    a: 1,
+    b: 2,  // Trailing comma here.
+}
+
+# ❌ Invalid in both modes: leading comma.
+obj4_a = { , a: 1 }
+obj4_b = {
+    ,
+    a: 1
+}
+
+# ❌ Invalid in both modes: empty member slot.
+obj5_a = { a: 1,, b: 2 }
+obj5_b = {
+    a: 1,,
+    b: 2
+}
+obj5_c = {
+    a: 1,
+    , 
+    b: 2
+}
+```
+
+A complete nested object example:
+```yini
+^ System
+
+config = {
+    name: "production",
+    services: {
+        web: {
+            ports: [80, 443],
+            routes: [
+                { path: "/", secure: true },
+                { path: "/api", secure: false }
+            ]
+        },
+        database: {
+            replicas: [
+                { host: "db1", role: "primary" },
+                { host: "db2", role: "secondary" }
+            ]
+        }
+    }
+}
+```
+
+### 9.2. Object Member Separators
+
+Inside inline objects, `:` is the canonical member separator.
 
 ```yini
 obj = { a: 1, b: 2 }
 ```
 
-The colon helps signal that the entries are members of an internal object literal, not ordinary section-level assignments. At root and section level, values are assigned with `=`; inside inline objects, fields are canonically defined with `:`.
-
-The following rules apply to objects in YINI:
-- Begins with `{` and ends with `}`.
-- Between `{` and `}`, write zero or more object members, separated by commas. The canonical form is `key: value`.
-- Optionally and only in lenient mode, after a value allow a trailing comma before the closing `}`
-- Whitespace (spaces, tabs, newlines) is ignored except inside quoted strings.
-- Comments (e.g. `// ...` or `# ...`) may appear anywhere whitespace is allowed.
-
-💡 **In lenient mode only**, a trailing comma after the last member is permitted and ignored (no `Null` member is added). **In strict mode**, trailing commas result in a parse error.
-
-Conceptual/spec grammar rule:
+At root and section level, YINI uses `=` for ordinary members:
+```yini
+name = "Kim"
 ```
+
+Inside inline objects, `:` is used because the object itself is already the value of a surrounding member. The colon helps distinguish object member definitions from ordinary root-level or section-level assignments.
+
+In lenient mode only, implementations MAY also accept `=` as an object member separator:
+```yini
+obj = { a = 1, b = 2 }  # Lenient mode only
+```
+
+This exists as a compatibility and user-friendliness feature, especially for users who are accustomed to writing `key = value` throughout a configuration file.
+
+The following rules apply:
+- In lenient mode, inline object members MAY use either `:` or `=`.
+- In strict mode, inline object members MUST use `:`.
+- In strict mode, using `=` inside an inline object is invalid, whether mixed with `:` or used consistently.
+- Within a single inline object, mixing `:` and `=` is discouraged in lenient mode.
+- Tools and formatters SHOULD normalize inline object members to `:`.
+
+```yini
+# Canonical form, valid in lenient and strict mode.
+obj1 = { a: 1, b: 2 }
+
+# Lenient mode only.
+obj2 = { a = 1, b = 2 }
+
+# Discouraged in lenient mode; invalid in strict mode.
+obj3 = { a: 1, b = 2 }
+```
+
+
+Conceptual grammar:
+```
+COLON =  ':';
+EQUALS = '=';
+
 // Lenient mode:
 objectMember
   : KEY WS? (COLON | EQUALS) NL* value
@@ -1102,12 +1225,12 @@ obj1 = { a: 1, b: 2, }     # → ❌ Error: trailing comma not allowed in strict
 obj4 = { }                 # → {} ✅
 ```
 
-A Complete YINI Example:
+A complete YINI Example:
 ```
 // Section at level-1 starts here
 ^ System
 
-// Withing the section "System", inline object "config" starts here
+// Within the section "System", inline object "config" starts here
 config = {
     name: "production",
       services: {
@@ -1126,41 +1249,6 @@ config = {
         }
     }
 }
-```
-
-### 9.2. Object Member Separators
-
-Inside inline objects, `:` is the canonical member separator.
-
-```yini
-obj = { a: 1, b: 2 }
-```
-
-In lenient mode only, implementations MAY also accept `=` as an object member separator:
-```yini
-obj = { a = 1, b = 2 }  # Lenient mode only
-```
-
-This exists as a compatibility and user-friendliness feature, especially for users who are accustomed to writing `key = value` throughout a configuration file.
-
-However, `:` remains the canonical and recommended form for inline object members. The colon helps distinguish object member definitions from ordinary root-level or section-level assignments.
-
-The following rules apply:
-- In lenient mode, inline object members MAY use either `:` or `=`.
-- In strict mode, inline object members MUST use `:`.
-- Within a single inline object, mixing `:` and `=` is discouraged in lenient mode.
-- In strict mode, using `=` inside an inline object is invalid, whether mixed with `:` or used consistently.
-- Tools and formatters SHOULD normalize inline object members to `:`.
-
-```yini
-# Canonical form, valid in lenient and strict mode.
-obj1 = { a: 1, b: 2 }
-
-# Lenient mode only.
-obj2 = { a = 1, b = 2 }
-
-# Discouraged in lenient mode; invalid in strict mode.
-obj3 = { a: 1, b = 2 }
 ```
 
 ## 10. List Literals
@@ -1265,7 +1353,7 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `§` | Section header (alternative on high-end systems) |   |
 | `<` | Section header (escape hatch on low-end systems) | Used to denote section start |
 | `/* */` | Block comment | Marks multi-line comment block |
-| `//` | Inine comment |   |
+| `//` | Inline comment |   |
 | `#` | Comment | Begins a comment outside string literals; everything from `#` to the end of the line is ignored |
 | `;` | Full-line comment |   |
 | `[ ]` | List literal |  |
@@ -1320,6 +1408,8 @@ A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and
 - Inline object members MUST use `:` in strict mode. In lenient mode, implementations MAY also accept `=` inside inline objects, but `:` remains canonical.
 
 #### 12.2.5. Document Terminator
+**Note:** The authoritative syntax and placement rules for the document terminator are defined in Section 3.5, "Document Terminator". This section restates the validation requirements by mode.
+
 - In lenient mode, the terminator is optional.
 - In strict mode, the terminator is required.
 - See Section 3.5, "Document Terminator", for terminator syntax.
@@ -1425,7 +1515,7 @@ object6 = { a: 1, b: 2 }        # ✅ OK
 | `=` inside inline objects | ✅ | ❌ | Lenient mode MAY accept `key = value` inside `{ ... }`; strict mode requires canonical `key: value`. |
 | Mixed `:` and `=` inside same inline object | ⚠️ Discouraged | ❌ | Lenient parsers MAY accept mixed separators, but formatters SHOULD normalize all inline object members to `:`. |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient mode the comma is ignored, error in strict mode  |
-| Missing (empty) value (only in section-top-level)| ✅ | ❌ | Will result in a `Null` value in lenient mode  |
+| Missing (empty) value (only in section/root-level)| ✅ | ❌ | Will result in a `Null` value in lenient mode  |
 | Missing (empty) value before comma | - | ❌ | In lenient mode SHOULD warn or make error  |
 | Invalid escape sequences              | ✅ (may warn) | ❌ (error) |   |
 
@@ -1446,7 +1536,7 @@ key2 = ,       # → ❌ error: unexpected comma
 
 The following guidance is intended to assist developers implementing YINI parsers, engines, or tools. These notes aim to promote consistent interpretation of YINI syntax across different platforms and environments.
 
-See also [Section 11.2: Well-Formedness Requirements] for formal validation criteria.
+See also Section 12.2, "Well-Formedness Requirements", for formal validation criteria.
 
 ### 13.1. Top-Level Sections and Implicit Root
 
@@ -1487,7 +1577,7 @@ Otherwise, an error MUST be reported.
 ### 13.2. Line Handling and Whitespace
 
 - Newline normalization is required:
-  * Support all three forms: LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`.
+  * Support all three forms: LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`).
 - Leading/trailing whitespaces (tabs or spaces):
   * Trim from section headers and keys.
 - Full-line and inline comments may follow key-value members or appear on separate lines.
@@ -1546,13 +1636,15 @@ object = { a: 1, , b: 2 }
 is an error in strict mode and SHOULD be reported as at least a warning or error in lenient mode.
 
 ### 13.6. Lists
+
 The syntax for list:
   **(a) Bracketed form (preferred):**
   ```yini
   items = ["a", "b", "c"]
   ```
   * A bracketed list line MUST not begin with a comma.
-  * A trailing comma in `[ ]` is ignored.
+  * In lenient mode, a trailing comma in `[ ]` is ignored.
+  * In strict mode, a trailing comma in `[ ]` MUST result in an error.
 
 **Lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the value is interpreted as `null`, not a list):
   ```yini
@@ -2294,7 +2386,7 @@ blockedCountries = ['KP', 'NG', 'BY']
 // Example C: Industrial Monitoring & Automation Platform.
 /*
   Covers:
-  - Strict mode compatible single top-level section.
+  - Strict-mode-compatible single top-level section.
   - Deep section nesting.
   - Realistic industrial / factory domain modeling.
   - Inline objects and nested inline objects.
@@ -2594,7 +2686,7 @@ v1.0.0 RC 5 + UPDATES, 2026-xx-xx
 - **Removed:** Support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
 - **Removed:** Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
-- **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid.
+- **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid, whether mixed with `:` or used consistently.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 
@@ -2622,78 +2714,13 @@ v1.0.0 RC 4, 2026-03-29
 - **Clarified:** Added clarifying bullets to Sections 1.2 and 1.4.
 - **Fixed:** Fixed a few typos and made various minor wording and consistency improvements.
 
-v1.0.0 RC 3, 2025-09-01
-- Changed at that time: The document terminator `/END` was made optional in both lenient and strict mode.
-- Note: This was later revised again in v1.0.0 RC 5, where `/END` became required in strict mode.
-
-v1.0.0 RC 2, 2025-08-11
-- Added case-insensitive support for digits `A` (10) and `B` (11) as alternative syntax in duodecimal (base-12) notation.
-
-v1.0.0 RC 1, 2025-07-26
-- Added support for YINI marker `@yini`, section 2.4, "YINI Marker (`@yini`)".
-- Discontinued alternative marker character `~` (visually ambiguous) in favor of `<`.
-- Promoted the section markers `§` and `€` to "Experimental" from only being "Reserved".
-- Dropped the use of `=` in object literals, objects now use `:` (similar as to JSON, etc).
-
-v1.0.0 Beta 7, 2025-06-12
-- Clarified where special/control characters (U+0000–U+001F) are allowed in Backticked Identifiers, Raw Strings, Classic Strings, and Triple-Quoted Strings. These characters are now disallowed in Backticked Identifiers and Classic Strings unless they are escaped, with exceptions for TAB and SPACE in the latter.
-- Updated Hyper Strings to support <Unicode-WS> for indentation and whitespace normalization.
-- Added table of all "Unicode Whitespace Characters" in <Unicode-WS>.
-- Added support for Triple-Quoted strings with the prefix `C`, which interprets escape codes. Additionally, they can optionally be prefixed with `R` but this is not required since they are Raw by default.
-- Added "`base`"  as an alternative name for the implicit root section, in addition to the previously suggested "`root`".
-- Changed policy in 14.1, "Fallback Rules" to keep invalid key names or section headers as-is.
-- Added note about optional "Abort Sensitivity Levels" in parsing.
-- Added a couple of sections in future:
-  * 10.1.1, "Short-hand Section Marker"
-  * 10.1.2, "Inline Objects"
-- Updated section heading rule:
-  * Section heading markers (`^`, `~`, or `§`) may be repeated up to six times to indicate levels 1–6. 
-  * Beyond level 6, numeric shorthand MUST be used (see Section 5.3.1).
-- Added support for objects (`{ ... }`). 
-- Changed handling of trailing comma to:
-  - A missing value (empty value) for a **section-top-level** key-value assignment and that is not inside `[ ]` or `{ }`) is equivalent to `Null`.
-  - A missing **last element/member** inside `[ ... ]` or `{ ... }` is always considered a trailing comma and does not produce a null value/element (the comma is ignored).
-
-
-v1.0.0 Beta 6, 2025-05-20
-- Reworked the use of `#` **based on feedback**: it is no longer a section marker and is now used exclusively as a comment symbol (more in line with formats like classic INI, Bash, etc).
-  * **(An important caveat):** comments starting with `#` MUST be followed by a space or tab.
-  * This requirement prevents clashes with hex-like values. Using `#` for hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise to align with conventions found in CSS (for color) and similar contexts. For example: `#FF0033` is a hex value, whereas `# FF0033` is treated as a comment.
-  * Note: This rule was later revised in v1.0.0 RC 6. `#` now always begins a comment outside string literals, and `#` is no longer valid as a hexadecimal number prefix.
-- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and compatibility with the 7-bit ASCII range.
-- Added support for full line comment using `;` and disable line using `--`.
-- Added section 16.6, "Appendix C – Common Mistakes and Pitfalls".
-  
-v1.0.0 Beta 5, 2025-05-13
-- Added new section 16.2, "Acknowledgments".
-- Changed the default mode (after feedback of not requiring the /END) to non-stict (lenient) from Strict mode:
-  * Thus the "Document Terminator" is now only optional.
-  * Renamed section name to 12.3, "Lenient vs. Strict Modes".
-- Added tab as illegal character in backticked identifiers.
-- Deprecated `>` for use as section marker, due to its tendency to be confused with quoting syntax in forums, emails, and messaging platforms, etc.
-- Added missing escape codes in strings (matching those from C/C++), with one exception: YINI uses `\OOO` instead of `\oOOO` for octal values, as the `o` clearly indicates that an octal sequence follows, whereas the C-style form does not.
-- Reserved `{ }` for future syntax (inline objects).
-- Renamed the term "Phrased identifiers" to "Backticked identifiers", it's simpler.
-– Removed support (after feedback by user JoshYx at Reddit) for the alternative document terminator `###`. Although it was intended as a shorter, a one character shorter alternative to `/END`, it contradicted YINI's core principle of simplicity. Its presence risked confusing users unfamiliar with YINI's syntax and ultimately undermined clarity.
-
-v1.0.0 Beta 4
-- Fixed an issue with very short YINI files in the grammar: both members and sections are now explicitly optional. 
-
-v1.0.0 Beta 3, 2025-04-25
-
-v1.0.0 Beta 2, 2025-04-23
-- Added (new) support for triple-quoted strings (`"""`).
-- Added support for alternative hexadecimal literals using `#`.
-- Added support for binary literals using `%`.
-- Reintroduced support for the alternative terminator marker `###`.
-
 ---
 
 ### 16.6. Appendix C – Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats like YAML, JSON, or classic INI. This table aims to clarify syntax edge cases and help avoid subtle bugs.
 
 #### Trailing commas in list and objects
-Note: Trailing commas (after any value/member) inside list or objects, does never result in any `Null` values. Strict mode disallows a comma with no element after it altogether.
+Trailing commas after values or members inside lists or objects never produce `Null` values. Strict mode disallows a comma with no element after it altogether.
 
 ✅ YINI Syntax Cheatsheet – Common Confusions
 | **Element**       | **Correct Syntax**              | **Common Mistake**              | **Clarification** |

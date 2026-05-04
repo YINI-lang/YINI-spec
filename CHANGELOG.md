@@ -22,6 +22,9 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
 - **Clarified:** In the spec, defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
+- **Clarified:** Missing values vs trainling comma:
+  * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
+  * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
 - **Improved:** Clarified and updated the spec about these:
   * UTF-8 with or without BOM?
   * Duplicate key handling in lenient vs strict.
