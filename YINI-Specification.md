@@ -101,7 +101,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
 &nbsp;&nbsp;&nbsp;&nbsp;6.4. String Types Summary  
 &nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Type Mixing
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. Scalar Conversion into String  
 
 **7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
@@ -394,12 +394,19 @@ The following whitespace `<WS>` behaviors are defined:
 ### 3.3. Comments
 YINI supports three categories of comments, **using four comment syntaxes:**
 
-| Comment Type | Prefix | Position |
-|--------------|--------|----------|
-| Inline / line comment | `//` | Own line or after content |
-| Inline / line comment | `#`  | Own line or after content |
-| Block comment | `/* ... */` | Anywhere (multi-line) |
-| Full-line comment | `;` | Start of line ONLY |
+| Syntax | Type | Valid position |
+|--------|------|----------------|
+| `//` | Line comment | **Anywhere whitespace is allowed**; ignores the rest of the line |
+| `#` | Line comment | **Anywhere whitespace is allowed**; ignores the rest of the line |
+| `/* ... */` | Block comment | **Anywhere whitespace is allowed**; may span multiple lines |
+| `;` | Full-line comment | Only at the beginning of a logical line, after optional spaces or tabs |
+
+These rules apply:
+- Comments are ignored by the parser and have no effect on the parsed data model.
+- Comment markers are recognized only outside string literals and outside backticked identifiers. A comment marker appearing inside a quoted string, triple-quoted string, Classic string, or backticked identifier is treated as ordinary content.
+- Line comments begin at `//` or `#` and continue until the next line ending.
+- Block comments begin at `/*` and end at the next `*/`. Nested block comments are not supported.
+- Comments may appear only where whitespace is allowed. A comment MUST NOT split an identifier, keyword, number literal, string prefix, string literal delimiter, section marker, or other token.
 
 While both `//` and `#` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
 
@@ -420,13 +427,20 @@ YINI supports two syntaxes for inline comments.
 
 Outside string literals, the `#` character always begins a comment. Everything from `#` to the end of the line is ignored by the parser. No whitespace is required before or after `#`.
 
-  ✅ **Valid `#` comments:**
+✅ **Valid `#` comments:**
   - `# This is a comment`
   - `# Also valid`
   - `#\tTabbed too`
   - `#Comment too` — Valid with or without horizontal whitespace.
   - `#FF9900` — Interpreted as a comment.
   - `##` — Also a comment.
+
+```txt
+0xFF#comment               # ✅ valid if after complete value
+na#commentme = "Kim"       # ❌ invalid, comment splits identifier
+hex:#FF                    # ❌ invalid / comment starts before hex digits
+C#comment"hello"           # ❌ invalid, comment splits string prefix/literal
+```
 
 ### 3.3.2. Multi-line Block Comments
 Multi-line (block) Comments.
@@ -440,10 +454,16 @@ Begin with `/*` and end with `*/`. These comments may span multiple lines.
 ```
 
 ### 3.3.3. Full-line Comments
-A full-line comment starts with a semicolon `;` and occupies the entire line.
+A semicolon (`;`) begins a full-line comment only when it is the first non-whitespace character on a line. Spaces and tabs may appear before it. A semicolon after meaningful content does not begin an inline comment.
+
 ```yini
-; This is a full-line comment.
+; Valid full-line comment
+   ; Valid full-line comment with leading whitespace
+
+key = "value" ; not an inline comment
 ```
+
+If `;` appears after meaningful content outside a string literal, it is not treated as a comment marker and MUST result in an error unless otherwise permitted by a future extension.
 
 **Note:** Block comments may appear between any two members, or on their own lines. They cannot appear inside a quoted string or within an identifier. Comments are ignored by parsers and exist solely for human readability.
 
@@ -783,7 +803,11 @@ String literals in YINI **MUST be enclosed** in either single quotes `'` or doub
 
 **Note:** If a string is not quoted, it's not a string — period.
 
-**YINI supports three types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for Triple-Quoted Strings** `"""`, which do not support any prefix). YINI supports multi-line strings via Triple-Quoted Strings.
+**YINI supports three string literal forms:** single-line quoted strings, Classic strings, and Triple-Quoted strings. String behavior is determined by the optional prefix before the opening quote sequence.
+
+The `R` prefix is optional and has no semantic effect because Raw strings are the default. The `C` prefix enables escape-sequence interpretation.
+
+Triple-Quoted Strings may also use the `R` or `C` prefix. Without a prefix, a Triple-Quoted String is Raw by default. YINI supports multi-line strings via Triple-Quoted Strings.
 
 If no prefix is used, the string is treated as a **Raw string literal** by default.
 
@@ -803,30 +827,45 @@ If no prefix is used, the string is treated as a **Raw string literal** by defau
 | C-Triple-Quoted        | `C"""..."""` or `c"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
 
 ### 6.1. Raw Strings (R-Strings)
-In (Raw) strings, the backslash (`\`) is treated as a literal character — **it is "just a backslash"**. This means escape sequences are not interpreted, and most special characters can be included directly.
+A Raw string is enclosed in either single quotes (`'...'`) or double quotes (`"..."`).
 
-However, Raw strings **cannot contain newlines**, as they MUST appear on a single line.
+Because Raw strings do not interpret escape sequences, the matching quote character cannot appear unescaped inside the string. To include a single quote, use double quotes as the delimiter. To include a double quote, use single quotes as the delimiter.
+
+Raw strings MUST NOT contain line breaks. For multi-line raw text, use a Triple-Quoted String.
 
 For multi-line Raw strings, see Triple-Quoted String literals.
 
 Raw strings are particularly suitable for representing file paths and other literal text.
->myPath = "C:\Users\John Smith\"  // Raw string
-or
->myPath = '/home/Leila Häkkinen'
-or
->myPath = '/Users/kim-lee'
+
+Examples:
+```yini
+single_quote = "Amanda's file"
+double_quote = 'He said "hello"'
+
+path1 = "C:\Users\Kim\Documents"  // Raw string
+path2 = "C:\Users\John Smith\"
+path3 = '/home/Leila Häkkinen'
+path4 = '/Users/kim-lee'
+```
 
 #### Raw String Prefix
 Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
 
 ### 6.2. Classic Strings (C-Strings)
-YINI also supports standard string literals, referred to as **Classic Strings**, or **C-Strings** for short. These strings are prefixed with either `C` or `c`.
+A Classic String is a string literal prefixed with `C` or `c`. Classic Strings interpret escape sequences before the final string value is produced. The parsed value is a normal string; the `C` prefix is not preserved in the resulting data model.
 
 C-Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Thus, all special control characters (U+0000–U+001F), except for space and tab, MUST be written using escape sequences — they cannot appear directly in Classic Strings.
 
-Classic strings MUST begin and end on the same line.
+Classic strings MUST begin and end on the same logical line.
 
->myText = c"This is a newline \n and this is a tab \t character."
+Examples:
+```yini
+text1 = C"hello\nworld"
+
+text2 = c"This is a newline \n and this is a tab \t character."
+```
+
+Both `text1` and `text2` parses to a string containing an actual newline, not the two characters `\` and `n` or `\t`.
 
 #### 6.2.1. Escape Characters
 Escape sequences are supported only in Classic Strings (C-Strings), which MUST be enclosed in quotes and prefixed with `C` (or `c`). 
@@ -862,11 +901,12 @@ Invalid escape sequences (e.g. `\z` or `\o378`) MUST result in a parse error unl
 
 ### 6.3. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
-- **Begins and ends** with three double-quote characters: `"""`.
+- **Begins with** `"""` and **ends at** the next unescaped `"""` sequence.
 - **May span multiple lines**, including embedded newline characters.
-- **May contain any characters**, including quotes (`"`) and double quotes (`""`), **except** an unescaped sequence of three double quotes (`"""`), which ends the string.
-- **Preserves all content exactly as written**, including whitespace and line breaks (new lines) — unless escape sequences are enabled by prefixing the string with `C` or `c` (see below).
-- **Ends at the first unescaped** sequence of three double quotes  (`"""`).
+- In a Raw Triple-Quoted String, the sequence `"""` cannot appear as content because it terminates the string. In a C-Triple-Quoted String, quote characters may be escaped using `\"`.
+- Without a prefix, a Triple-Quoted String is Raw: escape sequences are not interpreted.
+- With a `C` or `c` prefix, escape sequences are interpreted using the same rules as Classic Strings.
+- With an `R` or `r` prefix, behavior is identical to the unprefixed Raw form. The `R` prefix is allowed only for explicitness.
 
 By default, Triple-Quoted Strings are treated as **Raw** — escape sequences are not interpreted. To explicitly indicate that a Triple-Quoted String is raw, a prefix `R` (or `r`) may optionally be used. This prefix is purely **syntactic sugar** and does not affect its default behavior.
 
@@ -905,23 +945,65 @@ C"""Quotes inside: "double" and 'single'"""
 | C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
 
 ### 6.5. String Concatenation
-Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
+YINI supports string **concatenation** using the plus sign (`+`). Concatenation joins two or more scalar operands into a single string value.
 
 **Example:**
 ```yini
 greeting = "Hi, " + "hello " + "there"
 ```
-The result of the above will be equivalent to:
+
+The result is equivalent to:
 ```yini
 greeting = "Hi, hello there"
 ```
 
-Concatenation is supported between all string types, but mixing different types (e.g., Raw + Classic) is discouraged unless necessary for special use cases.
+The result of string concatenation is always a single string value.
 
-### 6.6. String Type Mixing
-Concatenation of string literals of different types (for example, Raw + Classic, Raw + Triple-Quoted, or Classic + C-Triple-Quoted) MUST be **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
+Concatenation is allowed ONLY between **simple/scalar types** and the **null type**:
+- String literals.
+- Numbers literals.
+- Booleans literals.
+- Nulls
 
-Engines SHOULD handle mixed-type concatenations correctly, but authors are encouraged to use consistent string types within concatenations to ensure clarity and predictable behavior.
+Lists and inline objects MUST NOT be operands in concatenation expressions.
+
+Each string literal is interpreted according to its own string type before concatenation. For example, Classic Strings interpret escape sequences before being joined, while Raw Strings preserve backslashes literally.
+
+```yini
+greeting = "Hi, " + "hello " + "there"
+escaped = C"Line 1\n" + "Line 2"
+label = "port-" + 5432
+enabled_text = "enabled=" + true
+missing_text = "value=" + null
+```
+
+The first example is equivalent to:
+```yini
+greeting = "Hi, hello there"
+```
+
+Concatenation SHOULD be written on a single logical line. Implementations MAY support line breaks around `+` in lenient mode, but strict mode MUST require concatenation expressions to remain on one logical line.
+
+Example accepted in lenient mode only, if supported by the implementation:
+```yini
+message = "Hello, "
+        + "world"
+```
+
+The following concatenation is also allowed.
+```yini
+x = 1 + " item"
+```
+
+### 6.6. Scalar Conversion into String
+
+Non-string scalar operands are converted to strings before concatenation:
+- String → its interpreted string value
+- Numbers are converted to their textual numeric representation.
+- Booleans are converted to `true` or `false`.
+- Null is converted to `null`.
+
+Lists and inline objects MUST NOT be used as operands in concatenation expressions.
 
 ## 7. Number Literals
 ### 7.1. Numbers
@@ -1674,12 +1756,19 @@ The syntax for list:
 
 ### 13.9. Comments
 
-* YINI supports (outside string literals):
-  - `/* ... */` for block (multi-line) comments (may span lines).
-  - `//` for inline comments (rest of the line is ignored).
-  - `#` for full-line or inline comments, everything from `#` to the end of the line is ignored. No whitespace is required before or after `#`.
-  - `;` at start of line is treated as full-line comments (there may appear only spaces or tabs before `;`).
-  - **Nested block comments are not supported.**
+### 13.9. Comments
+
+Implementations MUST recognize comments according to Section 3.3, "Comments".
+
+In summary:
+- `//` begins a line comment outside string literals and backticked identifiers.
+- `#` begins a line comment outside string literals and backticked identifiers.
+- `/* ... */` begins a block comment outside string literals and backticked identifiers.
+- `;` begins a full-line comment only when it is the first non-whitespace character on a line.
+- Nested block comments are not supported.
+- Comments may appear only where whitespace is allowed and MUST NOT split tokens.
+
+Implementations SHOULD remove or ignore comments during parsing before semantic interpretation, while preserving source-position information where useful for diagnostics.
 
 ### 13.10 Bonus Tips for Implementation
 Developers are encouraged to implement the following features to improve parser robustness and developer experience:
