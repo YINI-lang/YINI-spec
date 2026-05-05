@@ -250,6 +250,7 @@ The following key terms are used consistently throughout this specification. Und
 | Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
 | Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
 | Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document. It is optional in lenient mode and required in strict mode. |
+| Horizontal whitespace     | One or more space and/or tab characters. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=`). Keys MUST be unique within their section (and depth/level). |
 | Lenient Mode              | This is the default parsing mode in YINI. |
@@ -334,7 +335,7 @@ YINI files consist of a series of **sections, members** (key-value pairs), and o
 
 Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure. In section headers, whitespace between the marker and the section name is optional in repeated/basic form, but required in numeric shorthand form (to make it clear where the marker ends and where the name starts). Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
 
-Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
+Definitions of control characters, see more in section 3.2, "Whitespace and Indentation".
 
 #### Sections
 
@@ -602,6 +603,8 @@ This section describes how values (on the right-hand side of `=`) are interprete
 
 Inside inline objects (`{ ... }`), `:` is the canonical member separator. In lenient mode only, `=` MAY also be accepted inside inline objects as a compatibility convenience. In strict mode, inline object members MUST use `:`.
 
+For compound values written after `=`, the opening `[` or `{` MUST appear on the same logical line as the `=`. A newline immediately after `=` means the member has no explicit value.
+
 #### Strings
 If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`) — even in lenient mode.
 
@@ -757,29 +760,79 @@ For example:
 
 This prevents arbitrarily long runs of the same marker. When ascending (moving to a shallower level), you may skip multiple levels at once (e.g., from `^9` back to `^^`).  
 
-**Examples:**
-```yini
-^      Level1      # One caret
-^^     Level2      # Two carets   → depth 2
-^9     Level9      # ❌ Invalid: levels 3 through 8 were not explicitly defined
-^^^    Level3      # Three carets → depth 3
-^^^^   Level4      # Four carets  → depth 4
-^^^^^  Level5      # Five carets  → depth 5
-^^^^^^ Level6      # Six carets   → depth 6
-^7     Level7      # Shorthand    → depth 7
-^7Level7           # ❌ Invalid: shorthand requires at least one space or tab after the number
-^8     Level8      # Shorthand    → depth 8
-^9     Level9      # Shorthand    → depth 9
-^10    Level10     # Shorthand    → depth 10
+**✅ Valid examples:**
 
-^     BackTo1      # Going back to level 1 (allowed)
-^^    BackTo2      # Going back to level 2 (allowed)
+Repeated marker form for levels 1–6:
+
+```yini
+^      Level1      # depth 1
+^^     Level2      # depth 2
+^^^    Level3      # depth 3
+^^^^   Level4      # depth 4
+^^^^^  Level5      # depth 5
+^^^^^^ Level6      # depth 6
 ```
 
-```txt
-^1     Level1      # ✅ Valid
-^2     Level2      # ✅ Valid
-^9     Level9      # ❌ Invalid: levels 3 through 8 were not explicitly defined
+Numeric shorthand form for levels deeper than 6:
+
+```yini
+^      Level1      # depth 1
+^^     Level2      # depth 2
+^^^    Level3      # depth 3
+^^^^   Level4      # depth 4
+^^^^^  Level5      # depth 5
+^^^^^^ Level6      # depth 6
+^7     Level7      # depth 7
+^8     Level8      # depth 8
+^9     Level9      # depth 9
+^10    Level10     # depth 10
+```
+
+Numeric shorthand may also be used for levels 1–6:
+
+```yini
+^1     Level1      # depth 1
+^2     Level2      # depth 2
+^3     Level3      # depth 3
+```
+
+Going back to a shallower level is allowed:
+
+```yini
+^      Level1
+^^     Level2
+^^^    Level3
+^      BackTo1     # allowed: returns to depth 1
+^^     BackTo2     # allowed: descends from depth 1 to depth 2
+```
+
+**❌ Invalid examples:**
+
+Skipping an intermediate level is invalid:
+
+```yini
+^      Level1
+^^^    Level3      # ❌ Invalid: depth 2 was not established
+```
+
+The same rule applies to numeric shorthand:
+
+```yini
+^1     Level1
+^2     Level2
+^9     Level9      # ❌ Invalid: depths 3 through 8 were not established
+```
+
+A numeric shorthand section header requires whitespace after the number:
+
+```yini
+^7Level7           # ❌ Invalid: shorthand requires at least one space or tab after the number
+```
+
+Using seven or more repeated section markers is invalid:
+
+```yini
+^^^^^^^ Level7     # ❌ Invalid: use numeric shorthand instead
 ```
 
 Numeric shorthand does not permit skipping intermediate nesting levels. It is only an alternative notation for expressing a section depth and a notation for going deeper than level 6. Therefore, a shorthand section at level `n` is valid only if level `n - 1` has already been explicitly established in the current nesting chain.
@@ -800,6 +853,13 @@ Prefix letters are **case-insensitive**, e.g. lowercase `r` behaves identically 
 YINI has three types of string literals — Raw, Classic, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
 
 String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
+
+**Quote character note:** In this specification, the quote characters used to delimit strings are the plain ASCII quote characters:
+
+- Single quote: `'` U+0027 APOSTROPHE
+- Double quote: `"` U+0022 QUOTATION MARK
+
+Typographic or curly quotation marks such as `‘`, `’`, `“`, and `”` are ordinary Unicode text characters. They do not begin or end YINI string literals.
 
 **Note:** If a string is not quoted, it's not a string — period.
 
@@ -833,8 +893,6 @@ Because Raw strings do not interpret escape sequences, the matching quote charac
 
 Raw strings MUST NOT contain line breaks. For multi-line raw text, use a Triple-Quoted String.
 
-For multi-line Raw strings, see Triple-Quoted String literals.
-
 Raw strings are particularly suitable for representing file paths and other literal text.
 
 Examples:
@@ -847,6 +905,14 @@ path2 = "C:\Users\John Smith\"
 path3 = '/home/Leila Häkkinen'
 path4 = '/Users/kim-lee'
 ```
+
+Curly quotation marks may appear inside quoted strings as ordinary text:
+
+```yini
+meaning = "It comes from Greek akmḗ (ἀκμή), meaning “the highest point” or “best”."
+```
+
+In the aboves example, the outer `"` characters are plain ASCII double quotes and delimit the string. The inner `“` and `”` characters are typographic quotation marks and are part of the string value.
 
 #### Raw String Prefix
 Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
@@ -945,6 +1011,7 @@ C"""Quotes inside: "double" and 'single'"""
 | C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
 
 ### 6.5. String Concatenation
+
 YINI supports string **concatenation** using the plus sign (`+`). Concatenation joins two or more operands into a single string value.
 
 **Example:**
@@ -959,21 +1026,25 @@ greeting = "Hi, hello there"
 
 The result of string concatenation is always a single string value.
 
-**In strict mode**, concatenation is allowed ONLY between string literals.
+**In strict mode**, concatenation is allowed ONLY between string literals. This rule is due to restricting implicit string conversion in strict mode. Which keeps the `+` operator narrowly defined as string-joining operator, and avoids confusion with numeric addition, and preserves predictable strict-mode validation.
 
-**In lenient mode**, concatenation MAY accept operands of the **simple/scalar types** and the **null type**.
+**In lenient mode**, concatenation MAY also accept operands of the **simple/scalar types** and the **null type**, provided that at least one operand is a string literal.
 
-This means the following operands MAY be accepted:
+This means the following operands MAY be used in lenient mode:
 - String literals.
 - Number literals.
 - Boolean literals.
 - Null literals.
 
-At least one operand in a lenient-mode concatenation expression MUST be a string literal. YINI does not define numeric addition.
+YINI does not define numeric addition. Therefore, a concatenation expression MUST contain at least one string literal.
 
 Lists and inline objects MUST NOT be operands in concatenation expressions.
 
 Each string literal is interpreted according to its own string type before concatenation. For example, Classic Strings interpret escape sequences before being joined, while Raw Strings preserve backslashes literally.
+
+Concatenation **MUST occur on a single logical line.** A newline MUST NOT appear inside a concatenation expression, including before or after the `+` operator. This limitation is by design, since this favor explicitness and predictable parsing. This avoids hidden continuation behavior and keeps multi-line text handling clearly separated into Triple-Quoted Strings.
+
+For multi-line text, authors SHOULD use Triple-Quoted Strings instead.
 
 **Valid in both lenient and strict mode:**
 
@@ -998,7 +1069,21 @@ x = 1 + 2  // ❌ Invalid, not a string concatenation!
 
 The following is invalid in strict mode, because strict mode does not allow implicit string conversion:
 ```yini
-label = "port-" + 5432
+label = "port-" + 5432  // ❌ Invalid in strict mode
+```
+
+More examples:
+```yini
+# ✅ Valid
+message = "hello " + "world"
+
+# ❌ Invalid: newline after +
+message = "hello " +
+          "world"
+
+# ❌ Invalid: newline before +
+message = "hello "
+        + "world"
 ```
 
 ### 6.6. Scalar Conversion to Strings
@@ -1143,6 +1228,26 @@ An object has the following canonical form:
 ```yini
 settings = { enabled: true, retries: 3 }
 empty = { }
+```
+
+**Syntax Rule**
+
+There MUST be **no newline** between the `=` and the opening brace `{`. If a newline appears after `=`, the member is treated as having no explicit value: in lenient mode this is interpreted as `null`; in strict mode it is a missing-value error. The `{ ... }` block on the following line is not treated as the value of that member.
+
+❌ Invalid:
+```yini
+object =
+{ a: 1, b: 2 }  // Not parsed as an inline object value.
+```
+
+✅ Valid:
+```yini
+object1 = { a: 1, b: 2 }
+
+object2 = {
+    a: 1,
+    b: 2
+}
 ```
 
 The **key** in each object member follows the same identifier rules as any YINI key.
@@ -1378,7 +1483,7 @@ list3 = ["a", "b", "c", NULL]
 
 **Syntax Rule**
 
-There MUST be **no newline** between the `=` and the opening bracket `[`, otherwise the value will be interpreted as `null`.
+There MUST be **no newline** between the `=` and the opening bracket `[`. If a newline appears after `=`, the member is treated as having no explicit value: in lenient mode this is interpreted as `null`; in strict mode it is a missing-value error. The `[ ... ]` block on the following line is not treated as the value of that member.
 
 ❌ Invalid:
 ```yini
@@ -1606,7 +1711,7 @@ object6 = { a: 1, b: 2 }        # ✅ OK
 | Mixed `:` and `=` inside same inline object | ⚠️ Discouraged | ❌ | Lenient parsers MAY accept mixed separators, but formatters SHOULD normalize all inline object members to `:`. |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient mode the comma is ignored, error in strict mode  |
 | Missing (empty) value (only in section/root-level)| ✅ | ❌ | Will result in a `Null` value in lenient mode  |
-| Missing (empty) value before comma | - | ❌ | In lenient mode SHOULD warn or make error  |
+| Empty value before comma | ⚠️ | ❌ | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Lenient implementations SHOULD report a warning or error; strict implementations MUST report an error. |
 | Invalid escape sequences              | ✅ (may warn) | ❌ (error) |   |
 
 ⚠️ Strict mode enforces a stricter contract suitable for automated validation and reproducible builds. Lenient mode favors user-friendliness and flexibility for human editing.
@@ -1614,12 +1719,12 @@ object6 = { a: 1, b: 2 }        # ✅ OK
 Example:
 ```yini
 # Lenient:
-key1 =         # → ✅ key1 = null
-key2 = ,       # → ❌ error: unexpected comma (may warn)
+key1 =         # ✅ key1 = null
+key2 = ,       # ❌ error: unexpected comma (may warn)
 
 # Strict:
-key1 =         # → ❌ error: missing value
-key2 = ,       # → ❌ error: unexpected comma
+key1 =         # ❌ error: missing value
+key2 = ,       # ❌ error: unexpected comma
 ```
 
 ## 13. Implementation Notes
@@ -1690,8 +1795,8 @@ Otherwise, an error MUST be reported.
 
 * Boolean literals are **case-insensitive**.
 * The following values MUST be interpreted as Booleans:
-  * `true`, `yes`, `on` → `true`
-  * `false`, `no`, `off` → `false`
+  * `true`, `yes`, `on` -> `true`
+  * `false`, `no`, `off` -> `false`
 * DOES NOT allow Boolean values like `1` or `0` unless explicitly cast by the host software.
 
 ### 13.5. Objects
@@ -1748,7 +1853,7 @@ The syntax for list:
     ```yini
     name = "Hello, " + "world"
     ```
-* Concatenation SHOULD occur **on a single line**.
+* Concatenation MUST occur on a single logical line. A newline inside a concatenation expression MUST result in an error.
 * Concatenating different types of strings (e.g., r"..." + c'...') is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
 * Only Classic strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
 
@@ -1761,8 +1866,6 @@ The syntax for list:
 | Classic String         | `C` or `c`       | `C"..."`   | Escape sequences are interpreted|
 | Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
 | C-Triple-Quoted String | `C`, or `c`       | `C"""..."""`   | Can be multi-line, escapes interpreted, preserves all whitespace, including line breaks |
-
-### 13.9. Comments
 
 ### 13.9. Comments
 
@@ -2837,6 +2940,7 @@ Trailing commas after values or members inside lists or objects never produce `N
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
 | Inline object member separator | `obj = { a: 1, b: 2 }` | `obj = { a = 1, b = 2 }` | `:` is the canonical separator inside inline objects. In lenient mode, `=` MAY be accepted, but formatters should normalize to `:`. In strict mode, `=` inside inline objects is invalid. |
 | Mixed object separators | `obj = { a: 1, b: 2 }` | `obj = { a: 1, b = 2 }` | Mixing `:` and `=` inside the same inline object is discouraged in lenient mode and invalid in strict mode. |
+| Quote characters | `text = "hello"` or `text = 'hello'` | Using curly quotes as delimiters: `text = “hello”` | String delimiters MUST be plain ASCII quotes: `'` U+0027 or `"` U+0022. Curly quotes may appear inside strings as ordinary text, but they do not delimit strings. |
 
 ---
 
