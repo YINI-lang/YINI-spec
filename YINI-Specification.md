@@ -1065,9 +1065,9 @@ greeting = "Hi, hello there"
 
 The result of string concatenation is always a single string value.
 
-**In strict mode**, concatenation is allowed ONLY between string literals. **Rationale:** This rule restricts implicit string conversion in strict mode. This keeps the `+` operator narrowly defined as a string-joining operator, which avoids confusion with numeric addition and preserves predictable strict-mode validation.
+**In strict mode**, concatenation is allowed ONLY between string literals (Raw/R-prefixed, Classic/C-prefixed, or any Triple-Quoted strings). **Rationale:** This rule restricts implicit string conversion in strict mode. This keeps the `+` operator narrowly defined as a string-joining operator, which avoids confusion with numeric addition and preserves predictable strict-mode validation.
 
-**In lenient mode**, concatenation MAY also accept operands of the **simple/scalar types** and the **null type**, provided that at least one operand is a string literal.
+**In lenient mode**, concatenation MAY also accept operands of the **simple/scalar types** and the **null type**, provided that the first operand is a string literal.
 
 This means the following operands MAY be used in lenient mode:
 - String literals.
@@ -1075,7 +1075,7 @@ This means the following operands MAY be used in lenient mode:
 - Boolean literals.
 - Null literals.
 
-YINI does not define numeric addition. Therefore, a concatenation expression MUST contain at least one string literal.
+YINI does not define numeric addition. The `+` operator in YINI is exclusively a string concatenation operator. o keep it unambiguous at the parser level, the first operand in any concatenation expression MUST be a string literal.
 
 Lists and inline objects MUST NOT be operands in concatenation expressions.
 
@@ -1083,7 +1083,7 @@ Each string literal is interpreted according to its own string type before conca
 
 Concatenation **MUST occur on a single logical line.** A newline MUST NOT appear inside a concatenation expression, including before or after the `+` operator. This limitation is by design, since it favors explicitness and predictable parsing, avoids hidden continuation behavior, and keeps multi-line text handling clearly separated into Triple-Quoted Strings.
 
-For multi-line text, authors SHOULD use Triple-Quoted Strings instead.
+For multi-line text, authors SHOULD use Triple-Quoted Strings instead. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
 
 **Valid in both lenient and strict mode:**
 
@@ -1098,12 +1098,12 @@ label = "port-" + 5432
 enabled_text = "enabled=" + true
 missing_text = "value=" + null
 x1 = "item " + 1
-x2 = 1 + " item"
 ```
 
 The following is invalid in both modes, because YINI does not define numeric addition:
 ```yini
-x = 1 + 2  // ❌ Invalid, not a string concatenation!
+x1 = 1 + 2        // ❌ Invalid, not a string concatenation.
+x2 = 1 + " item"  // ❌ Invalid, string literal must appear first.
 ```
 
 The following is invalid in strict mode, because strict mode does not allow implicit string conversion:
@@ -1134,9 +1134,8 @@ In strict mode, implicit scalar-to-string conversion MUST NOT occur. Every opera
 Conversion is based on the parsed scalar value, not the original lexical spelling in the source document. **This keeps parsing predictable, avoids hidden rules, and produces stable output.**
 
 In lenient mode, scalar operands are converted to strings before concatenation as follows:
-
 - Strings use their interpreted string value.
-- Numbers are converted to their canonical textual numeric representation.
+- Numbers are converted to their canonical textual numeric representation (from their converted parsed value). `0xFF` becoming `255`.
 - Booleans are converted to `true` or `false`.
 - Null is converted to `null`.
 - Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion.
