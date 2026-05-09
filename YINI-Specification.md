@@ -279,7 +279,7 @@ YINI documents MUST be encoded in UTF-8.
 
 - **Character Set:** YINI documents use Unicode. Control characters and other non-printable characters SHOULD be avoided except where explicitly allowed, such as tabs, spaces, and line endings, or when represented through valid string literal forms. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-Quoted Strings.
 
-Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
+For details about whitespace and control characters, see Section 3.2, "Whitespace and Indentation".
 
 ### 2.2. File Extension
 YINI files SHOULD use the `.yini` file extension. This extension helps clearly identify the file type and ensures proper handling by tools and parsers designed for the YINI format.
@@ -335,9 +335,9 @@ YINI files consist of a series of **sections, members** (key-value pairs), and o
 
 #### Whitespace
 
-Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure. In section headers, whitespace between the marker and the section name is optional in repeated/basic form, but required in numeric shorthand form (to make it clear where the marker ends and where the name starts). Other than this tabs are totally ignored outside strings, though tabs or multiple spaces may be used to make it clearer for humans to read.
+Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure. In section headers, whitespace between the marker and the section name is optional in repeated/basic form, but required in numeric shorthand form (to make it clear where the marker ends and where the name starts). Outside strings and backticked identifiers, spaces and tabs are generally insignificant except where this specification explicitly requires or forbids whitespace, such as in numeric shorthand section headers or between tokens. Though, tabs or multiple spaces may be used to make it clearer for humans to read.
 
-Definitions of control characters, see more in section 3.2, "Whitespace and Indentation".
+For definitions of whitespace and control characters, see Section 3.2, "Whitespace and Indentation".
 
 #### Sections
 
@@ -756,10 +756,11 @@ Optionally, indentation may be omitted:
 For readability, underscores (`_`) MAY be placed between repeated section markers. These underscores are visual separators only and do not change the section depth.
 
 Rules:
-- An underscore MAY appear between two repeated section marker characters.
+- An underscore MAY appear only between two repeated occurrences of the same section marker character.
 - An underscore MUST NOT appear at the beginning or end of the section marker sequence.
 - An underscore MUST NOT appear adjacent to another `_`.
 - Section marker separators are supported only in repeated section marker form, not in numeric shorthand form.
+- Section marker separators do not count toward the section depth. Only actual section marker characters are counted.
 
 For example, the following are equivalent:
 ```yini
@@ -774,8 +775,11 @@ Invalid:
 ```yini
 ^^_ Section      // ❌ Invalid trailing underscore.
 ^__^ Section     // ❌ Invalid adjacent underscores.
+
 _^ Section       // ❌ Invalid leading underscore.
 ^_ Section       // ❌ Invalid trailing underscore.
+
+^_< Section      // ❌ Invalid: section marker characters must not be mixed.
 ```
 
 #### 5.3.2. Short-hand Section Heading
@@ -936,7 +940,7 @@ single_quote = "Amanda's file"
 double_quote = 'He said "hello"'
 
 path1 = "C:\Users\Kim\Documents"  // Raw string
-path2 = "C:\Users\John Smith\"
+path2 = "D:\Users\John Smith\"    // The closing quote is treated as an ordinary backslash, not as an escape character.
 path3 = '/home/Leila Häkkinen'
 path4 = '/Users/kim-lee'
 ```
@@ -1136,7 +1140,7 @@ In lenient mode, scalar operands are converted to strings before concatenation a
 - Booleans are converted to `true` or `false`.
 - Null is converted to `null`.
 - Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion.
-- - Lists and inline objects MUST NOT be converted to strings and MUST NOT be used as operands in concatenation expressions.
+- Lists and inline objects MUST NOT be converted to strings and MUST NOT be used as operands in concatenation expressions.
 
 Example:
 ```yini
@@ -1175,13 +1179,15 @@ For readability, an underscore (`_`) MAY appear after a base prefix or between s
 
 Underscores are permitted:
 - It may appear between two digits.
-- It may appear immediately after a supported base prefix: `0b`, `0o`, `0x`, `hex:`, `%`.
-- It may appear between digit groups in base-prefixed number literals, such as `0xFF_AA`, `0b1010_1100`, or `0o755_644`.
+- Immediately after a supported base prefix: `0b`, `0o`, `0x`, `0z`, `hex:`, or `%`.
+- Between digit groups in base-prefixed number literals, such as `0xFF_AA`, `0b1010_1100`, or `0o755_644`.
+- Underscores MAY appear between digits in the integer part, fractional part, or exponent part of a decimal number.
 
 Underscores are not permitted:
-- It may not appear at the beginning or end of a number literal.
-- It may not appear adjacent to another underscore.
-- It may not appear inside or between the characters of a base prefix.
+- At the beginning or end of a number literal.
+- Adjacent to another underscore.
+- Inside or between the characters of a base prefix.
+- Underscores MUST NOT appear adjacent to a sign character (`+` or `-`), decimal point (`.`), exponent marker (`e` or `E`), or at the beginning or end of the literal.
 
 Examples:
 ```yini
@@ -1195,30 +1201,46 @@ hex4 = hex:_FF_AA_00
 binary_grouped = 0b1111_0001
 binary_alt = %_1010
 octal_grouped = 0o6_4_0
+dozenal = 0z_2EX9
 ```
 
 Invalid examples:
 ```yini
-bad1 = 73_       // ❌ INVALID: Trailing underscore.
-bad2 = 5__9      // ❌ INVALID: Adjacent underscores.
-bad3 = 0_b1101   // ❌ INVALID: Underscore breaks the base prefix.
-bad4 = _73       // ❌ INVALID: Leading underscore.
+bad1 = 73_        // ❌ INVALID: Trailing underscore.
+bad2 = 5__9       // ❌ INVALID: Adjacent underscores.
+
+bad3 = 0_b1101    // ❌ INVALID: Underscore breaks the base prefix.
+bad4 = _73        // ❌ INVALID: Leading underscore.
+
+bad_hex1 = 0x_    // ❌ INVALID: Separator without any digits.
+bad_hex2 = hex:_  // ❌ INVALID: Separator without any digits.
 ```
 
 ### 7.3. Exponent Format
 Exponent notation uses the format:
 ```
-<base>e<sign><exponent>
+<significand>e<sign><exponent>
 ```
 
 Where:
-- `<base>` is any integer number.
-- `<sign>` can be `+`, `-`, or blank (positive).
-- `<exponent>` is any non-negative number.
+- `<significand>` is an integer or decimal number.
+- `e` may be written as `e` or `E`.
+- `<sign>` may be `+`, `-`, or omitted.
+- `<exponent>` is a sequence of decimal digits, optionally using permitted digit separators.
 
 Example:
 ```
 3e4 // Is same as 3 × 10⁴ = 30000
+```
+
+```yini
+valid_float = 1_000.5_25
+valid_exp = 1.5e1_0
+
+bad_float1 = 1_.5     // ❌ Invalid: underscore before decimal point.
+bad_float2 = 1._5     // ❌ Invalid: underscore after decimal point.
+bad_exp1 = 1_e10      // ❌ Invalid: underscore before exponent marker.
+bad_exp2 = 1e_10      // ❌ Invalid: underscore after exponent marker.
 ```
 
 ### 7.4. Number Formats
@@ -1244,13 +1266,14 @@ color3 = HEX:FA90
 
 The `#` character is not a hexadecimal prefix in YINI. Outside string literals, `#` always begins a comment.
 
-In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits only. The `0x` prefix is not used inside the `hex:` form.
+In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits and permitted digit separators only. The `0x` prefix is not used inside the `hex:` form.
 
 ```
-color1 = hex:FFAA00    // ✅ valid
-color2 = 0xFFAA00      // ✅ valid
-color3 = hex:0xFFAA00  // ❌ invalid
-color4 = hex: FFAA00   // ❌ invalid
+color1 = hex:FFAA00     // ✅ valid
+color2 = 0xFFAA00       // ✅ valid
+color3 = hex:_FF_AA_00  // ✅ valid
+color4 = hex:0xFFAA00   // ❌ invalid
+color5 = hex: FFAA00    // ❌ invalid
 ```
 
 ## 8. Boolean and Null Literals
@@ -1269,7 +1292,7 @@ Boolean literals in a YINI document **are case-insensitive** and may be written 
 The engine SHOULD convert the literal value to the corresponding Boolean value in the host language.
 
 ### 8.2. Null Literal
-The null literal (value) is `null` (NON CASE-SENSITIVE). 
+The null literal (value) is `null`, case-insensitive.
 
 - Empty or missing value in section/root-level key-value pair (member outside any list or object), is treated as `null` in lenient mode, error in strict mode.
   If written `key = `with nothing after `=`, that member's value is `null` (lenient only; strict mode requires explicitly `key = null`).
@@ -1686,7 +1709,7 @@ A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and
 | Strict  | Required |
 
 #### 12.2.6. Escaping and String Literals
-- Escape sequences are **ONLY allowed** in in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
+- Escape sequences are **ONLY allowed** in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-Quoted Strings MUST use `"""` for both opening and closing (`'''` is not supported).
 
 #### 12.2.7. Shortest Valid YINI Documents in Strict Mode
@@ -2287,7 +2310,7 @@ hosts = ["alpha.local", "beta.local", "gamma.local"]
 
 ### 15.5. Large-Scale Real-World Configuration Example A: Corporate SaaS Platform  
 
-This is a lenient-mode example. This have multiple top-level sections and no `/END`.
+This is a lenient-mode example. It has multiple top-level sections and no `/END`.
 
 ```yini
 @YINI
@@ -2419,9 +2442,9 @@ blockedCountries = ["KP", "SD"]
         lockoutMinutes = 30
 ```
 
-15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System
+### 15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System
 
-Examples B, as example A, have multiple top-level sections and no `/END`, this example is a lenient-mode example.
+This is a lenient-mode example. It has multiple top-level sections and no `/END`.
 
 ```yini
 @YINI
@@ -2647,7 +2670,7 @@ blockedCountries = ['KP', 'NG', 'BY']
         }
 ```
 
-15.7. Large-Scale Real-World Configuration Example C: Industrial Monitoring & Automation Platform  
+### 15.7. Large-Scale Real-World Configuration Example C: Industrial Monitoring & Automation Platform  
 
 This example C is meant to be parsed in strict mode.
 
@@ -3007,7 +3030,7 @@ Trailing commas after values or members inside lists or objects never produce `N
 | Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | Line break after `=` causes the value of `items` to be parsed as null. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
 | Comments | `# Comment`, `#Comment`, or `// Comment` | Assuming `#Comment` is not a comment | Outside string literals, `#` always begins a comment. No whitespace is required. |
-| Hex values | `color = 0xFF0033` or `color = hex: FF0033` | `color = #FF0033` | `#` is not a hex prefix in YINI. It begins a comment outside string literals. |
+| Hex values | `color = 0xFF0033` or `color = hex:FF0033` | `color = #FF0033` | `#` is not a hex prefix in YINI. It begins a comment outside string literals. |
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
 | List nesting       | `list = [[1, 2], [3, 4]]`       | Using inner lists without brackets | All nested lists MUST be bracketed explicitly. |
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
@@ -3053,4 +3076,3 @@ Below is a categorized list of Unicode whitespace characters recognized as withi
 > A simple, structured, and human-friendly configuration format.  
 
 [yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang/?utm_content=spec_footer)  
-
