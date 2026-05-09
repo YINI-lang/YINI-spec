@@ -605,7 +605,7 @@ This section describes how values (on the right-hand side of `=`) are interprete
 
 Inside inline objects (`{ ... }`), `:` is the canonical member separator. In lenient mode only, `=` MAY also be accepted inside inline objects as a compatibility convenience. In strict mode, inline object members MUST use `:`.
 
-For compound values written after `=`, the opening `[` or `{` MUST appear on the same logical line as the `=`. A newline immediately after `=` means the member has no explicit value.
+For compound values written after `=`, the opening `[` or `{` **MUST appear on the same logical line** as the `=`. A newline immediately after `=` means the member has no explicit value.
 
 #### Strings
 If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`) — even in lenient mode.
@@ -1263,8 +1263,15 @@ There MUST be **no newline** between the `=` and the opening brace `{`. If a new
 
 ❌ Invalid:
 ```yini
-object =
-{ a: 1, b: 2 }  // Not parsed as an inline object value.
+object1 =
+{ a: 1, b: 2 }  // Not parsed as an object value for object1
+
+// Not parsed as an object value for object2
+object2 =
+    {
+        a: 1,
+        b: 2
+    }
 ```
 
 ✅ Valid:
@@ -1426,7 +1433,7 @@ Lists in YINI correspond to what are called _Arrays_ in JSON and serve the same 
 YINI defines lists using bracketed list notation with `=` and square brackets `[ ]`, similar to JSON.
 
 ### 10.1. Bracketed Lists (using `=`)
-A list is assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
+A list is assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values. The opening `[` MUST appear on the same logical line as the `=`. A newline after `=` does not continue the assignment.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
 
@@ -1451,6 +1458,23 @@ list2 = ["a", "b", "c", ]  // Trailing comma here is ignored.
 
 // A list with FOUR items.
 list3 = ["a", "b", "c", NULL]
+```
+
+
+```yini
+// ❌ Not parsed as a list value for `items1`
+items1 =
+[
+    "a",
+    "b"
+]
+
+// ✅ Valid
+items2 = [
+    "a",
+    "b"
+]
+
 ```
 
 > **Note:** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
