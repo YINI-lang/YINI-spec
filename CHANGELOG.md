@@ -23,6 +23,17 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
 - **Clarified:** Clarified string concatenation and scalar-to-string conversion rules: strict mode permits only string-literal concatenation, while lenient mode may allow non-string scalar operands. Numeric addition, lists, and inline objects remain invalid in concatenation expressions.
 - **Clarified:** In the spec, defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
+- **Added:** For readability, an underscore character `_` may appear after a base prefix or between successive digits. For example:
+  ```yini
+  2_468
+  0x_ab_cd_12_34_ef
+  0b1111_0001
+  ```
+- **Added:** For readability, added support for section marker separators `_`. For example:
+  ```yini
+  ^^_^^_^ Section  // depth 5
+  ^^^_^^^ Section  // depth 6
+  ```
 - **Clarified:** Missing values vs trainling comma:
   * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
   * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.

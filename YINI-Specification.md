@@ -92,7 +92,8 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `§`, or `<`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Short-hand Section Heading  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Section Marker Separators  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.2. Short-hand Section Heading  
 
 **6. String Literals** ([Link ⇨](./YINI-Specification.md#6-string-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
@@ -105,8 +106,9 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 **7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
-&nbsp;&nbsp;&nbsp;&nbsp;7.2. Exponent Format  
-&nbsp;&nbsp;&nbsp;&nbsp;7.3. Number Formats
+&nbsp;&nbsp;&nbsp;&nbsp;7.2. Digit Separators  
+&nbsp;&nbsp;&nbsp;&nbsp;7.3. Exponent Format  
+&nbsp;&nbsp;&nbsp;&nbsp;7.4. Number Formats
 
 **8. Boolean and Null Literals** ([Link ⇨](./YINI-Specification.md#8-boolean-and-null-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;8.1. Booleans  
@@ -445,7 +447,7 @@ C#comment"hello"           # ❌ invalid, comment splits string prefix/literal
 ```
 
 ### 3.3.2. Multi-line Block Comments
-Multi-line (block) Comments.
+YINI supports multi-line block comments.
   
 Block comments begin with `/*` and end with `*/`. They may span multiple lines.
 
@@ -615,7 +617,7 @@ If the value is meant to be a string, it MUST be quoted — either with single q
 #### Numbers
 - A sequence of digits **without a period** (`.`) is treated as a **Number** (integer).
 - A sequence of digits **with a period** (`.`) is treated as a **Number** (floating-point / float).
-- YINI also supports explicit base-prefixed number formats such as binary, octal, duodecimal, and hexadecimal literals. See Section 7.3, "Number Formats".
+- YINI also supports explicit base-prefixed number formats such as binary, octal, duodecimal, and hexadecimal literals. See Section 7.4, "Number Formats".
 
 #### Booleans
 If the value matches any of the following keywords `true`, `false`, `on`, `off`, `yes`, or `no` (case-insensitive) — it is interpreted as a **Boolean**. 
@@ -702,13 +704,13 @@ That is, the following denote nesting levels 1–6:
 ```
 
 **Using seven or more of the same marker in succession (for example, `^^^^^^^`) is invalid.**
-For nesting levels deeper than 6, the **numeric shorthand section header** syntax MUST be used (see Section 5.3.1).
+For nesting levels deeper than 6, the **numeric shorthand section header** syntax MUST be used (see Section 5.3.2).
 
 ### 5.3. Nested Sections
 To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
 
 - Section heading markers (`^`, `§`, or `<`) may only be repeated up to six times — to level 6 (maximum).
-- Beyond level 6, the numeric shorthand section MUST be used (see section 5.3.1).
+- Beyond level 6, the numeric shorthand section MUST be used (see section 5.3.2).
 - **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.  
   This rule applies equally to **repeated marker** form and **numeric shorthand** form. Numeric shorthand does not permit skipping intermediate levels.
 - **Going shallower (decrease nesting):** May drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
@@ -749,7 +751,34 @@ Optionally, indentation may be omitted:
 ^ Section 3         // Main section 3 (depth 1)
 ```
 
-#### 5.3.1. Short-hand Section Heading
+#### 5.3.1. Section Marker Separators
+
+For readability, underscores (`_`) MAY be placed between repeated section markers. These underscores are visual separators only and do not change the section depth.
+
+Rules:
+- An underscore MAY appear between two repeated section marker characters.
+- An underscore MUST NOT appear at the beginning or end of the section marker sequence.
+- An underscore MUST NOT appear adjacent to another `_`.
+- Section marker separators are supported only in repeated section marker form, not in numeric shorthand form.
+
+For example, the following are equivalent:
+```yini
+^^^^^ Section    // depth 5
+^^_^^_^ Section  // depth 5
+
+^^^^^^ Section   // depth 6
+^^^_^^^ Section  // depth 6
+```
+
+Invalid:
+```yini
+^^_ Section      // ❌ Invalid trailing underscore.
+^__^ Section     // ❌ Invalid adjacent underscores.
+_^ Section       // ❌ Invalid leading underscore.
+^_ Section       // ❌ Invalid trailing underscore.
+```
+
+#### 5.3.2. Short-hand Section Heading
 
 **Short-hand Section Headings:**
 Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `<`) and `<n>` is an integer ≥ 1 indicating the nesting level. For levels 1–6, repeated markers such as `^`, `^^`, `^^^` are RECOMMENDED. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers are RECOMMENDED but not required).
@@ -1107,7 +1136,7 @@ In lenient mode, scalar operands are converted to strings before concatenation a
 - Booleans are converted to `true` or `false`.
 - Null is converted to `null`.
 - Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion.
-- Lists and inline objects MUST NOT be converted to strings. Implementations MUST report an error.
+- - Lists and inline objects MUST NOT be converted to strings and MUST NOT be used as operands in concatenation expressions.
 
 Example:
 ```yini
@@ -1140,7 +1169,43 @@ negative = -12
 scientific = 1.23e4
 ```
 
-### 7.2. Exponent Format
+### 7.2. Digit Separators
+
+For readability, an underscore (`_`) MAY appear after a base prefix or between successive digits inside a number literal. Digit separators do not change the numeric value of the literal.
+
+Underscores are permitted:
+- It may appear between two digits.
+- It may appear immediately after a supported base prefix: `0b`, `0o`, `0x`, `hex:`, `%`.
+- It may appear between digit groups in base-prefixed number literals, such as `0xFF_AA`, `0b1010_1100`, or `0o755_644`.
+
+Underscores are not permitted:
+- It may not appear at the beginning or end of a number literal.
+- It may not appear adjacent to another underscore.
+- It may not appear inside or between the characters of a base prefix.
+
+Examples:
+```yini
+decimal = 2_468
+binary = 0b_1101
+octal = 0o_640
+hex1 = 0x_A3
+hex2 = 0xCafe_Babe
+hex3 = 0x_ab_cd_12_34_ef
+hex4 = hex:_FF_AA_00
+binary_grouped = 0b1111_0001
+binary_alt = %_1010
+octal_grouped = 0o6_4_0
+```
+
+Invalid examples:
+```yini
+bad1 = 73_       // ❌ INVALID: Trailing underscore.
+bad2 = 5__9      // ❌ INVALID: Adjacent underscores.
+bad3 = 0_b1101   // ❌ INVALID: Underscore breaks the base prefix.
+bad4 = _73       // ❌ INVALID: Leading underscore.
+```
+
+### 7.3. Exponent Format
 Exponent notation uses the format:
 ```
 <base>e<sign><exponent>
@@ -1156,27 +1221,25 @@ Example:
 3e4 // Is same as 3 × 10⁴ = 30000
 ```
 
-### 7.3. Number Formats
+### 7.4. Number Formats
 In addition to standard decimal numbers (base-10), YINI supports other number base literals as well.
 
 Note, binary and hexadecimal values also allow **alternative notations** for convenience and readability.
 
 | Number Format (case-insensitive) | Alternative Format | Description | Base | Notes
 |----------|--|---|---|---|
-| `3e4`                   | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
-| `0b1010`                | `%1010` | Binary number | 2-base | Digits: `0` and `1` only
-| `0o7477`                | - | Octal number | 8-base | Digits: `0`–`7`
-| `0z2EX9`                | `0z2BA9` | Duodecimal (dozenal) | 12-base | `X` = `A` = 10, `E` = `B` = 11 (case-insensitive)
-| `hex:F390`, `hex: f390` | `0xF390` | Hexadecimal number | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15 
+| `3e4`    | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
+| `0b1010` | `%1010` | Binary number prefix | 2-base | Digits: `0` and `1` only
+| `0o7477` | - | Octal number | 8-base prefix | Digits: `0`–`7`
+| `0z2EX9` | `0z2BA9` | Duodecimal (dozenal) prefix | 12-base | `X` = `A` = 10, `E` = `B` = 11 (case-insensitive)
+| `0xF390` | `hex:F390`, `HEX:f390` | Hexadecimal number prefix | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15 
 
 **Note:** All prefix-based number formats in YINI are case-insensitive. For example, `0xF390`, `0XF390`, `0xf390`, and `0Xf390` are all valid hexadecimal literals.
 
-The explicit hexadecimal form `hex:` is also case-insensitive and may be followed by optional horizontal whitespace:
-
 ```yini
-color1 = hex:F390
-color2 = hex: F390
-color3 = HEX: f390
+color1 = hex:fa90
+color2 = Hex:Fa90
+color3 = HEX:FA90
 ```
 
 The `#` character is not a hexadecimal prefix in YINI. Outside string literals, `#` always begins a comment.
@@ -1184,15 +1247,16 @@ The `#` character is not a hexadecimal prefix in YINI. Outside string literals, 
 In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits only. The `0x` prefix is not used inside the `hex:` form.
 
 ```
-color = hex: FFAA00    // ✅ valid
-color = 0xFFAA00       // ✅ valid
-color = hex: 0xFFAA00  // ❌ invalid
+color1 = hex:FFAA00    // ✅ valid
+color2 = 0xFFAA00      // ✅ valid
+color3 = hex:0xFFAA00  // ❌ invalid
+color4 = hex: FFAA00   // ❌ invalid
 ```
 
 ## 8. Boolean and Null Literals
 
 ### 8.1. Booleans
-Boolean literals in a `YINI` document can be following literals (NON CASE-SENSITIVE):
+Boolean literals in a YINI document **are case-insensitive** and may be written as follows:
 - Treated as **TRUE** (by the engine):
   - `true`
   - `yes`
@@ -1205,9 +1269,9 @@ Boolean literals in a `YINI` document can be following literals (NON CASE-SENSIT
 The engine SHOULD convert the literal value to the corresponding Boolean value in the host language.
 
 ### 8.2. Null Literal
-The null literal (value) is `NULL` (NON CASE-SENSITIVE). 
+The null literal (value) is `null` (NON CASE-SENSITIVE). 
 
-- Empty or missing value in section/root-level key-value pair (member outside any list or object), is treated as NULL in lenient mode, error in strict mode.
+- Empty or missing value in section/root-level key-value pair (member outside any list or object), is treated as `null` in lenient mode, error in strict mode.
   If written `key = `with nothing after `=`, that member's value is `null` (lenient only; strict mode requires explicitly `key = null`).
 - Note: At top level (outside any `[ ]` or `{ }`), `key =` with nothing after `=` → `key = null` in lenient mode; in strict mode that is a syntax error unless you write `key = null` explicitly.
   
@@ -1443,7 +1507,7 @@ list2 = [100, 200, 300]
 list3 = []  // An empty list.
 ```
 
-For convenience, a trailing comma (`,`) may be optionally be included (only in lenient mode).
+For convenience, a trailing comma (`,`) may optionally be included (only in lenient mode).
 
 ```yini
 // A list with THREE items.
@@ -1710,7 +1774,7 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient mode the comma is ignored, error in strict mode  |
 | Missing (empty) value (only in section/root-level)| ✅ | ❌ | Will result in a `Null` value in lenient mode  |
 | Empty value before comma | ⚠️ | ❌ | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Lenient implementations SHOULD report a warning or error; strict implementations MUST report an error. |
-| Invalid escape sequences              | ✅ (may warn) | ❌ (error) |   |
+| Invalid escape sequences | ❌ | ❌ | Invalid escape sequences MUST result in an error unless an implementation explicitly documents a non-standard extension. |
 
 ⚠️ Strict mode enforces a stricter contract suitable for automated validation and reproducible builds. Lenient mode favors user-friendliness and flexibility for human editing.
 
@@ -1830,7 +1894,7 @@ is an error in strict mode and SHOULD be reported as at least a warning or error
 
 ### 13.6. Lists
 
-The syntax for list:
+The syntax for a list is:
   **(a) Bracketed form (preferred):**
   ```yini
   items = ["a", "b", "c"]
@@ -2357,7 +2421,7 @@ blockedCountries = ["KP", "SD"]
 
 15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System
 
-Examples B, as example A, have multiple top-level sections and no `/END`, thus a lenient-mode example.
+Examples B, as example A, have multiple top-level sections and no `/END`, this example is a lenient-mode example.
 
 ```yini
 @YINI
@@ -2889,7 +2953,7 @@ Notes:
 
 v1.0.0 RC 5 + UPDATES, 2026-xx-xx
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
-- **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and may be followed by optional horizontal whitespace.
+- **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
 - **Removed:** Support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
 - **Removed:** Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
@@ -2900,6 +2964,8 @@ v1.0.0 RC 5 + UPDATES, 2026-xx-xx
   * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
   * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
 - **Added:** Added explicit rules that concatenation always produces a string, does not define numeric addition, and never permits lists or inline objects as operands.
+- **Added:** For readability, an underscore character `_` may appear after a base prefix or between successive digits.
+- **Added:** For readability, added support for section marker separators `_`.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 
 v1.0.0 RC 5, 2026-04-09
