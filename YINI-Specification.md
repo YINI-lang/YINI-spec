@@ -375,8 +375,8 @@ YINI primarily follows C-style commenting rules using `//` and `/* ... */`. Alte
 ; Full-line comment.
 key1 = "Banana"
 
-key2 = "Mango"  # This is an inline comment.
-key3 = "Peach"  // This is also an inline comment.
+key2 = "Mango"  // This is an inline comment.
+key3 = "Peach"  # This is also an inline comment.
 
 /*
   This is a block comment.
@@ -767,35 +767,35 @@ This prevents arbitrarily long runs of the same marker. When ascending (moving t
 Repeated marker form for levels 1–6:
 
 ```yini
-^      Level1      # depth 1
-^^     Level2      # depth 2
-^^^    Level3      # depth 3
-^^^^   Level4      # depth 4
-^^^^^  Level5      # depth 5
-^^^^^^ Level6      # depth 6
+^      Level1      // depth 1
+^^     Level2      // depth 2
+^^^    Level3      // depth 3
+^^^^   Level4      // depth 4
+^^^^^  Level5      // depth 5
+^^^^^^ Level6      // depth 6
 ```
 
 Numeric shorthand form for levels deeper than 6:
 
 ```yini
-^      Level1      # depth 1
-^^     Level2      # depth 2
-^^^    Level3      # depth 3
-^^^^   Level4      # depth 4
-^^^^^  Level5      # depth 5
-^^^^^^ Level6      # depth 6
-^7     Level7      # depth 7
-^8     Level8      # depth 8
-^9     Level9      # depth 9
-^10    Level10     # depth 10
+^      Level1      // depth 1
+^^     Level2      // depth 2
+^^^    Level3      // depth 3
+^^^^   Level4      // depth 4
+^^^^^  Level5      // depth 5
+^^^^^^ Level6      // depth 6
+^7     Level7      // depth 7
+^8     Level8      // depth 8
+^9     Level9      // depth 9
+^10    Level10     // depth 10
 ```
 
 Numeric shorthand may also be used for levels 1–6:
 
 ```yini
-^1     Level1      # depth 1
-^2     Level2      # depth 2
-^3     Level3      # depth 3
+^1     Level1      // depth 1
+^2     Level2      // depth 2
+^3     Level3      // depth 3
 ```
 
 Going back to a shallower level is allowed:
@@ -804,8 +804,8 @@ Going back to a shallower level is allowed:
 ^      Level1
 ^^     Level2
 ^^^    Level3
-^      BackTo1     # allowed: returns to depth 1
-^^     BackTo2     # allowed: descends from depth 1 to depth 2
+^      BackTo1     // allowed: returns to depth 1
+^^     BackTo2     // allowed: descends from depth 1 to depth 2
 ```
 
 **❌ Invalid examples:**
@@ -814,7 +814,7 @@ Skipping an intermediate level is invalid:
 
 ```yini
 ^      Level1
-^^^    Level3      # ❌ Invalid: depth 2 was not established
+^^^    Level3      // ❌ Invalid: depth 2 was not established
 ```
 
 The same rule applies to numeric shorthand:
@@ -822,19 +822,19 @@ The same rule applies to numeric shorthand:
 ```yini
 ^1     Level1
 ^2     Level2
-^9     Level9      # ❌ Invalid: depths 3 through 8 were not established
+^9     Level9      // ❌ Invalid: depths 3 through 8 were not established
 ```
 
 A numeric shorthand section header requires whitespace after the number:
 
 ```yini
-^7Level7           # ❌ Invalid: shorthand requires at least one space or tab after the number
+^7Level7           // ❌ Invalid: shorthand requires at least one space or tab after the number
 ```
 
 Using seven or more repeated section markers is invalid:
 
 ```yini
-^^^^^^^ Level7     # ❌ Invalid: use numeric shorthand instead
+^^^^^^^ Level7     // ❌ Invalid: use numeric shorthand instead
 ```
 
 Numeric shorthand does not permit skipping intermediate nesting levels. It is only an alternative notation for expressing a section depth and a notation for going deeper than level 6. Therefore, a shorthand section at level `n` is valid only if level `n - 1` has already been explicitly established in the current nesting chain.
@@ -1080,14 +1080,14 @@ label = "port-" + 5432  // ❌ Invalid in strict mode
 
 **Line-break examples:**
 ```yini
-# ✅ Valid
+// ✅ Valid
 message = "hello " + "world"
 
-# ❌ Invalid: newline after +
+// ❌ Invalid: newline after +
 message = "hello " +
           "world"
 
-# ❌ Invalid: newline before +
+// ❌ Invalid: newline before +
 message = "hello "
         + "world"
 ```
@@ -1184,9 +1184,9 @@ The `#` character is not a hexadecimal prefix in YINI. Outside string literals, 
 In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits only. The `0x` prefix is not used inside the `hex:` form.
 
 ```
-color = hex: FFAA00    # ✅ valid
-color = 0xFFAA00       # ✅ valid
-color = hex: 0xFFAA00  # ❌ invalid
+color = hex: FFAA00    // ✅ valid
+color = 0xFFAA00       // ✅ valid
+color = hex: 0xFFAA00  // ❌ invalid
 ```
 
 ## 8. Boolean and Null Literals
@@ -1214,26 +1214,26 @@ The null literal (value) is `NULL` (NON CASE-SENSITIVE).
   Invalid Examples (both strict and lenient):
   ```yini
   ^ Section1
-  key = { a: }    # ❌ Missing value within object.
+  key = { a: }    // ❌ Missing value within object.
 
   ^ Section2
-  key = { a: , }  # ❌ Comma without preceding value.
+  key = { a: , }  // ❌ Comma without preceding value.
   ```
   👆 An isolated comma or missing value is never interpreted as `Null` inside `{ }`.
 
 Examples:
 ```yini
 ^ Section1
-# In lenient mode:
-key1 =                  # ✅ Lenient: key1 → null
-key2 = [1, 2, ]         # ✅ Lenient: [1, 2]
-key3 = { a: 1, b: 2, }  # ✅ Lenient: {a: 1, b: 2}
+// In lenient mode:
+key1 =                  // ✅ Lenient: key1 → null
+key2 = [1, 2, ]         // ✅ Lenient: [1, 2]
+key3 = { a: 1, b: 2, }  // ✅ Lenient: {a: 1, b: 2}
 
 ^ Section2
-# In Strict mode:
-key1 =                  # ❌ Error: Missing value
-key2 = [1, 2, ]         # ❌ Error: Stray trailing comma
-key3 = { a: 1, b: 2, }  # ❌ Error: Stray trailing comma
+// In Strict mode:
+key1 =                  // ❌ Error: Missing value
+key2 = [1, 2, ]         // ❌ Error: Stray trailing comma
+key3 = { a: 1, b: 2, }  // ❌ Error: Stray trailing comma
 ```
 
 ## 9. Object Literals
@@ -1302,31 +1302,31 @@ The **canonical object member separator is `:`.** See Section 9.2, "Object Membe
 
 Examples:
 ```yini
-# Valid in both lenient and strict mode.
+// Valid in both lenient and strict mode.
 obj1_a = { a: 1, b: 2 }
 obj1_b = {
     a: 1,
     b: 2
 }
 
-# ✅ Valid in both lenient and strict mode.
+// ✅ Valid in both lenient and strict mode.
 obj2 = { }
 
-# ✅ Lenient mode only: trailing comma is ignored.
+// ✅ Lenient mode only: trailing comma is ignored.
 obj3_a = { a: 1, b: 2, }
 obj3_b = {
     a: 1,
     b: 2,  // Trailing comma here.
 }
 
-# ❌ Invalid in both modes: leading comma.
+// ❌ Invalid in both modes: leading comma.
 obj4_a = { , a: 1 }
 obj4_b = {
     ,
     a: 1
 }
 
-# ❌ Invalid in both modes: empty member slot.
+// ❌ Invalid in both modes: empty member slot.
 obj5_a = { a: 1,, b: 2 }
 obj5_b = {
     a: 1,,
@@ -1380,7 +1380,7 @@ Inside inline objects, `:` is used because the object itself is already the valu
 
 In lenient mode only, implementations MAY also accept `=` as an object member separator:
 ```yini
-obj = { a = 1, b = 2 }  # Lenient mode only
+obj = { a = 1, b = 2 }  // Lenient mode only
 ```
 
 This exists as a compatibility and user-friendliness feature, especially for users who are accustomed to writing `key = value` throughout a configuration file.
@@ -1393,13 +1393,13 @@ The following rules apply:
 - Tools and formatters SHOULD normalize inline object members to `:`.
 
 ```yini
-# Canonical form, valid in lenient and strict mode.
+// Canonical form, valid in lenient and strict mode.
 obj1 = { a: 1, b: 2 }
 
-# Lenient mode only.
+// Lenient mode only.
 obj2 = { a = 1, b = 2 }
 
-# Discouraged in lenient mode; invalid in strict mode.
+// Discouraged in lenient mode; invalid in strict mode.
 obj3 = { a: 1, b = 2 }
 ```
 
@@ -1443,11 +1443,11 @@ For convenience, a trailing comma (`,`) may be optionally be included (only in l
 list1 = [
   "a",
   "b",
-  "c",  # Trailing comma here is ignored (parse error in strict mode).
+  "c",  // Trailing comma here is ignored (parse error in strict mode).
 ]
 
 // A list with THREE items.
-list2 = ["a", "b", "c", ]  # Trailing comma here is ignored.
+list2 = ["a", "b", "c", ]  // Trailing comma here is ignored.
 
 // A list with FOUR items.
 list3 = ["a", "b", "c", NULL]
@@ -1656,19 +1656,19 @@ Some YINI parsers may support multiple **validation modes**:
 Example:
 ```yini
 ; Lenient mode examples:
-list_bracketed1 = [1, 2, ]      # ✅ → [1, 2]
-object1 = { a: 1, b: 2, }       # ✅ → {a: 1, b: 2} (trailing comma dropped)
-object2 = { a = 1, b = 2 }      # ✅ Lenient only; formatter should normalize to { a: 1, b: 2 }
-object3 = { a: 1, b = 2 }       # ⚠️ Discouraged mixing; formatter should normalize to `:`
+list_bracketed1 = [1, 2, ]      // ✅ → [1, 2]
+object1 = { a: 1, b: 2, }       // ✅ → {a: 1, b: 2} (trailing comma dropped)
+object2 = { a = 1, b = 2 }      // ✅ Lenient only; formatter should normalize to { a: 1, b: 2 }
+object3 = { a: 1, b = 2 }       // ⚠️ Discouraged mixing; formatter should normalize to `:`
 
 
 ; Strict mode examples:
-list_bracketed2 = [1, 2, ]      # ❌ Error: stray trailing comma
-object4 = { a: 1, b: 2, }       # ❌ Error: stray trailing comma
-object5 = { a = 1, b = 2 }      # ❌ Error: `=` not allowed inside inline objects in strict mode
+list_bracketed2 = [1, 2, ]      // ❌ Error: stray trailing comma
+object4 = { a: 1, b: 2, }       // ❌ Error: stray trailing comma
+object5 = { a = 1, b = 2 }      // ❌ Error: `=` not allowed inside inline objects in strict mode
 
-list_bracketed3 = [1, 2]        # ✅ OK
-object6 = { a: 1, b: 2 }        # ✅ OK
+list_bracketed3 = [1, 2]        // ✅ OK
+object6 = { a: 1, b: 2 }        // ✅ OK
 ```
 
 ### 12.3.1. Table: Lenient vs. Strict Mode
@@ -1692,13 +1692,13 @@ object6 = { a: 1, b: 2 }        # ✅ OK
 
 Example:
 ```yini
-# Lenient:
-key1 =         # ✅ key1 = null
-key2 = ,       # ❌ error: unexpected comma (may warn)
+// Lenient:
+key1 =         // ✅ key1 = null
+key2 = ,       // ❌ error: unexpected comma (may warn)
 
-# Strict:
-key1 =         # ❌ error: missing value
-key2 = ,       # ❌ error: unexpected comma
+// Strict:
+key1 =         // ❌ error: missing value
+key2 = ,       // ❌ error: unexpected comma
 ```
 
 ## 13. Implementation Notes
@@ -1791,7 +1791,7 @@ If accepted, implementations SHOULD treat this as equivalent to the canonical `:
 Mixing `:` and `=` within the same inline object is discouraged in lenient mode because it reduces visual consistency and can make the object harder to read:
 
 ```yini
-obj = { a: 1, b = 2 }  # Discouraged in lenient mode; invalid in strict mode.
+obj = { a: 1, b = 2 }  // Discouraged in lenient mode; invalid in strict mode.
 ```
 
 In strict mode, `=` MUST NOT be accepted inside inline objects.
