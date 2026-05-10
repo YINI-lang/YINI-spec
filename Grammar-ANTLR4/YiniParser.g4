@@ -117,13 +117,14 @@ assignment
   : member eol
   ;
 
-/* KEY = value  (value may be empty in lenient mode -> NULL by convention,
- * enforced and validated in host code, not here.)
- *
- * @note (!) KEY, EQ, and value MUST be on the same line!
+/*
+ * @note KEY, EQ, and the first value token MUST be on the same logical line.
+ * A concatenation expression may continue onto following lines only when
+ * the previous line ends with PLUS.
  */
 member
-  : KEY EQ value? // Empty value is treated as NULL.
+  // : KEY EQ value? // Empty value is treated as NULL.
+  : KEY EQ value? // Empty value is treated as NULL.  
   ;
 
 /* ------------------------------------------------------------------
@@ -147,19 +148,43 @@ scalar_value
 /*
  * String concatenation.
  *
- * Latest spec behavior:
+ * Spec behavior:
  * - The first operand MUST be a string literal.
  * - The + operator is exclusively string concatenation.
- * - No newline may appear before or after +.
+ * - YINI does not define numeric addition.
+ * - A newline MAY appear after +.
+ * - A newline MUST NOT appear before +.
  * - Lists and inline objects are never valid operands.
  *
  * Strict-vs-lenient validation:
  * - Strict mode: every concat_operand MUST be STRING.
  * - Lenient mode: operands after the first MAY be STRING, NUMBER, BOOLEAN, or NULL.
  */
+// This accepts:
+//
+// message = "hello " + "world"
+// longText = "hello " +
+//            "world"
+//
+// label = "port-" +
+//         5432
+//
+// And rejects:
+//
+// message = "hello "
+//         + "world"
+//
+// because there is an NL token between STRING and PLUS.
+//
 concat_expression
-  : STRING PLUS concat_operand (PLUS concat_operand)*
+  // : STRING PLUS concat_operand (PLUS concat_operand)*
+  : STRING concat_tail+
   ;
+
+concat_tail
+  : PLUS NL* concat_operand
+  ;
+
 
 concat_operand
   : STRING
@@ -226,10 +251,12 @@ null_literal
   : NULL // NOTE: NULL is case-insensitive.
   ;
 
+// Below is OLD: Can be deleted
 // string_literal
 //   : STRING string_concat*
 //   ;
 
+// Below is OLD: Can be deleted
 // string_concat
 //   : NL* PLUS NL* STRING
 //   ;
