@@ -44,6 +44,35 @@ fragment OCT_DIGIT: [0-7];
 fragment DUO_DIGIT: DIGIT | [xXeEaAbB]; // x = A = 10, e = B = 11.
 fragment HEX_DIGIT: DIGIT | [a-fA-F];
 
+fragment SEP: '_';
+
+/*
+ * Digit separators:
+ * - Allowed between digits.
+ * - Allowed immediately after a base prefix.
+ * - Not allowed at the end.
+ * - Not allowed adjacent to another underscore.
+ */
+fragment DEC_DIGITS
+  : DIGIT (SEP? DIGIT)*
+  ;
+
+fragment BIN_DIGITS
+  : SEP? BIN_DIGIT (SEP? BIN_DIGIT)*
+  ;
+
+fragment OCT_DIGITS
+  : SEP? OCT_DIGIT (SEP? OCT_DIGIT)*
+  ;
+
+fragment DUO_DIGITS
+  : SEP? DUO_DIGIT (SEP? DUO_DIGIT)*
+  ;
+
+fragment HEX_DIGITS
+  : SEP? HEX_DIGIT (SEP? HEX_DIGIT)*
+  ;
+
 fragment UNICODE16
   : 'u' HEX_DIGIT HEX_DIGIT HEX_DIGIT HEX_DIGIT
   ;
@@ -56,7 +85,7 @@ fragment UNICODE32
 // Note: 0 or higher than 1, no leading 0s allowed (for ex: `01`)
 fragment DECIMAL_INTEGER
   : '0'
-  | [1-9] DIGIT*
+  | [1-9] (SEP? DIGIT)*
   ;
 
 fragment INTEGER
@@ -64,29 +93,29 @@ fragment INTEGER
   ;
 
 fragment FRACTION
-  : '.' DIGIT+
+  : '.' DEC_DIGITS
   ;
 
 fragment EXPONENT
-  : [eE] SIGN? DIGIT+
+  : [eE] SIGN? DEC_DIGITS
   ;
 
 fragment BIN_INTEGER
-  : '0' [bB] BIN_DIGIT+
-  | '%' BIN_DIGIT+
+  : '0' [bB] BIN_DIGITS
+  | '%' BIN_DIGITS
   ;
 
 fragment OCT_INTEGER
-  : '0' [oO] OCT_DIGIT+ // Make sure to not clash with boolean ON | OFF.
+  : '0' [oO] OCT_DIGITS // Make sure to not clash with boolean ON | OFF.
   ;
 
 fragment DUO_INTEGER
-  : '0' [zZ] DUO_DIGIT+
+  : '0' [zZ] DUO_DIGITS
   ;
 
 fragment HEX_INTEGER
-  : '0' [xX] HEX_DIGIT+                   // 0xFFAA00
-  | [hH] [eE] [xX] ':' HSPACE* HEX_DIGIT+ // hex:FFAA00, HEX: ffaa00
+  : '0' [xX] HEX_DIGITS            // 0xFFAA00
+  | [hH] [eE] [xX] ':' HEX_DIGITS  // hex:ffaa00, HEX:FFAA00
   ;
 
 // NOTE: This lexer rule is intentionally relaxed to allow `.` as well.
@@ -116,32 +145,48 @@ fragment SECTION_NAME_PART
   | IDENT_BACKTICKED
   ;
 
-// Section markers: '^', '<', '§'.
+// Section markers: '^', '§', '<'.
 // – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
-// – For levels beyond 6, use the numeric shorthand form (e.g. ^7, <12, §100).
+// – For levels beyond 6, use the numeric shorthand form (e.g. ^7, §100, <12).
+// - Repeated/basic form supports optional '_' separators between same marker chars.
+// - Numeric shorthand form does NOT support '_' separators.
 fragment SECTION_MARKER
   : SECTION_MARKER_BASIC_REPEAT      // Classic/repeating marker section headers (e.g. ^^ SectionName).
   | SECTION_MARKER_SHORTHAND         // Numeric shorthand section headers (e.g. ^7 SectionName).
   | SECTION_MARKER_INVALID           // Captures malformed section markers so the parser/validator can report a clearer error.
   ;
 
+// Repeated/basic marker form.
+// Underscores may appear only between two identical section marker characters.
 // Match one or more of the same marker. Parser must check "count ≤ 6".
 // This check is deferred to the parser, which
 // gives more control and enables better user feedback.
 fragment SECTION_MARKER_BASIC_REPEAT
-  : CARET+
-  | LT+
-  | SS+
+  : CARET_MARKERS
+  | SS_MARKERS
+  | LT_MARKERS
+  ;
+
+fragment CARET_MARKERS
+  : CARET (SEP? CARET)*
+  ;
+
+fragment SS_MARKERS
+  : SS (SEP? SS)*
+  ;
+
+fragment LT_MARKERS
+  : LT (SEP? LT)*
   ;
 
 // Shorthand: a single marker followed by a positive integer (1 or larger).
 // Examples: ^7, <12, §100
 fragment SECTION_MARKER_SHORTHAND
-  : (CARET | LT | SS) [1-9] DIGIT* HSPACE
+  : (CARET | SS | LT ) [1-9] DIGIT* HSPACE
   ;
 
 fragment SECTION_MARKER_INVALID
-  : (CARET | LT | SS)+ DIGIT+
+  : (CARET | SS | LT | SEP)+ DIGIT*
   ;
 
 // For matching bad character.
@@ -184,7 +229,7 @@ SECTION_HEAD
   ;
 
 INVALID_SECTION_HEAD
-  : (CARET | LT | SS)+ ~[\r\n]* EOL+
+  : (CARET | SS | LT | SEP)+ ~[\r\n]* EOL+
   ;
 
 /* ------------------------------------------------------------------
@@ -246,7 +291,7 @@ R_AND_C_STRING
 //   | [Hh] '"'  (~["])* '"'
 //   ;
 
-// NOTE: NUMBER must come before KEY, IDENT, etc.
+// NOTE: This NUMBER rule must come before KEY, IDENT, etc.
 NUMBER
   : SIGN? INTEGER FRACTION? EXPONENT?
   | SIGN? FRACTION EXPONENT?

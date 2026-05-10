@@ -92,14 +92,6 @@ directive
   ;
 
 /*
- * Pre-processing directives: instructions that modify the document itself
- * by including or transforming content before/while parsing.
- */
-// pre_processing_command
-//   : INCLUDE_TOKEN string_literal? eol
-//   ;
-
-/*
  * Metadata attached to a specific element (key, section, function,
  * class, variable). Does not change source, but adds semantic
  * meaning or tooling hints.
@@ -139,12 +131,46 @@ member
  * ------------------------------------------------------------------ */
 
 value
+  : concat_expression
+  | scalar_value
+  | list_literal
+  | object_literal
+  ;
+
+scalar_value
   : null_literal
   | string_literal
   | number_literal
   | boolean_literal
-  | list_literal
-  | object_literal
+  ;
+
+/*
+ * String concatenation.
+ *
+ * Latest spec behavior:
+ * - The first operand MUST be a string literal.
+ * - The + operator is exclusively string concatenation.
+ * - No newline may appear before or after +.
+ * - Lists and inline objects are never valid operands.
+ *
+ * Strict-vs-lenient validation:
+ * - Strict mode: every concat_operand MUST be STRING.
+ * - Lenient mode: operands after the first MAY be STRING, NUMBER, BOOLEAN, or NULL.
+ */
+concat_expression
+  : STRING PLUS concat_operand (PLUS concat_operand)*
+  ;
+
+concat_operand
+  : STRING
+  | NUMBER
+  | BOOLEAN_TRUE
+  | BOOLEAN_FALSE
+  | NULL
+  ;
+
+string_literal
+  : STRING
   ;
 
 /* Object literal.
@@ -200,13 +226,13 @@ null_literal
   : NULL // NOTE: NULL is case-insensitive.
   ;
 
-string_literal
-  : STRING string_concat*
-  ;
+// string_literal
+//   : STRING string_concat*
+//   ;
 
-string_concat
-  : NL* PLUS NL* STRING
-  ;
+// string_concat
+//   : NL* PLUS NL* STRING
+//   ;
 
 boolean_literal
   : BOOLEAN_TRUE
