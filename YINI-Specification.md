@@ -1871,6 +1871,29 @@ NOTE: In strict mode, orphan members are forbidden.
 
 In lenient mode only, an implementation MUST expose accepted orphan members in a well-defined way. The preferred behavior is to mount orphan members directly onto the parsed result, alongside explicitly defined top-level sections. If the underlying platform, host language, or target representation does not allow this cleanly, orphan members MUST instead be placed under an implicit section named `base`.
 
+accepted orphan members SHOULD be exposed as direct members of the parsed root object, alongside explicitly defined top-level sections.
+
+For example:
+
+```yini
+name = "App"
+
+^ Server
+host = "localhost
+```
+
+SHOULD be represented conceptually as:
+```json
+{
+  "name": "App",
+  "Server": {
+    "host": "localhost"
+  }
+}
+```
+
+It SHOULD NOT be represented under an explicit `root` or `base` object unless the implementation cannot directly mix orphan members and top-level sections in its target representation.
+
 When the implicit `base` section strategy is used, `base` becomes a reserved top-level section name for that parsed document. Therefore, if orphan members are present, an explicitly defined top-level section named `base` MUST result in an error.
 
 If orphan members are not present, an explicitly defined top-level section named `base` is treated as an ordinary section name.
