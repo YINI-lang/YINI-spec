@@ -1,10 +1,10 @@
-_YINI: A lightweight configuration file format — clean, readable, structured._
+_YINI: A clear configuration file format — clean, readable, structured._
 
 ---
 
 # Specification for the YINI Format
 **Version:** 1.0.0-RC.5 + UPDATES
-**Date:** 2026-04
+**Date:** 2026-05
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 14.2, "Versioning Strategy").
 
@@ -92,7 +92,8 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;5.1. Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `§`, or `<`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Short-hand Section Heading  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Section Marker Separators  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.2. Short-hand Section Heading  
 
 **6. String Literals** ([Link ⇨](./YINI-Specification.md#6-string-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
@@ -101,12 +102,13 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
 &nbsp;&nbsp;&nbsp;&nbsp;6.4. String Types Summary  
 &nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Type Mixing
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. Scalar Conversion to Strings  
 
 **7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
-&nbsp;&nbsp;&nbsp;&nbsp;7.2. Exponent Format  
-&nbsp;&nbsp;&nbsp;&nbsp;7.3. Number Formats
+&nbsp;&nbsp;&nbsp;&nbsp;7.2. Digit Separators  
+&nbsp;&nbsp;&nbsp;&nbsp;7.3. Exponent Format  
+&nbsp;&nbsp;&nbsp;&nbsp;7.4. Number Formats
 
 **8. Boolean and Null Literals** ([Link ⇨](./YINI-Specification.md#8-boolean-and-null-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;8.1. Booleans  
@@ -139,7 +141,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;13.4. Boolean Canonicalization  
 &nbsp;&nbsp;&nbsp;&nbsp;13.5. Objects  
 &nbsp;&nbsp;&nbsp;&nbsp;13.6. Lists  
-&nbsp;&nbsp;&nbsp;&nbsp;13.7. Strings Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;13.7. String Concatenation  
 &nbsp;&nbsp;&nbsp;&nbsp;13.8. String Literal Types  
 &nbsp;&nbsp;&nbsp;&nbsp;13.9. Comments  
 &nbsp;&nbsp;&nbsp;&nbsp;13.10. Bonus Tips for Implementation
@@ -250,6 +252,7 @@ The following key terms are used consistently throughout this specification. Und
 | Classic String (C-String) | A string prefixed with `C` that supports escape sequences like `\n`, `\t`, etc. |
 | Configuration             | A structured set of members and sections that defines settings or data in a YINI document or file. |
 | Document Terminator       | A special line (`/END`) that explicitly marks the end of a YINI document. It is optional in lenient mode and required in strict mode. |
+| Horizontal whitespace     | One or more space and/or tab characters. |
 | Identifier                | The name of a key or section. Can be a simple word (e.g., `title`) or a **backticked identifier** (wrapped in backticks). |
 | Key                       | An identifier on the left side of an assignment (`=`). Keys MUST be unique within their section (and depth/level). |
 | Lenient Mode              | This is the default parsing mode in YINI. |
@@ -260,7 +263,7 @@ The following key terms are used consistently throughout this specification. Und
 | Section                   | A logical grouping of members, introduced by a header using a section marker such as `^`, `§`, or `<`. |
 | Section Marker            | A special character used to denote a new section header. Supported section markers are `^`, `§`, and `<`; `^` is the primary and recommended marker. |
 | Strict Mode               | An optional parsing mode that enforces stricter structural validation, including exactly one explicit top-level section and prohibition of top-level orphan members. Not the default. |
-| Triple-Quoted String      | A string enclosed in `""" ... """`that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
+| Triple-Quoted String      | A string enclosed in `""" ... """` that may span multiple lines and, by default, preserves all content (including whitespace and line breaks) exactly; when prefixed with `C`, it recognizes standard escape sequences. |
 | Value | The data assigned to a key. Can be of type string, number, boolean, null, list, or object. |
 | YINI document             | A complete YINI configuration. In this specification, "document" and "file" mean the same thing. |
 | YINI file                 | A complete YINI configuration. In this specification, "file" and "document" mean the same thing. |
@@ -276,7 +279,7 @@ YINI documents MUST be encoded in UTF-8.
 
 - **Character Set:** YINI documents use Unicode. Control characters and other non-printable characters SHOULD be avoided except where explicitly allowed, such as tabs, spaces, and line endings, or when represented through valid string literal forms. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-Quoted Strings.
 
-Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
+For details about whitespace and control characters, see Section 3.2, "Whitespace and Indentation".
 
 ### 2.2. File Extension
 YINI files SHOULD use the `.yini` file extension. This extension helps clearly identify the file type and ensures proper handling by tools and parsers designed for the YINI format.
@@ -332,9 +335,9 @@ YINI files consist of a series of **sections, members** (key-value pairs), and o
 
 #### Whitespace
 
-Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure. In section headers, whitespace between the marker and the section name is optional in repeated/basic form, but required in numeric shorthand form (to make it clear where the marker ends and where the name starts). Other than this tabs are totally ignored, though tabs or multiple spaces may be used to make it clearer for humans to read.
+Whitespace (spaces and newlines) is used to separate elements in the file. Tabs do not contribute to the logical structure. In section headers, whitespace between the marker and the section name is optional in repeated/basic form, but required in numeric shorthand form (to make it clear where the marker ends and where the name starts). Outside strings and backticked identifiers, spaces and tabs are generally insignificant except where this specification explicitly requires or forbids whitespace, such as in numeric shorthand section headers or between tokens. Though, tabs or multiple spaces may be used to make it clearer for humans to read.
 
-Exactly which control characters see more in section 3.2, "Whitespace and Indentation".
+For definitions of whitespace and control characters, see Section 3.2, "Whitespace and Indentation".
 
 #### Sections
 
@@ -374,8 +377,8 @@ YINI primarily follows C-style commenting rules using `//` and `/* ... */`. Alte
 ; Full-line comment.
 key1 = "Banana"
 
-key2 = "Mango"  # This is an inline comment.
-key3 = "Peach"  // This is also an inline comment.
+key2 = "Mango"  // This is an inline comment.
+key3 = "Peach"  # This is also an inline comment.
 
 /*
   This is a block comment.
@@ -394,12 +397,20 @@ The following whitespace `<WS>` behaviors are defined:
 ### 3.3. Comments
 YINI supports three categories of comments, **using four comment syntaxes:**
 
-| Comment Type | Prefix | Position |
-|--------------|--------|----------|
-| Inline / line comment | `//` | Own line or after content |
-| Inline / line comment | `#`  | Own line or after content |
-| Block comment | `/* ... */` | Anywhere (multi-line) |
-| Full-line comment | `;` | Start of line ONLY |
+| Syntax | Type | Valid position |
+|--------|------|----------------|
+| `//` | Line comment | **Anywhere whitespace is allowed**; ignores the rest of the line |
+| `#` | Line comment | **Anywhere whitespace is allowed**; ignores the rest of the line |
+| `/* ... */` | Block comment | **Anywhere whitespace is allowed**; may span multiple lines |
+| `;` | Full-line comment | Only at the beginning of a logical line, after optional spaces or tabs |
+
+These rules apply:
+- Comments are ignored by the parser and have no effect on the parsed data model.
+- Comment markers are recognized only outside string literals and outside backticked identifiers. A comment marker appearing inside a quoted string, triple-quoted string, Classic string, or backticked identifier is treated as ordinary content.
+- Line comments begin at `//` or `#` and continue until the next line ending.
+- Block comments begin at `/*` and end at the next `*/`. Nested block comments are not supported.
+- Comments may appear only where whitespace is allowed. A comment MUST NOT split an identifier, keyword, number literal, string prefix, string literal delimiter, section marker, or other token.
+- A line comment may begin immediately after a complete token; no whitespace is required before `//` or `#`.
 
 While both `//` and `#` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
 
@@ -420,7 +431,7 @@ YINI supports two syntaxes for inline comments.
 
 Outside string literals, the `#` character always begins a comment. Everything from `#` to the end of the line is ignored by the parser. No whitespace is required before or after `#`.
 
-  ✅ **Valid `#` comments:**
+✅ **Valid `#` comments:**
   - `# This is a comment`
   - `# Also valid`
   - `#\tTabbed too`
@@ -428,10 +439,18 @@ Outside string literals, the `#` character always begins a comment. Everything f
   - `#FF9900` — Interpreted as a comment.
   - `##` — Also a comment.
 
+```txt
+0xFF#comment               # ✅ valid if after complete value
+na#commentme = "Kim"       # ❌ invalid, comment splits identifier
+hex:#FF                    # ❌ invalid / comment starts before hex digits
+C#comment"hello"           # ❌ invalid, comment splits string prefix/literal
+```
+
 ### 3.3.2. Multi-line Block Comments
-Multi-line (block) Comments.
+YINI supports multi-line block comments.
   
-Begin with `/*` and end with `*/`. These comments may span multiple lines.
+Block comments begin with `/*` and end with `*/`. They may span multiple lines.
+
 ```yini
 /*
   This is a multi-line comment.
@@ -440,10 +459,16 @@ Begin with `/*` and end with `*/`. These comments may span multiple lines.
 ```
 
 ### 3.3.3. Full-line Comments
-A full-line comment starts with a semicolon `;` and occupies the entire line.
+A semicolon (`;`) begins a full-line comment only when it is the first non-whitespace character on a line. Spaces and tabs may appear before it. A semicolon after meaningful content does not begin an inline comment.
+
 ```yini
-; This is a full-line comment.
+; Valid full-line comment
+   ; Valid full-line comment with leading whitespace
+
+key = "value" ; INVALID: Semicolon is not an inline comment marker.
 ```
+
+If `;` appears after meaningful content outside a string literal, it is not treated as a comment marker and MUST result in an error unless otherwise permitted by a future extension.
 
 **Note:** Block comments may appear between any two members, or on their own lines. They cannot appear inside a quoted string or within an identifier. Comments are ignored by parsers and exist solely for human readability.
 
@@ -475,7 +500,7 @@ An _**identifier**_ can be one of two forms below:
   `Description of Project`
   `Amanda's Project`
   ```
-### 3.5 Document Terminator
+### 3.5. Document Terminator
 **Mode requirement:** The document terminator is optional in lenient mode and required in strict mode.
 
 | Mode | `/END` requirement |
@@ -547,7 +572,7 @@ A **key** is an identifier used to reference a specific value in a member (a `ke
 
 - Keys MUST be valid identifiers — either a **simple form** or a **backticked identifier** (a backticked string). (See Section 3.4: Identifiers.)
 - Keys MUST be **unique** within the same section and nesting level. 
-- Keys are assigned values using `=` operator.
+- Keys are assigned values using the `=` operator.
   
 **Examples:**
 ```yini
@@ -573,7 +598,7 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
 - **Special type:**
   - NULL
 
-**Note:** Currently, YINI value types map 1-to-1 to native JSON types. Constructs and objects like date-time, **SHOULD currently be expressed as strings**. See more in 10.1.3, "Date-time Type".
+**Note:** Currently, YINI value types map 1-to-1 to native JSON types. Constructs and objects like date-time, **SHOULD currently be expressed as strings**. See more in 11.1.3, "Date-time Type".
 
 ### 4.3. Type Rules
 This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
@@ -581,6 +606,8 @@ This section describes how values (on the right-hand side of `=`) are interprete
 **Note:** At root and section level, values are assigned using `=`. The colon (`:`) is not a general assignment operator and MUST NOT be used to define root-level or section-level members or lists.
 
 Inside inline objects (`{ ... }`), `:` is the canonical member separator. In lenient mode only, `=` MAY also be accepted inside inline objects as a compatibility convenience. In strict mode, inline object members MUST use `:`.
+
+For compound values written after `=`, the opening `[` or `{` **MUST appear on the same logical line** as the `=`. A newline immediately after `=` means the member has no explicit value.
 
 #### Strings
 If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`) — even in lenient mode.
@@ -590,7 +617,7 @@ If the value is meant to be a string, it MUST be quoted — either with single q
 #### Numbers
 - A sequence of digits **without a period** (`.`) is treated as a **Number** (integer).
 - A sequence of digits **with a period** (`.`) is treated as a **Number** (floating-point / float).
-- YINI also supports explicit base-prefixed number formats such as binary, octal, duodecimal, and hexadecimal literals. See Section 7.3, "Number Formats".
+- YINI also supports explicit base-prefixed number formats such as binary, octal, duodecimal, and hexadecimal literals. See Section 7.4, "Number Formats".
 
 #### Booleans
 If the value matches any of the following keywords `true`, `false`, `on`, `off`, `yes`, or `no` (case-insensitive) — it is interpreted as a **Boolean**. 
@@ -677,13 +704,13 @@ That is, the following denote nesting levels 1–6:
 ```
 
 **Using seven or more of the same marker in succession (for example, `^^^^^^^`) is invalid.**
-For nesting levels deeper than 6, the **numeric shorthand section header** syntax MUST be used (see Section 5.3.1).
+For nesting levels deeper than 6, the **numeric shorthand section header** syntax MUST be used (see Section 5.3.2).
 
 ### 5.3. Nested Sections
 To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
 
 - Section heading markers (`^`, `§`, or `<`) may only be repeated up to six times — to level 6 (maximum).
-- Beyond level 6, the numeric shorthand section MUST be used (see section 5.3.1).
+- Beyond level 6, the numeric shorthand section MUST be used (see section 5.3.2).
 - **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.  
   This rule applies equally to **repeated marker** form and **numeric shorthand** form. Numeric shorthand does not permit skipping intermediate levels.
 - **Going shallower (decrease nesting):** May drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
@@ -707,7 +734,7 @@ Optionally, indentation may be omitted:
 ^^^ Level3  // ❌ Invalid: cannot skip Level2
 ```
 
-💡While YINI does not require indentation before section headers, it is recommended to visually indent section headers according to their nesting level — this make for for better human readability.
+💡While YINI does not require indentation before section headers, it is recommended to visually indent section headers according to their nesting level — this improves human readability.
 
 ✅ **Example of valid section nesting:**
 ```yini
@@ -724,10 +751,41 @@ Optionally, indentation may be omitted:
 ^ Section 3         // Main section 3 (depth 1)
 ```
 
-#### 5.3.1. Short-hand Section Heading
+#### 5.3.1. Section Marker Separators
+
+For readability, underscores (`_`) MAY be placed between repeated section markers. These underscores are visual separators only and do not change the section depth.
+
+Rules:
+- An underscore MAY appear only between two repeated occurrences of the same section marker character.
+- An underscore MUST NOT appear at the beginning or end of the section marker sequence.
+- An underscore MUST NOT appear adjacent to another `_`.
+- Section marker separators are supported only in repeated section marker form, not in numeric shorthand form.
+- Section marker separators do not count toward the section depth. Only actual section marker characters are counted.
+
+For example, the following are equivalent:
+```yini
+^^^^^ Section    // depth 5
+^^_^^_^ Section  // depth 5
+
+^^^^^^ Section   // depth 6
+^^^_^^^ Section  // depth 6
+```
+
+Invalid:
+```yini
+^^_ Section      // ❌ Invalid trailing underscore.
+^__^ Section     // ❌ Invalid adjacent underscores.
+
+_^ Section       // ❌ Invalid leading underscore.
+^_ Section       // ❌ Invalid trailing underscore.
+
+^_< Section      // ❌ Invalid: section marker characters must not be mixed.
+```
+
+#### 5.3.2. Short-hand Section Heading
 
 **Short-hand Section Headings:**
-Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `<`) and `<n>` is an integer ≥ 1 indicating the nesting level. Levels 1 - 6 is recomended to use repeated markers `^`, `^^`, `^^^`, etc. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers are RECOMMENDED but not required).
+Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `<`) and `<n>` is an integer ≥ 1 indicating the nesting level. For levels 1–6, repeated markers such as `^`, `^^`, `^^^` are RECOMMENDED. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers are RECOMMENDED but not required).
 
 For example:
 - To go from depth 6 to depth 7: write `^7 SectionName`.  
@@ -737,29 +795,79 @@ For example:
 
 This prevents arbitrarily long runs of the same marker. When ascending (moving to a shallower level), you may skip multiple levels at once (e.g., from `^9` back to `^^`).  
 
-**Examples:**
-```yini
-^      Level1      # One caret
-^^     Level2      # Two carets   → depth 2
-^9     Level9      # ❌ Invalid: levels 3 through 8 were not explicitly defined
-^^^    Level3      # Three carets → depth 3
-^^^^   Level4      # Four carets  → depth 4
-^^^^^  Level5      # Five carets  → depth 5
-^^^^^^ Level6      # Six carets   → depth 6
-^7     Level7      # Shorthand    → depth 7
-^7Level7           # ❌ Invalid: shorthand requires at least one space or tab after the number
-^8     Level8      # Shorthand    → depth 8
-^9     Level9      # Shorthand    → depth 9
-^10    Level10     # Shorthand    → depth 10
+**✅ Valid examples:**
 
-^     BackTo1      # Going back to level 1 (allowed)
-^^    BackTo2      # Going back to level 2 (allowed)
+Repeated marker form for levels 1–6:
+
+```yini
+^      Level1      // depth 1
+^^     Level2      // depth 2
+^^^    Level3      // depth 3
+^^^^   Level4      // depth 4
+^^^^^  Level5      // depth 5
+^^^^^^ Level6      // depth 6
 ```
 
-```txt
-^1     Level1      # ✅ Valid
-^2     Level2      # ✅ Valid
-^9     Level9      # ❌ Invalid: levels 3 through 8 were not explicitly defined
+Numeric shorthand form for levels deeper than 6:
+
+```yini
+^      Level1      // depth 1
+^^     Level2      // depth 2
+^^^    Level3      // depth 3
+^^^^   Level4      // depth 4
+^^^^^  Level5      // depth 5
+^^^^^^ Level6      // depth 6
+^7     Level7      // depth 7
+^8     Level8      // depth 8
+^9     Level9      // depth 9
+^10    Level10     // depth 10
+```
+
+Numeric shorthand may also be used for levels 1–6:
+
+```yini
+^1     Level1      // depth 1
+^2     Level2      // depth 2
+^3     Level3      // depth 3
+```
+
+Going back to a shallower level is allowed:
+
+```yini
+^      Level1
+^^     Level2
+^^^    Level3
+^      BackTo1     // allowed: returns to depth 1
+^^     BackTo2     // allowed: descends from depth 1 to depth 2
+```
+
+**❌ Invalid examples:**
+
+Skipping an intermediate level is invalid:
+
+```yini
+^      Level1
+^^^    Level3      // ❌ Invalid: depth 2 was not established
+```
+
+The same rule applies to numeric shorthand:
+
+```yini
+^1     Level1
+^2     Level2
+^9     Level9      // ❌ Invalid: depths 3 through 8 were not established
+```
+
+A numeric shorthand section header requires whitespace after the number:
+
+```yini
+^7Level7           // ❌ Invalid: shorthand requires at least one space or tab after the number
+```
+
+Using seven or more repeated section markers is invalid:
+
+```yini
+^^^^^^^ Level7     // ❌ Invalid: use numeric shorthand instead
 ```
 
 Numeric shorthand does not permit skipping intermediate nesting levels. It is only an alternative notation for expressing a section depth and a notation for going deeper than level 6. Therefore, a shorthand section at level `n` is valid only if level `n - 1` has already been explicitly established in the current nesting chain.
@@ -781,17 +889,32 @@ YINI has three types of string literals — Raw, Classic, and Triple-quoted — 
 
 String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
 
+**Quote character note:** In this specification, the quote characters used to delimit strings are the plain ASCII quote characters:
+
+- Single quote: `'` U+0027 APOSTROPHE
+- Double quote: `"` U+0022 QUOTATION MARK
+
+Typographic or curly quotation marks such as `‘`, `’`, `“`, and `”` are ordinary Unicode text characters. They do not begin or end YINI string literals.
+
 **Note:** If a string is not quoted, it's not a string — period.
 
-**YINI supports three types of string literals**, distinguished by an optional prefix character before the opening quote `'` or `"` (**except for Triple-Quoted Strings** `"""`, which do not support any prefix). YINI supports multi-line strings via Triple-Quoted Strings.
+**YINI supports three string literal forms:** single-line quoted strings, Classic strings, and Triple-Quoted strings. String behavior is determined by the optional prefix before the opening quote sequence.
 
-If no prefix is used, the string is treated as a **Raw string literal** by default.
+The `R` prefix is optional and has no semantic effect because Raw strings are the default. The `C` prefix enables escape-sequence interpretation.
 
-**Note:** Triple-Quoted Strings (`"""`) only support the `R` and `C` prefixes. If no prefix is given, a Triple-Quoted String is treated as raw. 
+Triple-Quoted Strings may also use the `R` or `C` prefix. Without a prefix, a Triple-Quoted String is Raw by default. YINI supports multi-line strings via Triple-Quoted Strings.
+
+String behavior is controlled by an optional prefix before the opening quote sequence:
+
+- No prefix: Raw string behavior.
+- `R` or `r`: Raw string behavior; allowed for explicitness only.
+- `C` or `c`: Classic string behavior; escape sequences are interpreted.
+
+This applies to both single-line quoted strings and Triple-Quoted Strings. Triple-Quoted Strings without a prefix are Raw by default.
 
 **Rules and Behavior for Strings:**
 - All string literals **MUST start and finish on the same line**, except for **Triple-Quoted Strings** (see section 6.3.), which can span multiple lines.
-- Multiple string literals can be **concatenated** to create longer strings (see section 6.6, "String Concatenation").
+- Multiple string literals can be **concatenated** to create longer strings (see section 6.5, "String Concatenation").
 
 **String Overview**
 
@@ -803,30 +926,51 @@ If no prefix is used, the string is treated as a **Raw string literal** by defau
 | C-Triple-Quoted        | `C"""..."""` or `c"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
 
 ### 6.1. Raw Strings (R-Strings)
-In (Raw) strings, the backslash (`\`) is treated as a literal character — **it is "just a backslash"**. This means escape sequences are not interpreted, and most special characters can be included directly.
+A Raw string is enclosed in either single quotes (`'...'`) or double quotes (`"..."`).
 
-However, Raw strings **cannot contain newlines**, as they MUST appear on a single line.
+Because Raw strings do not interpret escape sequences, the matching quote character cannot appear unescaped inside the string. To include a single quote, use double quotes as the delimiter. To include a double quote, use single quotes as the delimiter.
 
-For multi-line Raw strings, see Triple-Quoted String literals.
+Raw strings MUST NOT contain line breaks. For multi-line raw text, use a Triple-Quoted String.
 
 Raw strings are particularly suitable for representing file paths and other literal text.
->myPath = "C:\Users\John Smith\"  // Raw string
-or
->myPath = '/home/Leila Häkkinen'
-or
->myPath = '/Users/kim-lee'
+
+Examples:
+```yini
+single_quote = "Amanda's file"
+double_quote = 'He said "hello"'
+
+path1 = "C:\Users\Kim\Documents"  // Raw string
+path2 = "D:\Users\John Smith\"    // The closing quote is treated as an ordinary backslash, not as an escape character.
+path3 = '/home/Leila Häkkinen'
+path4 = '/Users/kim-lee'
+```
+
+Curly quotation marks may appear inside quoted strings as ordinary text:
+
+```yini
+meaning = "It comes from Greek akmḗ (ἀκμή), meaning “the highest point” or “best”."
+```
+
+In the above example, the outer `"` characters are plain ASCII double quotes and delimit the string. The inner `“` and `”` characters are typographic quotation marks and are part of the string value.
 
 #### Raw String Prefix
 Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
 
 ### 6.2. Classic Strings (C-Strings)
-YINI also supports standard string literals, referred to as **Classic Strings**, or **C-Strings** for short. These strings are prefixed with either `C` or `c`.
+A Classic String is a string literal prefixed with `C` or `c`. Classic Strings interpret escape sequences before the final string value is produced. The parsed value is a normal string; the `C` prefix is not preserved in the resulting data model.
 
 C-Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Thus, all special control characters (U+0000–U+001F), except for space and tab, MUST be written using escape sequences — they cannot appear directly in Classic Strings.
 
-Classic strings MUST begin and end on the same line.
+Classic strings MUST begin and end on the same logical line.
 
->myText = c"This is a newline \n and this is a tab \t character."
+Examples:
+```yini
+text1 = C"hello\nworld"
+
+text2 = c"This is a newline \n and this is a tab \t character."
+```
+
+Both `text1` and `text2` parse to a string containing an actual newline, not the two characters `\` and `n` or `\t`.
 
 #### 6.2.1. Escape Characters
 Escape sequences are supported only in Classic Strings (C-Strings), which MUST be enclosed in quotes and prefixed with `C` (or `c`). 
@@ -862,11 +1006,12 @@ Invalid escape sequences (e.g. `\z` or `\o378`) MUST result in a parse error unl
 
 ### 6.3. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
-- **Begins and ends** with three double-quote characters: `"""`.
+- **Begins with** `"""` and **ends at** the next unescaped `"""` sequence.
 - **May span multiple lines**, including embedded newline characters.
-- **May contain any characters**, including quotes (`"`) and double quotes (`""`), **except** an unescaped sequence of three double quotes (`"""`), which ends the string.
-- **Preserves all content exactly as written**, including whitespace and line breaks (new lines) — unless escape sequences are enabled by prefixing the string with `C` or `c` (see below).
-- **Ends at the first unescaped** sequence of three double quotes  (`"""`).
+- In a Raw Triple-Quoted String, the sequence `"""` cannot appear as content because it terminates the string. In a C-Triple-Quoted String, quote characters may be escaped using `\"`.
+- Without a prefix, a Triple-Quoted String is Raw: escape sequences are not interpreted.
+- With a `C` or `c` prefix, escape sequences are interpreted using the same rules as Classic Strings.
+- With an `R` or `r` prefix, behavior is identical to the unprefixed Raw form. The `R` prefix is allowed only for explicitness.
 
 By default, Triple-Quoted Strings are treated as **Raw** — escape sequences are not interpreted. To explicitly indicate that a Triple-Quoted String is raw, a prefix `R` (or `r`) may optionally be used. This prefix is purely **syntactic sugar** and does not affect its default behavior.
 
@@ -905,23 +1050,154 @@ C"""Quotes inside: "double" and 'single'"""
 | C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
 
 ### 6.5. String Concatenation
-Strings in YINI can be **concatenated** using the plus sign `+`. This operator joins two or more string literals into a single combined string. Any number of strings can be chained together using this method.
+
+YINI supports explicit string **concatenation** using the plus sign (`+`).  
+Concatenation joins two or more operands into a single string value.
+
+The result of concatenation is always a single string value.
 
 **Example:**
 ```yini
 greeting = "Hi, " + "hello " + "there"
 ```
-The result of the above will be equivalent to:
+
+The result is equivalent to:
 ```yini
 greeting = "Hi, hello there"
 ```
 
-Concatenation is supported between all string types, but mixing different types (e.g., Raw + Classic) is discouraged unless necessary for special use cases.
+#### Concatenation Operands
 
-### 6.6. String Type Mixing
-Concatenation of string literals of different types (for example, Raw + Classic, Raw + Triple-Quoted, or Classic + C-Triple-Quoted) MUST be **permitted**, but generally **discouraged**. This flexibility exists to support **rare or advanced use cases** where such combinations may be helpful or necessary.
+The `+` operator in YINI is exclusively a string concatenation operator. YINI does not define numeric addition.
 
-Engines SHOULD handle mixed-type concatenations correctly, but authors are encouraged to use consistent string types within concatenations to ensure clarity and predictable behavior.
+To keep concatenation unambiguous, the first operand in any concatenation expression MUST be a string literal.
+
+**In strict mode**, all concatenation operands MUST be string literals. This includes Raw/R-prefixed, Classic/C-prefixed, or any Triple-Quoted strings. **Rationale:** This rule restricts implicit string conversion in strict mode. This keeps the `+` operator narrowly defined as a string-joining operator, which avoids confusion with numeric addition and preserves predictable strict-mode validation.
+
+**In lenient mode**, concatenation MAY also accept operands of the **simple/scalar types** and the **null type** after the first operand.
+
+This means the following operands MAY be used in lenient mode after the first string literal:
+- String literals.
+- Number literals.
+- Boolean literals.
+- Null literals.
+
+Lists and inline objects MUST NOT be operands in concatenation expressions.
+
+Each string literal is interpreted according to its own string type before concatenation. For example, Classic Strings interpret escape sequences before being joined, while Raw Strings preserve backslashes literally.
+
+#### Multi-line Concatenation
+
+A line break MAY occur after the `+` operator. This allows long string values to be split across multiple source lines without using a Triple-Quoted String.
+
+A line break MUST NOT occur before the `+` operator. The `+` operator MUST appear on the same logical line as the preceding operand.
+
+Valid:
+```yini
+longText = "This is a long string that is split " +
+           "across multiple source lines, but " +
+           "the resulting value is still one string."
+```
+
+Also valid:
+```yini
+title = "YINI: " + "A human-friendly configuration format"
+```
+
+Invalid:
+```yini
+message = "hello "
+        + "world"  // ❌ Invalid: newline before +
+```
+
+For longer human-authored text where exact line breaks should be preserved, authors SHOULD use Triple-Quoted Strings instead. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
+
+**Valid in both lenient and strict mode**
+
+```yini
+escaped = C"Line 1\n" + "Line 2"
+
+longText = "This is a long string that is split " +
+           "across multiple source lines."
+```
+
+**Valid in lenient mode only**
+
+```yini
+label = "port-" + 5432
+enabled_text = "enabled=" + true
+missing_text = "value=" + null
+x1 = "item " + 1
+```
+
+**Invalid in both modes**
+
+The following is invalid because YINI does not define numeric addition:
+```yini
+x1 = 1 + 2        // ❌ Invalid, not a string concatenation.
+x2 = 1 + " item"  // ❌ Invalid: first operand must be a string literal.
+```
+
+The following is invalid because the line break appears before the `+` operator:
+```yini
+message = "hello "
+        + "world"  // ❌ Invalid
+```
+
+**Invalid in strict mode**
+
+The following is invalid in strict mode because strict mode does not allow implicit scalar-to-string conversion:
+
+```yini
+label = "port-" + 5432  // ❌ Invalid in strict mode
+```
+
+### 6.6. Scalar Conversion to Strings
+
+Scalar conversion to strings is allowed only in lenient-mode concatenation expressions.
+
+In strict mode, implicit scalar-to-string conversion MUST NOT occur. Every operand in a concatenation expression MUST be a string literal.
+
+In lenient mode, the first operand in a concatenation expression MUST still be a string literal. Later operands MAY be string literals, number literals, boolean literals, or null literals.
+
+Conversion is based on the parsed scalar value, not the original lexical spelling in the source document. **This keeps parsing predictable, avoids hidden rules, and produces stable output.**
+
+In lenient mode, scalar operands are converted to strings before concatenation as follows:
+- Strings use their interpreted string value.
+- Numbers are converted to their canonical textual numeric representation (from their converted parsed value). `0xFF` becoming `255`.
+- Booleans are converted to `true` or `false`.
+- Null is converted to `null`.
+- Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion.
+- Lists and inline objects MUST NOT be converted to strings and MUST NOT be used as operands in concatenation expressions.
+
+Example:
+```yini
+a = "n: " + 1_000
+b = "hex: " + 0xFF
+c = "bool: " + YES
+d = "null: " + NULL
+```
+
+This produces:
+```txt
+n: 1000
+hex: 255
+bool: true
+null: null
+```
+
+Multi-line concatenation does not change scalar conversion rules:
+```yini
+label = "port-" +
+        5432
+```
+
+In lenient mode, this produces:
+```txt
+port-5432
+```
+
+In strict mode, it is invalid because `5432` is not a string literal.
 
 ## 7. Number Literals
 ### 7.1. Numbers
@@ -938,59 +1214,113 @@ negative = -12
 scientific = 1.23e4
 ```
 
-### 7.2. Exponent Format
+### 7.2. Digit Separators
+
+For readability, an underscore (`_`) MAY appear after a base prefix or between successive digits inside a number literal. Digit separators do not change the numeric value of the literal.
+
+Underscores are permitted:
+- It may appear between two digits.
+- Immediately after a supported base prefix: `0b`, `0o`, `0x`, `0z`, `hex:`, or `%`.
+- Between digit groups in base-prefixed number literals, such as `0xFF_AA`, `0b1010_1100`, or `0o755_644`.
+- Underscores MAY appear between digits in the integer part, fractional part, or exponent part of a decimal number.
+
+Underscores are not permitted:
+- At the beginning or end of a number literal.
+- Adjacent to another underscore.
+- Inside or between the characters of a base prefix.
+- Underscores MUST NOT appear adjacent to a sign character (`+` or `-`), decimal point (`.`), exponent marker (`e` or `E`), or at the beginning or end of the literal.
+
+Examples:
+```yini
+decimal = 2_468
+binary = 0b_1101
+octal = 0o_640
+hex1 = 0x_A3
+hex2 = 0xCafe_Babe
+hex3 = 0x_ab_cd_12_34_ef
+hex4 = hex:_FF_AA_00
+binary_grouped = 0b1111_0001
+binary_alt = %_1010
+octal_grouped = 0o6_4_0
+dozenal = 0z_2EX9
+```
+
+Invalid examples:
+```yini
+bad1 = 73_        // ❌ INVALID: Trailing underscore.
+bad2 = 5__9       // ❌ INVALID: Adjacent underscores.
+
+bad3 = 0_b1101    // ❌ INVALID: Underscore breaks the base prefix.
+bad4 = _73        // ❌ INVALID: Leading underscore.
+
+bad_hex1 = 0x_    // ❌ INVALID: Separator without any digits.
+bad_hex2 = hex:_  // ❌ INVALID: Separator without any digits.
+```
+
+### 7.3. Exponent Format
 Exponent notation uses the format:
 ```
-<base>e<sign><exponent>
+<significand>e<sign><exponent>
 ```
 
 Where:
-- `<base>` is any integer number.
-- `<sign>` can be `+`, `-`, or blank (positive).
-- `<exponent>` is any non-negative number.
+- `<significand>` is an integer or decimal number.
+- `e` may be written as `e` or `E`.
+- `<sign>` may be `+`, `-`, or omitted.
+- `<exponent>` is a sequence of decimal digits, optionally using permitted digit separators.
 
 Example:
 ```
 3e4 // Is same as 3 × 10⁴ = 30000
 ```
 
-### 7.3. Number Formats
+```yini
+valid_float = 1_000.5_25
+valid_exp = 1.5e1_0
+
+bad_float1 = 1_.5     // ❌ Invalid: underscore before decimal point.
+bad_float2 = 1._5     // ❌ Invalid: underscore after decimal point.
+bad_exp1 = 1_e10      // ❌ Invalid: underscore before exponent marker.
+bad_exp2 = 1e_10      // ❌ Invalid: underscore after exponent marker.
+```
+
+### 7.4. Number Formats
 In addition to standard decimal numbers (base-10), YINI supports other number base literals as well.
 
 Note, binary and hexadecimal values also allow **alternative notations** for convenience and readability.
 
 | Number Format (case-insensitive) | Alternative Format | Description | Base | Notes
 |----------|--|---|---|---|
-| `3e4`                   | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
-| `0b1010`                | `%1010` | Binary number | 2-base | Digits: `0` and `1` only
-| `0o7477`                | - | Octal number | 8-base | Digits: `0`–`7`
-| `0z2EX9`                | `0z2BA9` | Duodecimal (dozenal) | 12-base | `X` = `A` = 10, `E` = `B` = 11 (case-insensitive)
-| `hex:F390`, `hex: f390` | `0xF390` | Hexadecimal number | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15 
+| `3e4`    | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
+| `0b1010` | `%1010` | Binary number prefix | 2-base | Digits: `0` and `1` only
+| `0o7477` | - | Octal number | 8-base prefix | Digits: `0`–`7`
+| `0z2EX9` | `0z2BA9` | Duodecimal (dozenal) prefix | 12-base | `X` = `A` = 10, `E` = `B` = 11 (case-insensitive)
+| `0xF390` | `hex:F390`, `HEX:f390` | Hexadecimal number prefix | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15 
 
 **Note:** All prefix-based number formats in YINI are case-insensitive. For example, `0xF390`, `0XF390`, `0xf390`, and `0Xf390` are all valid hexadecimal literals.
 
-The explicit hexadecimal form `hex:` is also case-insensitive and may be followed by optional horizontal whitespace:
-
 ```yini
-color1 = hex:F390
-color2 = hex: F390
-color3 = HEX: f390
+color1 = hex:fa90
+color2 = Hex:Fa90
+color3 = HEX:FA90
 ```
 
 The `#` character is not a hexadecimal prefix in YINI. Outside string literals, `#` always begins a comment.
 
-In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits only. The `0x` prefix is not used inside the `hex:` form.
+In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits and permitted digit separators only. The `0x` prefix is not used inside the `hex:` form.
 
 ```
-color = hex: FFAA00    # ✅ valid
-color = 0xFFAA00       # ✅ valid
-color = hex: 0xFFAA00  # ❌ invalid
+color1 = hex:FFAA00     // ✅ valid
+color2 = 0xFFAA00       // ✅ valid
+color3 = hex:_FF_AA_00  // ✅ valid
+color4 = hex:0xFFAA00   // ❌ invalid
+color5 = hex: FFAA00    // ❌ invalid
 ```
 
 ## 8. Boolean and Null Literals
 
 ### 8.1. Booleans
-Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
+Boolean literals in a YINI document **are case-insensitive** and may be written as follows:
 - Treated as **TRUE** (by the engine):
   - `true`
   - `yes`
@@ -1003,35 +1333,35 @@ Booleans in a `YINI` document can be following literals (NON CASE-SENSITIVE):
 The engine SHOULD convert the literal value to the corresponding Boolean value in the host language.
 
 ### 8.2. Null Literal
-Value/literal `NULL` (NON CASE-SENSITIVE). 
+The null literal (value) is `null`, case-insensitive.
 
-- Empty or missing value in section/root-level key-value pair (member outside any list or object), is treated as NULL in lenient mode, error in strict mode.
+- Empty or missing value in section/root-level key-value pair (member outside any list or object), is treated as `null` in lenient mode, error in strict mode.
   If written `key = `with nothing after `=`, that member's value is `null` (lenient only; strict mode requires explicitly `key = null`).
 - Note: At top level (outside any `[ ]` or `{ }`), `key =` with nothing after `=` → `key = null` in lenient mode; in strict mode that is a syntax error unless you write `key = null` explicitly.
   
   Invalid Examples (both strict and lenient):
   ```yini
   ^ Section1
-  key = { a: }    # ❌ Missing value within object.
+  key = { a: }    // ❌ Missing value within object.
 
   ^ Section2
-  key = { a: , }  # ❌ Comma without preceding value.
+  key = { a: , }  // ❌ Comma without preceding value.
   ```
   👆 An isolated comma or missing value is never interpreted as `Null` inside `{ }`.
 
 Examples:
 ```yini
 ^ Section1
-# In lenient mode:
-key1 =                  # ✅ Lenient: key1 → null
-key2 = [1, 2, ]         # ✅ Lenient: [1, 2]
-key3 = { a: 1, b: 2, }  # ✅ Lenient: {a: 1, b: 2}
+// In lenient mode:
+key1 =                  // ✅ Lenient: key1 → null
+key2 = [1, 2, ]         // ✅ Lenient: [1, 2]
+key3 = { a: 1, b: 2, }  // ✅ Lenient: {a: 1, b: 2}
 
 ^ Section2
-# In Strict mode:
-key1 =                  # ❌ Error: Missing value
-key2 = [1, 2, ]         # ❌ Error: Stray trailing comma
-key3 = { a: 1, b: 2, }  # ❌ Error: Stray trailing comma
+// In Strict mode:
+key1 =                  // ❌ Error: Missing value
+key2 = [1, 2, ]         // ❌ Error: Stray trailing comma
+key3 = { a: 1, b: 2, }  // ❌ Error: Stray trailing comma
 ```
 
 ## 9. Object Literals
@@ -1055,6 +1385,33 @@ settings = { enabled: true, retries: 3 }
 empty = { }
 ```
 
+**Syntax Rule**
+
+There MUST be **no newline** between the `=` and the opening brace `{`. If a newline appears after `=`, the member is treated as having no explicit value: in lenient mode this is interpreted as `null`; in strict mode it is a missing-value error. The `{ ... }` block on the following line is not treated as the value of that member.
+
+❌ Invalid:
+```yini
+object1 =
+{ a: 1, b: 2 }  // Not parsed as an object value for object1
+
+// Not parsed as an object value for object2
+object2 =
+    {
+        a: 1,
+        b: 2
+    }
+```
+
+✅ Valid:
+```yini
+object1 = { a: 1, b: 2 }
+
+object2 = {
+    a: 1,
+    b: 2
+}
+```
+
 The **key** in each object member follows the same identifier rules as any YINI key.
 
 The **value** in each object member may be any supported YINI value type:
@@ -1074,37 +1431,37 @@ The following structural rules apply to inline objects:
 - In lenient mode only, a trailing comma after the last member is permitted and ignored.
 - In strict mode, trailing commas are invalid.
 - Whitespace is ignored except inside quoted strings.
-- Comments may appear anywhere whitespace is allowed.
+- Line comments may begin after a complete token, even without preceding whitespace. However, a comment marker MUST NOT split a token.
 
 The **canonical object member separator is `:`.** See Section 9.2, "Object Member Separators", for the exact separator rules in lenient and strict mode.
 
 Examples:
 ```yini
-# Valid in both lenient and strict mode.
+// Valid in both lenient and strict mode.
 obj1_a = { a: 1, b: 2 }
 obj1_b = {
     a: 1,
     b: 2
 }
 
-# ✅ Valid in both lenient and strict mode.
+// ✅ Valid in both lenient and strict mode.
 obj2 = { }
 
-# ✅ Lenient mode only: trailing comma is ignored.
+// ✅ Lenient mode only: trailing comma is ignored.
 obj3_a = { a: 1, b: 2, }
 obj3_b = {
     a: 1,
     b: 2,  // Trailing comma here.
 }
 
-# ❌ Invalid in both modes: leading comma.
+// ❌ Invalid in both modes: leading comma.
 obj4_a = { , a: 1 }
 obj4_b = {
     ,
     a: 1
 }
 
-# ❌ Invalid in both modes: empty member slot.
+// ❌ Invalid in both modes: empty member slot.
 obj5_a = { a: 1,, b: 2 }
 obj5_b = {
     a: 1,,
@@ -1158,7 +1515,7 @@ Inside inline objects, `:` is used because the object itself is already the valu
 
 In lenient mode only, implementations MAY also accept `=` as an object member separator:
 ```yini
-obj = { a = 1, b = 2 }  # Lenient mode only
+obj = { a = 1, b = 2 }  // Lenient mode only
 ```
 
 This exists as a compatibility and user-friendliness feature, especially for users who are accustomed to writing `key = value` throughout a configuration file.
@@ -1171,13 +1528,13 @@ The following rules apply:
 - Tools and formatters SHOULD normalize inline object members to `:`.
 
 ```yini
-# Canonical form, valid in lenient and strict mode.
+// Canonical form, valid in lenient and strict mode.
 obj1 = { a: 1, b: 2 }
 
-# Lenient mode only.
+// Lenient mode only.
 obj2 = { a = 1, b = 2 }
 
-# Discouraged in lenient mode; invalid in strict mode.
+// Discouraged in lenient mode; invalid in strict mode.
 obj3 = { a: 1, b = 2 }
 ```
 
@@ -1198,66 +1555,13 @@ objectMember
   ;
 ```
 
-**Example:**
-```yini
-// ✅ Valid.
-^ section
-object = { member1: "value1", member2: "value2" }
-
-// ✅ Lenient mode only.
-// ❌ Invalid in strict mode.
-obj = { a = 1, b = 2 }
-
-// ✅ Canonical form, valid in both lenient and strict mode.
-obj = { a: 1, b: 2 }
-```
-
-More Examples:
-```
-# In lenient mode:
-obj1 = { a: 1, b: 2, }     # → {a: 1, b: 2} ✅
-obj2 = { a: 1,, b: 2 }     # → ❌ Parse error or warning (double comma)
-obj3 = { , a: 1 }          # → ❌ Parse error (leading comma not allowed)
-obj4 = { }                 # → {} ✅
-
-# In strict mode:
-obj1 = { a: 1, b: 2, }     # → ❌ Error: trailing comma not allowed in strict mode
-obj4 = { }                 # → {} ✅
-```
-
-A complete YINI Example:
-```
-// Section at level-1 starts here
-^ System
-
-// Within the section "System", inline object "config" starts here
-config = {
-    name: "production",
-      services: {
-          web: {
-              ports: [80, 443],
-              routes: [
-                  { path: "/", secure: true },
-                  { path: "/api", secure: false }
-              ]
-          },
-          database: {
-              replicas: [
-                  { host: "db1", role: "primary" },
-                  { host: "db2", role: "secondary" }
-              ]
-        }
-    }
-}
-```
-
 ## 10. List Literals
 Lists in YINI correspond to what are called _Arrays_ in JSON and serve the same purpose as arrays in many programming languages (e.g., in JavaScript).
 
 YINI defines lists using bracketed list notation with `=` and square brackets `[ ]`, similar to JSON.
 
 ### 10.1. Bracketed Lists (using `=`)
-A list is assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values.
+A list is assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values. The opening `[` MUST appear on the same logical line as the `=`. A newline after `=` does not continue the assignment.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
 
@@ -1267,28 +1571,45 @@ list2 = [100, 200, 300]
 list3 = []  // An empty list.
 ```
 
-For convenience, a trailing comma (`,`) may be optionally be included (only in lenient mode).
+For convenience, a trailing comma (`,`) may optionally be included (only in lenient mode).
 
 ```yini
 // A list with THREE items.
 list1 = [
   "a",
   "b",
-  "c",  # Trailing comma here is ignored (parse error in strict mode).
+  "c",  // Trailing comma here is ignored (parse error in strict mode).
 ]
 
 // A list with THREE items.
-list2 = ["a", "b", "c", ]  # Trailing comma here is ignored.
+list2 = ["a", "b", "c", ]  // Trailing comma here is ignored.
 
 // A list with FOUR items.
 list3 = ["a", "b", "c", NULL]
+```
+
+
+```yini
+// ❌ Not parsed as a list value for `items1`
+items1 =
+[
+    "a",
+    "b"
+]
+
+// ✅ Valid
+items2 = [
+    "a",
+    "b"
+]
+
 ```
 
 > **Note:** A parser may optionally support strict and lenient modes, where trailing commas are either disallowed or accepted.
 
 **Syntax Rule**
 
-There MUST be **no newline** between the `=` and the opening bracket `[`, otherwise the value will be interpreted as `null`.
+There MUST be **no newline** between the `=` and the opening bracket `[`. If a newline appears after `=`, the member is treated as having no explicit value: in lenient mode this is interpreted as `null`; in strict mode it is a missing-value error. The `[ ... ]` block on the following line is not treated as the value of that member.
 
 ❌ Invalid:
 ```yini
@@ -1429,7 +1750,7 @@ A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and
 | Strict  | Required |
 
 #### 12.2.6. Escaping and String Literals
-- Escape sequences are **ONLY allowed** in in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
+- Escape sequences are **ONLY allowed** in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
 - Triple-Quoted Strings MUST use `"""` for both opening and closing (`'''` is not supported).
 
 #### 12.2.7. Shortest Valid YINI Documents in Strict Mode
@@ -1487,19 +1808,19 @@ Some YINI parsers may support multiple **validation modes**:
 Example:
 ```yini
 ; Lenient mode examples:
-list_bracketed1 = [1, 2, ]      # ✅ → [1, 2]
-object1 = { a: 1, b: 2, }       # ✅ → {a: 1, b: 2} (trailing comma dropped)
-object2 = { a = 1, b = 2 }      # ✅ Lenient only; formatter should normalize to { a: 1, b: 2 }
-object3 = { a: 1, b = 2 }       # ⚠️ Discouraged mixing; formatter should normalize to `:`
+list_bracketed1 = [1, 2, ]      // ✅ → [1, 2]
+object1 = { a: 1, b: 2, }       // ✅ → {a: 1, b: 2} (trailing comma dropped)
+object2 = { a = 1, b = 2 }      // ✅ Lenient only; formatter should normalize to { a: 1, b: 2 }
+object3 = { a: 1, b = 2 }       // ⚠️ Discouraged mixing; formatter should normalize to `:`
 
 
 ; Strict mode examples:
-list_bracketed2 = [1, 2, ]      # ❌ Error: stray trailing comma
-object4 = { a: 1, b: 2, }       # ❌ Error: stray trailing comma
-object5 = { a = 1, b = 2 }      # ❌ Error: `=` not allowed inside inline objects in strict mode
+list_bracketed2 = [1, 2, ]      // ❌ Error: stray trailing comma
+object4 = { a: 1, b: 2, }       // ❌ Error: stray trailing comma
+object5 = { a = 1, b = 2 }      // ❌ Error: `=` not allowed inside inline objects in strict mode
 
-list_bracketed3 = [1, 2]        # ✅ OK
-object6 = { a: 1, b: 2 }        # ✅ OK
+list_bracketed3 = [1, 2]        // ✅ OK
+object6 = { a: 1, b: 2 }        // ✅ OK
 ```
 
 ### 12.3.1. Table: Lenient vs. Strict Mode
@@ -1516,20 +1837,22 @@ object6 = { a: 1, b: 2 }        # ✅ OK
 | Mixed `:` and `=` inside same inline object | ⚠️ Discouraged | ❌ | Lenient parsers MAY accept mixed separators, but formatters SHOULD normalize all inline object members to `:`. |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient mode the comma is ignored, error in strict mode  |
 | Missing (empty) value (only in section/root-level)| ✅ | ❌ | Will result in a `Null` value in lenient mode  |
-| Missing (empty) value before comma | - | ❌ | In lenient mode SHOULD warn or make error  |
-| Invalid escape sequences              | ✅ (may warn) | ❌ (error) |   |
+| Empty value before comma | ⚠️ | ❌ | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Lenient implementations SHOULD report a warning or error; strict implementations MUST report an error. |
+| Invalid escape sequences | ❌ | ❌ | Invalid escape sequences MUST result in an error unless an implementation explicitly documents a non-standard extension. |
+| String concatenation with scalar operands | ✅ | ❌ | In lenient mode, operands after the first string literal MAY be number, boolean, or null literals. In strict mode, all operands MUST be string literals. |
+| Multi-line concatenation after `+` | ✅ | ✅ | A line break MAY occur after `+`, but MUST NOT occur before `+`. |
 
 ⚠️ Strict mode enforces a stricter contract suitable for automated validation and reproducible builds. Lenient mode favors user-friendliness and flexibility for human editing.
 
 Example:
 ```yini
-# Lenient:
-key1 =         # → ✅ key1 = null
-key2 = ,       # → ❌ error: unexpected comma (may warn)
+// Lenient:
+key1 =         // ✅ key1 = null
+key2 = ,       // ❌ error: unexpected comma (may warn)
 
-# Strict:
-key1 =         # → ❌ error: missing value
-key2 = ,       # → ❌ error: unexpected comma
+// Strict:
+key1 =         // ❌ error: missing value
+key2 = ,       // ❌ error: unexpected comma
 ```
 
 ## 13. Implementation Notes
@@ -1547,6 +1870,29 @@ In lenient mode, orphan members MAY be accepted.
 NOTE: In strict mode, orphan members are forbidden.
 
 In lenient mode only, an implementation MUST expose accepted orphan members in a well-defined way. The preferred behavior is to mount orphan members directly onto the parsed result, alongside explicitly defined top-level sections. If the underlying platform, host language, or target representation does not allow this cleanly, orphan members MUST instead be placed under an implicit section named `base`.
+
+accepted orphan members SHOULD be exposed as direct members of the parsed root object, alongside explicitly defined top-level sections.
+
+For example:
+
+```yini
+name = "App"
+
+^ Server
+host = "localhost
+```
+
+SHOULD be represented conceptually as:
+```json
+{
+  "name": "App",
+  "Server": {
+    "host": "localhost"
+  }
+}
+```
+
+It SHOULD NOT be represented under an explicit `root` or `base` object unless the implementation cannot directly mix orphan members and top-level sections in its target representation.
 
 When the implicit `base` section strategy is used, `base` becomes a reserved top-level section name for that parsed document. Therefore, if orphan members are present, an explicitly defined top-level section named `base` MUST result in an error.
 
@@ -1600,8 +1946,8 @@ Otherwise, an error MUST be reported.
 
 * Boolean literals are **case-insensitive**.
 * The following values MUST be interpreted as Booleans:
-  * `true`, `yes`, `on` → `true`
-  * `false`, `no`, `off` → `false`
+  * `true`, `yes`, `on` -> `true`
+  * `false`, `no`, `off` -> `false`
 * DOES NOT allow Boolean values like `1` or `0` unless explicitly cast by the host software.
 
 ### 13.5. Objects
@@ -1622,7 +1968,7 @@ If accepted, implementations SHOULD treat this as equivalent to the canonical `:
 Mixing `:` and `=` within the same inline object is discouraged in lenient mode because it reduces visual consistency and can make the object harder to read:
 
 ```yini
-obj = { a: 1, b = 2 }  # Discouraged in lenient mode; invalid in strict mode.
+obj = { a: 1, b = 2 }  // Discouraged in lenient mode; invalid in strict mode.
 ```
 
 In strict mode, `=` MUST NOT be accepted inside inline objects.
@@ -1637,7 +1983,7 @@ is an error in strict mode and SHOULD be reported as at least a warning or error
 
 ### 13.6. Lists
 
-The syntax for list:
+The syntax for a list is:
   **(a) Bracketed form (preferred):**
   ```yini
   items = ["a", "b", "c"]
@@ -1652,15 +1998,36 @@ The syntax for list:
   [1, 2, 3]     // Not parsed as a list!
   ```
 
-### 13.7. Strings Concatenation
+### 13.7. String Concatenation
 
-* Strings can be concatenated using the `+` operator:
-    ```yini
-    name = "Hello, " + "world"
-    ```
-* Concatenation SHOULD occur **on a single line**.
-* Concatenating different types of strings (e.g., r"..." + c'...') is **permitted** (for use in some special or advanced cases), but generally **discouraged**.
-* Only Classic strings (C-Strings) interpret escape sequences (`\n`, `\t`, etc).
+Implementations SHOULD treat the `+` operator as a string-concatenation operator only. YINI does not define numeric addition.
+
+A concatenation expression MUST begin with a string literal.
+    
+```yini
+name = "Hello, " + "world"
+```
+
+A line break MAY occur after the `+` operator:
+```yini
+longText = "This is a long string " +
+           "continued on the next source line."
+```
+
+A line break MUST NOT occur before the `+` operator:
+```yini
+longText = "This is invalid "
+         + "because + starts the next line."
+```
+
+Strict and lenient mode validation:
+- In strict mode, every concatenation operand MUST be a string literal.
+- In lenient mode, operands after the first string literal MAY be string literals, number literals, boolean literals, or null literals.
+- Lists and inline objects MUST NOT be accepted as concatenation operands.
+- Only C/Classic Strings and C-Triple-Quoted Strings interpret escape sequences.
+- Raw Strings and Raw Triple-Quoted Strings preserve backslashes literally.
+
+Concatenating different string literal types, such as Raw strings and Classic strings, is permitted but should generally be used with care because each operand is interpreted according to its own string rules before concatenation.
 
 ### 13.8. String Literal Types
 **Note:** If a string is not quoted, it's not a string — period.
@@ -1674,12 +2041,17 @@ The syntax for list:
 
 ### 13.9. Comments
 
-* YINI supports (outside string literals):
-  - `/* ... */` for block (multi-line) comments (may span lines).
-  - `//` for inline comments (rest of the line is ignored).
-  - `#` for full-line or inline comments, everything from `#` to the end of the line is ignored. No whitespace is required before or after `#`.
-  - `;` at start of line is treated as full-line comments (there may appear only spaces or tabs before `;`).
-  - **Nested block comments are not supported.**
+Implementations MUST recognize comments according to Section 3.3, "Comments".
+
+In summary:
+- `//` begins a line comment outside string literals and backticked identifiers.
+- `#` begins a line comment outside string literals and backticked identifiers.
+- `/* ... */` begins a block comment outside string literals and backticked identifiers.
+- `;` begins a full-line comment only when it is the first non-whitespace character on a line.
+- Nested block comments are not supported.
+- Comments may appear only where whitespace is allowed and MUST NOT split tokens.
+
+Implementations SHOULD remove or ignore comments during parsing before semantic interpretation, while preserving source-position information where useful for diagnostics.
 
 ### 13.10 Bonus Tips for Implementation
 Developers are encouraged to implement the following features to improve parser robustness and developer experience:
@@ -1691,7 +2063,7 @@ Developers are encouraged to implement the following features to improve parser 
 - Support both `strict` as well as `lenient` parsing modes.
 - Support different **Bail/Abort Sensitivity Levels** while parsing a YINI document:
   (AKA severity threshold)
-  - Level 0 = Ignore errors and try parse anyway (may remap falty key/section names to something more valid so parsing can continue).
+  - Level 0 = Ignore errors and try parse anyway (may remap faulty key/section names to something more valid so parsing can continue).
   - Level 1 = Abort on errors only.
   - Level 2 = Abort even on warnings.
 - **Extra Bonus:** In strings, if C/C++-style octal escape codes like `\1` to `\377` are used (which are not valid in YINI), parsers SHOULD treat this as an error in strict mode (and suggest the correct YINI syntax). In lenient mode, parsers may optionally emit a warning and suggest the correct YINI syntax: `\o1` to `\o377`, and interpret the octal code as intended.
@@ -2024,6 +2396,9 @@ hosts = ["alpha.local", "beta.local", "gamma.local"]
 ```
 
 ### 15.5. Large-Scale Real-World Configuration Example A: Corporate SaaS Platform  
+
+This is a lenient-mode example. It has multiple top-level sections and no `/END`.
+
 ```yini
 @YINI
 
@@ -2154,7 +2529,10 @@ blockedCountries = ["KP", "SD"]
         lockoutMinutes = 30
 ```
 
-15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System  
+### 15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System
+
+This is a lenient-mode example. It has multiple top-level sections and no `/END`.
+
 ```yini
 @YINI
 
@@ -2379,7 +2757,10 @@ blockedCountries = ['KP', 'NG', 'BY']
         }
 ```
 
-15.7. Large-Scale Real-World Configuration Example C: Industrial Monitoring & Automation Platform  
+### 15.7. Large-Scale Real-World Configuration Example C: Industrial Monitoring & Automation Platform  
+
+This example C is meant to be parsed in strict mode.
+
 ```yini
 @YINI
 
@@ -2682,12 +3063,18 @@ Notes:
 
 v1.0.0 RC 5 + UPDATES, 2026-xx-xx
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
-- **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and may be followed by optional horizontal whitespace.
+- **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
 - **Removed:** Support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
 - **Removed:** Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid, whether mixed with `:` or used consistently.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
+- **Changed:** Updated string concatenation rules. A concatenation expression MUST begin with a string literal. In strict mode, all operands MUST be string literals. In lenient mode, operands after the first string literal MAY be string literals, number literals, boolean literals, or null literals. A concatenation expression MAY span multiple source lines when the line break occurs after the `+` operator. The `+` operator always produces a string, does not define numeric addition, and never permits lists or inline objects as operands.
+- **Clarified:** Missing values vs. trailing commas:
+  * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
+  * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
+- **Added:** For readability, an underscore character `_` may appear after a base prefix or between successive digits.
+- **Added:** For readability, added support for section marker separators `_`.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 
 v1.0.0 RC 5, 2026-04-09
@@ -2729,12 +3116,14 @@ Trailing commas after values or members inside lists or objects never produce `N
 | Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | Line break after `=` causes the value of `items` to be parsed as null. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
 | Comments | `# Comment`, `#Comment`, or `// Comment` | Assuming `#Comment` is not a comment | Outside string literals, `#` always begins a comment. No whitespace is required. |
-| Hex values | `color = 0xFF0033` or `color = hex: FF0033` | `color = #FF0033` | `#` is not a hex prefix in YINI. It begins a comment outside string literals. |
+| Hex values | `color = 0xFF0033` or `color = hex:FF0033` | `color = #FF0033` | `#` is not a hex prefix in YINI. It begins a comment outside string literals. |
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
 | List nesting       | `list = [[1, 2], [3, 4]]`       | Using inner lists without brackets | All nested lists MUST be bracketed explicitly. |
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
 | Inline object member separator | `obj = { a: 1, b: 2 }` | `obj = { a = 1, b = 2 }` | `:` is the canonical separator inside inline objects. In lenient mode, `=` MAY be accepted, but formatters should normalize to `:`. In strict mode, `=` inside inline objects is invalid. |
 | Mixed object separators | `obj = { a: 1, b: 2 }` | `obj = { a: 1, b = 2 }` | Mixing `:` and `=` inside the same inline object is discouraged in lenient mode and invalid in strict mode. |
+| Quote characters | `text = "hello"` or `text = 'hello'` | Using curly quotes as delimiters: `text = “hello”` | String delimiters MUST be plain ASCII quotes: `'` U+0027 or `"` U+0022. Curly quotes may appear inside strings as ordinary text, but they do not delimit strings. |
+| Multi-line concatenation | `text = "hello " +`<br>`       "world"` | Placing `+` at the start of the next line | A line break is allowed after `+`, but not before `+`. |
 
 ---
 
@@ -2774,4 +3163,3 @@ Below is a categorized list of Unicode whitespace characters recognized as withi
 > A simple, structured, and human-friendly configuration format.  
 
 [yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang/?utm_content=spec_footer)  
-

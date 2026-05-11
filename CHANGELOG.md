@@ -9,7 +9,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 ## Package 2026 xxx + UPDATES (spec: v1.0.0-rc.5 + UPDATES)
 - Revised `#` character handling and updated hexadecimal notation rules, in the specification and in the ANTLR4 grammar:
   * **Changed:** In the spec, the `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
-  * **Added:** In the spec, added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and may be followed by optional horizontal whitespace.
+  * **Added:** In the spec, added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
   * **Removed:** In the spec, support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
 - **Removed:** Removed Hyper Strings (H-Strings), in the specification and in the ANTLR4 grammar. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
 - **Improved:** Made the lexer grammar target-independent by removing TypeScript-specific members and semantic predicates, enabling cross-language parser generation.
@@ -21,8 +21,23 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
+- **Changed:** Updated string concatenation rules. Concatenation expressions MUST begin with a string literal, and the `+` operator is defined only as a string-concatenation operator, not numeric addition. A line break MAY now occur after the `+` operator, allowing long concatenation expressions to span multiple source lines. A line break before the `+` operator remains invalid.
+  * In strict mode, all concatenation operands MUST be string literals.
+  * In lenient mode, operands after the first string literal MAY be string literals, number literals, boolean literals, or null literals.
+  * Lists and inline objects MUST NOT be used as concatenation operands.
 - **Clarified:** In the spec, defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
-- **Clarified:** Missing values vs trainling comma:
+- **Added:** For readability, an underscore character `_` may appear after a base prefix or between successive digits. For example:
+  ```yini
+  2_468
+  0x_ab_cd_12_34_ef
+  0b1111_0001
+  ```
+- **Added:** For readability, added support for section marker separators `_`. For example:
+  ```yini
+  ^^_^^_^ Section  // depth 5
+  ^^^_^^^ Section  // depth 6
+  ```
+- **Clarified:** Missing values vs. trailing commas:
   * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
   * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
 - **Improved:** Clarified and updated the spec about these:

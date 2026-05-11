@@ -92,14 +92,6 @@ directive
   ;
 
 /*
- * Pre-processing directives: instructions that modify the document itself
- * by including or transforming content before/while parsing.
- */
-// pre_processing_command
-//   : INCLUDE_TOKEN string_literal? eol
-//   ;
-
-/*
  * Metadata attached to a specific element (key, section, function,
  * class, variable). Does not change source, but adds semantic
  * meaning or tooling hints.
@@ -125,13 +117,14 @@ assignment
   : member eol
   ;
 
-/* KEY = value  (value may be empty in lenient mode -> NULL by convention,
- * enforced and validated in host code, not here.)
- *
- * @note (!) KEY, EQ, and value MUST be on the same line!
+/*
+ * @note KEY, EQ, and the first value token MUST be on the same logical line.
+ * A concatenation expression may continue onto following lines only when
+ * the previous line ends with PLUS.
  */
 member
-  : KEY EQ value? // Empty value is treated as NULL.
+  // : KEY EQ value? // Empty value is treated as NULL.
+  : KEY EQ value? // Empty value is treated as NULL.  
   ;
 
 /* ------------------------------------------------------------------
@@ -139,12 +132,70 @@ member
  * ------------------------------------------------------------------ */
 
 value
+  : concat_expression
+  | scalar_value
+  | list_literal
+  | object_literal
+  ;
+
+scalar_value
   : null_literal
   | string_literal
   | number_literal
   | boolean_literal
-  | list_literal
-  | object_literal
+  ;
+
+/*
+ * String concatenation.
+ *
+ * Spec behavior:
+ * - The first operand MUST be a string literal.
+ * - The + operator is exclusively string concatenation.
+ * - YINI does not define numeric addition.
+ * - A newline MAY appear after +.
+ * - A newline MUST NOT appear before +.
+ * - Lists and inline objects are never valid operands.
+ *
+ * Strict-vs-lenient validation:
+ * - Strict mode: every concat_operand MUST be STRING.
+ * - Lenient mode: operands after the first MAY be STRING, NUMBER, BOOLEAN, or NULL.
+ */
+// This accepts:
+//
+// message = "hello " + "world"
+// longText = "hello " +
+//            "world"
+//
+// label = "port-" +
+//         5432
+//
+// And rejects:
+//
+// message = "hello "
+//         + "world"
+//
+// because there is an NL token between STRING and PLUS.
+//
+concat_expression
+  // : STRING PLUS concat_operand (PLUS concat_operand)*
+  : STRING concat_tail+
+  ;
+
+concat_tail
+  : PLUS NL* concat_operand
+  ;
+
+
+concat_operand
+  : STRING
+  | NUMBER
+  | BOOLEAN_TRUE
+  | BOOLEAN_FALSE
+  | NULL
+  ;
+
+string_literal
+  : STRING
   ;
 
 /* Object literal.
@@ -200,13 +251,15 @@ null_literal
   : NULL // NOTE: NULL is case-insensitive.
   ;
 
-string_literal
-  : STRING string_concat*
-  ;
+// Below is OLD: Can be deleted
+// string_literal
+//   : STRING string_concat*
+//   ;
 
-string_concat
-  : NL* PLUS NL* STRING
-  ;
+// Below is OLD: Can be deleted
+// string_concat
+//   : NL* PLUS NL* STRING
+//   ;
 
 boolean_literal
   : BOOLEAN_TRUE
