@@ -9,8 +9,8 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Package Version:** 1.0.0-RC.5 + UPDATES ([Version Mapping Table](./README.md#version-mapping-table))  
-**Date:** 2026-04  
+**Package Version:** 1.0.0-RC.5 + UPDATES/WIP ([Version Mapping Table](./README.md#version-mapping-table))  
+**Date:** >2026-04  
 **Status:** Release Candidate  
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
@@ -415,7 +415,7 @@ We welcome feedback — feel free to open an Issue or start a Discussion.
 ### Acknowledgments
 YINI has grown and improved thanks to the insights, questions, and thoughtful feedback from the community. Much of the specification — and this repository — reflects that shared input.
 
-For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
+For more details, see section D.2, _"Acknowledgments & Special Thanks"_, in the [Rationale](./RATIONALE.md) document.
 
 ---
 
@@ -439,7 +439,7 @@ This project is licensed under the Apache License 2.0 — see the [LICENSE](./LI
 ---
 
 **^YINI ≡**  
-> YINI is a human-readable configuration format designed for clarity, readability, explicit structure, and predictable parsing.
+> YINI is a human-readable, INI-inspired, indentation-insensitive configuration format with clear nested sections, explicit structure, and predictable parsing.
 > 
 > It has a formal specification and a defined grammar.
 

@@ -3,8 +3,8 @@ _YINI: A clear configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.5 + UPDATES
-**Date:** 2026-05
+**Version:** 1.0.0-RC.5 + UPDATES/WIP
+**Date:** >2026-05
 
 > **Note:** This specification of the YINI format may introduce changes that are not backward-compatible (see Section 14.2, "Versioning Strategy").
 
