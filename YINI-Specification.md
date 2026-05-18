@@ -1704,10 +1704,14 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
 - In repeated/basic section headers, whitespace between the marker and the section name is optional.
 - In numeric shorthand section headers, at least one space or tab is required after the number before the section name.
 - Keys are case-sensitive, and no spaces nor quotes allowed unless enclosed in backticks (phrase identifiers).
-- Duplicate keys **within the same section and nesting level** are not allowed.  
-  1. In lenient mode, later duplicate keys MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
+- **Duplicate keys** within the **same section and nesting level** are not allowed.
+  1. In lenient mode, the first definition wins: the first key definition MUST be kept, later duplicate key definitions MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
   2. In strict mode, any duplicate key MUST result in an error.
-  3. In neither mode may an implementation silently overwrite an earlier key with a later one.
+  3. In neither mode may an implementation silently overwrite an earlier key with a later one. This rule reflects an intentionally conservative approach. It avoids surprising behavior in large files and prevents accidental overrides later in the document.
+- **Duplicate sections** with the same name under the **same parent section** are not allowed.
+  1. In lenient mode, the first section definition wins: the first section MUST be kept, later duplicate section definitions at the same level MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
+  2. In strict mode, any duplicate section at the same level MUST result in an error.
+  3. Implementations MUST NOT silently merge, overwrite, or extend an earlier section with a later section of the same name. If a repeated section definition is rejected, all assignments belonging to that duplicate section block MUST also be rejected or ignored; they MUST NOT be reinterpreted as belonging to another section or context.
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
 - The document terminator (`/END`) is **optional in lenient (default) mode** and **required in strict mode**.
 - **In lenient (default) mode, an empty document is permitted.** A document that contains only whitespace, comments, and/or disabled lines (`--`) is considered empty. In such cases, the parser MUST NOT fail; it SHOULD instead report a warning diagnostic indicating that the document appears empty or contains no meaningful content.
@@ -1828,8 +1832,8 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 |-------------------------|:----------------------:|:-----------:|-------|
 | Explicit string quoting               | ✅ | ✅ | All strings MUST be enclosed with `"` or `'` — no ambiguity over strings.|
 | Empty sections allowed                | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
-| Duplicate keys                        | ❌ | ❌ | In lenient mode, later duplicate keys MUST be ignored and MUST produce a warning diagnostic. In strict mode, any duplicate key MUST result in an error. |
-| Duplicate sections at same level      | ❌ | ❌ | Implementations MUST NOT silently overwrite or merge duplicate sections unless explicitly defined elsewhere. |
+| Duplicate keys | ⚠️ First wins | ❌ Error | Later duplicate keys are ignored in lenient mode and MUST produce a warning diagnostic. |
+| Duplicate sections at same level | ⚠️ First wins | ❌ Error | Later duplicate sections are ignored in lenient mode. Implementations MUST NOT merge or overwrite sections. |
 | Exactly one explicit top-level section required | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
 | Top-level orphan members allowed      | ✅ | ❌ | In lenient mode they may be mounted at root or under implicit base. |
 | `/END` required at end of document                       | ❌ | ✅ |   |
