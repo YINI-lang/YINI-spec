@@ -11,6 +11,7 @@ More details of feedback, see section D.2, _“Acknowledgments & Special Thanks�
   * **Changed:** In the spec, the `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
   * **Added:** In the spec, added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
   * **Removed:** In the spec, support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
+- **Changed:** Increased the maximum repeated section marker depth from 6 to 9, due to section marker separators (`_`) may now be used to make headers easier to read.. Repeated marker headers may now express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
 - **Removed:** Removed Hyper Strings (H-Strings), in the specification and in the ANTLR4 grammar. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
 - **Improved:** Made the lexer grammar target-independent by removing TypeScript-specific members and semantic predicates, enabling cross-language parser generation.
 - **Changed:** In `Grammar-ANTLR4`, replaced Windows-specific .bat helper scripts with a language-agnostic `Taskfile.yaml`.

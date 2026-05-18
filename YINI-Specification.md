@@ -93,7 +93,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;5.2. Section Markers (`^`, `§`, or `<`)  
 &nbsp;&nbsp;&nbsp;&nbsp;5.3. Nested Sections  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.1. Section Marker Separators  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.2. Short-hand Section Heading  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5.3.2. Shorthand Section Heading  
 
 **6. String Literals** ([Link ⇨](./YINI-Specification.md#6-string-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
@@ -509,11 +509,11 @@ The default and recommended terminator is:
 ```
 
 This line is **not case-sensitive** (`/end`, `/End`, etc. are also valid).
-Only **whitespaces or comments** may appear after the terminator.
+Only **whitespace or comments** may appear after the terminator.
 
 It is recommended that there are no leading spaces or tabs, on the same line as the terminator. If there are comments after the marker, these SHOULD be ignored.
 
-After the document terminator, only whitespaces and comments are permitted.  
+After the document terminator, only whitespace and comments are permitted.  
 Any other content appearing after the terminator MUST result in an error.
 
 ### 3.6. Ignore / Disable Line
@@ -681,30 +681,35 @@ Supported markers:
 
 Note: The `€` character is no longer supported as a valid section marker in YINI.
 
-**When using a repeated marker to indicate nesting, a maximum of six (`6`) repeated markers is allowed.**  
+**When using a repeated marker to indicate nesting, a maximum of nine (`9`) repeated markers is allowed.**  
 
-That is, the following denote nesting levels 1–6:
+That is, the following denote nesting levels 1–9:
 ```yini
-^       ← level 1
-^^      ← level 2
-^^^     ← level 3
-^^^^    ← level 4
-^^^^^   ← level 5
-^^^^^^  ← level 6
+^          ← level 1
+^^         ← level 2
+^^^        ← level 3
+^^^^       ← level 4
+^^^^^      ← level 5
+^^^^^^     ← level 6
+^^^^^^^    ← level 7
+^^^^^^^^   ← level 8
+^^^^^^^^^  ← level 9
 ```
 
-**Using seven or more of the same marker in succession (for example, `^^^^^^^`) is invalid.**
-For nesting levels deeper than 6, the **numeric shorthand section header** syntax MUST be used (see Section 5.3.2).
+**Using ten or more section marker characters in a repeated marker header is invalid.**  
+For example, `^^^^^^^^^^ Section` is invalid and MUST be written using numeric shorthand instead, such as `^10 Section`. 
+
+For nesting levels deeper than 9, the **numeric shorthand section header** syntax MUST be used (see Section 5.3.2).
 
 ### 5.3. Nested Sections
 To place a section under another (i.e., to nest sections), repeat the section marker character (this technique with repeating characters is inspired by Markdown) without skipping any intermediate levels. Each additional repetition indicates one more nesting level. However, when moving to a less‐nested (closer to section header) level, you may drop directly to any smaller level.
 
-- Section heading markers (`^`, `§`, or `<`) may only be repeated up to six times — to level 6 (maximum).
-- Beyond level 6, the numeric shorthand section MUST be used (see section 5.3.2).
+- Repeated section marker (`^`, `§`, or `<`) headers may only be repeated up to nine times — to level 9 (maximum).
+- Beyond level 9, the numeric shorthand section MUST be used (see section 5.3.2).
 - **Going deeper (increase nesting):** Must increment exactly one level at a time. E.g.: `^^` → `^^^` but not `^^` → `^^^^`.  
   This rule applies equally to **repeated marker** form and **numeric shorthand** form. Numeric shorthand does not permit skipping intermediate levels.
 - **Going shallower (decrease nesting):** May drop directly to any previous level. E.g.: `^9` → `^^` or `^9` → `^`.
-- Optionally the short-hand section notation may be used for any levels and that notation is the only way to define levels 7 or beyond.
+- Optionally the shorthand section notation may be used for any levels and that notation is the only way to define levels 10 or beyond.
 
 ```yini
 ^ Prefs
@@ -743,7 +748,7 @@ Optionally, indentation may be omitted:
 
 #### 5.3.1. Section Marker Separators
 
-For readability, underscores (`_`) MAY be placed between repeated section markers. These underscores are visual separators only and do not change the section depth.
+For readability, underscores (`_`) MAY be placed between repeated section markers. These underscores are visual separators only and do not change the section depth. Section marker separators are supported only in repeated section marker form. They MUST NOT be used in numeric shorthand section headers.
 
 Rules:
 - An underscore MAY appear only between two repeated occurrences of the same section marker character.
@@ -759,9 +764,12 @@ For example, the following are equivalent:
 
 ^^^^^^ Section   // depth 6
 ^^^_^^^ Section  // depth 6
+
+^^^^^^^^^ Section   // depth 9
+^^^_^^^_^^^ Section // depth 9
 ```
 
-Invalid:
+These following examples are all invalid:
 ```yini
 ^^_ Section      // ❌ Invalid trailing underscore.
 ^__^ Section     // ❌ Invalid adjacent underscores.
@@ -770,55 +778,73 @@ _^ Section       // ❌ Invalid leading underscore.
 ^_ Section       // ❌ Invalid trailing underscore.
 
 ^_< Section      // ❌ Invalid: section marker characters must not be mixed.
+^1_0 Section      // ❌ Invalid: separators are not allowed in numeric shorthand section headers.
 ```
 
-#### 5.3.2. Short-hand Section Heading
+#### 5.3.2. Shorthand Section Heading
 
-**Short-hand Section Headings:**
-Numeric shorthand is required for nesting levels greater than 6. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `<`) and `<n>` is an integer ≥ 1 indicating the nesting level. For levels 1–6, repeated markers such as `^`, `^^`, `^^^` are RECOMMENDED. (Using the shorthand is optionally valid for levels 1–6 as well, though repeated markers are RECOMMENDED but not required).
+**Shorthand Section Headings:**
+Numeric shorthand is required for nesting levels greater than 9. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `<`) and `<n>` is an integer ≥ 1 indicating the nesting level. For levels 1–9, repeated markers such as `^`, `^^`, `^^^` are RECOMMENDED. (Using the shorthand is optionally valid for levels 1–9 as well, though repeated markers are RECOMMENDED but not required).
 
 For example:
-- To go from depth 6 to depth 7: write `^7 SectionName`.  
-- To go from depth 7 to depth 8: write `^8 SectionName`.  
-- To go from depth 8 to depth 9: write `^9 SectionName`.  
+- To go from depth 9 to depth 10: write `^10 SectionName`.  
+- To go from depth 10 to depth 11: write `^11 SectionName`.  
+- To go from depth 11 to depth 12: write `^12 SectionName`.  
 - And so on...
 
-This prevents arbitrarily long runs of the same marker. When ascending (moving to a shallower level), you may skip multiple levels at once (e.g., from `^9` back to `^^`).  
+This prevents arbitrarily long runs of the same marker beyond level 9.  
 
 **✅ Valid examples:**
 
-Repeated marker form for levels 1–6:
+Repeated marker form for levels 1–9:
 
 ```yini
-^      Level1      // depth 1
-^^     Level2      // depth 2
-^^^    Level3      // depth 3
-^^^^   Level4      // depth 4
-^^^^^  Level5      // depth 5
-^^^^^^ Level6      // depth 6
+^         Level1      // depth 1
+^^        Level2      // depth 2
+^^^       Level3      // depth 3
+^^^^      Level4      // depth 4
+^^^^^     Level5      // depth 5
+^^^^^^    Level6      // depth 6
+^^^^^^^   Level7      // depth 7
+^^^^^^^^  Level8      // depth 8
+^^^^^^^^^ Level9      // depth 9
 ```
 
-Numeric shorthand form for levels deeper than 6:
+For deeper repeated marker headers, `_` separators may make the section depth easier to read:
+
+For example:
+```yini
+^^^_^       Level4      // depth 4
+^^^_^^      Level5      // depth 5
+^^^_^^^     Level6      // depth 6
+^^^_^^^_^   Level7      // depth 7
+^^^_^^^_^^  Level8      // depth 8
+^^^_^^^_^^^ Level9      // depth 9
+```
+
+Numeric shorthand form for levels deeper than 9:
 
 ```yini
-^      Level1      // depth 1
-^^     Level2      // depth 2
-^^^    Level3      // depth 3
-^^^^   Level4      // depth 4
-^^^^^  Level5      // depth 5
-^^^^^^ Level6      // depth 6
-^7     Level7      // depth 7
-^8     Level8      // depth 8
-^9     Level9      // depth 9
-^10    Level10     // depth 10
+^         Level1      // depth 1
+^^        Level2      // depth 2
+^^^       Level3      // depth 3
+^^^^      Level4      // depth 4
+^^^^^     Level5      // depth 5
+^^^^^^    Level6      // depth 6
+^^^^^^^   Level7      // depth 7
+^^^^^^^^  Level8      // depth 8
+^^^^^^^^^ Level9      // depth 9
+^10       Level10     // depth 10
+^11       Level11     // depth 11
 ```
 
-Numeric shorthand may also be used for levels 1–6:
+Numeric shorthand may also be used for levels 1–9:
 
 ```yini
 ^1     Level1      // depth 1
 ^2     Level2      // depth 2
 ^3     Level3      // depth 3
+^9     Level9      // depth 9
 ```
 
 Going back to a shallower level is allowed:
@@ -854,13 +880,13 @@ A numeric shorthand section header requires whitespace after the number:
 ^7Level7           // ❌ Invalid: shorthand requires at least one space or tab after the number
 ```
 
-Using seven or more repeated section markers is invalid:
+Using ten or more repeated section markers is invalid:
 
 ```yini
-^^^^^^^ Level7     // ❌ Invalid: use numeric shorthand instead
+^^^^^^^^^^ Level10 // ❌ Invalid: use numeric shorthand instead
 ```
 
-Numeric shorthand does not permit skipping intermediate nesting levels. It is only an alternative notation for expressing a section depth and a notation for going deeper than level 6. Therefore, a shorthand section at level `n` is valid only if level `n - 1` has already been explicitly established in the current nesting chain.
+Numeric shorthand does not permit skipping intermediate nesting levels. It is only an alternative notation for expressing a section depth and a notation for going deeper than level 9. Therefore, a shorthand section at level `n` is valid ONLY if level `n - 1` has already been explicitly established in the current nesting chain.
 
 ## 6. String Literals
 
@@ -1206,7 +1232,7 @@ scientific = 1.23e4
 
 ### 7.2. Digit Separators
 
-For readability, an underscore (`_`) MAY appear after a base prefix or between successive digits inside a number literal. Digit separators do not change the numeric value of the literal.
+For readability, an underscore (`_`) MAY be used as a digit separator inside number literals. It MAY appear either immediately after a supported base prefix or between successive digits. Digit separators do not change the numeric value.
 
 Underscores are permitted:
 - It may appear between two digits.
@@ -1326,7 +1352,7 @@ The engine SHOULD convert the literal value to the corresponding Boolean value i
 The null literal (value) is `null`, case-insensitive.
 
 - Empty or missing value in section/root-level key-value pair (member outside any list or object), is treated as `null` in lenient mode, error in strict mode.
-  If written `key = `with nothing after `=`, that member's value is `null` (lenient only; strict mode requires explicitly `key = null`).
+  If written as `key =` with nothing after `=`, that member's value is `null` in lenient mode. (Strict mode requires explicitly `key = null`.)
 - Note: At top level (outside any `[ ]` or `{ }`), `key =` with nothing after `=` → `key = null` in lenient mode; in strict mode that is a syntax error unless you write `key = null` explicitly.
   
   Invalid Examples (both strict and lenient):
@@ -1422,6 +1448,10 @@ The following structural rules apply to inline objects:
 - In strict mode, trailing commas are invalid.
 - Whitespace is ignored except inside quoted strings.
 - Line comments may begin after a complete token, even without preceding whitespace. However, a comment marker MUST NOT split a token.
+- Object member keys MUST be unique within the same inline object.
+  * In lenient mode, the first object member definition wins: the first member MUST be kept, later duplicate object members MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
+  * In strict mode, any duplicate object member key MUST result in an error.
+  * Implementations MUST NOT silently overwrite an earlier object member with a later one.
 
 The **canonical object member separator is `:`.** See Section 9.2, "Object Member Separators", for the exact separator rules in lenient and strict mode.
 
@@ -1734,7 +1764,7 @@ A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and
 - Missing terminators:
   * **In lenient mode:** No error is required.
   * **In strict mode:** MUST be treated as an error.
-- After the terminator, only whitespaces and comments are allowed.
+- After the terminator, only whitespace and comments are allowed.
 - Any other content appearing after the terminator MUST result in an error.
 
 ##### Table: Terminator Requirement by Mode
@@ -1865,7 +1895,7 @@ NOTE: In strict mode, orphan members are forbidden.
 
 In lenient mode only, an implementation MUST expose accepted orphan members in a well-defined way. The preferred behavior is to mount orphan members directly onto the parsed result, alongside explicitly defined top-level sections. If the underlying platform, host language, or target representation does not allow this cleanly, orphan members MUST instead be placed under an implicit section named `base`.
 
-accepted orphan members SHOULD be exposed as direct members of the parsed root object, alongside explicitly defined top-level sections.
+Accepted orphan members SHOULD be exposed as direct members of the parsed root object, alongside explicitly defined top-level sections.
 
 For example:
 
@@ -1873,7 +1903,7 @@ For example:
 name = "App"
 
 ^ Server
-host = "localhost
+host = "localhost"
 ```
 
 SHOULD be represented conceptually as:
@@ -1918,7 +1948,7 @@ Otherwise, an error MUST be reported.
 
 - Newline normalization is required:
   * Support all three forms: LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`).
-- Leading/trailing whitespaces (tabs or spaces):
+- Leading/trailing whitespace (tabs or spaces):
   * Trim from section headers and keys.
 - Full-line and inline comments may follow key-value members or appear on separate lines.
 - Whitespace is permitted within lists, including across lines.
@@ -2077,7 +2107,7 @@ This section covers YINI's compatibility and interoperability principles.
 
 ### 14.1. Fallback Rules
 #### 14.1.1. Invalid Sections or Keys
-- Invalid key names or section headers **SHOULD be retained as-is** if possible and/or illegal characters remapped (both in lenient and strict mode, and optionally also support "Abort Sensitivity Levels"), though at least a warning SHOULD be issued depending on it's severity.
+- In lenient mode, implementations MAY retain invalid key names or section headers as-is where possible, or MAY remap illegal characters, provided a warning diagnostic is reported. In strict mode, invalid key names or section headers MUST result in an error.
   
 #### 14.1.2. Graceful Degradation
 - Parsers SHOULD issue warnings instead of errors when encountering unrecognized features (e.g., unknown directives, anchors, or section markers).
@@ -2087,7 +2117,7 @@ This section covers YINI's compatibility and interoperability principles.
 **Version Format**
 
 - In the future, the YINI Specification will adopt _Semantic Versioning_ (`MAJOR.MINOR.PATCH STAGE`) to signal format evolution.
-- **`STAGE`:** For the time being, the specification version remains `v1.0.0` until all primary features are implemented, tested, and the specification exits in the `Beta` stage. The next stage after `Beta` will be denoted `RC` (Release Candidate). Each stage may be appended with an incremental number, such as `Beta 2`, `Beta 3`, `Beta 4`, etc.
+- The YINI specification uses staged pre-1.0 development labels such as Beta and RC (Release Candidate) before the final `1.0.0` release. Release Candidate versions indicate that the format is intended to be close to stable, but may still receive clarifications or breaking adjustments before final release.
 
 Semantic Versioning:
 - **MAJOR:** Incompatible changes.
@@ -2198,7 +2228,6 @@ rotate = true
 ^ Features
 enable_experimental = false
 api_version = "v2.1"
-
 ```
 
 **Notes:**
@@ -3067,6 +3096,7 @@ Notes:
 
 v1.0.0 RC 5 + UPDATES, 2026-xx-xx
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
+- **Changed:** Increased the maximum repeated section marker depth from 6 to 9, due to section marker separators (`_`) may now be used to make headers easier to read.. Repeated marker headers may now express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
 - **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
 - **Removed:** Support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
 - **Removed:** Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
@@ -3104,6 +3134,11 @@ v1.0.0 RC 4, 2026-03-29
     [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
 - **Clarified:** Added clarifying bullets to Sections 1.2 and 1.4.
 - **Fixed:** Fixed a few typos and made various minor wording and consistency improvements.
+
+---
+
+### 16.5. Reserved: Grammar (Formal)
+Reserved for future inclusion of the formal grammar.
 
 ---
 
