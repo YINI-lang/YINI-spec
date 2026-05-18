@@ -190,16 +190,6 @@ YINI is flexible enough to support a wide range of use cases, from simple key-va
 
 ### 1.2. Purpose and Design Goals
 
-#### 1.2.1. The # Marker as a Comment Symbol
-YINI treats `#` as a comment symbol (instead of being used as a section marker), aligning with conventions found in formats like classic INI, Bash, YAML, and various scripting environments. This change improves predictability for users familiar with other configuration file styles. See [A.4. Design Philosophy](./RATIONALE.md) for background.
-
-- Outside string literals, the `#` character begins a comment.
-- Everything from `#` to the end of the line is ignored by the parser.
-- No whitespace is required before or after `#`.
-
-Because `#` always begins a comment outside string literals, `#` is not valid as a hexadecimal number prefix. Hexadecimal values are written using `0x...` or the explicit `hex:` form.
-
-#### 1.2.2. Key Design Goals
 The YINI format was designed with the following philosophy and key goals in mind:
 
 1. **Clarity over cleverness**  
@@ -2004,18 +1994,28 @@ The syntax for a list is:
 
 ### 13.7. String Concatenation
 
-Implementations SHOULD treat the `+` operator as a string-concatenation operator only. YINI does not define numeric addition.
+YINI supports explicit string concatenation using the plus sign (`+`).
 
-A concatenation expression MUST begin with a string literal.
-    
-```yini
-name = "Hello, " + "world"
-```
+Concatenation joins two or more operands into one string value. The first operand MUST be a string literal.
 
-A line break MAY occur after the `+` operator:
+A line break MAY occur after the `+` operator, allowing long string values to be split across multiple source lines. A line break MUST NOT occur before the `+` operator.
+
+In strict mode, all concatenation operands MUST be string literals.
+
+In lenient mode, operands after the first string literal MAY also be simple scalar values: numbers, booleans, or null.
+
+Lists and inline objects MUST NOT be used as concatenation operands.
+
+The result of concatenation is always a single string value.
+
+Example:
+
 ```yini
-longText = "This is a long string " +
-           "continued on the next source line."
+title = "YINI: " + "A human-friendly configuration format"
+
+longText = "This is a long string that is split " +
+           "across multiple source lines, but " +
+           "the resulting value is still one string."
 ```
 
 A line break MUST NOT occur before the `+` operator:
@@ -3073,7 +3073,7 @@ v1.0.0 RC 5 + UPDATES, 2026-xx-xx
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid, whether mixed with `:` or used consistently.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
-- **Changed:** Updated string concatenation rules. A concatenation expression MUST begin with a string literal. In strict mode, all operands MUST be string literals. In lenient mode, operands after the first string literal MAY be string literals, number literals, boolean literals, or null literals. A concatenation expression MAY span multiple source lines when the line break occurs after the `+` operator. The `+` operator always produces a string, does not define numeric addition, and never permits lists or inline objects as operands.
+- **Changed:** Updated string concatenation rules. A concatenation expression MUST begin with a string literal. In strict mode, all operands MUST be string literals. In lenient mode, operands after the first string literal MAY be string literals, number literals, boolean literals, or null literals. A concatenation expression MAY span multiple source lines only when the line break occurs after the `+` operator; a line break before `+` is invalid. The `+` operator always produces a string, does not define numeric addition, and never permits lists or inline objects as operands.
 - **Clarified:** Missing values vs. trailing commas:
   * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
   * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.

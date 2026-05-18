@@ -21,7 +21,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
-- **Changed:** Updated string concatenation rules. Concatenation expressions MUST begin with a string literal, and the `+` operator is defined only as a string-concatenation operator, not numeric addition. A line break MAY now occur after the `+` operator, allowing long concatenation expressions to span multiple source lines. A line break before the `+` operator remains invalid.
+- **Changed:** Updated string concatenation rules. Concatenation expressions MUST begin with a string literal, and the `+` operator is defined only as a string-concatenation operator, not numeric addition. A line break MAY now occur after the `+` operator, allowing long concatenation expressions to span multiple source lines. A line break before the `+` operator remains invalid. The result of concatenation is always a single string value.
   * In strict mode, all concatenation operands MUST be string literals.
   * In lenient mode, operands after the first string literal MAY be string literals, number literals, boolean literals, or null literals.
   * Lists and inline objects MUST NOT be used as concatenation operands.
