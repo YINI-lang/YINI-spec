@@ -145,25 +145,29 @@ fragment SECTION_NAME_PART
   | IDENT_BACKTICKED
   ;
 
-// Section markers: '^', '§', '<'.
-// – Up to six repeated markers are allowed (the parser must enforce the ≤ 6 rule).
-// – For levels beyond 6, use the numeric shorthand form (e.g. ^7, §100, <12).
+// Section markers: '^', '§', '>', '<'.
+// - Up to nine repeated markers are allowed.
+// - For levels beyond 9, use the numeric shorthand form (e.g. ^10, §100, >12, <12).
 // - Repeated/basic form supports optional '_' separators between same marker chars.
 // - Numeric shorthand form does NOT support '_' separators.
+// - The parser/visitor must enforce the maximum repeated-marker depth and maximum section depth.
+// Keep the order as 1, 2, and 3.
 fragment SECTION_MARKER
-  : SECTION_MARKER_BASIC_REPEAT      // Classic/repeating marker section headers (e.g. ^^ SectionName).
-  | SECTION_MARKER_SHORTHAND         // Numeric shorthand section headers (e.g. ^7 SectionName).
-  | SECTION_MARKER_INVALID           // Captures malformed section markers so the parser/validator can report a clearer error.
+  : SECTION_MARKER_SHORTHAND         // (1) Numeric shorthand section headers (e.g. ^7 SectionName).
+  | SECTION_MARKER_BASIC_REPEAT      // (2) Classic/repeating marker section headers (e.g. ^^ SectionName).
+  | SECTION_MARKER_INVALID           // (3) Captures malformed section markers so the parser/validator can report a clearer error.
   ;
 
 // Repeated/basic marker form.
 // Underscores may appear only between two identical section marker characters.
-// Match one or more of the same marker. Parser must check "count ≤ 6".
+// Match one or more of the same marker. Parser must check "count ≤ 9",
+// for level 10 and deeper, numeric shorthand is required.
 // This check is deferred to the parser, which
 // gives more control and enables better user feedback.
 fragment SECTION_MARKER_BASIC_REPEAT
   : CARET_MARKERS
   | SS_MARKERS
+  | GT_MARKERS
   | LT_MARKERS
   ;
 
@@ -175,24 +179,29 @@ fragment SS_MARKERS
   : SS (SEP? SS)*
   ;
 
+fragment GT_MARKERS
+  : GT (SEP? GT)* // >
+  ;
+
 fragment LT_MARKERS
-  : LT (SEP? LT)*
+  : LT (SEP? LT)* // <
   ;
 
 // Shorthand: a single marker followed by a positive integer (1 or larger).
 // Examples: ^7, <12, §100
 fragment SECTION_MARKER_SHORTHAND
-  : (CARET | SS | LT ) [1-9] DIGIT* HSPACE
+  : (CARET | SS | GT | LT ) [1-9] DIGIT* HSPACE
   ;
 
 fragment SECTION_MARKER_INVALID
-  : (CARET | SS | LT | SEP)+ DIGIT*
+  : (CARET | SS | GT | LT | SEP)+ DIGIT*
   ;
 
 // For matching bad character.
 fragment REST_CHAR
   // : ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
-  :~([@# \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+  // :~([@#> \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+  : ~([@#^§>< \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
   ;
 
 /* ------------------------------------------------------------------
@@ -223,13 +232,14 @@ TERMINAL_TOKEN options { caseInsensitive = true; }
 
 // SECTION_HEAD: SECTION_MARKER HSPACE* WS* IDENT NL+;
 SECTION_HEAD
-  // : SECTION_MARKER HSPACE+ SECTION_NAME_PART NL+ // Requires hor-WS between marker and name.
-  // : SECTION_MARKER HSPACE* SECTION_NAME_PART NL+   // Repeated/basic section headers do not require whitespace before the name.
-  : SECTION_MARKER HSPACE* SECTION_NAME_PART HSPACE* EOL+ // Repeated/basic section headers do not require whitespace before the name.
+  // : SECTION_MARKER HSPACE* SECTION_NAME_PART HSPACE* EOL+ // Repeated/basic section headers do not require whitespace before the name.
+  : SECTION_MARKER_SHORTHAND HSPACE+ SECTION_NAME_PART HSPACE* EOL+
+  | SECTION_MARKER_BASIC_REPEAT HSPACE* SECTION_NAME_PART HSPACE* EOL+  
   ;
 
 INVALID_SECTION_HEAD
-  : (CARET | SS | LT | SEP)+ ~[\r\n]* EOL+
+  // : (CARET | SS | GT | LT | SEP)+ ~[\r\n]* EOL+
+  : (CARET | SS | GT | LT | SEP) ~[\r\n]* EOL+
   ;
 
 /* ------------------------------------------------------------------
@@ -256,18 +266,18 @@ EMPTY_LIST
   : '[]'
   ;
 
-STRING
-  : TRIPLE_QUOTED_STRING
-  | SINGLE_OR_DOUBLE
-  ;
+// STRING
+//   : TRIPLE_QUOTED_STRING
+//   | SINGLE_OR_DOUBLE
+//   ;
 
-TRIPLE_QUOTED_STRING
-  : [RrCc]? '"""' .*? '"""'
-  ; // Greedy-safe because of .*? (non-greedy).
+// TRIPLE_QUOTED_STRING
+//   : [RrCc]? '"""' .*? '"""'
+//   ; // Greedy-safe because of .*? (non-greedy).
 
-SINGLE_OR_DOUBLE
-  : R_AND_C_STRING
-  ;
+// SINGLE_OR_DOUBLE
+//   : R_AND_C_STRING
+//   ;
 
 /**
  * Common rule for RAW and CLASSIC string literals.
@@ -280,16 +290,36 @@ SINGLE_OR_DOUBLE
  *
  * @note If refactoring rule(s), make sure C-strings can include \' and \" as well.
  */
-R_AND_C_STRING
-  : [RrCc]? '\'' ('\\\'' | ~['\r\n])* '\''
-  | [RrCc]? '"'  ('\\"'  | ~["\r\n])* '"'
+// R_AND_C_STRING
+//   : [RrCc]? '\'' ('\\\'' | ~['\r\n])* '\''
+//   | [RrCc]? '"'  ('\\"'  | ~["\r\n])* '"'
+//   ;
+
+STRING
+  : CLASSIC_TRIPLE_QUOTED_STRING
+  | RAW_TRIPLE_QUOTED_STRING
+  | CLASSIC_SINGLE_OR_DOUBLE_STRING
+  | RAW_SINGLE_OR_DOUBLE_STRING
   ;
 
-// // Hyper string literal.
-// HYPER_STRING
-//   : [Hh] '\'' (~['])* '\''
-//   | [Hh] '"'  (~["])* '"'
-//   ;
+fragment RAW_TRIPLE_QUOTED_STRING
+  : [Rr]? '"""' .*? '"""'
+  ;
+
+fragment CLASSIC_TRIPLE_QUOTED_STRING
+  // : [Cc] '"""' .*? '"""'
+  : [Cc] '"""' ( '\\' . | . )*? '"""'
+  ;
+
+fragment RAW_SINGLE_OR_DOUBLE_STRING
+  : [Rr]? '\'' ~['\r\n]* '\''
+  | [Rr]? '"'  ~["\r\n]* '"'
+  ;
+
+fragment CLASSIC_SINGLE_OR_DOUBLE_STRING
+  : [Cc] '\'' ('\\' ~[\r\n] | ~['\\\r\n])* '\''
+  | [Cc] '"'  ('\\' ~[\r\n] | ~["\\\r\n])* '"'
+  ;
 
 // NOTE: This NUMBER rule must come before KEY, IDENT, etc.
 NUMBER
@@ -302,8 +332,8 @@ NUMBER
  * Punctuation / symbols
  * ------------------------------------------------------------------ */
 
-SS: '\u00A7'; // Section sign §.
 CARET: '^';
+SS: '\u00A7'; // Section sign §.
 GT: '>'; // Greater Than.
 LT: '<'; // Less Than.
 
@@ -357,6 +387,10 @@ fragment DISABLE_LINE_MARKER
   : '--'
   ;
 
+DISABLED_LINE
+  : DISABLE_LINE_MARKER ~[\r\n]*
+  ;
+
 /*
  FULL_LINE_COMMENT:
  This rule intentionally does not enforce "start of line" in the lexer.
@@ -365,8 +399,9 @@ fragment DISABLE_LINE_MARKER
 */
 // todo: if it doesn't work, try delete skip
 FULL_LINE_COMMENT
-  : HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
   //: ('\r\n' | '\r' | '\n') HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
+  //: HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip // This (may?) accidentally allow invalid inline semicolon comments.
+  : ';' ~[\r\n]*
   ;
 
 /*

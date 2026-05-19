@@ -62,12 +62,22 @@ terminal_stmt
  * ------------------------------------------------------------------ */
 
 stmt
-  : eol             // BlankOrComment
-  | SECTION_HEAD    // SectionHeader
+  : eol                     // BlankOrComment
+  | full_line_comment_stmt
+  | disabled_line_stmt
+  | SECTION_HEAD            // SectionHeader
   | invalid_section_stmt
-  | assignment      // key = value
-  | meta_stmt       // Note: The implementing parser is responsible for enforcing YINI marker constraints.
-  | bad_member      // BadMember
+  | assignment              // key = value
+  | meta_stmt               // Note: The implementing parser is responsible for enforcing YINI marker constraints.
+  | bad_member              // BadMember
+  ;
+
+full_line_comment_stmt
+  : FULL_LINE_COMMENT eol?
+  ;
+
+disabled_line_stmt
+  : DISABLED_LINE eol?
   ;
 
 invalid_section_stmt
@@ -87,8 +97,19 @@ meta_stmt
  * sections or members.
  */
 directive
-  : YINI_TOKEN eol
+  : yini_directive
   | INCLUDE_TOKEN string_literal? eol
+  ;
+
+yini_directive
+  : YINI_TOKEN yini_mode_declaration? eol
+  ;
+
+// IMPORTANT: Do not add lexer tokens like STRICT_MODE and LENIENT_MODE,
+// because then strict = true or lenient = false could stop parsing
+// as normal keys.
+yini_mode_declaration
+  : KEY // "strict" and "lenient" (case-insensitive)
   ;
 
 /*
@@ -149,8 +170,7 @@ scalar_value
  * String concatenation.
  *
  * Spec behavior:
- * - The first operand MUST be a string literal.
- * - The + operator is exclusively string concatenation.
+ * - The + operator is exclusively string concatenation when accepted.
  * - YINI does not define numeric addition.
  * - A newline MAY appear after +.
  * - A newline MUST NOT appear before +.
@@ -158,7 +178,9 @@ scalar_value
  *
  * Strict-vs-lenient validation:
  * - Strict mode: every concat_operand MUST be STRING.
- * - Lenient mode: operands after the first MAY be STRING, NUMBER, BOOLEAN, or NULL.
+ * - Lenient mode: at least one operand MUST be STRING.
+ *   Other operands MAY be NUMBER, BOOLEAN, or NULL.
+ * - If a lenient-mode + expression contains no STRING operand, it is invalid.
  */
 // This accepts:
 //
@@ -169,6 +191,10 @@ scalar_value
 // label = "port-" +
 //         5432
 //
+// txt1 = 8080 + " is the port"
+//
+// txt2 = 1 + 2 + "3"
+//
 // And rejects:
 //
 // message = "hello "
@@ -177,12 +203,12 @@ scalar_value
 // because there is an NL token between STRING and PLUS.
 //
 concat_expression
-  // : STRING PLUS concat_operand (PLUS concat_operand)*
-  : STRING concat_tail+
+  // : STRING concat_tail+
+  : concat_operand concat_tail+
   ;
 
 concat_tail
-  : PLUS NL* concat_operand
+  : PLUS NL* concat_operand  // This allows newline after +, but not before +.
   ;
 
 
