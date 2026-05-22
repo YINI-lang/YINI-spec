@@ -745,8 +745,8 @@ Supported markers:
 
 - `^` — Primary and recommended section marker. It is within the 7-bit ASCII range and is the most portable option.
 - `§` — Supported Unicode aesthetic option for authors who prefer it and know their toolchain handles it correctly. It may be less portable because it lies outside the 7-bit ASCII range.
-- `>` — Quote-like ASCII fallback marker. It is portable, but authors should **be aware** that some email clients, forum renderers, and Markdown-like environments may treat it as a quote prefix.
-- `<` — Explicit ASCII fallback marker, intended for environments where the other markers are unsuitable.
+- `>` — (Not recommended) Quote-like ASCII fallback marker. It is portable, but authors should **be aware** that some email clients, forum renderers, and Markdown-like environments may treat it as a quote prefix.
+- `<` — (Not recommended) Explicit ASCII fallback marker, intended for environments where the other markers are unsuitable.
 
 Recommended preference order is: `^` first, then `§`, then `>` with its caveat, and then finally `<`.
 
