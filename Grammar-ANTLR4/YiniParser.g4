@@ -54,7 +54,14 @@ prolog
   ;
 
 terminal_stmt
-  : TERMINAL_TOKEN eol*
+  : TERMINAL_TOKEN terminal_trivia*
+  ;
+
+// Fullfills the spec, that after /END, only whitespace and
+// comments may appear.
+terminal_trivia
+  : eol
+  | full_line_comment_stmt
   ;
 
 /* ------------------------------------------------------------------
@@ -244,7 +251,8 @@ object_members
   ;
 
 object_member
-  : KEY object_member_separator NL* value
+  // : KEY object_member_separator NL* value
+  : KEY object_member_separator value
   ;
 
 object_member_separator

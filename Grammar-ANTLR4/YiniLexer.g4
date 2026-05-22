@@ -190,7 +190,7 @@ fragment LT_MARKERS
 // Shorthand: a single marker followed by a positive integer (1 or larger).
 // Examples: ^7, <12, §100
 fragment SECTION_MARKER_SHORTHAND
-  : (CARET | SS | GT | LT ) [1-9] DIGIT* HSPACE
+  : (CARET | SS | GT | LT ) [1-9] DIGIT*
   ;
 
 fragment SECTION_MARKER_INVALID
@@ -286,7 +286,7 @@ EMPTY_LIST
  * invalid characters). Additionally, this simplifies the lexer rule.
  *
  * Rather than having the lexer reject on any "illegal" character, let the
- * parser catch it so you can give a more precise error message.
+ * implemented parser catch it so you can give a more precise error message.
  *
  * @note If refactoring rule(s), make sure C-strings can include \' and \" as well.
  */
