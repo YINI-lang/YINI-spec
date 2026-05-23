@@ -320,11 +320,14 @@ Implementations MAY use the `.strict.yini` suffix to provide helpful diagnostics
 The `.strict.yini` suffix does not replace `@yini strict`, and it does not replace strict-mode validation. A file using this suffix MUST still satisfy all strict-mode requirements when parsed in strict mode.
 
 ### 2.3. Optional Shebang (`#!`)
-For Unix-based systems, a shebang (#!) is commonly used in script files to specify the interpreter or tool to use. **The shebang is only special on the first line.** In all other positions, `#` begins a normal comment.
 
-**How to Use the Shebang:**
-- The **very first line** of the document may optionally begin with a Unix-style **shebang** (`#!`), which specifies the interpreter for the script.
-- If present, the shebang line will be ignored by the YINI parser.
+A shebang line MAY appear only as the first line of a YINI document.
+
+If present, the shebang marker MUST be the first two non-BOM characters of the document: `#!`. An optional UTF-8 BOM MAY appear before it if the implementation supports BOM handling.
+
+A `#!` sequence that appears after leading whitespace, after a blank line, or anywhere other than the first line MUST NOT be treated as a shebang.
+
+If present, the shebang line is ignored by the YINI parser.
 
 Here's an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
 ```yini
