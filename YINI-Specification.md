@@ -332,7 +332,7 @@ A `#!` sequence that appears after leading whitespace, after a blank line, or an
 If such a misplaced shebang-like sequence appears where `#` would otherwise begin a comment, it MUST be treated as a comment.
 
 - In lenient mode, a misplaced shebang-like sequence in a comment position SHOULD be reported as a warning.
-- In strict mode, a misplaced shebang-like sequence in a comment position MUST be reported as an error.
+- In strict mode, a misplaced shebang-like sequence in a comment position SHOULD be reported as an error.
 
 Example:
 
