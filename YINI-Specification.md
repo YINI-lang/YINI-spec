@@ -331,8 +331,9 @@ A `#!` sequence that appears after leading whitespace, after a blank line, or an
 
 If such a misplaced shebang-like sequence appears where `#` would otherwise begin a comment, it MUST be treated as a comment.
 
-- In lenient mode, a misplaced shebang-like sequence in a comment position SHOULD be reported as a warning.
-- In strict mode, a misplaced shebang-like sequence in a comment position SHOULD be reported as an error.
+- In lenient mode, a misplaced shebang-like sequence SHOULD be reported as a warning.
+- In strict mode, a misplaced shebang-like sequence SHOULD be reported as an error.
+- To avoid repeated diagnostics and unnecessarily complex implementation logic, an implementation SHOULD report only the first misplaced shebang-like sequence per document.
 
 Example:
 
