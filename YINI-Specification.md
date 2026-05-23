@@ -325,9 +325,11 @@ A shebang line MAY appear only as the first line of a YINI document.
 
 If present, the shebang marker MUST be the first two non-BOM characters of the document: `#!`. An optional UTF-8 BOM MAY appear before it if the implementation supports BOM handling.
 
+If present, the shebang line is ignored by the YINI parser.
+
 A `#!` sequence that appears after leading whitespace, after a blank line, or anywhere other than the first line MUST NOT be treated as a shebang.
 
-If present, the shebang line is ignored by the YINI parser.
+If such a misplaced shebang-like sequence appears where `#` would otherwise begin a comment, it MUST be treated as a comment. Implementations SHOULD report a warning diagnostic, because the sequence may indicate that the shebang was placed incorrectly.
 
 Here's an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
 ```yini
