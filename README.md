@@ -89,7 +89,7 @@ You can try YINI with the CLI (`yini-cli`) by parsing a small configuration file
     ```
 
 ### Option 2: Install globally
-1. **Install the CLI globally**  (requres Node.js)
+1. **Install the CLI globally**  (requires Node.js)
     ```bash
     npm install -g yini-cli
     ```
@@ -159,8 +159,9 @@ YINI is designed to prioritize **readability, clarity, and explicit structure**.
 - ✔️ **Flexible booleans** with `true`/`false`, `on`/`off`, `yes`/`no` (all case-insensitive).
 - ✔️ **Common number literals**  — supports decimal, base-prefixed, and exponent notation.
 - ✔️ **Designed to prefer explicit and readable syntax** over compact or implicit forms.
-- ✔️ **Flexible strings** using single or double quotes.
+- ✔️ **Flexible strings** using single quotes, double quotes, Classic escaped strings, and Triple-Quoted Strings.
 - ✔️ **Supports the `null` value type.**
+- ✔️ **Explicit string concatenation** using `+`, with stricter behavior in strict mode.
 
 ---
 
@@ -189,20 +190,20 @@ const config = YINI.parse(`
     ^ Server                        // Definition of section (group) "Server"
       host = 'localhost'
       port = 8080
-      useTLS = OFF                  // "false" and "NO" works too
+      useTLS = OFF                  // "false" and "NO" work too
 
         // Sub-section of "Server"
         ^^ Login
           username = 'user_name'
           password = 'your_password_here'
     
-    /END                            // Optional document terminator.
+    /END  // Optional in lenient mode; required in strict mode.
 `);
 
 console.log(config);
 ```
 
-The resulting value o `config` is:
+The resulting value of `config` is:
 ```js
 // JS object
 {
@@ -260,7 +261,7 @@ server:
 💡 Notes:
 > - Indentation in YINI is purely for human readability.
 > - In YINI, `^` defines section headers.
-> - `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
+- `//` and `#` are used for inline comments. Outside string literals, `#` always begins a comment; no whitespace is required.
 > - `;` can be used for full line comments (`//` and `#` can be used too).
 > - All strings must be enclosed in quotes (`'` or `"`).
 > - Keys and values are separated by (`=`).
@@ -292,10 +293,10 @@ server:
 
 ### Before (TOML)
 ```toml
-[Service]               # Defines a section named Server.
+[Service]               # Defines a section named Service.
 Enabled = true
 
-[Service.Cache]         # Defines Cache, a sub-section of Server.
+[Service.Cache]         # Defines Cache, a sub-section of Service.
 Type = "redis"
 TTL = 3600
 
@@ -338,13 +339,24 @@ code = "dev"
 Section nesting is expressed by repeating the section marker character. For example, `^` indicates a top-level section, `^^` indicates a nested section, and `^^^` indicates a deeper nested section.
 
 ## Comments
-YINI supports **three types of comments**:
+YINI supports several comment styles:
 - **Inline comments:** `//` or `#`
 - **Block comments:**  `/* multi-line */`
 - **Full-line comments:** `;`  
 - A line may also contain only an inline comment.
 
-Note: `#` must be followed by a space or tab to be recognized as a comment (to avoid clashes with hex values like `#FF0033`).
+Note: Outside string literals, `#` always begins a comment. Hexadecimal values use `0x...` or `hex:...`; `#FF0033` is treated as a comment, not a hex value.
+
+```yini
+key1 = "value" // Inline comment.
+key2 = "value" # Also an inline comment.
+# Full-line hash comment.
+; Full-line semicolon comment.
+
+/*
+  Block comment.
+*/
+```
 
 ## Strings
 
@@ -354,7 +366,9 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### String Literals in YINI
-YINI defines four string literal forms: Raw, Classic, and Triple-quoted. These forms differ in how they handle escape sequences, whitespace normalization, and multi-line content.
+YINI defines four main string literal forms: Raw Strings, Classic Strings, Raw Triple-Quoted Strings, and C-Triple-Quoted Strings.  
+
+These forms differ in how they handle escape sequences, whitespace normalization, and multi-line content.
 
 💡 **Note:** YINI primarily follows C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 
 ```yini

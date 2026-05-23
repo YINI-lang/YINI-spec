@@ -21,7 +21,7 @@ Why YINI exists, what problems it aims to solve.
 ---
 
 ### Part B – Design Goals and Philosophy ([Link ⇨](./RATIONALE.md#b-design-goals-and-philosophy))
-Minimalism, human readability, lenient vs. strict, etc.
+Minimalism, human readability, strict and lenient parsing modes, and related design choices.
 
 &nbsp;&nbsp;&nbsp;&nbsp;B.1. What inspired its design?  
 &nbsp;&nbsp;&nbsp;&nbsp;B.2. Design Philosophy  
@@ -31,7 +31,8 @@ Minimalism, human readability, lenient vs. strict, etc.
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.4. Why strict mode requires `/END`  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.5. String Type Motivations  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.6. Section Marker Separators and Repeated Marker Depth  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.7. Mode Declarations
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.7. Mode Declarations  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.8. String Concatenation and Non-Arithmetic `+`
 
 ---
 
@@ -212,7 +213,7 @@ This fits a configuration format very well, and it is the main reason raw string
 
 ##### B.2.5.2. Classic Strings
 
-> Classic strings in YINI are quoted strings prefixed with `C` or `c` that interprets escape sequences such as `\n`, `\t`, and `\"`.
+> Classic strings in YINI are quoted strings prefixed with `C` or `c` that interpret escape sequences such as `\n`, `\t`, and `\"`.
 
 A config format still needs some way to express things like:
 - newline inside a single-line literal
@@ -241,8 +242,6 @@ A config format may sometimes need true multi-line literals, for example:
 
 So, for this reason Triple-quoted strings are supported as well, and they are optional.
 
----
-
 #### B.2.6. Section Marker Separators and Repeated Marker Depth
 
 YINI uses repeated section markers to make section depth visible directly in the text, for example `^`, `^^`, and `^^^`. In earlier drafts, the maximum repeated-marker depth was kept lower to avoid very long marker runs that were hard to read and count.
@@ -262,15 +261,31 @@ YINI supports optional mode declarations in the document marker:
 @yini lenient
 ```
 
+A mode mismatch is diagnostic behavior, not mode selection behavior. In lenient mode, a mismatch is reported as a warning. In strict mode, a mismatch is reported as an error.
+
 These declarations state the document's expected parsing mode. They do not automatically switch the parser into that mode. This is intentional. I prefer that the active parsing mode is controlled explicitly by the parser, tool, API, command-line flag, or host application, rather than silently changing behavior because of something inside the document.
 
-The benefit of writing `@yini strict` is that the document clearly says: "this file is meant to be parsed and validated as strict YINI." That makes the intent visible to humans, and it gives tools a chance to catch accidental mode mistakes. For example, if a strict-mode file is accidentally parsed in lenient mode, the parser can report a mode-mismatch error instead of accepting the file too permissively.
+The benefit of writing `@yini strict` is that the document clearly says: "this file is meant to be parsed and validated as strict YINI." That makes the intent visible to humans, and it gives tools a chance to catch accidental mode mistakes. For example, if a strict-mode file is accidentally parsed in lenient mode, the parser can report a mode-mismatch warning instead of accepting the file silently and too permissively. When a mode declaration conflicts with strict parsing, the mismatch is treated as an error.
 
 This is especially useful for production configuration, CI validation, generated files, shared project files, or any case where correctness and reproducibility matter.
 
 On the other hand, leaving the mode declaration out is also valid. This keeps ordinary YINI files lightweight and simple, especially for hand-edited configuration where lenient mode is expected. A file without `@yini strict` or `@yini lenient` does not make a mode claim; it simply lets the surrounding tool or parser configuration decide.
 
 In short, `@yini strict` is useful when the document itself should clearly declare its intended validation level. Leaving it out is useful when the file should stay minimal and rely on the parser or tool configuration instead.
+
+---
+
+#### B.2.8. String Concatenation and Non-Arithmetic `+`
+
+YINI defines `+` only as an explicit string-concatenation operator. It is not a numeric addition operator.
+
+This avoids introducing expression evaluation, arithmetic precedence, or mixed-type calculation rules into the configuration language. Configuration files should remain predictable data declarations, not small programming languages.
+
+In strict mode, all concatenation operands must be string literals. This keeps strict parsing simple, explicit, and easy to validate.
+
+In lenient mode, a `+` expression may be accepted as string concatenation when at least one operand is a string literal. Other scalar operands, such as numbers, booleans, and null, are converted to their canonical string representation before concatenation. If no operand is a string literal, the expression is invalid because YINI does not define numeric addition.
+
+Lists and inline objects are intentionally excluded from concatenation to avoid ambiguous or implementation-specific stringification rules.
 
 ---
 

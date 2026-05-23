@@ -119,7 +119,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;9.2. Object Member Separators  
 
 **10. List Literals** ([Link ⇨](./YINI-Specification.md#10-list-literals))  
-&nbsp;&nbsp;&nbsp;&nbsp;10.1. Bracketed Lists (using `=`)  
+&nbsp;&nbsp;&nbsp;&nbsp;10.1. Bracketed Lists (`[...]`)  
 
 **11. Advanced Constructs** ([Link ⇨](./YINI-Specification.md#11-advanced-constructs))  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Future / Reserved Features _(For Future Use)_  
@@ -131,7 +131,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 **12. Validation Rules** ([Link ⇨](./YINI-Specification.md#12-validation-rules))  
 &nbsp;&nbsp;&nbsp;&nbsp;12.1. Reserved Syntax  
 &nbsp;&nbsp;&nbsp;&nbsp;12.2. Well-Formedness Requirements  
-&nbsp;&nbsp;&nbsp;&nbsp;12.3. Lenient vs. Strict Modes _(Optional Feature)_  
+&nbsp;&nbsp;&nbsp;&nbsp;12.3. Lenient vs. Strict Modes  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.3.1. Table: Lenient vs. Strict Mode
 
 **13. Implementation Notes** ([Link ⇨](./YINI-Specification.md#13-implementation-notes))  
@@ -333,6 +333,7 @@ Here's an example of a YINI document with a shebang that could be used in a Unix
 ^ Config
 key = "value"
 ```
+
 ### 2.4. YINI Marker (`@yini`)
 The optional YINI marker (`@yini`) MAY be used and is RECOMMENDED for clarity and identification. If present, the YINI marker MUST appear before any meaningful YINI content. It MAY be preceded only by a shebang line, comments, or whitespace. (If both a shebang and a YINI marker are present, the shebang MUST appear first.)
 
@@ -382,7 +383,7 @@ If the declared mode does not match the active parser mode, the parser MUST emit
 | Declaration | Parsed in lenient mode | Parsed in strict mode |
 |---|---:|---:|
 | `@yini strict` | ❌ Error | ✅ Valid mode match |
-| `@yini lenient` | ✅ Valid mode match | ❌ Error |
+| `@yini lenient` | ✅ Valid mode match | ⚠️ Warning |
 | `@yini` | ✅ Allowed | ✅ Allowed |
 | No marker | ✅ Allowed | ✅ Allowed |
 
@@ -1664,7 +1665,7 @@ At root and section level, YINI uses `=` for ordinary members:
 name = "Kim"
 ```
 
-Inside inline objects, `:` is used since the object itself is already the value of a surrounding member. The colon improves to distinguish object member definitions from ordinary root-level or section-level assignments.
+Inside inline objects, `:` is used since the object itself is already the value of a surrounding member. The colon helps distinguish object member definitions from ordinary root-level or section-level assignments.
 
 In lenient mode only, implementations MAY also accept `=` as an object member separator:
 ```yini
@@ -1716,7 +1717,7 @@ Lists in YINI correspond to *arrays* in JSON and many programming languages (e.g
 
 YINI defines lists using bracketed list notation with `=` and square brackets `[ ]`, similar to JSON.
 
-### 10.1. Bracketed Lists (using `=`)
+### 10.1. Bracketed Lists (`[...]`)
 A list is assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values. The opening `[` MUST appear on the same logical line as `=`.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
@@ -1921,7 +1922,7 @@ A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and
     /END
     ```
 
-### 12.3. Lenient vs. Strict Modes _(Optional Feature)_
+### 12.3. Lenient vs. Strict Modes
 
 Non-strict mode (lenient mode) is the default mode of operation. Parsers SHOULD operate in this mode by default unless explicitly configured to use strict mode.
 
@@ -1955,7 +1956,7 @@ Some YINI parsers may support multiple **validation modes**:
     * The **second half** is invalid because it lacks the required single level-1 section header (for example, `^ Title`).
   - Empty sections (with no members) are still allowed.
   - Inside inline objects, object members MUST use `:`. Using `=` inside an inline object MUST result in an error.
-  - Files intended for strict-mode parsing MAY use the `.strict.yini` filename suffix as described in Section 2.2.1. This suffix is only a naming convention and does not replace `@yini strict` or strict-mode validation.
+  - Files intended for strict-mode parsing MAY use the `.strict.yini` filename suffix as described in Section 2.2.1. This suffix is only a naming convention and does not select strict mode or replace strict-mode validation. An explicit `@yini strict` declaration MAY still be used when the document should declare its expected mode.
   - In strict mode, an empty document is invalid. For this purpose, a document containing only whitespace, comments, and/or disabled lines (`--`) is considered empty. Parsing such a document MUST result in an error.
 
 Implementations SHOULD clearly document the validation mode in use and describe which rules are fully enforced under strict parsing.
@@ -3222,7 +3223,7 @@ Copyright 2024-2026 Gothenburg, Marko K. Seppänen. (Sweden via
 Finland).
 
 ### 16.2. Acknowledgments
-_YINI would not exist in its current form and shape, what it is today, without the many insights, challenges, and constructive feedback shared by the community._
+_YINI would not exist in its current form without the many insights, challenges, and constructive feedback contributed by the community._
 
 For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
@@ -3247,7 +3248,7 @@ Notes:
 
 v1.0.0 RC 5 + UPDATES, 2026-xx-xx
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
-- **Changed:** Increased the maximum repeated section marker depth from 6 to 9, due to section marker separators (`_`) may now be used to make headers easier to read.. Repeated marker headers may now express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
+- **Changed:** Increased the maximum repeated section marker depth from 6 to 9 because section marker separators (`_`) may now be used to make headers easier to read. Repeated marker headers may now express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
 - **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
 - **Removed:** Support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
 - **Removed:** Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
@@ -3260,7 +3261,7 @@ v1.0.0 RC 5 + UPDATES, 2026-xx-xx
   * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
 - **Added:** For readability, an underscore character `_` may appear after a base prefix or between successive digits.
 - **Added:** For readability, added support for section marker separators `_`.
-- **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the expected parser mode but MUST NOT automatically switch modes; if the declared mode does not match the active parser mode, the parser MUST emit a mode mismatch error.
+- **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. A mismatch MUST produce a warning in lenient mode and an error in strict mode.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 - **Changed:** Re-added `>` as a supported ASCII section marker based on feedback. It is now documented as a quote-like ASCII fallback marker, with a portability caveat because some email clients, forum renderers, and Markdown-like environments may treat it as a quote prefix.
 
@@ -3296,7 +3297,7 @@ Reserved for future inclusion of the formal grammar.
 ---
 
 ### 16.6. Appendix C – Common Mistakes and Pitfalls
-Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats like YAML, JSON, or classic INI. This table clarifies syntax edge cases and help avoid subtle bugs.
+Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats such as YAML, JSON, or classic INI. This table clarifies syntax edge cases and helps avoid subtle bugs.
 
 #### Trailing commas in list and objects
 Trailing commas after values or members inside lists or objects never produce `Null` values. Strict mode disallows a comma with no element after it altogether.

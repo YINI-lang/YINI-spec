@@ -22,13 +22,13 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid, whether mixed with `:` or used consistently.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
-- **Changed:** Updated string concatenation rules. Concatenation expressions MUST begin with a string literal, and the `+` operator is defined only as a string-concatenation operator, not numeric addition. A line break MAY occur after the `+` operator, allowing long concatenation expressions to span multiple source lines. A line break before the `+` operator remains invalid. The result of concatenation is always a single string value.
+- **Changed:** Updated string concatenation rules. The `+` operator is defined only as a string-concatenation operator, not numeric addition. A line break MAY occur after the `+` operator, allowing long concatenation expressions to span multiple source lines. A line break before the `+` operator remains invalid. The result of concatenation is always a single string value.
   * In strict mode, all concatenation operands MUST be string literals.
-  * In lenient mode, operands after the first string literal MAY be string literals, number literals, boolean literals, or null literals.
+  * In lenient mode, a `+` expression MAY be treated as string concatenation if at least one operand is a string literal. Other permitted scalar operands are number literals, boolean literals, and null literals.
+  * If a lenient-mode `+` expression contains no string literal, it MUST be rejected because YINI does not define numeric addition.
   * Lists and inline objects MUST NOT be used as concatenation operands.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 - **Added:** For readability, an underscore character `_` may appear after a base prefix or between successive digits in number literals. For example:
-
   ```yini
   2_468
   0x_ab_cd_12_34_ef
@@ -41,13 +41,14 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
   ^^^_^^^ Section      // depth 6
   ^^^_^^^_^^^ Section  // depth 9
   ```
+- **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. A mismatch MUST produce a warning in lenient mode and an error in strict mode.
 - **Clarified:** Missing values versus trailing commas:
   * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
   * Missing values inside lists or objects are not treated as `Null`.
   * A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
 - **Clarified:** Duplicate key and duplicate section handling:
   * In lenient mode, the first definition wins.
-  * Later duplicate keys or duplicate sections at the same level MUST be ignored and SHOULD produce a warning diagnostic.
+  * Later duplicate keys or duplicate sections at the same level MUST be ignored and MUST produce a warning diagnostic.
   * In strict mode, duplicate keys and duplicate sections at the same level MUST result in an error.
   * Implementations MUST NOT silently overwrite, merge, or extend earlier definitions.
 - **Clarified:** UTF-8 encoding and BOM handling. YINI documents MUST be encoded as UTF-8. A UTF-8 BOM SHOULD NOT be used, but implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
@@ -56,6 +57,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Clarified:** `/END` post-content behavior. After the document terminator, only whitespace and comments are permitted; any other content MUST result in an error.
 - **Improved:** Revised wording throughout the specification to better align with the YINI design goals of clarity, readability, explicit structure, predictability, and deterministic parsing.
 - **Fixed:** Various typos, formatting issues, and style inconsistencies.
+- **Changed:** Re-added `>` as a supported ASCII section marker. It is documented as a quote-like fallback marker with a portability caveat for contexts such as Markdown, email, and forum renderers.
 
 ## Package 2026 Apr (spec: v1.0.0-rc.5)
 - **Changed:** In the Spec, the document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
