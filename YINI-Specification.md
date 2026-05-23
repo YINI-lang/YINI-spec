@@ -323,21 +323,27 @@ The `.strict.yini` suffix does not replace `@yini strict`, and it does not repla
 
 A shebang line MAY appear only as the first line of a YINI document.
 
-If present, the shebang marker MUST be the first two non-BOM characters of the document: `#!`. An optional UTF-8 BOM MAY appear before it if the implementation supports BOM handling.
+If a shebang is present, the shebang marker MUST be the first two non-BOM characters of the document: `#!`. An optional UTF-8 BOM MAY appear before it if the implementation supports BOM handling.
 
-If present, the shebang line is ignored by the YINI parser.
+The shebang line is ignored by the YINI parser.
 
 A `#!` sequence that appears after leading whitespace, after a blank line, or anywhere other than the first line MUST NOT be treated as a shebang.
 
-If such a misplaced shebang-like sequence appears where `#` would otherwise begin a comment, it MUST be treated as a comment. Implementations SHOULD report a warning diagnostic, because the sequence may indicate that the shebang was placed incorrectly.
+If such a misplaced shebang-like sequence appears where `#` would otherwise begin a comment, it MUST be treated as a comment.
 
-Here's an example of a YINI document with a shebang that could be used in a Unix-based scripting environment:
+- In lenient mode, a misplaced shebang-like sequence in a comment position SHOULD be reported as a warning.
+- In strict mode, a misplaced shebang-like sequence in a comment position MUST be reported as an error.
+
+Example:
+
 ```yini
 #!/usr/bin/env yini
 
 ^ Config
 key = "value"
 ```
+
+This is not a valid shebang, ` #!/usr/bin/env yini` due to it has leading whitespace. It is treated as a comment in lenient mode, but should produce a warning in lenient mode, and an error in strict mode.
 
 ### 2.4. YINI Marker (`@yini`)
 The optional YINI marker (`@yini`) MAY be used and is RECOMMENDED for clarity and identification. If present, the YINI marker MUST appear before any meaningful YINI content. It MAY be preceded only by a shebang line, comments, or whitespace. (If both a shebang and a YINI marker are present, the shebang MUST appear first.)
