@@ -19,7 +19,7 @@
   the responsibility of the implementing parser to fully enforce all rules of
   the YINI specification.
 
-  Feedback, bug reports and improvements are welcomed here:
+  Feedback, bug reports, and improvements are welcome here:
 
   GitHub:   https://github.com/YINI-lang
   Homepage: http://yini-lang.org

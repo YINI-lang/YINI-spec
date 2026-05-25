@@ -11,7 +11,7 @@
   This PARSER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Version:
-  1.2.0-rc.2xx + UPDATES/WIP - >2026 Apr (v1.0.0-rc.5 YINI Spec Package).
+  1.2.0-rc.2xx + UPDATES/WIP - >2026 May (v1.0.0-rc.5 YINI Spec Package).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -19,7 +19,7 @@
   the responsibility of the implementing parser to fully enforce all rules of
   the YINI specification.
 
-  Feedback, bug reports and improvements are welcomed here:
+  Feedback, bug reports, and improvements are welcome here:
 
   GitHub:   https://github.com/YINI-lang
   Homepage: http://yini-lang.org
@@ -57,7 +57,7 @@ terminal_stmt
   : TERMINAL_TOKEN terminal_trivia*
   ;
 
-// Fullfills the spec, that after /END, only whitespace and
+// Fulfills the spec rule that after /END, only whitespace and
 // comments may appear.
 terminal_trivia
   : eol
@@ -151,8 +151,7 @@ assignment
  * the previous line ends with PLUS.
  */
 member
-  // : KEY EQ value? // Empty value is treated as NULL.
-  : KEY EQ value? // Empty value is treated as NULL.  
+  : KEY EQ value? // Missing value is validated by mode in host code.
   ;
 
 /* ------------------------------------------------------------------
@@ -179,15 +178,15 @@ scalar_value
  * Spec behavior:
  * - The + operator is exclusively string concatenation when accepted.
  * - YINI does not define numeric addition.
+ * - A concatenation expression MUST begin with a string literal.
  * - A newline MAY appear after +.
  * - A newline MUST NOT appear before +.
  * - Lists and inline objects are never valid operands.
  *
  * Strict-vs-lenient validation:
- * - Strict mode: every concat_operand MUST be STRING.
- * - Lenient mode: at least one operand MUST be STRING.
- *   Other operands MAY be NUMBER, BOOLEAN, or NULL.
- * - If a lenient-mode + expression contains no STRING operand, it is invalid.
+ * - Strict mode: every concat operand MUST be STRING.
+ * - Lenient mode: the first operand MUST be STRING.
+ *   Later operands MAY be STRING, NUMBER, BOOLEAN, or NULL.
  */
 // This accepts:
 //
@@ -198,26 +197,22 @@ scalar_value
 // label = "port-" +
 //         5432
 //
-// txt1 = 8080 + " is the port"
-//
-// txt2 = 1 + 2 + "3"
-//
 // And rejects:
 //
 // message = "hello "
 //         + "world"
 //
-// because there is an NL token between STRING and PLUS.
+// txt1 = 8080 + " is the port"
+// txt2 = 1 + 2 + "3"
 //
+// because concatenation must begin with a string literal.
 concat_expression
-  // : STRING concat_tail+
-  : concat_operand concat_tail+
+  : STRING concat_tail+
   ;
 
 concat_tail
-  : PLUS NL* concat_operand  // This allows newline after +, but not before +.
+  : PLUS NL* concat_operand
   ;
-
 
 concat_operand
   : STRING
@@ -251,7 +246,6 @@ object_members
   ;
 
 object_member
-  // : KEY object_member_separator NL* value
   : KEY object_member_separator value
   ;
 
@@ -284,16 +278,6 @@ number_literal
 null_literal
   : NULL // NOTE: NULL is case-insensitive.
   ;
-
-// Below is OLD: Can be deleted
-// string_literal
-//   : STRING string_concat*
-//   ;
-
-// Below is OLD: Can be deleted
-// string_concat
-//   : NL* PLUS NL* STRING
-//   ;
 
 boolean_literal
   : BOOLEAN_TRUE

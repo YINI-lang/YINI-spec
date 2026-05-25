@@ -281,9 +281,28 @@ YINI defines `+` only as an explicit string-concatenation operator. It is not a 
 
 This avoids introducing expression evaluation, arithmetic precedence, or mixed-type calculation rules into the configuration language. Configuration files should remain predictable data declarations, not small programming languages.
 
+In both strict and lenient mode, a concatenation expression must begin with a string literal. This keeps the syntax easy to recognize and avoids ambiguity between string concatenation and numeric-looking expressions.
+
 In strict mode, all concatenation operands must be string literals. This keeps strict parsing simple, explicit, and easy to validate.
 
-In lenient mode, a `+` expression may be accepted as string concatenation when at least one operand is a string literal. Other scalar operands, such as numbers, booleans, and null, are converted to their canonical string representation before concatenation. If no operand is a string literal, the expression is invalid because YINI does not define numeric addition.
+In lenient mode, additional operands after the first string literal may be string literals, number literals, boolean literals, or null literals. Non-string scalar operands are converted to their parsed canonical string representation before concatenation.
+
+For example, this is valid in lenient mode:
+
+```yini
+value = "1" + 2 + 3
+```
+
+which produces: `"123"`
+
+However, this is invalid:
+```yini
+value = 1 + 2 + "3"
+```
+
+It is evaluated as neither `"123"` nor `"33"`. It is invalid because the expression does not begin with a string literal, and YINI does not define numeric addition.
+
+This rule avoids ambiguity between numeric addition-like interpretation (`"33"`) and string-concatenation interpretation (`"123"`). It also fits YINI's philosophy: predictable, readable, and not too clever.
 
 Lists and inline objects are intentionally excluded from concatenation to avoid ambiguous or implementation-specific stringification rules.
 

@@ -10,7 +10,7 @@
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
 **Package Version:** 1.0.0-RC.5 + UPDATES/WIP ([Version Mapping Table](./README.md#version-mapping-table))  
-**Date:** >2026-04  
+**Date:** >2026-05  
 **Status:** Release Candidate  
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
@@ -20,13 +20,13 @@
 ---
 
 ## 🙋‍♀️ A Quick YINI Example
-Here is a small example of YINI syntax:
+Here is a small lenient-mode (default) example of YINI syntax:
 ```yini
 ^ App
 name    = "Demo App"
 version = "1.0.0"
 list    = ["web", "api"]
-isDebug = On  // true/yes works too
+isDebug = On  // true/yes also mean true.
 
     ^^ Server
     host   = "localhost"
@@ -161,7 +161,8 @@ YINI is designed to prioritize **readability, clarity, and explicit structure**.
 - ✔️ **Designed to prefer explicit and readable syntax** over compact or implicit forms.
 - ✔️ **Flexible strings** using single quotes, double quotes, Classic escaped strings, and Triple-Quoted Strings.
 - ✔️ **Supports the `null` value type.**
-- ✔️ **Explicit string concatenation** using `+`, with stricter behavior in strict mode.
+- ✔️ **Explicit string concatenation** using `+`; concatenation expressions must begin with a string literal.
+- ✔️ **Optional mode declarations** with `@yini strict` and `@yini lenient`.
 
 ---
 
@@ -261,12 +262,12 @@ server:
 💡 Notes:
 > - Indentation in YINI is purely for human readability.
 > - In YINI, `^` defines section headers.
-- `//` and `#` are used for inline comments. Outside string literals, `#` always begins a comment; no whitespace is required.
-> - `;` can be used for full line comments (`//` and `#` can be used too).
+> - `//` and `#` are used for inline comments. Outside string literals, `#` always begins a comment; no whitespace is required.
+> - `;` can be used for full-line comments (`//` and `#` can be used too).
 > - All strings must be enclosed in quotes (`'` or `"`).
-> - Keys and values are separated by (`=`).
-> - Typed scalar and composite values with explicit syntax.
-> - In YINI, `:` is not an assignment operator; use `=` for both single values and lists.
+> - Keys and values are separated by `=`.
+> - Typed scalar and compound values use explicit syntax.
+> - In YINI, `:` is not an assignment operator; use `=` for root-level and section-level members.
 
 ### With Alternative Indentation (YINI)
 ```yini
@@ -310,11 +311,11 @@ code = "dev"
 
 ### After (YINI)
 ```yini
-^ Service                   // Defines a section named Server.
+^ Service                   // Defines a section named Service.
 Enabled = true
 
     ^^ Cache
-    Type = "redis"          // Defines Cache, a sub-section of Server.
+    Type = "redis"          // Defines Cache, a sub-section of Service.
     TTL = 3600
 
         ^^^ Options         // Defines Options, a sub-section of Cache.
@@ -368,7 +369,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 ### String Literals in YINI
 YINI defines four main string literal forms: Raw Strings, Classic Strings, Raw Triple-Quoted Strings, and C-Triple-Quoted Strings.  
 
-These forms differ in how they handle escape sequences, whitespace normalization, and multi-line content.
+These forms differ in how they handle escape sequences and multi-line content.
 
 💡 **Note:** YINI primarily follows C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 
 ```yini
@@ -389,6 +390,19 @@ string literal — characters
 are preserved exactly, without escapes.
 """
 ```
+
+---
+
+### String Concatenation
+
+YINI supports explicit string concatenation with `+`. A concatenation expression must begin with a string literal.
+
+```yini
+label = "port-" + 5432   // Valid in lenient mode: "port-5432"
+bad   = 5432 + "-port"   // Invalid: must begin with a string literal.
+```
+
+In strict mode, all concatenation operands must be string literals.
 
 ---
 

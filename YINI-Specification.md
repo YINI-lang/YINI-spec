@@ -1199,7 +1199,7 @@ For readability, whitespace around `+` is recommended, but not required.
 
 **In strict mode**, all concatenation operands MUST be string literals. This keeps concatenation clear, deterministic, human-readable, and intentionally limited. This includes Raw/R-prefixed, Classic/C-prefixed, or any Triple-Quoted strings.
 
-**In lenient mode**, if a `+` expression contains at least one string literal, the entire expression is treated as string concatenation. Numeric addition is not performed. Non-string scalar operands MUST first be converted to their parsed scalar canonical string representation, and the resulting string values are then concatenated from left to right.
+**In lenient mode**, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not performed. Non-string scalar operands MUST first be converted to their parsed scalar canonical string representation, and the resulting string values are then concatenated from left to right.
 
 This means the following operands MAY be used in lenient mode:
 - String literals.
@@ -1224,12 +1224,6 @@ longText = "This is a long string that is split " +
 str1 = "Port: " + 8080
 // "Port: 8080"
 
-str2 = 8080 + " is the port"
-// "8080 is the port"
-
-str3 = 1 + 2 + "3"  // NOTE: Not numeric addition first.
-// "123"
-
 str4 = "1" + 2 + 3
 // "123"
 
@@ -1239,7 +1233,9 @@ x = "a" + +42
 
 **Invalid in both modes:**
 ```yini
-invalid = 1 + 2 + 3  // Invalid: YINI does not define numeric addition.
+invalid1 = 1 + 2 + 3          // Invalid: YINI does not define numeric addition.
+invalid2 = 8080 + " is port"  // Invalid: concatenation must begin with a string literal.
+invalid3 = 1 + 2 + "3"        // Invalid: concatenation must begin with a string literal.
 ```
 
 #### Multi-line Concatenation
@@ -2007,7 +2003,7 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | Missing (empty) value (only in section/root-level)| ✅ | ❌ | Will result in a `Null` value in lenient mode  |
 | Empty value before comma | ❌ | ❌ | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Lenient implementations SHOULD report a warning or error; strict implementations MUST report an error. |
 | Invalid escape sequences | ❌ | ❌ | Invalid escape sequences MUST result in an error unless an implementation explicitly documents a non-standard extension. |
-| String concatenation with scalar operands | ✅ | ❌ | In lenient mode, a `+` expression is treated as string concatenation if at least one operand is a string literal. Other permitted operands are number, boolean, and null literals. |
+| String concatenation with scalar operands | ✅ | ❌ | In lenient mode, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. |
 | Multi-line concatenation after `+` | ✅ | ✅ | A line break MAY occur after `+`, but MUST NOT occur before `+`. |
 
 ⚠️ Strict mode enforces a stricter contract suitable for automated validation and reproducible builds. Lenient mode favors user-friendliness and flexibility for human editing.
@@ -2176,32 +2172,37 @@ Lists and inline objects MUST NOT be used as concatenation operands.
 
 In strict mode, validation is simple: every operand in a concatenation expression MUST be a string literal. If any operand is a number, boolean, null, list, or inline object, the implementation MUST reject the expression.
 
-In lenient mode, the implementation MAY accept a concatenation expression if at least one operand is a string literal. In that case, the whole `+` expression MUST be treated as string concatenation. This means an expression such as:
+In lenient mode, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. The whole `+` expression MUST be treated as string concatenation.
 
 ```yini
-value = 1 + 2 + "3"
+value = 1 + 2 + "3"  // Invalid!
 ```
 
-is evaluated as:
+This expression is evaluated as neither `"123"` nor `"33"`. It MUST result in an error because the first operand is not a string literal.
+
+The correct way to do this:
 ```yini
-value = "123"
+value1 = "1" + 2 + 3     // Valid, result: "123"
+value2 = "1" + 2 + "3"   // Valid, result: "123"
+value3 = "" + 1 + 2 + 3  // Valid, result: "123"
 ```
 
 The result of concatenation is always a single string value.
 
 It MUST NOT be evaluated as numeric addition followed by string conversion.
 
-If a lenient-mode + expression contains no string literal, the expression MUST be rejected. For example:
+If a lenient-mode `+` expression does not begin with a string literal, the expression MUST be rejected. For example:
 
 ```yini
-invalid = 100 + 99  // Invalid: YINI does not define numeric addition.
+invalid1 = 100 + 99      // Invalid: YINI does not define numeric addition.
+invalid2 = 1 + 2 + "3"   // Invalid: concatenation must begin with a string literal.
 ```
 
-is invalid because YINI does not define numeric addition and the expression contains no string literal.
+The first expression is invalid because YINI does not define numeric addition. The second expression is invalid because a concatenation expression must begin with a string literal.
 
 Implementations SHOULD report invalid concatenation with diagnostics that identify the reason, such as:
 - Non-string operand in strict mode.
-- No string literal in a lenient-mode `+` expression.
+- Concatenation expression does not begin with a string literal.
 - List or inline object used as a concatenation operand.
 - Line break before the + operator.
 
@@ -3267,7 +3268,7 @@ v1.0.0 RC 5 + UPDATES, 2026-xx-xx
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: "value"`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid, whether mixed with `:` or used consistently.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
-- **Changed:** Updated string concatenation rules. In strict mode, all concatenation operands MUST be string literals. In lenient mode, a `+` expression MAY be treated as string concatenation if at least one operand is a string literal; non-string scalar operands MAY be number literals, boolean literals, or null literals. Numeric addition is not defined. A concatenation expression MAY span multiple source lines only when the line break occurs after the `+` operator; a line break before `+` is invalid. Lists and inline objects MUST NOT be used as concatenation operands.
+- **Changed:** Updated string concatenation rules. In both modes, a concatenation expression MUST begin with a string literal. In strict mode, all concatenation operands MUST be string literals. In lenient mode, additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not defined. Non-string scalar operands are converted to their parsed canonical string representation before concatenation. A concatenation expression MAY span multiple source lines only when the line break occurs after the `+` operator; a line break before `+` is invalid. Lists and inline objects MUST NOT be used as concatenation operands.
 - **Clarified:** Missing values vs. trailing commas:
   * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
   * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
@@ -3328,6 +3329,7 @@ Trailing commas after values or members inside lists or objects never produce `N
 | Inline object member separator | `obj = { a: 1, b: 2 }` | `obj = { a = 1, b = 2 }` | `:` is the canonical separator inside inline objects. In lenient mode, `=` MAY be accepted, but formatters should normalize to `:`. In strict mode, `=` inside inline objects is invalid. |
 | Mixed object separators | `obj = { a: 1, b: 2 }` | `obj = { a: 1, b = 2 }` | Mixing `:` and `=` inside the same inline object is discouraged in lenient mode and invalid in strict mode. |
 | Quote characters | `text = "hello"` or `text = 'hello'` | Using curly quotes as delimiters: `text = “hello”` | String delimiters MUST be plain ASCII quotes: `'` U+0027 or `"` U+0022. Curly quotes may appear inside strings as ordinary text, but they do not delimit strings. |
+| String concatenation start | `text = "value: " + 123` | `text = 123 + " value"` | A concatenation expression MUST begin with a string literal. In lenient mode, later scalar operands may be numbers, booleans, or null. |
 | Multi-line concatenation | `text = "hello " +`<br>`       "world"` | Placing `+` at the start of the next line | A line break is allowed after `+`, but not before `+`. |
 
 ---
