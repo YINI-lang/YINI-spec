@@ -390,12 +390,12 @@ The marker and mode declaration are case-insensitive. Therefore, `@yini strict`,
 
 A mode declaration states which parsing mode the document expects. It does not automatically switch the parser into that mode. This is intentional: the parser, tool, API, command-line option, or host application configuration remains responsible for selecting the active parsing mode.
 
-If the declared mode does not match the active parser mode, the parser MUST emit a **mode mismatch error**, like "Document declares strict mode but parser is running in lenient mode." or "Document declares lenient mode but parser is running in strict mode.".
+If the declared mode does not match the active parser mode, the parser MUST emit a **mode mismatch error**. For example, `@yini strict` is invalid when parsed in lenient mode, and `@yini lenient` is invalid when parsed in strict mode.
 
 | Declaration | Parsed in lenient mode | Parsed in strict mode |
 |---|---:|---:|
 | `@yini strict` | ❌ Error | ✅ Valid mode match |
-| `@yini lenient` | ✅ Valid mode match | ⚠️ Warning |
+| `@yini lenient` | ✅ Valid mode match | ❌ Error |
 | `@yini` | ✅ Allowed | ✅ Allowed |
 | No marker | ✅ Allowed | ✅ Allowed |
 
@@ -1957,7 +1957,7 @@ Some YINI parsers may support multiple **validation modes**:
   - Empty values are not allowed; they MUST always be written explicitly as `null`, `Null`, or `NULL`.
   - Stray trailing commas after the last value/member inside lists and objects are not permitted.
   - Strict mode requires exactly one explicit top-level section. Any additional sections MUST appear only as subsections nested within that section. Top-level orphan members are not allowed in strict mode. Otherwise, an error MUST be reported.
-  - If `@yini strict` is present, the active parser mode MUST already be strict. If the active mode is not strict, the parser MUST emit a mode-mismatch error. This declaration does not replace strict-mode validation, and strict mode MAY still be used when the declaration is absent.
+  - If a mode declaration is present, the active parser mode MUST match the declared mode. If `@yini strict` is parsed in lenient mode, or `@yini lenient` is parsed in strict mode, the parser MUST emit a mode-mismatch error. Mode declarations do not replace strict-mode validation, and strict mode MAY still be used when the declaration is absent.
   - The document terminator (`/END`) MUST be present in a YINI document in strict mode. It marks the end of the document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
     **Note:** Because strict mode also requires the document terminator `/END`, the end of the document is made explicit rather than being inferred from EOF alone. This improves deterministic parsing, reduces ambiguity about incomplete input, and makes **truncated, partially copied, or prematurely cut-off documents** easier to detect. Together with the requirement for exactly one explicit top-level section, this provides increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
     * The **first half** is invalid because it is missing the required `/END` marker.
@@ -3274,7 +3274,7 @@ v1.0.0 RC 5 + UPDATES, 2026-xx-xx
   * Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
 - **Added:** For readability, an underscore character `_` may appear after a base prefix or between successive digits.
 - **Added:** For readability, added support for section marker separators `_`.
-- **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. A mismatch MUST produce a warning in lenient mode and an error in strict mode.
+- **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. A mismatch MUST produce a mode-mismatch error.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 - **Changed:** Re-added `>` as a supported ASCII section marker based on feedback. It is now documented as a quote-like ASCII fallback marker, with a portability caveat because some email clients, forum renderers, and Markdown-like environments may treat it as a quote prefix.
 
