@@ -11,7 +11,7 @@
   This PARSER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Version:
-  1.2.0-rc.2xx + UPDATES/WIP - >2026 May (v1.0.0-rc.5 YINI Spec Package).
+  1.3.0-rc.1 - 2026 May (v1.0.0-rc.6 YINI Spec Package).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -84,7 +84,8 @@ full_line_comment_stmt
   ;
 
 disabled_line_stmt
-  : DISABLED_LINE eol?
+  // : DISABLED_LINE eol?
+  : DISABLED_LINE
   ;
 
 invalid_section_stmt
@@ -116,7 +117,7 @@ yini_directive
 // because then strict = true or lenient = false could stop parsing
 // as normal keys.
 yini_mode_declaration
-  : KEY // "strict" and "lenient" (case-insensitive)
+  : KEY // Host validation checks for "strict" or "lenient" case-insensitively.
   ;
 
 /*

@@ -3,8 +3,8 @@ _YINI: A clear configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.5 + UPDATES/WIP
-**Date:** >2026-05
+**Version:** 1.0.0-RC.6
+**Date:** 2026-05-27
 
 > **Status:** This is a release-candidate draft. Minor clarifications and corrections may still be made before YINI 1.0.0.
 
@@ -351,7 +351,7 @@ Example:
 key = "value"
 ```
 
-This is not a valid shebang, ` #!/usr/bin/env yini` due to it has leading whitespace. It is treated as a comment in lenient mode, but should produce a warning in lenient mode, and an error in strict mode.
+This is not a valid shebang: ` #!/usr/bin/env yini`, due to it has leading whitespace. It is treated as a comment in lenient mode, but should produce a warning in lenient mode, and an error in strict mode.
 
 ### 2.4. YINI Marker (`@yini`)
 The optional YINI marker (`@yini`) MAY be used and is RECOMMENDED for clarity and identification. If present, the YINI marker MUST appear before any meaningful YINI content. It MAY be preceded only by a shebang line, comments, or whitespace. (If both a shebang and a YINI marker are present, the shebang MUST appear first.)
@@ -1013,7 +1013,7 @@ String literals in YINI **MUST be enclosed** in either single quotes `'` or doub
 - Single quote: `'` U+0027 APOSTROPHE
 - Double quote: `"` U+0022 QUOTATION MARK
 
-Typographic or curly quotation marks such as `‘`, `'`, `“`, and `”` are ordinary Unicode text characters. They do not begin or end YINI string literals.
+Typographic or curly quotation marks such as `‘`, `’`, `“`, and `”` are ordinary Unicode text characters. They do not begin or end YINI string literals.
 
 **Note:** Text MUST be enclosed in quotation marks to be parsed as a string literal.
 
@@ -1082,7 +1082,7 @@ meaning = "It comes from Greek akmḗ (ἀκμή), meaning “the highest point�
 In the above example, the outer `"` characters are plain ASCII double quotes and delimit the string. The inner `“` and `”` characters are typographic quotation marks and are part of the string value.
 
 #### Raw String Prefix
-Any string enclosed in quotes (single `'` or double `"` ) can be prefixed with either `R` or `r` explicitly to denote it as a Raw-String, but Prefixing Raw strings is not required as strings are Raw as standard.
+Any string enclosed in single quotes (`'`) or double quotes (`"`) MAY be prefixed with `R` or `r` to explicitly mark it as a Raw String. This prefix is optional because strings are raw by default.
 
 ### 6.2. Classic Strings (C-Strings)
 A Classic String is a string literal prefixed with `C` or `c`. Classic Strings interpret escape sequences before the final string value is produced. The parsed value is a normal string; the `C` prefix is not preserved in the resulting data model.
@@ -1242,8 +1242,6 @@ invalid3 = 1 + 2 + "3"        // Invalid: concatenation must begin with a string
 
 **Rationale:** Requiring concatenation to begin with a string literal avoids ambiguity between numeric-looking expressions and string concatenation. For example, `1 + 2 + "3"` could otherwise be misread as either `"123"` or `"33"`. YINI rejects such expressions instead, because `+` is not a numeric addition operator.
 
-#### Multi-line Concatenation
-
 A line break MAY occur after the `+` operator. This allows long string values to be split across multiple source lines without using a Triple-Quoted String.
 
 A line break MUST NOT occur before the `+` operator. The `+` operator MUST appear on the same logical line as the preceding operand.
@@ -1267,30 +1265,6 @@ message = "hello "
 ```
 
 For longer human-authored text where exact line breaks should be preserved, authors SHOULD use Triple-Quoted Strings instead. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
-
-**Valid in lenient mode only**
-
-```yini
-label = "port-" + 5432
-enabled_text = "enabled=" + true
-missing_text = "value=" + null
-x1 = "item " + 1
-```
-
-**Invalid in both modes**
-
-The following is invalid because YINI does not define numeric addition:
-```yini
-x1 = 1 + 2        // ❌ Invalid, not a string concatenation.
-```
-
-**Invalid in strict mode**
-
-The following is invalid in strict mode because strict mode does not allow implicit scalar-to-string conversion:
-
-```yini
-label = "port-" + 5432  // ❌ Invalid in strict mode
-```
 
 ### 6.6. Scalar Conversion to Strings
 
@@ -3263,7 +3237,7 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.0 RC 5 + UPDATES, 2026-xx-xx
+v1.0.0 RC 6, 2026-05-27
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
 - **Changed:** Increased the maximum repeated section marker depth from 6 to 9 because section marker separators (`_`) may now be used to make headers easier to read. Repeated marker headers may now express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
 - **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.

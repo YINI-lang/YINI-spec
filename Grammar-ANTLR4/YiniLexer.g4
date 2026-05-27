@@ -11,7 +11,7 @@
   This LEXER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Version:
-  1.2.0-rc.2xx + UPDATES/WIP - >2026 Apr (v1.0.0-rc.5 YINI Spec Package).
+  1.3.0-rc.1 - 2026 May (v1.0.0-rc.6 YINI Spec Package).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -152,11 +152,11 @@ fragment SECTION_NAME_PART
 // - Numeric shorthand form does NOT support '_' separators.
 // - The parser/visitor must enforce the maximum repeated-marker depth and maximum section depth.
 // Keep the order as 1, 2, and 3.
-fragment SECTION_MARKER
-  : SECTION_MARKER_SHORTHAND         // (1) Numeric shorthand section headers (e.g. ^7 SectionName).
-  | SECTION_MARKER_BASIC_REPEAT      // (2) Classic/repeating marker section headers (e.g. ^^ SectionName).
-  | SECTION_MARKER_INVALID           // (3) Captures malformed section markers so the parser/validator can report a clearer error.
-  ;
+// fragment SECTION_MARKER
+//   : SECTION_MARKER_SHORTHAND         // (1) Numeric shorthand section headers (e.g. ^7 SectionName).
+//   | SECTION_MARKER_BASIC_REPEAT      // (2) Classic/repeating marker section headers (e.g. ^^ SectionName).
+//   | SECTION_MARKER_INVALID           // (3) Captures malformed section markers so the parser/validator can report a clearer error.
+//   ;
 
 // Repeated/basic marker form.
 // Underscores may appear only between two identical section marker characters.
@@ -239,7 +239,8 @@ SECTION_HEAD
 
 INVALID_SECTION_HEAD
   // : (CARET | SS | GT | LT | SEP)+ ~[\r\n]* EOL+
-  : (CARET | SS | GT | LT | SEP) ~[\r\n]* EOL+
+  // : (CARET | SS | GT | LT | SEP) ~[\r\n]* EOL+
+  : (CARET | SS | GT | LT) ~[\r\n]* EOL+
   ;
 
 /* ------------------------------------------------------------------
@@ -388,7 +389,8 @@ fragment DISABLE_LINE_MARKER
   ;
 
 DISABLED_LINE
-  : DISABLE_LINE_MARKER ~[\r\n]*
+  // : DISABLE_LINE_MARKER ~[\r\n]*
+  : DISABLE_LINE_MARKER ~[\r\n]* EOL?
   ;
 
 /*
