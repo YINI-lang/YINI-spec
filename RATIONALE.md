@@ -25,14 +25,15 @@ Minimalism, human readability, strict and lenient parsing modes, and related des
 
 &nbsp;&nbsp;&nbsp;&nbsp;B.1. What inspired its design?  
 &nbsp;&nbsp;&nbsp;&nbsp;B.2. Design Philosophy  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.1. The `#` Marker as a Comment Symbol  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.2. Non-standard Octal Escape  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.3. Summary of Marker Characters  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.4. Why strict mode requires `/END`  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.5. String Type Motivations  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.6. Section Marker Separators and Repeated Marker Depth  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.7. Mode Declarations  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.8. String Concatenation and Non-Arithmetic `+`
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.1. Relationship to Established Design Principles  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.2. The `#` Marker as a Comment Symbol  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.3. Non-standard Octal Escape  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.4. Summary of Marker Characters  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.5. Why strict mode requires `/END`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.6. String Type Motivations  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.7. Section Marker Separators and Repeated Marker Depth  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.8. Mode Declarations  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.9. String Concatenation and Non-Arithmetic `+`
 
 ---
 
@@ -114,7 +115,21 @@ YINI now treats `#` as a comment marker whenever it appears outside string liter
 
 These values guide YINI's syntax, structure, and behavior — making it reliable for both humans and machines.
 
-#### B.2.1. The `#` Marker as a Comment Symbol
+#### B.2.1. Relationship to Established Design Principles
+
+YINI was not designed by applying one external principle automatically. Instead, several well-known software-design principles influenced the format in a practical way.
+
+The format aligns with **KISS** (_"Keep It Simple, Stupid"_) by keeping the core syntax small and avoiding unnecessary constructs where simpler rules are enough. This is reflected in choices such as explicit section markers, quoted strings, bracketed lists, inline objects, and a limited set of value types.
+
+YINI also follows the **principle of least surprise** / **least astonishment** (POLA). A YINI document should behave in a way that matches what its syntax suggests. For example, indentation may improve readability, but it does not define structure; `#` always begins a comment outside string literals; and `+` is defined only as string concatenation, not as a general arithmetic operator.
+
+The principle **explicit is better than implicit** is reflected throughout the format. YINI favors visible section structure, explicit string delimiters (start/end characters), explicit list and object delimiters, and explicit strict-mode document completion using `/END`.
+
+YINI also follows the contract-oriented idea behind the **Liskov Substitution Principle (LSP)** in a limited configuration-format sense. A document that declares an intended parsing mode is making a mode contract. The parser must not silently reinterpret that document under a different contract without reporting a diagnostic. This is why mode declarations are checked against the active parser mode rather than being treated as harmless ordinary syntax.
+
+At the same time, YINI does not try to follow every possible principle to its extreme. It does not aim for maximum compactness, maximum flexibility, or a large expression system. In several cases, YINI deliberately chooses a slightly more explicit or restricted rule because configuration files are often read, reviewed, edited, and validated over time.
+
+#### B.2.2. The `#` Marker as a Comment Symbol
 
 YINI treats `#` as a comment marker outside string literals.
 
@@ -155,12 +170,12 @@ The earlier CSS-style form `#FF0033` was therefore removed as hexadecimal notati
 
 The section marker history is separate from this decision. Earlier drafts experimented with other section marker characters, including `#`, `~`, and `>`. The caret (`^`) was eventually chosen as the primary section marker because it is visually distinct, easy to repeat for nesting, and available in the 7-bit ASCII range.
 
-#### B.2.2. Non-standard Octal Escape
+#### B.2.3. Non-standard Octal Escape
 Octal escapes in YINI use the `\oNNN` format, which differs from the traditional `\NNN` style used in C and Python. 
 
 This design choice was made because `\NNN` provides no clear indication of the number base, unlike `\u` for Unicode (4-digit hex) and `\U` for extended Unicode (8-digit hex). The `\oNNN` format in YINI follows the same analogy, making the base explicit and the escape more readable and self-descriptive.
 
-#### B.2.3. Summary of Marker Characters
+#### B.2.4. Summary of Marker Characters
   - `^` (Default section marker, within the 7-bit ASCII range for maximum compatibility.)
   - `§` (Supported alternative section marker, useful where enhanced readability is preferred.)
   - `>` (Supported quote-like ASCII fallback marker; previously discontinued, later re-added with a portability caveat because it may be treated as a quote prefix in email clients, forums, and Markdown-like environments.)
@@ -176,24 +191,24 @@ This design choice was made because `\NNN` provides no clear indication of the n
 | `<`          | Fallback   | `<< Section2` |  (7-bit ASCII) Easy to count, replaced `~` |
 | `~`          | Discontinued  | `~~ Section2` | Hard to count when repeated, phased out      |
 
-#### B.2.4. Why strict mode requires `/END`
+#### B.2.5. Why strict mode requires `/END`
 Strict mode in YINI is intended for cases where the parser should be strict on purpose — for example in validation-oriented (checking and verification) use cases, deterministic (predictable and consistent) parsing, safer tooling, CI pipelines, generated configuration, and other environments where ambiguity (uncertainty or unclear meaning) should be minimized.
 
 For that reason, strict mode requires the document terminator `/END`.
 
 With /END, the document does not just stop — it explicitly says that it is finished. This makes the end of the document clearer and reduces guesswork for both parsers and humans. The parser does not have to assume that the file ended correctly; instead, the document itself explicitly declares: “this document is complete.”
 
-This also makes it easier to detect documents that have been truncated, only partly copied, or cut off too early — including during transfer, file copy, manual copy-and-paste, embedding, or other situations where the content may end up incomplete.
+This also makes it easier to detect documents that have been truncated (cut off), only partly copied, or cut off too early — including during transfer, file copy, manual copy-and-paste, embedding, or other situations where the content may end up incomplete.
 
-This works especially well together with strict mode's other structural rules, such as requiring exactly one explicit top-level section. Together, these rules improve robustness (reliability) and make strict mode better suited for validation-heavy (strictly checked) environments and safer tooling. If a strict-mode document is accidentally split, cut, or copied only in part, the resulting fragments are much more likely to be rejected as invalid rather than silently accepted as complete.
+This works especially well together with strict mode's other structural rules, such as requiring exactly one explicit top-level section. Together, these rules improve robustness (reliability) and make strict mode better suited for validation-heavy (strictly checked) environments and safer tooling. If a strict-mode document is accidentally split, cut, or copied only in part, the resulting pieces/fragments are much more likely to be rejected as invalid rather than silently accepted as complete.
 
 This requirement was chosen not to make YINI more complicated in general, but to make strict mode more reliable, more predictable, and more trustworthy where correctness matters most.
 
 The alternative is to parse in lenient mode, where the document terminator `/END` is optional.
 
-#### B.2.5. String Type Motivations
+#### B.2.6. String Type Motivations
 
-##### B.2.5.1. Raw Strings
+##### B.2.6.1. Raw Strings
 
 > Raw strings in YINI are quoted strings where the text is taken exactly as written, without interpreting escape sequences.
 
@@ -211,7 +226,7 @@ If raw strings are the default, users avoid the classic annoyance where `\n`, `\
 
 This fits a configuration format very well, and it is the main reason raw strings became the default in YINI.
 
-##### B.2.5.2. Classic Strings
+##### B.2.6.2. Classic Strings
 
 > Classic strings in YINI are quoted strings prefixed with `C` or `c` that interpret escape sequences such as `\n`, `\t`, and `\"`.
 
@@ -226,7 +241,7 @@ So having an explicit "escaped string" form is useful and reasonable.
 
 That said, Classic strings are optional, not the default.
 
-##### B.2.5.3. Triple-quoted Strings
+##### B.2.6.3. Triple-quoted Strings
 
 > Triple-quoted strings in YINI are strings enclosed in `""" ... """` that may span multiple lines and preserve their content exactly as written, unless prefixed with `C` to enable escape sequences.
 
@@ -242,7 +257,7 @@ A config format may sometimes need true multi-line literals, for example:
 
 So, for this reason Triple-quoted strings are supported as well, and they are optional.
 
-#### B.2.6. Section Marker Separators and Repeated Marker Depth
+#### B.2.7. Section Marker Separators and Repeated Marker Depth
 
 YINI uses repeated section markers to make section depth visible directly in the text, for example `^`, `^^`, and `^^^`. In earlier drafts, the maximum repeated-marker depth was kept lower to avoid very long marker runs that were hard to read and count.
 
@@ -252,7 +267,7 @@ Because of that, it made sense to increase the maximum repeated-marker depth fro
 
 This feels like a good balance: common nesting levels remain readable and visually explicit, while very deep nesting still avoids long, excessive marker sequences.
 
-#### B.2.7. Mode Declarations
+#### B.2.8. Mode Declarations
 
 YINI supports optional mode declarations in the document marker:
 
@@ -263,7 +278,7 @@ YINI supports optional mode declarations in the document marker:
 
 A mode mismatch is diagnostic behavior, not mode selection behavior. A mode declaration states the document's expected parsing mode, but it does not automatically switch the parser into that mode.
 
-This is intentional. I prefer that the active parsing mode is controlled explicitly by the parser, tool, API, command-line flag, or host application, rather than silently changing behavior because of something inside the document.
+This is intentional. It was preferred that the active parsing mode is controlled explicitly by the parser, tool, API, command-line flag, or host application, rather than silently changing behavior because of something inside the document.
 
 The benefit of writing `@yini strict` is that the document clearly says: "this file is meant to be parsed and validated as strict YINI." That makes the intent visible to humans, and it gives tools a chance to catch accidental mode mistakes. If a strict-mode file is accidentally parsed in lenient mode, the parser reports a mode-mismatch error instead of accepting the file silently and too permissively.
 
@@ -275,9 +290,7 @@ On the other hand, leaving the mode declaration out is also valid. This keeps or
 
 In short, `@yini strict` is useful when the document itself should clearly declare its intended validation level. `@yini lenient` is useful when the document should explicitly declare that it is intended for lenient parsing. Leaving the declaration out is useful when the file should stay minimal and rely on the parser or tool configuration instead.
 
----
-
-#### B.2.8. String Concatenation and Non-Arithmetic `+`
+#### B.2.9. String Concatenation and Non-Arithmetic `+`
 
 YINI defines `+` only as an explicit string-concatenation operator. It is not a numeric addition operator.
 
@@ -396,7 +409,7 @@ YINI is designed to be as simple and intuitive as possible. Its syntax aims to b
 
 Earlier drafts of YINI experimented with an alternative colon-based syntax for lists. While this shorthand could be convenient in some cases, it did not add any expressive capability beyond the standard bracketed list syntax.
 
-In practice, supporting colon-based lists introduced additional grammar rules, more edge cases, and a second mental model for representing the same data. This worked against several of YINI's central design goals: clarity, predictability, minimalism, and a smaller, more consistent syntax surface.
+In practice, supporting colon-based lists introduced additional grammar rules, more edge cases, and a second mental model for representing the same data. This worked against several of YINI's central design goals: clarity, predictability, minimalism, and a smaller, more consistent syntax surface (set of syntax rules).
 
 By removing colon-based lists, YINI keeps a clearer and more uniform structure:
 - Values are assigned with `=`.
@@ -484,7 +497,7 @@ Although H-Strings provided a convenient way to write longer human-authored text
 
 The feature was useful, but not essential. Since most YINI files are expected to use ordinary strings, raw strings, and triple-quoted strings for the majority of practical configuration needs, H-Strings were judged to serve too narrow a use case to justify their inclusion in the core language.
 
-Removing H-Strings supports YINI’s broader design goals: clarity over cleverness, predictable parsing, a smaller syntax surface, and fewer overlapping ways to express the same kind of value.
+Removing H-Strings supports YINI's broader design goals: clarity over cleverness, predictable parsing, a smaller syntax surface, and fewer overlapping ways to express the same kind of value.
 
 ### D.4. Future Considerations
 In the current specification, `@yini strict` and `@yini lenient` are supported as optional mode declarations. They state the document's expected parsing mode, but they do not automatically switch the parser into that mode.

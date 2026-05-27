@@ -34,7 +34,7 @@ YINI is therefore intended to be simple, but not simplistic: explicit where stru
 
 See [A.1. Why was YINI created?](./RATIONALE.md) for background.
 
-While inspired by established formats such as INI, JSON, Python, Markdown, and YAML, YINI defines its own approach through explicit structure, clear typing rules, and predictable interpretation.  
+While inspired by well-known formats such as INI, JSON, Python, Markdown, and YAML, YINI defines its own approach through explicit structure, clear typing rules, and predictable interpretation.  
 A central part of this approach is its handling of nested sections, which makes hierarchy visible without requiring indentation to define structure.
 
 This specification defines YINI with the goal of serving both human authors and implementers by describing the format in a clear, precise, and consistent way.
@@ -211,10 +211,17 @@ YINI is designed to represent hierarchy and grouping explicitly, without dependi
 YINI is intended to be comfortable for humans to write, review, and maintain. Its syntax is designed to support direct editing of configuration files without requiring excessive punctuation, ceremony, or visual noise.
 
 7. **Deterministic parsing**  
-YINI is designed to support deterministic parsing by implementations, especially in strict mode. This helps reduce ambiguity and improves robustness for validation, tooling, and long-term maintainability.
+YINI is designed to support deterministic (predictable and consistent) parsing by implementations, especially in strict mode. This helps reduce ambiguity and improves robustness for validation, tooling, and long-term maintainability.
   
 ### 1.3. Background and Intent
-YINI was created as a configuration format that emphasizes **clarity**, **readability**, and **predictability** while also providing **explicit structure**, **human-friendly editing**, and **deterministic parsing**. Its intent is to provide a format that remains easy to read and edit by hand, while being defined clearly enough to support consistent implementation and reliable tooling. For a deeper discussion of the motivation and design philosophy, see [Why YINI?](./RATIONALE.md).
+
+YINI was created as a configuration format for cases where human readability, explicit structure, and predictable interpretation are more important than compactness or maximum syntactic flexibility.
+
+Its design aligns with several established software-design principles, including **KISS** (_"Keep It Simple, Stupid"_), the **principle of least surprise** / **least astonishment** (POLA), **explicit is better than implicit**, and the contract-oriented idea behind the **Liskov Substitution Principle (LSP)**. These principles are reflected in YINI's visible section structure, quoted strings, and deterministic parsing rules.
+
+YINI also makes deliberate trade-offs. It does not try to infer structure from indentation, minimize every character of syntax, or behave like a general expression language. Instead, it favors explicit structure and stable interpretation rules, because configuration files are often read, reviewed, edited, and validated over time.
+
+For a deeper discussion of the motivation and design philosophy, see [Why YINI?](./RATIONALE.md).
 
 ### 1.4. Key Features
 Unless explicitly stated otherwise, YINI parsers are expected to operate in lenient (non-strict) mode by default. Strict mode is optional and intended for environments where stricter validation is needed.
@@ -1006,7 +1013,7 @@ String literals in YINI **MUST be enclosed** in either single quotes `'` or doub
 - Single quote: `'` U+0027 APOSTROPHE
 - Double quote: `"` U+0022 QUOTATION MARK
 
-Typographic or curly quotation marks such as `‘`, `’`, `“`, and `”` are ordinary Unicode text characters. They do not begin or end YINI string literals.
+Typographic or curly quotation marks such as `‘`, `'`, `“`, and `”` are ordinary Unicode text characters. They do not begin or end YINI string literals.
 
 **Note:** Text MUST be enclosed in quotation marks to be parsed as a string literal.
 
@@ -1182,7 +1189,7 @@ Triple-Quoted Strings always preserve their contents exactly — including all w
 
 YINI supports explicit string **concatenation** using the plus sign (`+`).  
 
-Concatenation joins two or more operands into a single string value. The result of concatenation is always a single string value.
+Concatenation joins two or more operands into a single string value. The result of concatenation is always a string.
 
 **Example:**
 ```yini
@@ -1196,18 +1203,11 @@ greeting = "Hi, hello there"
 
 #### Concatenation Operands
 
-The `+` operator in YINI is exclusively a string concatenation operator. YINI does not define numeric addition.  
-For readability, whitespace around `+` is recommended, but not required.
+The `+` operator in YINI is exclusively a string concatenation operator. YINI does not define numeric addition. For readability, whitespace around `+` is recommended, but not required.
 
-**In strict mode**, all concatenation operands MUST be string literals. This keeps concatenation clear, deterministic, human-readable, and intentionally limited. This includes Raw/R-prefixed, Classic/C-prefixed, or any Triple-Quoted strings.
+**In strict mode**, all concatenation operands MUST be string literals. This includes Raw/R-prefixed, Classic/C-prefixed, or any Triple-Quoted strings.
 
-**In lenient mode**, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not performed. Non-string scalar operands MUST first be converted to their parsed scalar canonical string representation, and the resulting string values are then concatenated from left to right.
-
-This means the following operands MAY be used in lenient mode:
-- String literals.
-- Number literals.
-- Boolean literals.
-- Null literals.
+**In lenient mode**, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not performed. Non-string scalar operands MUST first be converted to their parsed scalar canonical string representation before concatenation.
 
 Lists and inline objects MUST NOT be operands in concatenation expressions.
 
@@ -1226,10 +1226,10 @@ longText = "This is a long string that is split " +
 str1 = "Port: " + 8080
 // "Port: 8080"
 
-str4 = "1" + 2 + 3
+str2 = "1" + 2 + 3
 // "123"
 
-x = "a" + +42
+str3 = "a" + +42
 // "a42"
 ```
 
@@ -1239,6 +1239,8 @@ invalid1 = 1 + 2 + 3          // Invalid: YINI does not define numeric addition.
 invalid2 = 8080 + " is port"  // Invalid: concatenation must begin with a string literal.
 invalid3 = 1 + 2 + "3"        // Invalid: concatenation must begin with a string literal.
 ```
+
+**Rationale:** Requiring concatenation to begin with a string literal avoids ambiguity between numeric-looking expressions and string concatenation. For example, `1 + 2 + "3"` could otherwise be misread as either `"123"` or `"33"`. YINI rejects such expressions instead, because `+` is not a numeric addition operator.
 
 #### Multi-line Concatenation
 
@@ -3330,7 +3332,7 @@ Trailing commas after values or members inside lists or objects never produce `N
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
 | Inline object member separator | `obj = { a: 1, b: 2 }` | `obj = { a = 1, b = 2 }` | `:` is the canonical separator inside inline objects. In lenient mode, `=` MAY be accepted, but formatters should normalize to `:`. In strict mode, `=` inside inline objects is invalid. |
 | Mixed object separators | `obj = { a: 1, b: 2 }` | `obj = { a: 1, b = 2 }` | Mixing `:` and `=` inside the same inline object is discouraged in lenient mode and invalid in strict mode. |
-| Quote characters | `text = "hello"` or `text = 'hello'` | Using curly quotes as delimiters: `text = “hello”` | String delimiters MUST be plain ASCII quotes: `'` U+0027 or `"` U+0022. Curly quotes may appear inside strings as ordinary text, but they do not delimit strings. |
+| Quote characters | `text = "hello"` or `text = 'hello'` | Using curly quotes as delimiters (start/end characters): `text = “hello”` | String delimiters MUST be plain ASCII quotes: `'` U+0027 or `"` U+0022. Curly quotes may appear inside strings as ordinary text, but they do not delimit strings. |
 | String concatenation start | `text = "value: " + 123` | `text = 123 + " value"` | A concatenation expression MUST begin with a string literal. In lenient mode, later scalar operands may be numbers, booleans, or null. |
 | Multi-line concatenation | `text = "hello " +`<br>`       "world"` | Placing `+` at the start of the next line | A line break is allowed after `+`, but not before `+`. |
 

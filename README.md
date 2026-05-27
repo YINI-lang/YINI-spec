@@ -149,7 +149,7 @@ You should see JSON output printed to the console, similar to:
 YINI is designed to prioritize **readability, clarity, and explicit structure**.
 
 - ✔️ **Simple section-based structure** with clear visual nesting.
-- ✔️ YINI is designed to be simple, but not simplistic, with explicit structure and deterministic parsing.
+- ✔️ YINI is designed to be simple, but not simplistic, with explicit structure and deterministic (predictable and consistent) parsing.
 - ✔️ **Explicit value syntax** for strings, numbers, booleans, null, lists (AKA arrays), and inline objects.
 - ✔️ **Indentation-independent parsing** — without indentation pitfalls.
 - ✔️ **Formal specification and grammar.**
