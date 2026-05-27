@@ -261,17 +261,19 @@ YINI supports optional mode declarations in the document marker:
 @yini lenient
 ```
 
-A mode mismatch is diagnostic behavior, not mode selection behavior. In lenient mode, a mismatch is reported as a warning. In strict mode, a mismatch is reported as an error.
+A mode mismatch is diagnostic behavior, not mode selection behavior. A mode declaration states the document's expected parsing mode, but it does not automatically switch the parser into that mode.
 
-These declarations state the document's expected parsing mode. They do not automatically switch the parser into that mode. This is intentional. I prefer that the active parsing mode is controlled explicitly by the parser, tool, API, command-line flag, or host application, rather than silently changing behavior because of something inside the document.
+This is intentional. I prefer that the active parsing mode is controlled explicitly by the parser, tool, API, command-line flag, or host application, rather than silently changing behavior because of something inside the document.
 
-The benefit of writing `@yini strict` is that the document clearly says: "this file is meant to be parsed and validated as strict YINI." That makes the intent visible to humans, and it gives tools a chance to catch accidental mode mistakes. For example, if a strict-mode file is accidentally parsed in lenient mode, the parser can report a mode-mismatch warning instead of accepting the file silently and too permissively. When a mode declaration conflicts with strict parsing, the mismatch is treated as an error.
+The benefit of writing `@yini strict` is that the document clearly says: "this file is meant to be parsed and validated as strict YINI." That makes the intent visible to humans, and it gives tools a chance to catch accidental mode mistakes. If a strict-mode file is accidentally parsed in lenient mode, the parser reports a mode-mismatch error instead of accepting the file silently and too permissively.
+
+And the benefit of writing `@yini lenient` is that the document clearly says: "this file is intended for lenient parsing." If such a document is parsed in strict mode, the parser may still validate it under strict-mode rules, but it must report a mode-mismatch warning so the user's declared intent is not ignored.
 
 This is especially useful for production configuration, CI validation, generated files, shared project files, or any case where correctness and reproducibility matter.
 
 On the other hand, leaving the mode declaration out is also valid. This keeps ordinary YINI files lightweight and simple, especially for hand-edited configuration where lenient mode is expected. A file without `@yini strict` or `@yini lenient` does not make a mode claim; it simply lets the surrounding tool or parser configuration decide.
 
-In short, `@yini strict` is useful when the document itself should clearly declare its intended validation level. Leaving it out is useful when the file should stay minimal and rely on the parser or tool configuration instead.
+In short, `@yini strict` is useful when the document itself should clearly declare its intended validation level. `@yini lenient` is useful when the document should explicitly declare that it is intended for lenient parsing. Leaving the declaration out is useful when the file should stay minimal and rely on the parser or tool configuration instead.
 
 ---
 

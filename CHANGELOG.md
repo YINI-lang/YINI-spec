@@ -41,7 +41,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
   ^^^_^^^ Section      // depth 6
   ^^^_^^^_^^^ Section  // depth 9
   ```
-- **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. A mismatch MUST produce a mode-mismatch error.
+- **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. If `@yini strict` is parsed in lenient mode, the parser MUST emit a mode-mismatch error. If `@yini lenient` is parsed in strict mode, the parser MUST emit a mode-mismatch warning.
 - **Clarified:** Missing values versus trailing commas:
   * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
   * Missing values inside lists or objects are not treated as `Null`.

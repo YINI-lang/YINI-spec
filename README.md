@@ -153,7 +153,7 @@ YINI is designed to prioritize **readability, clarity, and explicit structure**.
 - ✔️ **Explicit value syntax** for strings, numbers, booleans, null, lists (AKA arrays), and inline objects.
 - ✔️ **Indentation-independent parsing** — without indentation pitfalls.
 - ✔️ **Formal specification and grammar.**
-- ✔️ **Strict and lenient parsing modes.**
+- ✔️ **Lenient and strict parsing modes** — lenient mode is the default, strict mode enables stronger validation.
 - ✔️ **Multiple comment styles** — C-style commenting rules using `//` and `/* ... */`. Supports `#` and `;` commenting styles too. 
 - ✔️ **Minimal syntax noise** — with explicit assignments and section-based nesting.
 - ✔️ **Flexible booleans** with `true`/`false`, `on`/`off`, `yes`/`no` (all case-insensitive).
@@ -162,7 +162,7 @@ YINI is designed to prioritize **readability, clarity, and explicit structure**.
 - ✔️ **Flexible strings** using single quotes, double quotes, Classic escaped strings, and Triple-Quoted Strings.
 - ✔️ **Supports the `null` value type.**
 - ✔️ **Explicit string concatenation** using `+`; concatenation expressions must begin with a string literal.
-- ✔️ **Optional mode declarations** with `@yini strict` and `@yini lenient`.
+- ✔️ **Optional mode declarations** with `@yini strict` and `@yini lenient`, declarations state intent but do not switch parser mode.
 
 ---
 
