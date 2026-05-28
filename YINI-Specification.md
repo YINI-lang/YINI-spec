@@ -4,7 +4,7 @@ _YINI: A clear configuration file format — clean, readable, structured._
 
 # Specification for the YINI Format
 **Version:** 1.0.0-RC.6
-**Date:** 2026-05-27
+**Date:** 2026-05-28
 
 > **Status:** This is a release-candidate draft. Minor clarifications and corrections may still be made before YINI 1.0.0.
 
@@ -102,7 +102,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
 &nbsp;&nbsp;&nbsp;&nbsp;6.4. String Types Summary  
 &nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;6.6. Scalar Conversion to Strings  
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. Scalar Conversion in Lenient Concatenation  
 
 **7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
@@ -351,7 +351,7 @@ Example:
 key = "value"
 ```
 
-This is not a valid shebang: ` #!/usr/bin/env yini`, due to it has leading whitespace. It is treated as a comment in lenient mode, but should produce a warning in lenient mode, and an error in strict mode.
+This is not a valid shebang: ` #!/usr/bin/env yini`, because it has leading whitespace. It is treated as a comment in lenient mode, but SHOULD produce a warning in lenient mode, and SHOULD produce an error in strict mode.
 
 ### 2.4. YINI Marker (`@yini`)
 The optional YINI marker (`@yini`) MAY be used and is RECOMMENDED for clarity and identification. If present, the YINI marker MUST appear before any meaningful YINI content. It MAY be preceded only by a shebang line, comments, or whitespace. (If both a shebang and a YINI marker are present, the shebang MUST appear first.)
@@ -1242,6 +1242,8 @@ invalid3 = 1 + 2 + "3"        // Invalid: concatenation must begin with a string
 
 **Rationale:** Requiring concatenation to begin with a string literal avoids ambiguity between numeric-looking expressions and string concatenation. For example, `1 + 2 + "3"` could otherwise be misread as either `"123"` or `"33"`. YINI rejects such expressions instead, because `+` is not a numeric addition operator.
 
+#### Multi-line Concatenation
+
 A line break MAY occur after the `+` operator. This allows long string values to be split across multiple source lines without using a Triple-Quoted String.
 
 A line break MUST NOT occur before the `+` operator. The `+` operator MUST appear on the same logical line as the preceding operand.
@@ -1266,7 +1268,7 @@ message = "hello "
 
 For longer human-authored text where exact line breaks should be preserved, authors SHOULD use Triple-Quoted Strings instead. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
 
-### 6.6. Scalar Conversion to Strings
+### 6.6. Scalar Conversion in Lenient Concatenation
 
 Scalar conversion to strings is allowed only in lenient-mode concatenation expressions.
 
@@ -1407,7 +1409,7 @@ In addition to standard decimal numbers (base-10), YINI supports other number ba
 
 Binary and hexadecimal values also allow **alternative notations** for convenience and readability.
 
-| Number Format (case-insensitive) | Alternative Format | Description | Base | Notes
+| Number Format (case-insensitive) | Alternative Format | Description | Base | Notes |
 |----------|--|---|---|---|
 | `3e4`    | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
 | `0b1010` | `%1010` | Binary number prefix | 2-base | Digits: `0` and `1` only
@@ -1787,7 +1789,7 @@ These features are not implemented in this version. They are reserved for future
 
 #### 11.1.3. Date-time Type
 
-Currently, the YINI **value types** in the specification map 1-to-1 to native JSON types. With that said YINI does not currently support native date, time, or date-time types. All date and time values **SHOULD currently** be represented as strings.
+Currently, the YINI **value types** in the specification map 1-to-1 to native JSON types. With that said, YINI does not currently support native date, time, or date-time types. All date and time values **SHOULD currently** be represented as strings.
 
 Support for standardized date-time literals may be considered in a future version, once the core specification is stable.
 
@@ -1834,7 +1836,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 #### 12.2.1. Structural Requirements
 Note: In lenient mode, top-level members outside any section may be accepted. In strict mode, the document structure is further restricted; see Section 12.3 and Section 13.1.
 
-- In lenient (default) mode, a document may consist of **zero or more root-level or section-level members**.
+- In lenient (default) mode, a document may consist of **zero or more root-level members, section-level members, and sections**.
 - In strict mode, a document MUST contain **exactly one explicit top-level section**. All members MUST appear inside that section or one of its subsections.
 - Section headers MUST begin with a valid marker (`^`, `§`, `>`, or `<`).
 - In repeated/basic section headers, whitespace between the marker and the section name is optional.
@@ -3237,7 +3239,7 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.0 RC 6, 2026-05-27
+v1.0.0 RC 6, 2026-05-28
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
 - **Changed:** Increased the maximum repeated section marker depth from 6 to 9 because section marker separators (`_`) may now be used to make headers easier to read. Repeated marker headers may now express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
 - **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
