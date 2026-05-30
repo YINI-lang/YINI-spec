@@ -17,4 +17,4 @@
 		["stylesheet", "css/themes.css"]
 	]
 		
-/END // (optional)
+/END // (required in strict mode)

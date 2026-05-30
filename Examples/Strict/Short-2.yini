@@ -20,4 +20,4 @@
         ['font-weight', 'bold'], ['size', 36], ['font', 'arial']
     ]
 
-/END  // End of YINI doc (optional).
+/END  // End of YINI doc (required in strict mode).

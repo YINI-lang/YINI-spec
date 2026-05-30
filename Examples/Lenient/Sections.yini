@@ -1,1 +1,25 @@
---todo--
+/*
+  Basic section examples.
+
+  Indentation is used only for readability. Section depth is defined by the
+  section marker count, not by indentation.
+*/
+
+^ Application
+name = "Section Demo"
+environment = "development"
+
+    ^^ Server
+    host = "localhost"
+    port = 8080
+
+    ^^ Logging
+    level = "info"
+    outputs = ["console", "file"]
+
+^ Features
+enabled = true
+
+    ^^ Search
+    provider = "local"
+    cache = { enabled: true, ttlSeconds: 300 }
