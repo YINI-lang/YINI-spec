@@ -36,7 +36,6 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
   0b1111_0001
   ```
 - **Added:** For readability, added support for section marker separators `_` in repeated section marker headers. For example:
-
   ```yini
   ^^_^^_^ Section      // depth 5
   ^^^_^^^ Section      // depth 6
