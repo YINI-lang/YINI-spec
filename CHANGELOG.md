@@ -1,10 +1,65 @@
 # CHANGELOG
+
 Edits and updates **in this repository and package**. (Very minor changes are not listed.)
 
 ### Feedback Acknowledgments
+
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
-## 2026 Apr (v1.0.0-rc.5)
+## Package 2026-05-30 (spec: v1.0.0-RC.6)
+- Revised `#` character handling and updated hexadecimal notation rules in the specification and ANTLR4 grammar:
+  * **Changed:** In the specification, `#` now always begins a comment outside string literals. No whitespace is required before or after `#`.
+  * **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
+  * **Removed:** Removed support for `#` as a hexadecimal number prefix. Hexadecimal numbers MUST now be written using `0x...` or the explicit `hex:` form.
+- **Changed:** Increased the maximum repeated section marker depth from 6 to 9. Section marker separators (`_`) may now be used to make deeper repeated marker headers easier to read. Repeated marker headers may express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
+- **Removed:** Removed Hyper Strings (H-Strings) from the specification and ANTLR4 grammar. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
+- **Improved:** Made the lexer grammar target-independent by removing TypeScript-specific members and semantic predicates, enabling cross-language parser generation.
+- **Changed:** In `Grammar-ANTLR4`, replaced Windows-specific `.bat` helper scripts with a language-agnostic `Taskfile.yaml`.
+- **Improved:** Revised `Contributing.md` for clarity and consistency.
+- **Changed:** Restructured the `Examples` directory into **Lenient** and **Strict** subdirectories.
+- **Added:** Added GitHub Actions workflows to validate example files with `yini-cli`.
+  **Note:** Validation in CI depends on the currently published `yini-cli` release, so some files may fail there even when they are valid according to the latest specification or grammar in this repository. Even in such cases, the validation output remains useful for manual review and for identifying where CLI support has not yet caught up.
+- **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
+- **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid, whether mixed with `:` or used consistently.
+- **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
+- **Changed:** Updated string concatenation rules. In both modes, a concatenation expression MUST begin with a string literal. In strict mode, all concatenation operands MUST be string literals. In lenient mode, additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not defined. Non-string scalar operands are converted to their parsed canonical string representation before concatenation. A concatenation expression MAY span multiple source lines only when the line break occurs after the `+` operator; a line break before `+` is invalid. Lists and inline objects MUST NOT be used as concatenation operands.
+  * In strict mode, all concatenation operands MUST be string literals.
+  * In lenient mode, a `+` expression MAY be treated as string concatenation if at least one operand is a string literal. Other permitted scalar operands are number literals, boolean literals, and null literals.
+  * If a lenient-mode `+` expression contains no string literal, it MUST be rejected because YINI does not define numeric addition.
+  * Lists and inline objects MUST NOT be used as concatenation operands.
+- **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
+- **Added:** For readability, an underscore character `_` may appear after a base prefix or between successive digits in number literals. For example:
+  ```yini
+  2_468
+  0x_ab_cd_12_34_ef
+  0b1111_0001
+  ```
+- **Added:** For readability, added support for section marker separators `_` in repeated section marker headers. For example:
+
+  ```yini
+  ^^_^^_^ Section      // depth 5
+  ^^^_^^^ Section      // depth 6
+  ^^^_^^^_^^^ Section  // depth 9
+  ```
+- **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. If `@yini strict` is parsed in lenient mode, the parser MUST emit a mode-mismatch error. If `@yini lenient` is parsed in strict mode, the parser MUST emit a mode-mismatch warning.
+- **Clarified:** Missing values versus trailing commas:
+  * If the value is the keyword `null` (case-insensitive), or if a root-level or section-level member has no value after `=` in lenient mode, it is treated as **Null**.
+  * Missing values inside lists or objects are not treated as `Null`.
+  * A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
+- **Clarified:** Duplicate key and duplicate section handling:
+  * In lenient mode, the first definition wins.
+  * Later duplicate keys or duplicate sections at the same level MUST be ignored and MUST produce a warning diagnostic.
+  * In strict mode, duplicate keys and duplicate sections at the same level MUST result in an error.
+  * Implementations MUST NOT silently overwrite, merge, or extend earlier definitions.
+- **Clarified:** UTF-8 encoding and BOM handling. YINI documents MUST be encoded as UTF-8. A UTF-8 BOM SHOULD NOT be used, but implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
+- **Clarified:** Orphan member handling in lenient mode, including the preferred direct-root mounting strategy and the fallback implicit `base` section strategy.
+- **Clarified:** Section nesting rules, including that descending into deeper nesting MUST NOT skip intermediate levels, while ascending to a shallower level may skip levels.
+- **Clarified:** `/END` post-content behavior. After the document terminator, only whitespace and comments are permitted; any other content MUST result in an error.
+- **Improved:** Revised wording throughout the specification to better align with the YINI design goals of clarity, readability, explicit structure, predictability, and deterministic parsing.
+- **Fixed:** Various typos, formatting issues, and style inconsistencies.
+- **Changed:** Re-added `>` as a supported ASCII section marker. It is documented as a quote-like fallback marker with a portability caveat for contexts such as Markdown, email, and forum renderers.
+
+## Package 2026 Apr (spec: v1.0.0-rc.5)
 - **Changed:** In the Spec, the document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
 - **Clarified:** In the Spec, updated the specification text, validation rules, and strict/lenient mode table to reflect that strict mode requires `/END` at the end of the document.
 - **Clarified:** In the Spec, repeated/basic section headers do not require a space before the section name, but numeric shorthand headers (such as `^7`) do.
@@ -13,6 +68,7 @@ More details of feedback, see section D.2, _“Acknowledgments & Special Thanks�
   - See Section **15.7**.
   - The full YINI and JSON versions of these examples are also included under  
     [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
+- **Updated:** Removed all colon-based lists from samples and examples, replacing them with bracketed lists (`[ ... ]`), since colon-based lists are no longer supported.
 - **Improved:** Cleaned up and reorganized the ANTLR4 lexer and parser grammar files (`.g4`) for better clarity, consistency, and maintainability.
   
 ## 2026 Mar (v1.0.0-rc.4)
@@ -133,6 +189,6 @@ in YINI files, specifically related to bad syntax members.
 ---
 
 **^YINI ≡**  
-> A simple, structured, and human-friendly configuration format.  
+> YINI is a human-readable configuration format designed for clarity, explicit structure, and predictable parsing.  
 
 [yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

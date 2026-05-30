@@ -1,0 +1,18 @@
+{
+    "DatabaseConfig": {
+        "Host": "db.example.com",
+        "Port": 3306,
+        "User": "root",
+        "Password": "secret",
+        "Logging": {
+            "LogFilePath": "/var/log/db.log",
+            "LogLevel": "info",
+            "EnableRotation": true,
+            "MaxLogSize": 1000000,
+            "RotationSettings": {
+                "MaxLogCount": 5,
+                "RotationInterval": "daily"
+            }
+        }
+    }
+}

@@ -4,7 +4,7 @@
     Example of a YINI document.
 */
 
-^ Service               // Defines a section named Server.
+^ Service               // Defines a section named Service.
 Enabled = true
 
     ^^ Cache

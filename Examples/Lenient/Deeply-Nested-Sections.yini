@@ -1,7 +1,9 @@
 /*
   Nesting level respected, no missing intermediary levels.
 
-  Using caret shorthand for deeper nesting.
+  RC 6 allows repeated section markers through level 9. The optional `_`
+  separator can make deeper repeated-marker headers easier to read.
+  Numeric shorthand is used for level 10 and deeper.
 */
 
 ^ Root                             # level 1
@@ -22,8 +24,14 @@ level5Key = "hello"
 ^^^^^^ Level6                      # level 6
 level6Key = [1, 2, 3]
 
-^7 Level7Shorthand                 # level 7 (shorthand)
+^^^^_^^^ Level7Separated           # level 7
 level7Key = "deepValue"
 
-^8 Level8Shorthand                 # level 8 (shorthand)
+^^^^_^^^^ Level8Separated          # level 8
 level8Key = 3.14159
+
+^^^_^^^_^^^ Level9Separated        # level 9
+level9Key = hex:FFAA00
+
+^10 Level10Shorthand               # level 10
+level10Key = "numeric shorthand"

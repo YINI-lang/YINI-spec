@@ -1,3 +1,9 @@
-// A dangling key is invalid, either = or : is missing.
+/*
+  Primary failure: syntactic.
+  Rule: a member must use `key = value`; a bare key is invalid.
+*/
+
 key
 ^^^
+
+/END

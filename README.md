@@ -1,17 +1,17 @@
 # YINI Specification ≡  
 
-**YINI is a human-readable configuration format designed for clarity, structure, and predictable parsing, with simple syntax, a formal specification, and a defined grammar.**
+**YINI is a human-readable configuration format designed for clarity, readability, explicit structure, and predictable parsing. It has a formal specification and a defined grammar.**
 
-> YINI (by the YINI-lang project) is an INI-inspired format for representing structured information. It is suitable for configuration files, application settings, and general data storage use cases.
+> YINI (by the YINI-lang project) is an INI-inspired format for representing structured information. It is intended for configuration files, application settings, and general data storage use cases.
 
 ---
 
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Package Version:** 1.0.0-RC.5 (Latest published release) => [Version Table](./README.md#version-mapping-table)
-**Date:** 2026-05
-**Status:** Release Candidate
+**Specification Package Version:** 1.0.0-RC.6 ([Version Mapping Table](./README.md#version-mapping-table))  
+**Date:** 2026-05-30  
+**Status:** Release Candidate  
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
 - [Latest updates/changes in this package](/CHANGELOG.md)  
@@ -20,47 +20,62 @@
 ---
 
 ## 🙋‍♀️ A Quick YINI Example
-Here is a small example of YINI syntax:
-```yini
+Here is a small lenient-mode (default) example of YINI syntax:
+```ini
 ^ App
-name = "Demo App"
+name    = "Demo App"
 version = "1.0.0"
-tags = ["web", "api"]
+list    = ["web", "api"]
+isDebug = On  // true/yes also mean true.
 
     ^^ Server
-    host = "localhost"
-    port = 8080
-    settings = { logging: true, mode: "debug" }
+    host   = "localhost"
+    port   = 8080
+    object = { logging: true, mode: "debug" }
 ```
 
 ---
 
 ## ℹ️ Why YINI?
-There are already many good configuration formats out there, each with its own trade-offs.
 
-- **INI** is simple, but limited for structured configuration and lacks a single widely adopted formal specification.
-- **JSON** is predictable, but can be verbose and does not support comments.
-- **YAML** is flexible, but can be fragile and indentation-sensitive.
-- **TOML** is well-defined, but can become verbose as files grow.
-- **XML** is highly structured and expressive, but often has too much syntax overhead for human-edited configuration.
+There are already many established configuration formats, each with different trade-offs.
 
-**So, why another format?**  
-YINI aims to offer a practical middle ground: **familiar**, **clear**, and **structured**, while also being **predictable** and flexible enough for real-world configuration.
+- **[INI](https://en.wikipedia.org/wiki/INI_file)** is simple, but limited for structured configuration and lacks a single widely adopted formal specification.
+- **[JSON](https://en.wikipedia.org/wiki/JSON)** is predictable, but can be verbose and does not support comments.
+- **[YAML](https://en.wikipedia.org/wiki/YAML)** is flexible, but can be indentation-sensitive and less predictable to parse.
+- **TOML** is well-defined, but may become verbose in larger nested files.
+- **XML** is expressive and strongly structured, but often introduces more syntax overhead than needed for human-edited configuration.
 
-**TL;DR:**
-- ✅ **Combines simplicity and structure** — aims to be more expressive than INI, while often remaining less verbose than JSON, YAML, or TOML.
-- ✅ **Designed for clarity** — aims to prioritize readability, straightforward syntax, and predictable parsing.
+YINI is intended as a configuration format that emphasizes clarity, readability, explicit structure, and predictable parsing. It is designed to be simple, but not simplistic, and to remain usable in both small and larger configuration files.
+
+**Summary:**
+- YINI is intended to provide more structure than traditional INI-style files.
+- YINI is designed to prioritize clarity, readability, and predictable parsing.
+
+---
+
+## Design Goals
+
+YINI is designed around a small set of core goals:
+
+1. **Clarity over cleverness** — prefer syntax that is easy to understand correctly.
+2. **Readability without sacrificing structure** — remain easy to read while still supporting structured configuration.
+3. **Simplicity with serious usability** — keep the format simple, but not simplistic.
+4. **Predictability over magic** — favor explicit and stable interpretation rules.
+5. **Explicitness over hidden behavior** — make structure and meaning visible in the file itself.
+6. **Structure without visual clutter** — support hierarchy without relying on indentation semantics.
+7. **Human-friendly, parser-friendly** — support direct editing by humans and consistent parsing by tools.
 
 ---
 
 ## 🚀 Quick Start
 
-Want to try YINI quickly? Parse a small config in seconds with the CLI (`yini-cli`).
+You can try YINI with the CLI (`yini-cli`) by parsing a small configuration file.
 
 ### Option 1: Run with `npx` (no global install)
 1. **Create a YINI file**  
     Save the following to a file called `config.yini`:
-    ```yini
+    ```ini
     ^ App
     name = "My App Title"
     version = "1.2.3"
@@ -74,7 +89,7 @@ Want to try YINI quickly? Parse a small config in seconds with the CLI (`yini-cl
     ```
 
 ### Option 2: Install globally
-1. **Install the CLI globally**  (requres Node.js)
+1. **Install the CLI globally**  (requires Node.js)
     ```bash
     npm install -g yini-cli
     ```
@@ -131,20 +146,23 @@ You should see JSON output printed to the console, similar to:
 ---
 
 ## ✨ Key Features
-YINI aims to prioritize **human readability, clarity, and clean syntax**.
+YINI is designed to prioritize **readability, clarity, and explicit structure**.
 
 - ✔️ **Simple section-based structure** with clear visual nesting.
+- ✔️ YINI is designed to be simple, but not simplistic, with explicit structure and deterministic (predictable and consistent) parsing.
 - ✔️ **Explicit value syntax** for strings, numbers, booleans, null, lists (AKA arrays), and inline objects.
 - ✔️ **Indentation-independent parsing** — without indentation pitfalls.
 - ✔️ **Formal specification and grammar.**
-- ✔️ **Strict and lenient parsing modes.**
+- ✔️ **Lenient and strict parsing modes** — lenient mode is the default, strict mode enables stronger validation.
 - ✔️ **Multiple comment styles** — C-style commenting rules using `//` and `/* ... */`. Supports `#` and `;` commenting styles too. 
-- ✔️ **Minimal syntax noise** — avoids visual noise, easy to write and read.
+- ✔️ **Minimal syntax noise** — with explicit assignments and section-based nesting.
 - ✔️ **Flexible booleans** with `true`/`false`, `on`/`off`, `yes`/`no` (all case-insensitive).
 - ✔️ **Common number literals**  — supports decimal, base-prefixed, and exponent notation.
-- ✔️ **Prioritizes clarity over cleverness** — yet machine-friendly.
-- ✔️ **Flexible strings** using single or double quotes.
+- ✔️ **Designed to prefer explicit and readable syntax** over compact or implicit forms.
+- ✔️ **Flexible strings** using single quotes, double quotes, Classic escaped strings, and Triple-Quoted Strings.
 - ✔️ **Supports the `null` value type.**
+- ✔️ **Explicit string concatenation** using `+`; concatenation expressions must begin with a string literal.
+- ✔️ **Optional mode declarations** with `@yini strict` and `@yini lenient`, declarations state intent but do not switch parser mode.
 
 ---
 
@@ -173,20 +191,20 @@ const config = YINI.parse(`
     ^ Server                        // Definition of section (group) "Server"
       host = 'localhost'
       port = 8080
-      useTLS = OFF                  // "false" and "NO" works too
+      useTLS = OFF                  // "false" and "NO" work too
 
         // Sub-section of "Server"
         ^^ Login
           username = 'user_name'
           password = 'your_password_here'
     
-    /END // (only optional)
+    /END  // Optional in lenient mode; required in strict mode.
 `);
 
 console.log(config);
 ```
 
-The above variable `config` now outputs:
+The resulting value of `config` is:
 ```js
 // JS object
 {
@@ -202,7 +220,7 @@ The above variable `config` now outputs:
 }
 ```
 
-- ➡️ [Parser usage & documentation](https://github.com/YINI-lang/yini-parser-typescript#usage)
+- [Parser usage & documentation](https://github.com/YINI-lang/yini-parser-typescript#usage)
 
 ---
 
@@ -224,7 +242,7 @@ server:
 ```
 
 ### After (YINI)
-```yini
+```ini
 ^ server
 
     ^^ connection
@@ -238,21 +256,21 @@ server:
         username = 'admin'
         password = 'secret'  // Change me!
 
-; Clear structure with visual nesting — still easy to read and follow.
+; Structure is expressed by section markers rather than indentation.
 ```
 
 💡 Notes:
 > - Indentation in YINI is purely for human readability.
 > - In YINI, `^` defines section headers.
-> - `//` is used for inline comments (`#` (followed by space or tab) works too for inline comments).
-> - `;` can be used for full line comments (`//` and `#` can be used too).
+> - `//` and `#` are used for inline comments. Outside string literals, `#` always begins a comment; no whitespace is required.
+> - `;` can be used for full-line comments (`//` and `#` can be used too).
 > - All strings must be enclosed in quotes (`'` or `"`).
-> - Natural, readable keys and values separated by (`=`).
-> - Strong typing without heavy syntax.
-> - In YINI, `:` is not an assignment operator; use `=` for both single values and lists.
+> - Keys and values are separated by `=`.
+> - Typed scalar and compound values use explicit syntax.
+> - In YINI, `:` is not an assignment operator; use `=` for root-level and section-level members.
 
 ### With Alternative Indentation (YINI)
-```yini
+```ini
 ^ server
 
     ^^ connection
@@ -276,10 +294,10 @@ server:
 
 ### Before (TOML)
 ```toml
-[Service]               # Defines a section named Server.
+[Service]               # Defines a section named Service.
 Enabled = true
 
-[Service.Cache]         # Defines Cache, a sub-section of Server.
+[Service.Cache]         # Defines Cache, a sub-section of Service.
 Type = "redis"
 TTL = 3600
 
@@ -292,12 +310,12 @@ code = "dev"
 ```
 
 ### After (YINI)
-```yini
-^ Service                   // Defines a section named Server.
+```ini
+^ Service                   // Defines a section named Service.
 Enabled = true
 
     ^^ Cache
-    Type = "redis"          // Defines Cache, a sub-section of Server.
+    Type = "redis"          // Defines Cache, a sub-section of Service.
     TTL = 3600
 
         ^^^ Options         // Defines Options, a sub-section of Cache.
@@ -313,22 +331,33 @@ code = "dev"
 > - **One** `^` = top-level section.
 > - **Two** `^^` = nested section under previous.
 > - **Three** `^^^` = sub-subsection.
-> - This structure is visually clear and easy to parse — especially for both humans and machines.
+> - Section depth is expressed directly by repeated section markers.
 > - Unlike TOML, YINI **does not** use dot `.` notation in sections.
 
 ---
 
 ## Section Nesting
-Nesting sections can be done easily by adding one extra section marker (e.g. `^^`).
+Section nesting is expressed by repeating the section marker character. For example, `^` indicates a top-level section, `^^` indicates a nested section, and `^^^` indicates a deeper nested section.
 
 ## Comments
-YINI supports **three types of comments**:
+YINI supports several comment styles:
 - **Inline comments:** `//` or `#`
 - **Block comments:**  `/* multi-line */`
 - **Full-line comments:** `;`  
 - A line may also contain only an inline comment.
 
-Note: `#` must be followed by a space or tab to be recognized as a comment (to avoid clashes with hex values like `#FF0033`).
+Note: Outside string literals, `#` always begins a comment. Hexadecimal values use `0x...` or `hex:...`; `#FF0033` is treated as a comment, not a hex value.
+
+```ini
+key1 = "value" // Inline comment.
+key2 = "value" # Also an inline comment.
+# Full-line hash comment.
+; Full-line semicolon comment.
+
+/*
+  Block comment.
+*/
+```
 
 ## Strings
 
@@ -338,10 +367,12 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### String Literals in YINI
-YINI has four types of string literals — Raw, Classic, Hyper, and Triple-quoted — each designed to help express text clearly and appropriately in different situations, whether for escape handling, whitespace normalization, or multi-line content.
+YINI defines four main string literal forms: Raw Strings, Classic Strings, Raw Triple-Quoted Strings, and C-Triple-Quoted Strings.  
+
+These forms differ in how they handle escape sequences and multi-line content.
 
 💡 **Note:** YINI primarily follows C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 
-```yini
+```ini
 # Raw strings are the default. No prefix is needed, but an optional R prefix
 # may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
@@ -349,13 +380,6 @@ String = "D:\folder\file"
 // Classic strings (C-Strings) are prefixed with C or c — they support
 // escape sequences.
 ClassicString = C"Hello\nWorld\n"
-
-; Hyper strings (H-Strings) are prefixed with H or h — they behave
-; similarly to HTML text: whitespace is normalized and edges are trimmed.
-HyperString = H"
-  This is a hyper string spanning multiple lines,
-  with trimmed edges and normalized whitespace.
-"
 
 /* Triple-quoted strings can span multiple lines and
    preserve all characters as-is, including tabs and newlines.
@@ -369,9 +393,22 @@ are preserved exactly, without escapes.
 
 ---
 
+### String Concatenation
+
+YINI supports explicit string concatenation with `+`. A concatenation expression must begin with a string literal.
+
+```ini
+label = "port-" + 5432   // Valid in lenient mode: "port-5432"
+bad   = 5432 + "-port"   // Invalid: must begin with a string literal.
+```
+
+In strict mode, all concatenation operands must be string literals.
+
+---
+
 ## 🔍 Summary: How YINI Compares to Other Formats
 
-YINI is a minimal, human-friendly **text-based configuration format** inspired by INI, YAML, JSON, and TOML, with a strong focus on clarity, structure, and predictability.
+YINI is a text-based configuration format inspired by INI, JSON, Python, and YAML. It is designed to emphasize clarity, readability, explicit structure, and predictable parsing.
 
 ### Feature Comparison
 
@@ -379,8 +416,8 @@ YINI is a minimal, human-friendly **text-based configuration format** inspired b
 |----------------------------------|:---:|:---:|:----:|:----:|:----:|
 | Human-friendly by default        | ✅ | ➖ | ❌ | ✅ | ➖ |
 | Readability at scale             | ✅ | ❌ | ❌ | ➖ | ➖ |
-| Predictable parsing              | ✅ | ❌ | ✅ | ❌ | ✅ |
-| Formal grammar / spec            | ✅ | ❌ | ✅ | ❌ | ✅ |
+| Predictable parsing              | ✅ | ❌ | ✅ | ➖ | ✅ |
+| Formal grammar / spec            | ✅ | ❌ | ✅ | ✅ | ✅ |
 | Nested sections / hierarchy      | ✅ | ➖ | ✅ | ✅ | ✅ |
 | Comments                         | ✅ | ✅ | ❌ | ✅ | ✅ |
 | Minimal syntax noise             | ✅ | ✅ | ❌ | ➖ | ➖ |
@@ -388,8 +425,10 @@ YINI is a minimal, human-friendly **text-based configuration format** inspired b
 | Designed to remain readable as files grow| ✅ | ❌ | ➖ | ❌ | ➖ |
 | Designed to work well with tooling and schemas| ✅ | ❌ | ✅ | ➖ | ✅ |
 | Supports mixed data & config     | ✅ | ➖ | ✅ | ✅ | ✅ |
+| Human-friendly by default | ✅ | ➖ | ❌ | ✅ | ➖ |
 
-> YINI is for people who want clean and predictable configuration files that are easy to work with.
+> This table is a simplified comparison intended to highlight common characteristics. Exact behavior depends on the specific parser or implementation.
+> YINI is intended for configuration files where readability, structure, and predictable parsing are important.
 
 ---
 
@@ -405,32 +444,33 @@ We welcome feedback — feel free to open an Issue or start a Discussion.
 ### Acknowledgments
 YINI has grown and improved thanks to the insights, questions, and thoughtful feedback from the community. Much of the specification — and this repository — reflects that shared input.
 
-For more details, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
+For more details, see section D.2, _"Acknowledgments & Special Thanks"_, in the [Rationale](./RATIONALE.md) document.
 
 ---
 
 ## Version Mapping Table
 
-| Date     | Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
+| Date     | Specification Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
 |----------|-----------------|--------------|--------------|---------------|
 | 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
 | 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   | 1.0.0-RC.2   | 1.0.0-RC.2    |
 | 2025 Sep | 1.0.0-RC.3      | 1.0.0-RC.3   | 1.1.0-RC.1   | 1.1.0-RC.1    |
 | 2026 Mar | 1.0.0-RC.4      | 1.0.0-RC.4   | 1.2.0-RC.1   | 1.2.0-RC.1    |
 | 2026 Apr | 1.0.0-RC.5      | 1.0.0-RC.5   | 1.2.0-RC.2   | 1.2.0-RC.2    |
+| 2026 May | 1.0.0-RC.6      | 1.0.0-RC.6   | 1.3.0-RC.1   | 1.3.0-RC.1    |
 | …        | …               | …            | …            | …             |
 
 ---
 
-## 🧾 License
+## License
 
-YINI is licensed under the [Apache License 2.0](./LICENSE).
+This project is licensed under the Apache License 2.0 — see the [LICENSE](./LICENSE) file for details.
 
 ---
 
 **^YINI ≡**  
-> Designed to be simple, structured, and human-friendly.  
+> YINI is a human-readable, INI-inspired, indentation-insensitive configuration format with clear nested sections, explicit structure, and predictable parsing.
 > 
-> Readable like INI. Structured like JSON. No indentation surprises.  
+> It has a formal specification and a defined grammar.
 
 [yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=readme_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

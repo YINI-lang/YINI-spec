@@ -1,5 +1,6 @@
 ^ MyPrefs
 
+// Strings are raw by default, so backslashes are literal here.
 HomeDir = "C:\Users\John Smith\"
 Buffers = 10
 IsNight = OFF  // Boolean false, YINI understands also OFF, YES, ON etc.

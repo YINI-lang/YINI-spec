@@ -1,4 +1,4 @@
-# Up to six levels using repeated carets
+# Up to nine levels using repeated carets in RC 6.
 
 ^ Application
 appName = "MyApp"
@@ -24,5 +24,13 @@ version = "1.0.0"
           level = "INFO"
           path  = "/var/log/myapp.log"
 
-# If we tried to go to level 7 here (e.g. ^^^^^^^ TooDeep),
-# the parser would reject it—use the ^<n> shorthand instead.
+            ^^^^^^^ Metrics
+            enabled = true
+
+              ^^^^^^^^ Retention
+              days = 30
+
+                ^^^^^^^^^ Archive
+                target = "cold-storage"
+
+# For level 10 and deeper, use numeric shorthand such as ^10.

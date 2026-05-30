@@ -1,0 +1,49 @@
+# Taskfile.yaml
+#
+# Install Task on Windows:
+#   winget install Task.Task
+#
+# Run these commands from the Grammar-ANTLR4 directory.
+#
+# Examples:
+#   task parse:gui
+#   task parse:tokens
+#   task parse:trace
+#   task parse:tree
+#
+#   task parse:tree INPUT=my-other-file.yini
+#   task parse:gui INPUT=../Examples/Lenient/Short-1.yini
+
+version: '3'
+
+vars:
+  PARSER_GRAMMAR: YiniParser.g4
+  LEXER_GRAMMAR: YiniLexer.g4
+  START_RULE: yini
+  INPUT_FILE: '{{default "sample.yini" .INPUT}}'
+
+tasks:
+  default:
+    desc: Show available tasks.
+    cmds:
+      - task --list
+
+  parse:gui:
+    desc: Run ANTLR parse viewer with GUI.
+    cmds:
+      - antlr4-parse {{.PARSER_GRAMMAR}} {{.LEXER_GRAMMAR}} {{.START_RULE}} {{.INPUT_FILE}} -gui
+
+  parse:tokens:
+    desc: Print lexer/parser tokens.
+    cmds:
+      - antlr4-parse {{.PARSER_GRAMMAR}} {{.LEXER_GRAMMAR}} {{.START_RULE}} {{.INPUT_FILE}} -tokens
+
+  parse:trace:
+    desc: Print parser trace output.
+    cmds:
+      - antlr4-parse {{.PARSER_GRAMMAR}} {{.LEXER_GRAMMAR}} {{.START_RULE}} {{.INPUT_FILE}} -trace
+
+  parse:tree:
+    desc: Print parse tree.
+    cmds:
+      - antlr4-parse {{.PARSER_GRAMMAR}} {{.LEXER_GRAMMAR}} {{.START_RULE}} {{.INPUT_FILE}} -tree
