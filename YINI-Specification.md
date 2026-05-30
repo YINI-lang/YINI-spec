@@ -526,13 +526,15 @@ Outside string literals, the `#` character always begins a comment. Everything f
   - `#FF9900` — Interpreted as a comment.
   - `##` — Also a comment.
 
-```txt
-^ MySection # comment      // Valid after section header line.
-0xFF#comment               // Valid if after complete value.
+Because `#` always begins a comment outside string literals, it cannot appear inside identifiers, prefixes, or other tokens.
 
-na#commentme = "Kim"       // Invalid: Comment splits an identifier.
-hex:#FF                    // Invalid: Comment begins before hexadecimal digits.
-C#comment"hello"           // Invalid: Comment splits a string prefix from its literal.
+```txt
+^ MySection # comment      // Valid: comment after a section header.
+0xFF#comment               // Valid: comment after a complete value.
+
+na#commentme = "Kim"       // Invalid: `#` begins a comment after `na`, leaving an incomplete/invalid member.
+hex:#FF                    // Invalid: `#` begins a comment before any hexadecimal digits.
+C#comment"hello"           // Invalid: `#` begins a comment after `C`, splitting the string prefix from its literal.
 ```
 
 ### 3.3.2. Multi-line Block Comments
@@ -1176,14 +1178,20 @@ C"""Quotes inside: "double" and 'single'"""
 Triple-Quoted Strings always preserve their contents exactly — including all whitespace and line breaks (new lines) — unless prefixed with `C` (or `c`), in which case escape sequences are interpreted.
 
 ### 6.4. String Types Summary
-**Summary**
 
-| String Type | Enclosed In | Multi-Line | Escape Sequences | Trims Whitespace | Notes | Behavior Hint
-|---|---|---|---|---|---|---|
-| Raw Strings (default)         | `' '` or `" "`   | ❌ No | ❌ No | ❌ No | Ideal for file paths and literal text | Simple raw, 1-line, no escapes
-| Classic Strings (C-Strings)| `C' '` or `c" "` | ❌ No | ✅ Yes | ❌ No | Standard escaped strings | Behaves like C/JSON strings
-| Triple-Quoted Strings | `""" """`   | ✅ Yes | ❌ No | ❌ No | Multi-line literal string, Raw by default | Raw multiline, no escapes
-| C-Triple-Quoted Strings | `C""" """` or `c""" """`   | ✅ Yes | ✅ Yes | ❌ No | Multi-line with escapes, like Classic but multiline | Like Python triple strings
+YINI string behavior is determined by two independent choices:
+
+1. The optional string prefix:
+   - No prefix, `R`, or `r` means Raw string behavior.
+   - `C` or `c` means Classic string behavior, where escape sequences are interpreted.
+
+2. The delimiter form:
+   - Single-line quoted strings use `'...'` or `"..."`.
+   - Triple-Quoted Strings use `"""..."""` and may span multiple lines.
+
+Raw strings are the default. The `R` prefix is allowed for explicitness only and has no semantic effect. The `C` prefix enables escape-sequence interpretation.
+
+For the full table of supported string forms, see the overview table at the beginning of Section 6.
 
 ### 6.5. String Concatenation
 
@@ -2253,15 +2261,27 @@ In lenient mode, implementations MAY report warnings for unsupported reserved co
 In strict mode, unsupported or unrecognized syntax MUST result in an error unless explicitly allowed by this specification.
 
 ### 14.2. Versioning Strategy
-**Version Format**
+The YINI Specification uses Semantic Versioning-style version numbers to signal format evolution.
 
-- In the future, the YINI Specification will adopt _Semantic Versioning_ (`MAJOR.MINOR.PATCH STAGE`) to signal format evolution.
-- The YINI specification uses staged pre-1.0 development labels such as Beta and RC (Release Candidate) before the final `1.0.0` release. Release Candidate versions indicate that the format is intended to be close to stable, but may still receive clarifications or breaking adjustments before final release.
+Version identifiers use the form:
 
-Semantic Versioning:
+```txt
+MAJOR.MINOR.PATCH[-STAGE.N]
+```
+
+Examples:
+```
+1.0.0-RC.6
+1.0.0
+1.1.0
+```
+
 - **MAJOR:** Incompatible changes.
 - **MINOR:** Backward-compatible additions.
-- **PATCH:** Backward-compatible fixes.
+- **PATCH:** Backward-compatible clarifications, corrections, and non-breaking fixes.
+- **STAGE:** Optional pre-release stage, such as Beta or RC.
+
+Before the final `1.0.0` release, staged labels such as Beta and RC indicate that the format is intended to be close to stable, but may still receive clarifications or breaking adjustments before final release.
 
 ### 14.3. Encoding Notes
 #### 14.3.1 Required Encoding
@@ -3212,7 +3232,7 @@ contacts = ['ops@orion-industries.io', 'maintenance@orion-industries.io', 'safet
 ### 16.1. License
 Apache License, Version 2.0, January 2004,
 http://www.apache.org/licenses/
-Copyright 2024-2026 Gothenburg, Marko K. Seppänen. (Sweden via
+Copyright 2024-2026 Gothenburg, Marko K. Seppänen, (Sweden via
 Finland).
 
 ### 16.2. Acknowledgments
@@ -3286,8 +3306,6 @@ v1.0.0 RC 4, 2026-03-29
 
 ### 16.5. Reserved: Grammar (Formal)
 Reserved for future inclusion of the formal grammar.
-
----
 
 ### 16.6. Appendix C – Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats such as YAML, JSON, or classic INI. This table clarifies syntax edge cases and helps avoid subtle bugs.
