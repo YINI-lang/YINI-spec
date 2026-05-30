@@ -1,61 +1,81 @@
 # Examples of YINI vs Other Formats 
-*(--TODO--)*
+YINI is intended for configuration files where human readability, explicit structure, and predictable parsing are more important than minimal syntax or maximum flexibility.
 
-## INI vs YINI
-### Before (INI)
+Compared with common configuration formats:
+- **INI:** YINI supports clearer nested sections and typed values.
+- **JSON:** YINI supports comments and is easier to edit by hand.
+- **YAML:** YINI does not use indentation to define structure.
+- **TOML:** YINI uses explicit section markers for hierarchy instead of dotted table names.
+
+The same small configuration can be written in several formats:
+
+### YINI
 ```ini
-[Server]                # Defines a section named Server.
-host=localhost
-port=8080
+^ Application
+name = 'demo'
+environment = 'dev'
 
-[Features]              # Defines a section named Features.
-login=true
-notifications=false
+^^ Server
+host = 'localhost'
+ports = [8080, 8081]
+
+^^^ TLS
+enabled = true
+mode = 'optional'
 ```
 
-### After (YINI)
-```js
-^ Server                // Defines a section named Server.
+- `Application` contains the top-level application settings.
+- `Server` is nested under `Application`.
+- `TLS` is nested under `Server`.
+- The section markers `^` make the nesting explicit. Indentation is optional and not required for structure.
+- Strings can use either `'` or `"`.
+
+### JSON
+```json
+{
+  "Application": {
+    "name": "demo",
+    "environment": "dev",
+    "Server": {
+      "host": "localhost",
+      "ports": [8080, 8081],
+      "TLS": {
+        "enabled": true,
+        "mode": "optional"
+      }
+    }
+  }
+}
+```
+
+### YAML
+```yaml
+Application:
+  name: demo
+  environment: dev
+  Server:
+    host: localhost
+    ports:
+      - 8080
+      - 8081
+    TLS:
+      enabled: true
+      mode: optional
+```
+
+### TOML
+```toml
+[Application]
+name = "demo"
+environment = "dev"
+
+[Application.Server]
 host = "localhost"
-port = 8080
+ports = [8080, 8081]
 
-^ Features              // Defines a section named Features.
-login = true
-notifications = false
-```
-
-## YAML vs YINI
-### Before (YAML)
-```
-server:
-    connection:
-        host: "localhost"
-        port: 8080  # Dev port
-    auth:
-        enabled: true
-        credentials:
-            username: "admin"
-            password: "secret"  # Change me!
-
-# Like Python, structure relies entirely on indentation — easy to misread or misplace.
-```
-
-### After (YINI)
-```yini
-^ server
-
-    ^^ connection
-    host = "localhost"
-    port = 8080  // Dev port
-
-    ^^ auth
-    enabled = true
-
-        ^^^ credentials
-        username = "admin"
-        password = "secret"  // Change me!
-
-; This config stays pretty clean and easy to read.
+[Application.Server.TLS]
+enabled = true
+mode = "optional"
 ```
 
 ---
