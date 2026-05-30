@@ -4,7 +4,7 @@ _YINI: A clear configuration file format — clean, readable, structured._
 
 # Specification for the YINI Format
 **Version:** 1.0.0-RC.6
-**Date:** 2026-05-28
+**Date:** 2026-05-30
 
 > **Status:** This is a release-candidate draft. Minor clarifications and corrections may still be made before YINI 1.0.0.
 
@@ -3259,7 +3259,7 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.0 RC 6, 2026-05-28
+v1.0.0 RC 6, 2026-05-30
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
 - **Changed:** Increased the maximum repeated section marker depth from 6 to 9 because section marker separators (`_`) may now be used to make headers easier to read. Repeated marker headers may now express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
 - **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
