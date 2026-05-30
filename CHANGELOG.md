@@ -17,6 +17,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 - **Changed:** In `Grammar-ANTLR4`, replaced Windows-specific `.bat` helper scripts with a language-agnostic `Taskfile.yaml`.
 - **Improved:** Revised `Contributing.md` for clarity and consistency.
 - **Changed:** Restructured the `Examples` directory into **Lenient** and **Strict** subdirectories.
+- **Improved:** Polished examples, expected JSON references, grammar test fixtures, and supporting example documentation for public RC 6 release readiness.
 - **Added:** Added GitHub Actions workflows to validate example files with `yini-cli`.
   **Note:** Validation in CI depends on the currently published `yini-cli` release, so some files may fail there even when they are valid according to the latest specification or grammar in this repository. Even in such cases, the validation output remains useful for manual review and for identifying where CLI support has not yet caught up.
 - **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: value`.
