@@ -21,7 +21,7 @@
 
 ## 🙋‍♀️ A Quick YINI Example
 Here is a small lenient-mode (default) example of YINI syntax:
-```yini
+```ini
 ^ App
 name    = "Demo App"
 version = "1.0.0"
@@ -75,7 +75,7 @@ You can try YINI with the CLI (`yini-cli`) by parsing a small configuration file
 ### Option 1: Run with `npx` (no global install)
 1. **Create a YINI file**  
     Save the following to a file called `config.yini`:
-    ```yini
+    ```ini
     ^ App
     name = "My App Title"
     version = "1.2.3"
@@ -242,7 +242,7 @@ server:
 ```
 
 ### After (YINI)
-```yini
+```ini
 ^ server
 
     ^^ connection
@@ -270,7 +270,7 @@ server:
 > - In YINI, `:` is not an assignment operator; use `=` for root-level and section-level members.
 
 ### With Alternative Indentation (YINI)
-```yini
+```ini
 ^ server
 
     ^^ connection
@@ -310,7 +310,7 @@ code = "dev"
 ```
 
 ### After (YINI)
-```yini
+```ini
 ^ Service                   // Defines a section named Service.
 Enabled = true
 
@@ -348,7 +348,7 @@ YINI supports several comment styles:
 
 Note: Outside string literals, `#` always begins a comment. Hexadecimal values use `0x...` or `hex:...`; `#FF0033` is treated as a comment, not a hex value.
 
-```yini
+```ini
 key1 = "value" // Inline comment.
 key2 = "value" # Also an inline comment.
 # Full-line hash comment.
@@ -372,7 +372,7 @@ YINI defines four main string literal forms: Raw Strings, Classic Strings, Raw T
 These forms differ in how they handle escape sequences and multi-line content.
 
 💡 **Note:** YINI primarily follows C-style commenting rules using `//` and `/* ... */`. However, alternative commenting styles `;` and `#` are also supported. 
-```yini
+```ini
 # Raw strings are the default. No prefix is needed, but an optional R prefix
 # may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
@@ -397,7 +397,7 @@ are preserved exactly, without escapes.
 
 YINI supports explicit string concatenation with `+`. A concatenation expression must begin with a string literal.
 
-```yini
+```ini
 label = "port-" + 5432   // Valid in lenient mode: "port-5432"
 bad   = 5432 + "-port"   // Invalid: must begin with a string literal.
 ```
