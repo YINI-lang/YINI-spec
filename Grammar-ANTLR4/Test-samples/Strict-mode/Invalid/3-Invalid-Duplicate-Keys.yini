@@ -1,8 +1,10 @@
 /*
-  SHOULD FAIL — duplicate key within same section.
+  Primary failure: semantic.
+  Rule: duplicate keys in the same section are invalid in strict mode.
 */
 
 ^ Config
 path = "/usr/local"
 path = "/opt"
 
+/END

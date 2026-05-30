@@ -399,7 +399,6 @@ DISABLED_LINE
  The parser or later validation step must verify that FULL_LINE_COMMENT appears
  only where a full-line comment is allowed.
 */
-// todo: if it doesn't work, try delete skip
 FULL_LINE_COMMENT
   //: ('\r\n' | '\r' | '\n') HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip
   //: HSPACE* (DISABLE_LINE_MARKER | SEMICOLON) ~[\r\n]* -> skip // This (may?) accidentally allow invalid inline semicolon comments.

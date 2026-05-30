@@ -1,10 +1,10 @@
 /*
-  SHOULD FAIL
+  Primary failure: semantic.
+  Rule: unquoted text is not a string or boolean literal.
 */
 
-^bools
+^ bools
+bool1 = falsy
+bool2 = true
 
-bool1=falsy	// ERROR HERE, no literal falsy!
-bool2=true
-
-
+/END

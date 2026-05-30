@@ -1,5 +1,6 @@
 /*
-  SHOULD FAIL - invalid escape sequence in a Classic String.
+  Primary failure: semantic.
+  Rule: Classic Strings must use only supported escape sequences.
 */
 
 ^ Strings

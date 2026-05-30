@@ -1,7 +1,8 @@
 /*
-  SHOULD FAIL
+  Primary failure: lexical/syntactic.
+  Rule: single-line Classic Strings cannot contain raw line breaks.
 */
 
-
+^ Strings
 str = C"Yes
-	mate"	// ERROR HERE, C-String must be on single line!
+mate"

@@ -1,18 +1,18 @@
 /*
-    NOTE: This should fail, due to opening bracket at line 14 must be on same line as <EQ> at line 13!
+  Primary failure: syntactic.
+  Rule: the opening `[` of a list value must be on the same line as `=`.
 */
 
 ^ Lists2
 
-	^^ ListWithBrackets
+    ^^ ListWithBrackets
 
-	list1 = [ "Orange", "Banana", "Pear", "Peach" ]
+    list1 = ["Orange", "Banana", "Pear", "Peach"]
+    list2 = []
 
-	list2 = []
-
-	listOfLists =
-	[
-		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
-		["stylesheet", "css/general.css"],
-		["stylesheet", "css/themes.css"]
-	]
+    listOfLists =
+    [
+        ["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],
+        ["stylesheet", "css/general.css"],
+        ["stylesheet", "css/themes.css"]
+    ]

@@ -9,7 +9,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Package Version:** 1.0.0-RC.6 ([Version Mapping Table](./README.md#version-mapping-table))  
+**Specification Package Version:** 1.0.0-RC.6 ([Version Mapping Table](./README.md#version-mapping-table))  
 **Date:** 2026-05-30  
 **Status:** Release Candidate  
 
@@ -416,8 +416,8 @@ YINI is a text-based configuration format inspired by INI, JSON, Python, and YAM
 |----------------------------------|:---:|:---:|:----:|:----:|:----:|
 | Human-friendly by default        | ✅ | ➖ | ❌ | ✅ | ➖ |
 | Readability at scale             | ✅ | ❌ | ❌ | ➖ | ➖ |
-| Predictable parsing              | ✅ | ❌ | ✅ | ❌ | ✅ |
-| Formal grammar / spec            | ✅ | ❌ | ✅ | ❌ | ✅ |
+| Predictable parsing              | ✅ | ❌ | ✅ | ➖ | ✅ |
+| Formal grammar / spec            | ✅ | ❌ | ✅ | ✅ | ✅ |
 | Nested sections / hierarchy      | ✅ | ➖ | ✅ | ✅ | ✅ |
 | Comments                         | ✅ | ✅ | ❌ | ✅ | ✅ |
 | Minimal syntax noise             | ✅ | ✅ | ❌ | ➖ | ➖ |
@@ -425,6 +425,7 @@ YINI is a text-based configuration format inspired by INI, JSON, Python, and YAM
 | Designed to remain readable as files grow| ✅ | ❌ | ➖ | ❌ | ➖ |
 | Designed to work well with tooling and schemas| ✅ | ❌ | ✅ | ➖ | ✅ |
 | Supports mixed data & config     | ✅ | ➖ | ✅ | ✅ | ✅ |
+| Human-friendly by default | ✅ | ➖ | ❌ | ✅ | ➖ |
 
 > This table is a simplified comparison intended to highlight common characteristics. Exact behavior depends on the specific parser or implementation.
 > YINI is intended for configuration files where readability, structure, and predictable parsing are important.
@@ -449,7 +450,7 @@ For more details, see section D.2, _"Acknowledgments & Special Thanks"_, in the 
 
 ## Version Mapping Table
 
-| Date     | Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
+| Date     | Specification Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
 |----------|-----------------|--------------|--------------|---------------|
 | 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
 | 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   | 1.0.0-RC.2   | 1.0.0-RC.2    |
