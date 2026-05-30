@@ -1,6 +1,7 @@
 /*
-  SHOULD FAIL
+  Primary failure: semantic.
+  Rule: Classic Strings must use only supported escape sequences.
 */
 
-
-str = C"👍yes"	// ERROR HERE, illegal character in C-String!
+^ Strings
+str = C"bad \z escape"

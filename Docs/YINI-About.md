@@ -33,7 +33,7 @@ In the beginning, `YINI` was known by its working name `MINI`, which later evolv
 ---
 
 ## License
-This project is licensed under the Apache-2.0 license.
+This project is licensed under the Apache License 2.0.
 
 ---
 

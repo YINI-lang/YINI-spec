@@ -1,9 +1,9 @@
 /*
-  SHOULD FAIL — raw strings cannot span multiple lines.
+  Primary failure: lexical/syntactic.
+  Rule: single-quoted and double-quoted raw strings cannot span lines.
 */
 
 ^ Strings
 multi = "This
 is not
 allowed"
-

@@ -1,8 +1,10 @@
 /*
-  SHOULD FAIL — newline between = and [ is disallowed.
+  Primary failure: syntactic.
+  Rule: a list value must start on the same logical line as `=`.
 */
 
 ^ BadList
 items =
     ["a", "b", "c"]
 
+/END

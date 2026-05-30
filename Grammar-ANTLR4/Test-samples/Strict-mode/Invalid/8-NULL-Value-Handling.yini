@@ -1,8 +1,10 @@
 /*
-  INVALID in strict-mode.
+  Primary failure: semantic.
+  Rule: strict mode requires explicit `null`; missing values are invalid.
 */
 
 ^ Nulls
 path = NULL
-empty =	// INVALID in strict-mode, missing explicit null value.
+empty =
 
+/END

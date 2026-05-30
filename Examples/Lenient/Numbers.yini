@@ -1,0 +1,53 @@
+^ Numbers
+
+# Decimal integers
+zero = 0
+positiveInt = 42
+negativeInt = -17
+
+# Decimal floating-point numbers
+simpleFloat = 3.14
+negativeFloat = -0.75
+leadingZeroFloat = 0.5
+trailingZeroFloat = 12.0
+
+# Exponent notation
+expLower = 1e3
+expUpper = 2E4
+expNegative = 5.2e-3
+expPositive = 7.5E+2
+
+# Hexadecimal
+hexColor = 0xFFAA00
+hexSmall = 0x2f
+
+# Binary
+binaryFlags = 0b101101
+binarySmall = 0b11
+
+# Octal
+octalMask = 0o755
+octalSmall = 0o12
+
+# Mixed usage inside a list
+samples = [
+    0,
+    25,
+    -8,
+    6.25,
+    -0.125,
+    1e6,
+    3.5e-2,
+    0xFF,
+    0b1010,
+    0o644
+]
+
+# Inline object with numeric values
+metrics = {
+    min: 0,
+    max: 100,
+    average: 42.75,
+    tolerance: 1e-6,
+    color: 0x336699
+}

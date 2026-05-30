@@ -1,3 +1,5 @@
+@yini strict
+
 < webApp
 
     << app
