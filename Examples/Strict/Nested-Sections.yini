@@ -1,3 +1,5 @@
+@yini strict
+
 ^ DatabaseConfig
 Host = "db.example.com"
 Port = 3306

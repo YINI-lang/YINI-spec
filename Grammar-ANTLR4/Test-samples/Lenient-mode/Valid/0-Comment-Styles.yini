@@ -7,5 +7,4 @@ key = "value" // This is a comment
 /* Block
    Comment */
 another = 123
-//--ignore this line completely	// NOTE: Not yet implemented!
-
+--disabledKey = "ignored"

@@ -1,8 +1,8 @@
 /*
-    corrupt.yini
-
-    In strict should throw error, while lenient should pass.
+  Primary failure: syntactic.
+  Rule: every assignment must have a key before `=`.
 */
+
 ^ Section
 key = 123
 = "missing key name"

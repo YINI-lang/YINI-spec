@@ -11,7 +11,7 @@
   This PARSER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Version:
-  1.2.0-rc.2 - 2026 Apr.
+  1.3.0-rc.1 - 2026 May (v1.0.0-rc.6 YINI Spec Package).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -19,7 +19,7 @@
   the responsibility of the implementing parser to fully enforce all rules of
   the YINI specification.
 
-  Feedback, bug reports and improvements are welcomed here:
+  Feedback, bug reports, and improvements are welcome here:
 
   GitHub:   https://github.com/YINI-lang
   Homepage: http://yini-lang.org
@@ -54,7 +54,14 @@ prolog
   ;
 
 terminal_stmt
-  : TERMINAL_TOKEN eol*
+  : TERMINAL_TOKEN terminal_trivia*
+  ;
+
+// Fulfills the spec rule that after /END, only whitespace and
+// comments may appear.
+terminal_trivia
+  : eol
+  | full_line_comment_stmt
   ;
 
 /* ------------------------------------------------------------------
@@ -62,12 +69,23 @@ terminal_stmt
  * ------------------------------------------------------------------ */
 
 stmt
-  : eol             // BlankOrComment
-  | SECTION_HEAD    // SectionHeader
+  : eol                     // BlankOrComment
+  | full_line_comment_stmt
+  | disabled_line_stmt
+  | SECTION_HEAD            // SectionHeader
   | invalid_section_stmt
-  | assignment      // key = value
-  | meta_stmt       // Note: The implementing parser is responsible for enforcing YINI marker constraints.
-  | bad_member      // BadMember
+  | assignment              // key = value
+  | meta_stmt               // Note: The implementing parser is responsible for enforcing YINI marker constraints.
+  | bad_member              // BadMember
+  ;
+
+full_line_comment_stmt
+  : FULL_LINE_COMMENT eol?
+  ;
+
+disabled_line_stmt
+  // : DISABLED_LINE eol?
+  : DISABLED_LINE
   ;
 
 invalid_section_stmt
@@ -87,17 +105,20 @@ meta_stmt
  * sections or members.
  */
 directive
-  : YINI_TOKEN eol
+  : yini_directive
   | INCLUDE_TOKEN string_literal? eol
   ;
 
-/*
- * Pre-processing directives: instructions that modify the document itself
- * by including or transforming content before/while parsing.
- */
-// pre_processing_command
-//   : INCLUDE_TOKEN string_literal? eol
-//   ;
+yini_directive
+  : YINI_TOKEN yini_mode_declaration? eol
+  ;
+
+// IMPORTANT: Do not add lexer tokens like STRICT_MODE and LENIENT_MODE,
+// because then strict = true or lenient = false could stop parsing
+// as normal keys.
+yini_mode_declaration
+  : KEY // Host validation checks for "strict" or "lenient" case-insensitively.
+  ;
 
 /*
  * Metadata attached to a specific element (key, section, function,
@@ -125,13 +146,13 @@ assignment
   : member eol
   ;
 
-/* KEY = value  (value may be empty in lenient-mode -> NULL by convention,
- * enforced and validated in host code, not here.)
- *
- * @note (!) KEY, EQ, and value MUST be on the same line!
+/*
+ * @note KEY, EQ, and the first value token MUST be on the same logical line.
+ * A concatenation expression may continue onto following lines only when
+ * the previous line ends with PLUS.
  */
 member
-  : KEY EQ value? // Empty value is treated as NULL.
+  : KEY EQ value? // Missing value is validated by mode in host code.
   ;
 
 /* ------------------------------------------------------------------
@@ -139,29 +160,99 @@ member
  * ------------------------------------------------------------------ */
 
 value
-  : null_literal
-  | string_literal
-  | number_literal
-  | boolean_literal
+  : concat_expression
+  | scalar_value
   | list_literal
   | object_literal
   ;
 
-/* Object literal is defined with object members such as { key: value, ... }
- * with optional trailing comma and newlines tolerated.
+scalar_value
+  : null_literal
+  | string_literal
+  | number_literal
+  | boolean_literal
+  ;
+
+/*
+ * String concatenation.
+ *
+ * Spec behavior:
+ * - The + operator is exclusively string concatenation when accepted.
+ * - YINI does not define numeric addition.
+ * - A concatenation expression MUST begin with a string literal.
+ * - A newline MAY appear after +.
+ * - A newline MUST NOT appear before +.
+ * - Lists and inline objects are never valid operands.
+ *
+ * Strict-vs-lenient validation:
+ * - Strict mode: every concat operand MUST be STRING.
+ * - Lenient mode: the first operand MUST be STRING.
+ *   Later operands MAY be STRING, NUMBER, BOOLEAN, or NULL.
+ */
+// This accepts:
+//
+// message = "hello " + "world"
+// longText = "hello " +
+//            "world"
+//
+// label = "port-" +
+//         5432
+//
+// And rejects:
+//
+// message = "hello "
+//         + "world"
+//
+// txt1 = 8080 + " is the port"
+// txt2 = 1 + 2 + "3"
+//
+// because concatenation must begin with a string literal.
+concat_expression
+  : STRING concat_tail+
+  ;
+
+concat_tail
+  : PLUS NL* concat_operand
+  ;
+
+concat_operand
+  : STRING
+  | NUMBER
+  | BOOLEAN_TRUE
+  | BOOLEAN_FALSE
+  | NULL
+  ;
+
+string_literal
+  : STRING
+  ;
+
+/* Object literal.
+ * Canonical object members use `key: value`.
+ * In lenient mode, `key = value` may also be accepted.
+ * In strict mode, `=` inside inline objects is invalid and must be rejected
+ * by semantic validation.
  */
 object_literal
   : OC NL* object_members? NL* CC NL*
   | EMPTY_OBJECT NL*
   ;
 
-// Object members are one or more key:value pairs separated by commas.
+// Object members are one or more key/value entries separated by commas.
+// Canonical syntax uses `key: value`.
+// In lenient mode, `key = value` may also be accepted (in the host parser).
+// In the host parser, strict mode validation must reject `=` inside inline objects.
 object_members
   : object_member (COMMA NL* object_member)* COMMA?
   ;
 
 object_member
-  : KEY COLON NL* value
+  : KEY object_member_separator value
+  ;
+
+object_member_separator
+  : COLON // The canonical form.
+  | EQ    // Optional ONLY in lenient mode.
   ;
 
 /* [ value, ... ] with optional trailing comma and newlines tolerated */
@@ -187,14 +278,6 @@ number_literal
 
 null_literal
   : NULL // NOTE: NULL is case-insensitive.
-  ;
-
-string_literal
-  : STRING string_concat*
-  ;
-
-string_concat
-  : NL* PLUS NL* STRING
   ;
 
 boolean_literal

@@ -1,6 +1,6 @@
 # Rationale
 
-**Applies to:** YINI Specification v1.0.0-RC.5
+**Applies to:** YINI Specification v1.0.0-RC.6
 
 This document outlines the **background**, **design motivations**, and **format comparisons** that led to the creation of YINI. It aims to explain **why YINI exists**, what problems it solves, and how its structure and features were shaped by practical needs, lessons from other formats, and from community feedback.
 
@@ -21,11 +21,19 @@ Why YINI exists, what problems it aims to solve.
 ---
 
 ### Part B – Design Goals and Philosophy ([Link ⇨](./RATIONALE.md#b-design-goals-and-philosophy))
-Minimalism, human readability, lenient vs. strict, etc.
+Minimalism, human readability, strict and lenient parsing modes, and related design choices.
 
 &nbsp;&nbsp;&nbsp;&nbsp;B.1. What inspired its design?  
 &nbsp;&nbsp;&nbsp;&nbsp;B.2. Design Philosophy  
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.1. The `#` Marker as a Comment Symbol
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.1. Relationship to Established Design Principles  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.2. The `#` Marker as a Comment Symbol  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.3. Non-standard Octal Escape  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.4. Summary of Marker Characters  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.5. Why strict mode requires `/END`  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.6. String Type Motivations  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.7. Section Marker Separators and Repeated Marker Depth  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.8. Mode Declarations  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;B.2.9. String Concatenation and Non-Arithmetic `+`
 
 ---
 
@@ -43,21 +51,22 @@ What YINI keeps, discards, or improves compared to INI, JSON, YAML, and TOML.
 &nbsp;&nbsp;&nbsp;&nbsp;D.2. Acknowledgments & Special Thanks  
 &nbsp;&nbsp;&nbsp;&nbsp;D.3. Rejected Ideas or Alternatives  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.3.1. Why colon-based lists were removed  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.3.2. Why `#` as hexadecimal notation was removed  
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;D.3.3. Hyper Strings (H-Strings)  
 &nbsp;&nbsp;&nbsp;&nbsp;D.4. Future Considerations  
 
 ---
 
-
 ## A. Background and Motivation
 ### A.1. Why was YINI created?
-The motivation for YINI arose during another (personal) project, where a configuration format was needed in the spirit of INI — but with a well-defined specification (something INI lacks) and a few modern features.
+The motivation for YINI arose during another (personal) project, where a configuration format was needed in the spirit of INI, but with a well-defined specification (something INI lacks) and a few modern features.
 
-None of the existing configuration formats truly seemed to fit the spirit or requirements of that (personal hobby) project. For the needs and wishes of this project — INI felt sometime too limited. YAML seemed too flexible and ambiguous. JSON's types and structure are fairly close but JSON felt too noisy and strict. TOML is quite solid, but ultimately felt a bit too verbose and noisy.
+None of the existing configuration formats truly seemed to fit the spirit or requirements of that (personal hobby) project. For the needs and wishes of this project, INI felt sometimes too limited. YAML seemed too flexible and ambiguous. JSON's types and structure are fairly close but JSON felt too noisy and strict. TOML is quite solid, but ultimately felt a bit too verbose and noisy.
 
 YINI was born from the desire for a configuration format that is:
 - **Simple** enough for humans to edit without friction.
 - **Consistent** enough to be parsed unambiguously by machines.
-- **Clean** in structure, but not overly forgiving (permissive).
+- **Clean** in structure, while avoiding overly magical or ambiguous behavior.
 - **Modern**, but respectful of INI's readability and legacy.
 
 It was also an enjoyable technical challenge to design. Exploring the edge between structure and simplicity became an enjoyable challenge in itself. If others find value in it too, that's a welcome bonus. 🙂
@@ -72,7 +81,9 @@ The core motivations behind YINI include:
 - **Predictability** — A small set of rules that always work the same way, regardless of platform or parser.
 - **Minimalist syntax** — Fewer surprises. YINI avoids magic behaviors and favors explicitness.
 - **Explicit completeness in strict mode** — In validation-oriented scenarios, relying on end-of-file alone can be too implicit. YINI strict mode uses a required `/END` terminator to make document completion explicit and easier to validate.
-- 
+  
+---
+
 ## B. Design Goals and Philosophy
 ### B.1. What inspired its design?
 YINI was mainly inspired by formats such as INI, JSON, Python, Markdown, and C — borrowing good ideas while introducing its own principles.
@@ -80,11 +91,13 @@ YINI was mainly inspired by formats such as INI, JSON, Python, Markdown, and C �
 ### B.2. Design Philosophy
 YINI is built around a few core principles:
 
-- **Minimalism over complexity** — fewer rules, fewer surprises.
-- **Human readability first** — config files should be easy to write, read, and maintain.
-- **Formal grammar matters** — to ensure consistent, predictable behavior across implementations.
-- **No magic** — what you write is what you get: YINI avoids implicit coercion or guessing.
-- **Balance** — it aims to sit between the extremes: not too rigid, not too permissive.
+1. **Clarity over cleverness** — prefer syntax that is easy to understand correctly.
+2. **Readability without sacrificing structure** — remain easy to read while still supporting structured configuration.
+3. **Simplicity with serious usability** — keep the format simple, but not simplistic.
+4. **Predictability over magic** — favor explicit and stable interpretation rules.
+5. **Explicitness over hidden behavior** — make structure and meaning visible in the file itself.
+6. **Structure without visual clutter** — support hierarchy without relying on indentation semantics.
+7. **Human-friendly, parser-friendly** — support direct editing by humans and consistent parsing by tools.
 
 > <i>“I wanted something:
 > - Simple and lightweight
@@ -94,52 +107,221 @@ YINI is built around a few core principles:
 >
 > — Mr. Seppänen (creator of YINI)
 
-Nonetheless, some design choices may seem unconventional at first, and may initially raise questions as certain design decisions were carefully weighed against competing goals. For instance, YINI deliberately adopts a C-style approach of using `//` for line comments, however `#` style comments are also supported — as long as the `#` is followed by a space or tab. This requirement prevents clashes with hex-like values. Using `#` to denote hex numbers (e.g., `#FF0033`) is a deliberate design choice and compromise, intended to align with conventions found in CSS (for color codes) and similar contexts.
-For example: #FF0033 is interpreted as a hex value, whereas # FF0033 is treated as a comment.
+Nonetheless, some design choices may seem unconventional at first, because they were carefully weighed against competing goals. One example is the treatment of the `#` character.
+
+Earlier drafts of YINI attempted to support both `#` comments and CSS-style hexadecimal values such as `#FF0033`. This required a whitespace-sensitive rule where `#` started a comment only when followed by a space or tab. In practice, that rule created an unnecessary distinction for readers and parsers.
+
+YINI now treats `#` as a comment marker whenever it appears outside string literals. This makes the rule simple and predictable: `#` always begins a comment, and hexadecimal values are written using `0x...` or the explicit `hex:` notation instead.
 
 These values guide YINI's syntax, structure, and behavior — making it reliable for both humans and machines.
 
-#### B.2.1. The `#` Marker as a Comment Symbol
-- This is an intentional design decision to avoid ambiguity with hex-like values (e.g., CSS-style color codes), which are common in various domains.
-- Due to the change where `#` is no longer used as a section marker, the tilde (`~`) was initially considered as the new default. However, multiple tildes on a line tend to visually blend together. In the end, the caret (`^`) was chosen instead for its clarity, visual distinctiveness, and maximum compatibility (like `#` and `~`, it is also is within 7-bit ASCII).
+#### B.2.1. Relationship to Established Design Principles
 
-In v1.0.0 Alpha 8, the section marker character `~` was replaced by `<` because repeated tildes were judged visually ambiguous.
+YINI was not designed by applying one external principle automatically. Instead, several well-known software-design principles influenced the format in a practical way.
 
-#### B.2.2. Non-standard Octal Escape
+The format aligns with **KISS** (_"Keep It Simple, Stupid"_) by keeping the core syntax small and avoiding unnecessary constructs where simpler rules are enough. This is reflected in choices such as explicit section markers, quoted strings, bracketed lists, inline objects, and a limited set of value types.
+
+YINI also follows the **principle of least surprise** / **least astonishment** (POLA). A YINI document should behave in a way that matches what its syntax suggests. For example, indentation may improve readability, but it does not define structure; `#` always begins a comment outside string literals; and `+` is defined only as string concatenation, not as a general arithmetic operator.
+
+The principle **explicit is better than implicit** is reflected throughout the format. YINI favors visible section structure, explicit string delimiters (start/end characters), explicit list and object delimiters, and explicit strict-mode document completion using `/END`.
+
+YINI also follows the contract-oriented idea behind the **Liskov Substitution Principle (LSP)** in a limited configuration-format sense. A document that declares an intended parsing mode is making a mode contract. The parser must not silently reinterpret that document under a different contract without reporting a diagnostic. This is why mode declarations are checked against the active parser mode rather than being treated as harmless ordinary syntax.
+
+At the same time, YINI does not try to follow every possible principle to its extreme. It does not aim for maximum compactness, maximum flexibility, or a large expression system. In several cases, YINI deliberately chooses a slightly more explicit or restricted rule because configuration files are often read, reviewed, edited, and validated over time.
+
+#### B.2.2. The `#` Marker as a Comment Symbol
+
+YINI treats `#` as a comment marker outside string literals.
+
+This decision was made to align with common expectations from formats and environments such as INI-like files, shell scripts, YAML, scripting languages, and many developer tools. In these contexts, users commonly expect `#` to begin a comment.
+
+Earlier drafts of YINI attempted to make `#` serve two roles:
+
+- `#` followed by whitespace began a comment.
+- `#` followed by hexadecimal digits represented a hexadecimal number, similar to CSS color notation.
+
+Although this made CSS-like color values visually familiar, it introduced a context-sensitive distinction that worked against YINI's goals of clarity and predictable parsing. A reader had to inspect the character after `#` to know whether the line contained a comment or a value. This made the syntax more clever than clear.
+
+The revised rule is simpler:
+
+- Outside string literals, `#` always begins a comment.
+- No whitespace is required before or after `#`.
+- Hexadecimal numbers are written using `0x...` or the explicit `hex:` form.
+
+For example:
+
+```yini
+name = "YINI" # This is a comment
+enabled = true#This is also a comment
+path = "C:\#folder" # The # inside the string is not a comment
+
+color1 = 0xFF0033
+color2 = hex:FF0033
+invalid = hex: FF0033  // Invalid, no space allowed.
+```
+
+This supports YINI's broader design principles:
+- Clarity over cleverness.
+- Predictability over magic.
+- Explicitness over hidden behavior.
+- Human-friendly, parser-friendly syntax.
+
+The earlier CSS-style form `#FF0033` was therefore removed as hexadecimal notation. In current YINI, it is treated as a comment.
+
+The section marker history is separate from this decision. Earlier drafts experimented with other section marker characters, including `#`, `~`, and `>`. The caret (`^`) was eventually chosen as the primary section marker because it is visually distinct, easy to repeat for nesting, and available in the 7-bit ASCII range.
+
+#### B.2.3. Non-standard Octal Escape
 Octal escapes in YINI use the `\oNNN` format, which differs from the traditional `\NNN` style used in C and Python. 
 
 This design choice was made because `\NNN` provides no clear indication of the number base, unlike `\u` for Unicode (4-digit hex) and `\U` for extended Unicode (8-digit hex). The `\oNNN` format in YINI follows the same analogy, making the base explicit and the escape more readable and self-descriptive.
 
-#### B.2.3. Summary of Marker Characters
-  - `^` (default section marker, within the 7-bit ASCII range for maximum compatibility)
-  - `<` (alternative section marker, within the 7-bit ASCII range for maximum compatibility)
+#### B.2.4. Summary of Marker Characters
+  - `^` (Default section marker, within the 7-bit ASCII range for maximum compatibility.)
+  - `§` (Supported alternative section marker, useful where enhanced readability is preferred.)
+  - `>` (Supported quote-like ASCII fallback marker; previously discontinued, later re-added with a portability caveat because it may be treated as a quote prefix in email clients, forums, and Markdown-like environments.)
+  - `<` (Alternative section marker, within the 7-bit ASCII range for maximum compatibility.)
   - `€` (Dropped after v1.0.0-rc.3, due to no clear practical benefit compared to the existing markers.)
-  - `~` (discontinued, was visually ambiguous)
-  - `>` (discontinued, was easy to confuse with reply)
-  - Reserved: `§` (experimental, maybe in future, for enhanced readability)
+  - `~` (Discontinued, was visually ambiguous.)
 
 | Marker Char. | Status         | Example        | Notes |
 |--------------|---------------|---------------|---------|
 | `^`          | Official/main | `^^ Section2` | Always supported (7-bit ASCII)  |
+| `§`          | Alternative | `§§ Section2` | Supported alternative marker; less portable than ASCII markers |
+| `>` | Supported fallback | `>> Section2` | Quote-like ASCII fallback; previously discontinued, later re-added with a portability caveat. |
 | `<`          | Fallback   | `<< Section2` |  (7-bit ASCII) Easy to count, replaced `~` |
-| `§`          | Alternative  | `§§ Section2` | For enhanced readability, may be promoted in the future |
 | `~`          | Discontinued  | `~~ Section2` | Hard to count when repeated, phased out      |
-| `>`          | Discontinued  | `>> Section2` | Was easy to confuse with reply in forums, etc   |
 
-#### B.2.4. Why strict mode requires `/END`
+#### B.2.5. Why strict mode requires `/END`
 Strict mode in YINI is intended for cases where the parser should be strict on purpose — for example in validation-oriented (checking and verification) use cases, deterministic (predictable and consistent) parsing, safer tooling, CI pipelines, generated configuration, and other environments where ambiguity (uncertainty or unclear meaning) should be minimized.
 
 For that reason, strict mode requires the document terminator `/END`.
 
 With /END, the document does not just stop — it explicitly says that it is finished. This makes the end of the document clearer and reduces guesswork for both parsers and humans. The parser does not have to assume that the file ended correctly; instead, the document itself explicitly declares: “this document is complete.”
 
-This also makes it easier to detect documents that have been truncated, only partly copied, or cut off too early — including during transfer, file copy, manual copy-and-paste, embedding, or other situations where the content may end up incomplete.
+This also makes it easier to detect documents that have been truncated (cut off), only partly copied, or cut off too early — including during transfer, file copy, manual copy-and-paste, embedding, or other situations where the content may end up incomplete.
 
-This works especially well together with strict mode's other structural rules, such as requiring exactly one explicit top-level section. Together, these rules improve robustness (reliability) and make strict mode better suited for validation-heavy (strictly checked) environments and safer tooling. If a strict-mode document is accidentally split, cut, or copied only in part, the resulting fragments are much more likely to be rejected as invalid rather than silently accepted as complete.
+This works especially well together with strict mode's other structural rules, such as requiring exactly one explicit top-level section. Together, these rules improve robustness (reliability) and make strict mode better suited for validation-heavy (strictly checked) environments and safer tooling. If a strict-mode document is accidentally split, cut, or copied only in part, the resulting pieces/fragments are much more likely to be rejected as invalid rather than silently accepted as complete.
 
 This requirement was chosen not to make YINI more complicated in general, but to make strict mode more reliable, more predictable, and more trustworthy where correctness matters most.
 
-The other choice is to parse in lenient-mode, where the document terminator `/END` is not required.
+The alternative is to parse in lenient mode, where the document terminator `/END` is optional.
+
+#### B.2.6. String Type Motivations
+
+##### B.2.6.1. Raw Strings
+
+> Raw strings in YINI are quoted strings where the text is taken exactly as written, without interpreting escape sequences.
+
+Why Raw strings, and why it is the default string in YINI?
+
+They are the safest default for configuration because config files often contain text that should be taken literally, such as:
+- file paths
+- URLs
+- regex-like fragments
+- shell commands
+- identifiers
+- snippets with backslashes
+
+If raw strings are the default, users avoid the classic annoyance where `\n`, `\t`, or `\U` accidentally become something else.
+
+This fits a configuration format very well, and it is the main reason raw strings became the default in YINI.
+
+##### B.2.6.2. Classic Strings
+
+> Classic strings in YINI are quoted strings prefixed with `C` or `c` that interpret escape sequences such as `\n`, `\t`, and `\"`.
+
+A config format still needs some way to express things like:
+- newline inside a single-line literal
+- tab characters
+- quotes inside quotes
+- control characters
+- Unicode escapes when needed
+
+So having an explicit "escaped string" form is useful and reasonable.
+
+That said, Classic strings are optional, not the default.
+
+##### B.2.6.3. Triple-quoted Strings
+
+> Triple-quoted strings in YINI are strings enclosed in `""" ... """` that may span multiple lines and preserve their content exactly as written, unless prefixed with `C` to enable escape sequences.
+
+A config format may sometimes need true multi-line literals, for example:
+- embedded text blocks
+- templates
+- SQL
+- prompts
+- email bodies
+- certificates
+- long descriptions
+- script fragments
+
+So, for this reason Triple-quoted strings are supported as well, and they are optional.
+
+#### B.2.7. Section Marker Separators and Repeated Marker Depth
+
+YINI uses repeated section markers to make section depth visible directly in the text, for example `^`, `^^`, and `^^^`. In earlier drafts, the maximum repeated-marker depth was kept lower to avoid very long marker runs that were hard to read and count.
+
+Later, section marker separators (`_`) were added as a small readability improvement. With separators, deeper marker sequences become easier to scan visually. For example, `^^^_^^^_^^^` is easier to read at a glance than `^^^^^^^^^`.
+
+Because of that, it made sense to increase the maximum repeated-marker depth from 6 to 9. Levels 1–9 can now be written directly using repeated markers, while levels 10 and deeper still use numeric shorthand, such as `^10 Section`.
+
+This feels like a good balance: common nesting levels remain readable and visually explicit, while very deep nesting still avoids long, excessive marker sequences.
+
+#### B.2.8. Mode Declarations
+
+YINI supports optional mode declarations in the document marker:
+
+```yini
+@yini strict
+@yini lenient
+```
+
+A mode mismatch is diagnostic behavior, not mode selection behavior. A mode declaration states the document's expected parsing mode, but it does not automatically switch the parser into that mode.
+
+This is intentional. It was preferred that the active parsing mode is controlled explicitly by the parser, tool, API, command-line flag, or host application, rather than silently changing behavior because of something inside the document.
+
+The benefit of writing `@yini strict` is that the document clearly says: "this file is meant to be parsed and validated as strict YINI." That makes the intent visible to humans, and it gives tools a chance to catch accidental mode mistakes. If a strict-mode file is accidentally parsed in lenient mode, the parser reports a mode-mismatch error instead of accepting the file silently and too permissively.
+
+And the benefit of writing `@yini lenient` is that the document clearly says: "this file is intended for lenient parsing." If such a document is parsed in strict mode, the parser may still validate it under strict-mode rules, but it must report a mode-mismatch warning so the user's declared intent is not ignored.
+
+This is especially useful for production configuration, CI validation, generated files, shared project files, or any case where correctness and reproducibility matter.
+
+On the other hand, leaving the mode declaration out is also valid. This keeps ordinary YINI files lightweight and simple, especially for hand-edited configuration where lenient mode is expected. A file without `@yini strict` or `@yini lenient` does not make a mode claim; it simply lets the surrounding tool or parser configuration decide.
+
+In short, `@yini strict` is useful when the document itself should clearly declare its intended validation level. `@yini lenient` is useful when the document should explicitly declare that it is intended for lenient parsing. Leaving the declaration out is useful when the file should stay minimal and rely on the parser or tool configuration instead.
+
+#### B.2.9. String Concatenation and Non-Arithmetic `+`
+
+YINI defines `+` only as an explicit string-concatenation operator. It is not a numeric addition operator.
+
+This avoids introducing expression evaluation, arithmetic precedence, or mixed-type calculation rules into the configuration language. Configuration files should remain predictable data declarations, not small programming languages.
+
+In both strict and lenient mode, a concatenation expression must begin with a string literal. This keeps the syntax easy to recognize and avoids ambiguity between string concatenation and numeric-looking expressions.
+
+In strict mode, all concatenation operands must be string literals. This keeps strict parsing simple, explicit, and easy to validate.
+
+In lenient mode, additional operands after the first string literal may be string literals, number literals, boolean literals, or null literals. Non-string scalar operands are converted to their parsed canonical string representation before concatenation.
+
+For example, this is valid in lenient mode:
+
+```yini
+value = "1" + 2 + 3
+```
+
+which produces: `"123"`
+
+However, this is invalid:
+```yini
+value = 1 + 2 + "3"
+```
+
+It is evaluated as neither `"123"` nor `"33"`. It is invalid because the expression does not begin with a string literal, and YINI does not define numeric addition.
+
+This rule avoids ambiguity between numeric addition-like interpretation (`"33"`) and string-concatenation interpretation (`"123"`). It also fits YINI's philosophy: predictable, readable, and not too clever.
+
+Lists and inline objects are intentionally excluded from concatenation to avoid ambiguous or implementation-specific stringification rules.
+
+---
 
 ## C. YINI vs Other Formats
 ### C.1. Why Not Existing Formats?
@@ -182,6 +364,8 @@ Here's a quick summary of why YINI doesn't just use an existing format:
 - ❌ = Not supported
 - ➖ = Partial, debated, or implementation-dependent
 
+---
+
 ## D. Reflections and Acknowledgments
 ### D.1. Summary
 YINI isn't trying to reinvent the wheel — just make it **easier to use, maintain, and integrate into tooling**.
@@ -193,7 +377,7 @@ It's a configuration format that's:
 It exists to fill the gap between minimal INI files and complex formats like YAML or TOML — with a pragmatic, readable, and structured approach.
 
 **YINI was crafted with the following in mind:**
-- Structured sections without deep syntax or noise (e.g. indendentation or many `.` or `'` symbols).
+- Structured sections without deep syntax or noise (e.g. indentation or many `.` or `'` symbols).
 - A simple, consistent grammar with predictable behavior.
 - Clear rules around strings, numbers, booleans, and nulls.
 - Multiple comment styles for flexibility and readability.
@@ -225,7 +409,7 @@ YINI is designed to be as simple and intuitive as possible. Its syntax aims to b
 
 Earlier drafts of YINI experimented with an alternative colon-based syntax for lists. While this shorthand could be convenient in some cases, it did not add any expressive capability beyond the standard bracketed list syntax.
 
-In practice, supporting colon-based lists introduced additional grammar rules, more edge cases, and a second mental model for representing the same data. This worked against several of YINI's central design goals: clarity, predictability, minimalism, and a smaller, more consistent syntax surface.
+In practice, supporting colon-based lists introduced additional grammar rules, more edge cases, and a second mental model for representing the same data. This worked against several of YINI's central design goals: clarity, predictability, minimalism, and a smaller, more consistent syntax surface (set of syntax rules).
 
 By removing colon-based lists, YINI keeps a clearer and more uniform structure:
 - Values are assigned with `=`.
@@ -236,14 +420,95 @@ This change was made because colon-based lists did not add enough practical valu
 
 Overall, this makes both the language and its parser implementations easier to understand, easier to maintain, and more predictable to use.
 
+### D.3.2. Why `#` as hexadecimal notation was removed
+
+Earlier versions of YINI supported CSS-style hexadecimal notation using `#`, for example:
+
+```yini
+color = #FF0033
+```
+
+This was intended to make color values familiar and compact for users coming from CSS, design systems, UI configuration, and similar domains.
+
+However, the same character was also useful and widely expected as a comment marker. To support both meanings, earlier drafts introduced a whitespace-sensitive rule:
+
+- `#` followed by a space or tab meant comment.
+- `#` followed by hexadecimal digits meant hexadecimal number.
+
+Although workable, this rule added unnecessary complexity. It required users and parsers to treat `#` differently depending on the following character. This made comments less obvious and introduced a small but real source of surprise:
+
+```yini
+# Comment
+#FF0033
+```
+
+Under the old rule, the first line was a comment, while the second line was a value-like hexadecimal token. This distinction was compact, but not especially clear.
+
+YINI now uses the simpler rule: outside string literals, `#` always begins a comment. Hexadecimal numbers are written using either the conventional programming-style `0x...` notation or the explicit `hex:` notation:
+
+```yini
+color1 = hex:FF0033
+color2 = 0xFF0033
+
+invalid = hex: FF0033  // Invalid, no space allowed.
+```
+
+The `hex:` form was added to preserve a readable, explicit alternative for users who prefer a word-based type cue. It also makes the value type visible without overloading a punctuation character.
+
+This change reduces syntax ambiguity, simplifies tokenization, and better supports YINI's design goals: clarity over cleverness, predictability over magic, and explicit structure without hidden behavior.
+
+### D.3.3. Hyper Strings (H-Strings)
+
+Hyper Strings, also called **H-Strings**, were previously defined as a special kind of string literal for writing longer human-authored text in a visually readable way. An H-String was prefixed with either `H` or `h`.
+
+The purpose of H-Strings was to make longer descriptive text blocks easier to write across multiple lines without preserving the exact line breaks and indentation used in the source file. They were intended for configuration values such as descriptions, labels, help text, messages, and other prose-like content where readable source formatting was more important than preserving whitespace exactly.
+
+Like raw strings, H-Strings treated backslashes as literal characters. Escape sequences were not interpreted.
+
+H-Strings were designed to be **multi-line friendly** and **visually readable**, especially for long text blocks:
+
+- `<NL>` refers to a newline or line break, represented by `CR`, `LF`, or `CRLF`.
+- `<Unicode-WS>` includes relevant Unicode whitespace characters, including the categories `Zs` (space separators), `Zl` (line separators), `Zp` (paragraph separators), and selected `Cc` control characters, primarily from the C0 range (`U+0000–U+001F`). For the complete table, see Section 16.7, "Unicode Whitespace Characters".
+- H-Strings could span multiple lines, and indentation using `<Unicode-WS>` was allowed to improve human readability.
+- Multiple consecutive newlines (`<NL>`) and/or whitespace characters (`<Unicode-WS>`) were normalized into a single space (`U+0020`).
+- Leading and trailing `<NL>` and/or `<Unicode-WS>` were trimmed.
+- For the complete set of characters included in `<Unicode-WS>`, see Section 16.7, "Unicode Whitespace Characters".
+
+In practice, H-Strings behaved similarly to how prose is rendered in HTML: extra spacing, indentation, and line breaks were collapsed into clean, flowing text.
+
+The following:
+
+```yini
+H"My name is
+  John Doe,  
+  and this is a test string."
+```
+
+Would result in:
+```txt
+My name is John Doe, and this is a test string.
+```
+
+#### Why H-Strings Were Removed
+
+H-Strings were removed from the core specification to keep YINI smaller, clearer, and easier to learn, document, and implement.
+
+Although H-Strings provided a convenient way to write longer human-authored text blocks, they also introduced another string form with its own whitespace-normalization rules. This increased the conceptual surface area of the language, added parser complexity, expanded the documentation burden, and forced users to decide when to use H-Strings instead of other string forms such as raw strings or triple-quoted strings.
+
+The feature was useful, but not essential. Since most YINI files are expected to use ordinary strings, raw strings, and triple-quoted strings for the majority of practical configuration needs, H-Strings were judged to serve too narrow a use case to justify their inclusion in the core language.
+
+Removing H-Strings supports YINI's broader design goals: clarity over cleverness, predictable parsing, a smaller syntax surface, and fewer overlapping ways to express the same kind of value.
+
 ### D.4. Future Considerations
-In future, MAYBE adding support for e.g.: `@yini strict`, `@yini version 1.0`, `@include somefile.yini`, and/or `@deprecated`, `@experimental`.
+In the current specification, `@yini strict` and `@yini lenient` are supported as optional mode declarations. They state the document's expected parsing mode, but they do not automatically switch the parser into that mode.
+
+Future considerations may include version declarations such as `@yini version 1.0`, file inclusion through `@include`, and annotations such as `@deprecated` or `@experimental`.
 
 #### Suggested terminology split in YINI spec
 
 Directives (pragmas): parser hints that affect mode/behavior but don't change document content.
 
-For example: `@yini strict`, `@mode lenient`, `@ver 1.0`, `@version 1.0`.
+For example: `@yini strict`, `@yini lenient`, `@ver 1.0`, `@version 1.0`.
 
 Pre-processing directives: instructions that modify the document itself by including or transforming content before/while parsing.
 
@@ -256,6 +521,6 @@ For example: `@deprecated`, `@experimental` on a key.
 ---
 
 **^YINI ≡**  
-> A simple, structured, and human-friendly configuration format.  
+>  A clear, structured, and human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer)  [YINI-lang on GitHub](https://github.com/YINI-lang)  

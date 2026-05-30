@@ -1,0 +1,8 @@
+/*
+  Lenient mode: duplicate keys are accepted with a warning.
+  The first definition wins.
+*/
+
+^ Config
+path = "/usr/local"
+path = "/opt"

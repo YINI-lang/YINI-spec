@@ -1,0 +1,38 @@
+# Note:
+# Validation in CI depends on the currently published yini-cli release.
+# Because the specification and grammar in this repository may evolve ahead of
+# the CLI implementation, some files may fail validation here even though they
+# are valid according to the latest repository version of the spec or grammar.
+#
+# Though, even on validation fail, the validation output remains useful for
+# manual review and for spotting where CLI support has not yet caught up.
+
+name: Run yini-cli validation (lenient/default)
+
+on:
+  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - '**' # All branches.
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Run yini-cli validation
+        run: |
+          npx yini-cli@latest validate \
+          "./Examples/Lenient" \
+          "./Grammar-ANTLR4/sample.yini" \
+          "./Grammar-ANTLR4/Test-samples/Lenient-mode/Valid" \
+          "./Examples/Large-Scale Real-World Configuration Examples/a-corporate-saas-platform.yini" \
+          "./Examples/Large-Scale Real-World Configuration Examples/b-high-security-distributed-control-system.yini"

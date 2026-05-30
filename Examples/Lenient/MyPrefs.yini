@@ -10,6 +10,7 @@
 	IsDarkMode = YES
 	Buffers = 10
 	Themes = ["Classic", "Modern"]
+	// Strings are raw by default, so backslashes are literal here.
 	Dirs = ["C:\Users\", "D:\Work\Temp\", "E:\Data\Temp\"]
 
 	^^ Menu 
@@ -20,10 +21,10 @@
 		Value = "New"
 		OnClick = "CreateDoc()"
 
-		^^^ MenuItem
+		^^^ MenuItem2
 		Value = "Open"
 		OnClick = "OpenDoc()"
 
-		^^^ MenuItem
+		^^^ MenuItem3
 		Value = "Save"
 		OnClick = "SaveDoc()"

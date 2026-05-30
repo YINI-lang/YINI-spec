@@ -1,3 +1,5 @@
+@yini strict
+
 ^ conf
 
 name = "My Program Name"

@@ -1,0 +1,6 @@
+/*
+  Primary failure: semantic.
+  Rule: strict mode requires exactly one explicit top-level section.
+*/
+
+/END

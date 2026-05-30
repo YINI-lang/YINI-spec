@@ -1,3 +1,5 @@
+@yini strict
+
 // package.json-like structure in YINI format
 
 ^ Package
