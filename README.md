@@ -162,7 +162,7 @@ YINI is designed to prioritize **readability, clarity, and explicit structure**.
 - ✔️ **Flexible strings** using single quotes, double quotes, Classic escaped strings, and Triple-Quoted Strings.
 - ✔️ **Supports the `null` value type.**
 - ✔️ **Explicit string concatenation** using `+`; concatenation expressions must begin with a string literal.
-- ✔️ **Optional mode declarations** with `@yini strict` and `@yini lenient`, declarations state intent but do not switch parser mode.
+- ✔️ **Optional mode declarations** — `@yini strict` and `@yini lenient` state which mode the file is intended for. They do not switch the parser mode by themselves; the parser or tool chooses the actual mode.
 
 ---
 
@@ -425,7 +425,6 @@ YINI is a text-based configuration format inspired by INI, JSON, Python, and YAM
 | Designed to remain readable as files grow| ✅ | ❌ | ➖ | ❌ | ➖ |
 | Designed to work well with tooling and schemas| ✅ | ❌ | ✅ | ➖ | ✅ |
 | Supports mixed data & config     | ✅ | ➖ | ✅ | ✅ | ✅ |
-| Human-friendly by default | ✅ | ➖ | ❌ | ✅ | ➖ |
 
 > This table is a simplified comparison intended to highlight common characteristics. Exact behavior depends on the specific parser or implementation.
 > YINI is intended for configuration files where readability, structure, and predictable parsing are important.
