@@ -6,6 +6,8 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
+## [Upcoming/Unreleased] - FUTURE
+
 ## Package 2026-05-30 (spec: v1.0.0-RC.6)
 - Revised `#` character handling and updated hexadecimal notation rules in the specification and ANTLR4 grammar:
   * **Changed:** In the specification, `#` now always begins a comment outside string literals. No whitespace is required before or after `#`.
