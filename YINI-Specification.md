@@ -588,12 +588,20 @@ An _**identifier**_ can be written in one of the following forms:
   - A backtick-quoted identifier MAY be empty (<code>``</code>).
     This permits representing an identifier equivalent to the JSON empty key <code>""</code>.
     Although permitted, empty identifiers are discouraged because they reduce readability.
-
-  Example:
+  - Spaces inside a backticked identifier are significant and MUST be preserved.  
+  These are distinct:
   ```yini
-  `Description of Project`
-  `Amanda's Project`
+  `name`
+  ` name`
+  `name `
   ```
+
+Example:
+```yini
+`Description of Project`
+`Amanda's Project`
+```
+
 ### 3.5. Document Terminator
 **Mode requirement:** The document terminator is optional in lenient mode and required in strict mode.
 
@@ -605,7 +613,14 @@ An _**identifier**_ can be written in one of the following forms:
 A YINI document MAY end with a terminator line in lenient mode.  
 A YINI document MUST end with a terminator line in strict mode.
 
-The document terminator explicitly marks the end of the configuration content and reduces ambiguity about whether the document was fully read. In strict mode, this makes document completion explicit rather than relying on end-of-file alone, **which enables implementations to detect truncated, partially copied, or prematurely cut-off documents.**
+The document terminator explicitly marks the end of the configuration content
+and reduces ambiguity about whether the complete trailing portion of a document
+was received.
+
+In strict mode, a missing terminator allows implementations to detect documents
+whose trailing content has been truncated, omitted, or incompletely copied.
+The terminator does not guarantee detection of every possible truncation,
+split, or partial-copy scenario.
 
 The default and recommended terminator is:
 ```yini
@@ -1284,11 +1299,30 @@ Conversion is based on the **parsed scalar value**, not the original lexical spe
 
 In lenient mode, scalar operands are **converted to strings before concatenation** as follows:
 - Strings use their interpreted string value.
-- Numbers are converted to their canonical textual numeric representation (from their converted parsed numeric value). For example:
-  * `42` becoming `42`.
-  * `0xFF` becoming `255`. Non-decimal numeric notation is normalized to decimal form.
-  * `-19` becoming `-19`. The minus sign **is preserved** in negative values.
-  * `+100` becoming `100`. The plus sign **is NOT preserved** (consumed) in positive values.
+- Numbers are converted using a normalized representation of their source literal. Implementations MUST perform this normalization without first
+  converting the literal through a potentially lossy host-language
+  floating-point type.
+
+  **This means 1e3 remains 1e3, rather than becoming 1000.**
+
+  Numeric normalization applies these rules:
+  * Digit separators (`_`) are removed.
+  * A leading plus sign (`+`) is removed.
+  * An uppercase exponent marker (`E`) is normalized to lowercase `e`.
+  * A plus sign immediately following an exponent marker is removed.
+  * Non-decimal integer literals are converted exactly to base-10 notation.
+  * Other digits, decimal points, minus signs, and exponent digits are
+    preserved.
+  * Negative zero remains negative zero.
+
+  Examples:
+  * `42` becomes `42`.
+  * `1_000` becomes `1000`.
+  * `+100` becomes `100`.
+  * `1.50` remains `1.50`.
+  * `3E+04` becomes `3e04`.
+  * `-0` remains `-0`.
+  * `0xFF` becomes `255`.
 - Booleans are converted to `true` or `false`.
 - Null is converted to `null`.
 - Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion.
@@ -1332,15 +1366,30 @@ In strict mode, this is invalid because `5432` is not a string literal (it's a n
 YINI supports both integer and floating-point literals. Numbers may be signed and written in decimal notation.
 
 - **Integers:** A sequence of digits, optionally prefixed with + or -.
-- **Floats:** Must include a decimal point (`.`) and optional exponent (`e` or `E`).
 
-**Examples:**
-```yini
-age = 42
-pi = 3.14159
-negative = -12
-scientific = 1.23e4
-```
+A decimal integer part MUST NOT contain unnecessary leading zeros. The literal
+`0` is valid, but `00`, `01`, and `007` are invalid. This rule also applies
+when the integer part is followed by a decimal fraction or exponent.
+
+Examples:
+
+- Valid: `0`, `0.5`, `0e3`
+- Invalid: `00`, `01`, `00.5`, `01e3`
+
+A grammar or lexer MAY recognize a leading-zero form for diagnostic recovery,
+but semantic validation MUST reject it as an invalid YINI number literal.
+
+- **Floats:** A number is considered floating-point if it includes a decimal point, an exponent (`e` or `E`), or both. A decimal point is not required when using exponent notation, so `3e4` is also a valid floating-point number.
+
+Valid decimal number forms include:
+
+- Integer: `42`, `-12`, `+100`
+- Decimal fraction: `3.14`, `-0.5`, `.5`
+- Exponent notation: `3e4`, `1.5e10`, `2E-3`, `+4E+8`
+
+A decimal point MUST be followed by at least one digit. Therefore, `1.` is
+invalid. The exponent marker MUST be followed by an optional sign and at
+least one decimal digit.
 
 ### 7.2. Digit Separators
 
@@ -1858,6 +1907,23 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
   1. In lenient mode, the first section definition wins: the first section MUST be kept, later duplicate section definitions at the same level MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
   2. In strict mode, any duplicate section at the same level MUST result in an error.
   3. Implementations MUST NOT silently merge, overwrite, or extend an earlier section with a later section of the same name. If a repeated section definition is rejected, all assignments belonging to that duplicate section block MUST also be rejected or ignored; they MUST NOT be reinterpreted as belonging to another section or context.
+- **Member and subsection names share one namespace within a container.**
+  A member and an immediate child section under the same document root or
+  parent section MUST NOT have the same identifier.
+
+  Such a cross-kind name collision MUST result in an error in both lenient
+  and strict mode. Implementations MUST NOT overwrite, merge, coerce, or
+  reinterpret either construct.
+
+  This rule ensures that every well-formed YINI container can be represented
+  as an object without losing information.
+
+  Thus this becomes invalid:
+  ```
+  ^ A
+  x = 1
+  ^^ x // Error: conflicts with member `x` in section `A`.
+  ```
 - Lines that do not match any syntactic role (member, comment, section, terminator) are considered malformed.
 - The document terminator (`/END`) is **optional in lenient (default) mode** and **required in strict mode**.
 - **In lenient (default) mode, an empty document is permitted.** A document that contains only whitespace, comments, and/or disabled lines (`--`) is considered empty. In such cases, the parser MUST NOT fail; it SHOULD instead report a warning diagnostic indicating that the document appears empty or contains no meaningful content.
@@ -1869,8 +1935,16 @@ YINI documents (files) **MUST** be encoded as **UTF-8**.
 A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
 
 #### 12.2.3. Line Endings
-- Acceptable: Unix-style `<LF>` or Windows-style `<CR><LF>` line endings.
-- Mixed line endings are discouraged but tolerated in lenient mode.
+
+Implementations MUST recognize the following line endings:
+
+- LF (`U+000A`)
+- CRLF (`U+000D U+000A`)
+- CR (`U+000D`)
+
+In lenient mode, mixed line-ending forms are allowed but SHOULD produce a
+warning. In strict mode: A document MUST use one line-ending form
+consistently, mixed forms MUST result in an error.
   
 #### 12.2.4. Valid Value Types
 - Values MUST be one of the supported data types: **String**, **Number**, **Boolean**, **Null**, **List**, or **Object**.
@@ -1950,6 +2024,10 @@ Some YINI parsers may support multiple **validation modes**:
     **Note:** Because strict mode also requires the document terminator `/END`, the end of the document is made explicit rather than being inferred from EOF alone. This improves deterministic parsing, reduces ambiguity about incomplete input, and makes **truncated, partially copied, or prematurely cut-off documents** easier to detect. Together with the requirement for exactly one explicit top-level section, this provides increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
     * The **first half** is invalid because it is missing the required `/END` marker.
     * The **second half** is invalid because it lacks the required single level-1 section header (for example, `^ Title`).
+
+    These requirements improve robustness, but they **do not guarantee detection of    every possible truncation, split, or partial-copy scenario**. A fragment that
+    happens to contain a complete top-level section and the `/END` terminator may
+    still form a structurally valid YINI document.
   - Empty sections (with no members) are still allowed.
   - Inside inline objects, object members MUST use `:`. Using `=` inside an inline object MUST result in an error.
   - Files intended for strict-mode parsing MAY use the `.strict.yini` filename suffix as described in Section 2.2.1. This suffix is only a naming convention and does not select strict mode or replace strict-mode validation. An explicit `@yini strict` declaration MAY still be used when the document should declare its expected mode.
@@ -2074,8 +2152,11 @@ Otherwise, an error MUST be reported.
 
 - Newline normalization is required:
   * Support all three forms: LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`).
-- Leading/trailing whitespace (tabs or spaces):
-  * Trim from section headers and keys.
+- Spaces and tabs surrounding a key or section-name token are insignificant
+  and MUST be ignored.
+- Content inside a backticked identifier MUST NOT be trimmed or otherwise
+  modified. Leading and trailing spaces inside the backticks are part of the
+  identifier.
 - Full-line and inline comments may follow key-value members or appear on separate lines.
 - Whitespace is permitted within lists, including across lines.
 
@@ -3324,6 +3405,17 @@ The grammar accompanying YINI Specification 1.0.0-RC.6 is version
 
 If the grammar and this specification conflict, this specification takes
 precedence.
+
+**Grammar scope:**
+
+For diagnostic purposes, the ANTLR4 grammar intentionally recognizes a
+superset of well-formed YINI syntax in some areas. This allows parser and validator implementations to recognize malformed constructs and provide specific,
+user-friendly diagnostics.
+
+Successful recognition by the ANTLR4 grammar alone does not establish that a
+document is well-formed or conforming. All normative syntactic, structural,
+mode-specific, and semantic requirements in this specification MUST still be
+validated.
 
 ### 16.6. Appendix C – Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats such as YAML, JSON, or classic INI. This table clarifies syntax edge cases and helps avoid subtle bugs.
