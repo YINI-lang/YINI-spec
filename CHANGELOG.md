@@ -7,6 +7,25 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## [Upcoming/Unreleased] - FUTURE
+Spec. changes:
+- **Changed:** Made number-to-string conversion in lenient-mode concatenation
+  deterministic. Decimal numbers keep a normalized form of their source
+  spelling: digit separators and unnecessary plus signs are removed, and `E`
+  is normalized to `e`. Non-decimal integers are converted exactly to base 10,
+  and negative zero is preserved. For example, `1e3` remains `1e3`, while
+  `0xFF` becomes `255`.
+- **Changed:** Standardized orphan-member handling in lenient mode. Conforming
+  lenient-mode parsers MUST accept root-level orphan members and mount them
+  directly on the abstract document root alongside top-level sections. The
+  previous implementation-dependent implicit `base` mapping is no longer part
+  of the YINI data model. In practice, orphan members and top-level sections
+  appear as siblings in the parsed output rather than placing orphan members
+  inside a separate `base` object.
+- **Clarified:** The `=` inline object member separator is valid YINI syntax
+  in lenient mode, not an optional parser extension. Conforming lenient-mode
+  parsers MUST accept both `:` and `=`, including mixed separators within the
+  same inline object. The canonical separator remains `:`, and formatters
+  SHOULD normalize object members to `:`.
 
 ## Package 2026-05-30 (spec: v1.0.0-RC.6)
 - Revised `#` character handling and updated hexadecimal notation rules in the specification and ANTLR4 grammar:
