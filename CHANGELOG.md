@@ -8,6 +8,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 
 ## [Upcoming/Unreleased] - FUTURE
 Spec. changes:
+- **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source
   spelling: digit separators and unnecessary plus signs are removed, and `E`

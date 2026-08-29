@@ -321,6 +321,12 @@ This rule avoids ambiguity between numeric addition-like interpretation (`"33"`)
 
 Lists and inline objects are intentionally excluded from concatenation to avoid ambiguous or implementation-specific stringification rules.
 
+#### B.2.10. Escape sequence `\xhh` but YINI strings are Unicode?
+
+The ambiguity. \xFF looks like "byte 0xFF" but if YINI strings are Unicode text (not byte arrays).
+
+This is solved by `\xhh` producing the Unicode code point U+00hh, not a raw byte. (As it is done in JS and Python 3.) Due to not making a hard error while parsing.
+
 ---
 
 ## C. YINI vs Other Formats

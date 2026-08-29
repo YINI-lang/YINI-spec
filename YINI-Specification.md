@@ -844,17 +844,17 @@ Although indentation has no semantic meaning, authors SHOULD visually indent nes
 
 ✅ **Example of valid section nesting:**
 ```yini
-^ Section 1         // Main section 1 (depth 1)
-^^ Section 1.1      // Sub-section of 1 (depth 2)
-^^^ Section 1.1.1   // Sub-section of 1.1 (depth 3)
+^ `Section 1`         // Main section 1 (depth 1)
+^^ `Section 1.1`      // Sub-section of 1 (depth 2)
+^^^ `Section 1.1.1`   // Sub-section of 1.1 (depth 3)
 
-^^ Section 1.2      // Sub-section of 1 (depth 2)
+^^ `Section 1.2`      // Sub-section of 1 (depth 2)
 
-^ Section 2         // Main section 2 (depth 1)
-^^ Section 2.1      // Sub-section of 2 (depth 2)
-^^^ Section 2.1.1   // Sub-section of 2.1 (depth 3)
+^ `Section 2`         // Main section 2 (depth 1)
+^^ `Section 2.1`      // Sub-section of 2 (depth 2)
+^^^ `Section 2.1.1`   // Sub-section of 2.1 (depth 3)
 
-^ Section 3         // Main section 3 (depth 1)
+^ `Section 3`         // Main section 3 (depth 1)
 ```
 
 #### 5.3.1. Section Marker Separators
@@ -1140,7 +1140,7 @@ The following escape sequences are case-sensitive:
 - `\r` — Carriage return (ASCII 13).
 - `\t` — Tab (ASCII 9).
 - `\v` — Vertical tab (ASCII 11).
-- `\xhh` — Hex byte, using exactly 2 hexadecimal digits.
+- `\xhh` — Short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - `\uhhhh` — Unicode code point in the range U+0000 to U+FFFF, using exactly 4 hexadecimal digits.
 - `\Uhhhhhhhh` — Unicode code point in the range U+00000000 to U+10FFFF, using exactly 8 hexadecimal digits.
 - `\oOOO` — Octal value (up to 3 digits, valid range `\o0` to `\o377`):
@@ -1627,7 +1627,7 @@ The following structural rules apply to inline objects:
 - Empty member slots are not allowed.
 - In lenient mode only, a trailing comma after the last member is permitted and ignored.
 - In strict mode, trailing commas are invalid.
-- Whitespace is ignored except inside quoted strings.
+- Whitespace is ignored except inside quoted strings and backticked identifiers.
 - Line comments may begin after a complete token, even without preceding whitespace. However, a comment marker MUST NOT split a token.
 - Object member keys MUST be unique within the same inline object.
   * In lenient mode, the first object member definition wins: the first member MUST be kept, later duplicate object members MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
@@ -1856,7 +1856,7 @@ Support for standardized date-time literals may be considered in a future versio
 YINI enforces a set of validation rules to ensure the structure and content of files are consistent, unambiguous, and semantically correct. These rules fall into two main categories: **reserved syntax protections** and **well-formedness**. Validation ensures compatibility across implementations and minimizes user errors.
 
 ### 12.1. Reserved Syntax
-Certain characters and keywords are **reserved** by the YINI specification for internal syntax or future use. Using them incorrectly may lead to a parse error or undefined behavior.
+Certain characters and keywords are **reserved** by the YINI specification for internal syntax or future use. Using them incorrectly SHOULD lead to a parse error.
 
 #### 12.1.1. Reserved Characters
 The following characters are reserved by the YINI syntax and MUST not be used improperly outside of their defined contexts. They may appear inside quoted strings or backticked identifiers but are otherwise restricted:
@@ -1876,7 +1876,7 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `;` | Full-line comment |   |
 | `[ ]` | List literal |  |
 | `{ }` | Object literal |  |
-| `--` | Line disabling | Experimental use (see Section 3.6) |
+| `--` | Line disabling |  |
 | `%` | Binary prefix | Begins binary number |
 | `hex:` | Hexadecimal number prefix | Begins an explicit hexadecimal number literal; case-insensitive |
 | `@` | Directive prefix | Reserved for future syntax |
@@ -3336,6 +3336,7 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 Upcoming release / v1.0.0 RC 7
+- **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source
   spelling: digit separators and unnecessary plus signs are removed, and `E`
@@ -3372,7 +3373,6 @@ v1.0.0 RC 6, 2026-05-30
 - **Added:** For readability, added support for section marker separators `_`.
 - **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. If `@yini strict` is parsed in lenient mode, the parser MUST emit a mode-mismatch error. If `@yini lenient` is parsed in strict mode, the parser MUST emit a mode-mismatch warning.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
-- **Changed:** Standardized orphan-member handling in lenient mode. Conforming lenient-mode parsers MUST accept orphan members and mount them directly on the abstract document root alongside top-level sections. The previous implementation-dependent implicit `base` mapping is no longer part of the YINI data model.
 - **Changed:** Re-added `>` as a supported ASCII section marker based on feedback. It is now documented as a quote-like ASCII fallback marker, with a portability caveat because some email clients, forum renderers, and Markdown-like environments may treat it as a quote prefix.
 
 v1.0.0 RC 5, 2026-04-09
