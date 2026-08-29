@@ -135,7 +135,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.3.1. Table: Lenient vs. Strict Mode
 
 **13. Implementation Notes** ([Link ⇨](./YINI-Specification.md#13-implementation-notes))  
-&nbsp;&nbsp;&nbsp;&nbsp;13.1. Top-Level Sections and Implicit Root  
+&nbsp;&nbsp;&nbsp;&nbsp;13.1. Top-Level Sections and Document Root  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Line Handling and Whitespace  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Value and Null Handling  
 &nbsp;&nbsp;&nbsp;&nbsp;13.4. Boolean Canonicalization  
@@ -281,7 +281,7 @@ These terms are used throughout this specification to describe YINI's grammar, s
 | Nested section | A section contained under another section, represented by a greater section depth. |
 | Null literal | The case-insensitive literal `null`, representing the null value. |
 | Number literal | A numeric value written using decimal notation or one of the supported base-prefixed forms. |
-| Object member | A key-value entry **inside an inline object**, normally written as `key: <value>`. For example: `num: 100` or `str: "Hello"`. In lenient mode only, `key = <value>` may also be accepted. |
+| Object member | A key-value entry **inside an inline object**, normally written as `key: <value>`. For example: `num: 100` or `str: "Hello"`. In lenient mode only, it may also be written as `key = <value>`; conforming lenient-mode parsers MUST accept both separators. |
 | Orphan member | A root-level member not contained in an explicit section. |
 | Parser | Software that reads a YINI document and produces a parsed data representation, or reports diagnostics. |
 | Raw string | A string literal that does not interpret escape sequences. Raw string behavior is the default. |
@@ -453,7 +453,7 @@ This follows a familiar convention from languages and formats such as JavaScript
 config = { enabled: true, retries: 3 }
 ```
 
-In **lenient mode only**, `=` MAY also be accepted inside inline objects, but tools and formatters SHOULD normalize inline object members to `:`.
+In **lenient mode only**, authors MAY also use `=` inside inline objects, and conforming lenient-mode parsers MUST accept it. Tools and formatters SHOULD normalize inline object members to `:`.
 
 #### Comments
 
@@ -701,7 +701,7 @@ This section describes how values (on the right-hand side of `=`) are interprete
 
 **Note:** At root and section level, values are assigned using `=`. The colon (`:`) is not a general assignment operator and MUST NOT be used to define root-level or section-level members or lists.
 
-Inside inline objects (`{ ... }`), `:` is the canonical member separator. In lenient mode only, `=` MAY also be accepted inside inline objects as a compatibility convenience. In strict mode, inline object members MUST use `:`.
+Inside inline objects (`{ ... }`), `:` is the canonical member separator. In lenient mode only, authors MAY also use `=` as a compatibility convenience, and conforming lenient-mode parsers MUST accept it. In strict mode, inline object members MUST use `:`.
 
 For compound values written after `=`, the opening `[` or `{` **MUST appear on the same logical line** as the `=`. A newline immediately after `=` means the member has no explicit value.
 
@@ -1712,7 +1712,7 @@ name = "Kim"
 
 Inside inline objects, `:` is used since the object itself is already the value of a surrounding member. The colon helps distinguish object member definitions from ordinary root-level or section-level assignments.
 
-In lenient mode only, implementations MAY also accept `=` as an object member separator:
+In lenient mode only, authors MAY also use `=` as an object member separator, and conforming lenient-mode parsers MUST accept it:
 ```yini
 obj = { a = 1, b = 2 }  // Lenient mode only
 ```
@@ -1720,10 +1720,10 @@ obj = { a = 1, b = 2 }  // Lenient mode only
 This exists as a compatibility and user-friendliness feature, especially for users who are accustomed to writing `key = "value"` throughout a configuration file.
 
 The following rules apply:
-- In lenient mode, inline object members MAY use either `:` or `=`.
+- In lenient mode, authors MAY use either `:` or `=`, and conforming lenient-mode parsers MUST accept both separators.
 - In strict mode, inline object members MUST use `:`.
 - In strict mode, using `=` inside an inline object is invalid, whether mixed with `:` or used consistently.
-- Within a single inline object, mixing `:` and `=` is discouraged in lenient mode.
+- Within a single inline object, mixing `:` and `=` is valid but discouraged in lenient mode. Conforming lenient-mode parsers MUST accept mixed separators.
 - Tools and formatters SHOULD normalize inline object members to `:`.
 
 ```yini
@@ -1893,7 +1893,7 @@ A YINI file is considered **well-formed** if it adheres to the core syntactic an
 #### 12.2.1. Structural Requirements
 Note: In lenient mode, top-level members outside any section may be accepted. In strict mode, the document structure is further restricted; see Section 12.3 and Section 13.1.
 
-- In lenient (default) mode, a document may consist of **zero or more root-level members, section-level members, and sections**.
+- In lenient (default) mode, a document MAY contain **zero or more root-level members, section-level members, and sections**. Conforming lenient-mode parsers MUST accept root-level orphan members.
 - In strict mode, a document MUST contain **exactly one explicit top-level section**. All members MUST appear inside that section or one of its subsections.
 - Section headers MUST begin with a valid marker (`^`, `§`, `>`, or `<`).
 - In repeated/basic section headers, whitespace between the marker and the section name is optional.
@@ -1950,7 +1950,7 @@ consistently, mixed forms MUST result in an error.
 - Values MUST be one of the supported data types: **String**, **Number**, **Boolean**, **Null**, **List**, or **Object**.
 - Boolean values are **case-insensitive**: `True`, `On`, `Yes`, etc.
 - Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
-- Inline object members MUST use `:` in strict mode. In lenient mode, implementations MAY also accept `=` inside inline objects, but `:` remains canonical.
+- Inline object members MUST use `:` in strict mode. In lenient mode, authors MAY use either `:` or `=`, and conforming lenient-mode parsers MUST accept both separators. The `:` separator remains canonical.
 
 #### 12.2.5. Document Terminator
 **Note:** The authoritative syntax and placement rules for the document terminator are defined in Section 3.5, "Document Terminator". This section restates the validation requirements by mode.
@@ -2003,12 +2003,13 @@ Some YINI parsers may support multiple **validation modes**:
 - **Lenient mode** is the default mode of operation.
   - Useful for hand-edited configuration files.
   - Permissive with minor issues (for example, trailing commas after the last value/member are ignored, and mixed line endings are tolerated).
+  - Root-level orphan members are permitted and MUST be accepted. In the abstract YINI data model, they are mounted directly on the document root alongside explicitly defined top-level sections.
   - The document terminator (`/END`) is optional in lenient mode and MAY be omitted entirely. If present, it marks the end of the YINI document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
   - All typing rules still apply. For example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
   - Empty values are allowed ONLY for members at section top level:
     - A missing/empty value (ONLY outside lists and objects) is treated as `Null`.
     - A trailing comma after the last value/member inside a list or object is ignored ONLY in lenient mode. In strict mode, it is a parse error.
-  - Inside inline objects, `=` MAY be accepted as an alternative to `:` for object member separation. This is a lenient mode compatibility feature only. The canonical form remains `key: "value"`.
+  - Inside inline objects, authors MAY use `=` as an alternative to `:` for object member separation. Conforming lenient-mode parsers MUST accept both separators, including when they are mixed within the same inline object. This is a lenient-mode compatibility feature only. The canonical form remains `key: "value"`.
   - In lenient (default) mode, an empty document is permitted. For this purpose, a document containing only whitespace, comments, and/or disabled lines (`--`) is considered empty. An implementation MUST NOT treat such a document as a parse failure solely because it is empty; however, it SHOULD report a warning diagnostic indicating that the document appears empty or contains no meaningful content.
 
 #### Strict Mode
@@ -2061,10 +2062,10 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | Duplicate keys | ⚠️ First wins | ❌ Error | Later duplicate keys are ignored in lenient mode and MUST produce a warning diagnostic. |
 | Duplicate sections at same level | ⚠️ First wins | ❌ Error | Later duplicate sections are ignored in lenient mode. Implementations MUST NOT merge or overwrite sections. |
 | Exactly one explicit top-level section required | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
-| Top-level orphan members allowed      | ✅ | ❌ | In lenient mode they may be mounted at root or under implicit base. |
+| Top-level orphan members allowed      | ✅ | ❌ | In lenient mode they are mounted directly on the document root. |
 | `/END` required at end of document                       | ❌ | ✅ |   |
-| `=` inside inline objects | ✅ | ❌ | Lenient mode MAY accept `key = "value"` inside `{ ... }`; strict mode requires canonical `key: "value"`. |
-| Mixed `:` and `=` inside same inline object | ⚠️ Discouraged | ❌ | Lenient parsers MAY accept mixed separators, but formatters SHOULD normalize all inline object members to `:`. |
+| `=` inside inline objects | ✅ | ❌ | Conforming lenient-mode parsers MUST accept `key = "value"` inside `{ ... }`; strict mode requires canonical `key: "value"`. |
+| Mixed `:` and `=` inside same inline object | ⚠️ Valid but discouraged | ❌ | Conforming lenient-mode parsers MUST accept mixed separators, but formatters SHOULD normalize all inline object members to `:`. |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient mode the comma is ignored, error in strict mode  |
 | Missing (empty) value (only in section/root-level)| ✅ | ❌ | Will result in a `Null` value in lenient mode  |
 | Empty value before comma | ❌ | ❌ | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Lenient implementations SHOULD report a warning or error; strict implementations MUST report an error. |
@@ -2091,17 +2092,15 @@ The following guidance is here to assist developers implementing YINI parsers, e
 
 See also Section 12.2, "Well-Formedness Requirements", for formal validation criteria.
 
-### 13.1. Top-Level Sections and Implicit Root
+### 13.1. Top-Level Sections and Document Root
 
 A YINI document may contain both explicit top-level sections and, in lenient mode only, top-level members that are not placed inside any explicit section. Such members are referred to here as **orphan members**.
 
 #### 13.1.1. Lenient Mode: Orphan Members
-In lenient mode, orphan members MAY be accepted.  
+In lenient mode, orphan members are permitted and MUST be accepted.  
 NOTE: In strict mode, orphan members are forbidden.
 
-In lenient mode only, an implementation MUST expose accepted orphan members in a well-defined way. The preferred behavior is to mount orphan members directly onto the parsed result, alongside explicitly defined top-level sections. If the underlying platform, host language, or target representation does not allow this cleanly, orphan members MUST instead be placed under an implicit section named `base`.
-
-Accepted orphan members SHOULD be exposed as direct members of the parsed root object, alongside explicitly defined top-level sections.
+In the abstract YINI data model, orphan members MUST be mounted directly on the document root alongside explicitly defined top-level sections.
 
 For example:
 
@@ -2112,7 +2111,7 @@ name = "App"
 host = "localhost"
 ```
 
-SHOULD be represented conceptually as:
+MUST be represented conceptually as:
 ```json
 {
   "name": "App",
@@ -2122,17 +2121,11 @@ SHOULD be represented conceptually as:
 }
 ```
 
-It SHOULD NOT be represented under an explicit `root` or `base` object unless the implementation cannot directly mix orphan members and top-level sections in its target representation.
+Implementations MUST NOT place orphan members under an implicit `base`, `root`, or other implementation-defined section in the abstract parsed result.
 
-When the implicit `base` section strategy is used, `base` becomes a reserved top-level section name for that parsed document. Therefore, if orphan members are present, an explicitly defined top-level section named `base` MUST result in an error.
+A host-language API MAY expose an additional wrapper object if required by that API. Such a wrapper is not part of the YINI data model and MUST NOT change the conceptual document structure or YINI-to-JSON conversion.
 
-If orphan members are not present, an explicitly defined top-level section named `base` is treated as an ordinary section name.
-
-The following collisions MUST result in an error:
-- An orphan member name colliding with an explicitly defined top-level section name.
-- The implicit `base` section colliding with an explicitly defined top-level section named `base`.
-
-The implementation SHOULD document clearly which orphan-member strategy it uses.
+An orphan member and an explicitly defined top-level section MUST NOT have the same name. Such a collision MUST result in an error.
 
 #### 13.1.2. Top-Level Section Mounting
 Explicitly defined top-level sections are mounted directly onto the parsed result. Their hierarchy MUST still be respected: descending into deeper nesting may not skip intermediate levels.
@@ -2188,15 +2181,15 @@ Inline object members use `:` as the canonical separator:
 obj = { a: 1, b: 2 }
 ```
 
-In lenient mode only, parsers MAY accept `=` as an alternative object member separator:
+In lenient mode only, authors MAY use `=` as an alternative object member separator, and conforming lenient-mode parsers MUST accept it:
 
 ```yini
 obj = { a = 1, b = 2 }
 ```
 
-If accepted, implementations SHOULD treat this as equivalent to the canonical `:` form internally. Formatters SHOULD normalize object members to `:`.
+Implementations MUST treat this as equivalent to the canonical `:` form internally. Formatters SHOULD normalize object members to `:`.
 
-Mixing `:` and `=` within the same inline object is discouraged in lenient mode because it reduces visual consistency and can make the object harder to read:
+Mixing `:` and `=` within the same inline object is valid but discouraged in lenient mode because it reduces visual consistency and can make the object harder to read. Conforming lenient-mode parsers MUST accept mixed separators:
 
 ```yini
 obj = { a: 1, b = 2 }  // Discouraged in lenient mode; invalid in strict mode.
@@ -2419,7 +2412,7 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 |---------------------|----------------------------------------------------|--------------------------------------|-----------------------------------------------------------------------------------|
 | Structure Mapping   | ✅ Yes (sections become objects)                   | ✅ Yes (objects, nested)              | Each YINI section is mapped to a JSON object.                                     |
 | Types Mapping       | ✅ Yes (direct type mapping)                       | ✅ Yes (direct type mapping)          | All core types (string, number, bool, null, object, list) are preserved.          |
-| Key/Value Syntax    | ✅ Root/section: `key = "value"`<br>Object: `key: "value"` canonical | ✅ Keys always quoted, `:` for objects | YINI uses `=` for root/section members and canonical `:` for object members. Lenient mode may accept `=` inside inline objects, but formatters should normalize to `:`. |
+| Key/Value Syntax    | ✅ Root/section: `key = "value"`<br>Object: `key: "value"` canonical | ✅ Keys always quoted, `:` for objects | YINI uses `=` for root/section members and canonical `:` for object members. Conforming lenient-mode parsers MUST also accept `=` inside inline objects, but formatters SHOULD normalize it to `:`. |
 | Identifiers (Keys)  | ✅ Unquoted, or backticked if needed               | ✅ Must always be quoted              | Backticks in YINI for special chars; JSON always quotes keys.                     |
 | Comments            | ✅ Supported (full-line, inline, or multi-line)                 | 🚫 Not supported (discarded)          | Comments are dropped when converting to JSON.                                     |
 | Terminator          | ✅ Supported in YINI (`/END`)                       | 🚫 Not supported in JSON            | YINI's document terminator has no JSON equivalent and is ignored when converting to JSON.                              |
@@ -3346,7 +3339,7 @@ v1.0.0 RC 6, 2026-05-30
 - **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
 - **Removed:** Support for `#` as a hexadecimal number prefix was removed. Hexadecimal numbers MUST instead be written using `0x...` or the explicit `hex:` form.
 - **Removed:** Hyper Strings (H-Strings) were removed. While useful for readable long-form text, they served a narrow use case and overlapped with existing string forms. Their removal keeps the core language smaller, clearer, and more predictable.
-- **Added:** In lenient mode, inline object members MAY use `=` as an alternative to `:`. The canonical form remains `key: "value"`.
+- **Added:** In lenient mode, authors MAY use `=` as an alternative to `:`, and conforming lenient-mode parsers MUST accept both separators. The canonical form remains `key: "value"`.
 - **Clarified:** In strict mode, inline object members MUST use `:`. Using `=` inside inline objects is invalid, whether mixed with `:` or used consistently.
 - **Clarified:** Tools and formatters SHOULD normalize inline object members to `:`.
 - **Changed:** Updated string concatenation rules. In both modes, a concatenation expression MUST begin with a string literal. In strict mode, all concatenation operands MUST be string literals. In lenient mode, additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not defined. Non-string scalar operands are converted to their parsed canonical string representation before concatenation. A concatenation expression MAY span multiple source lines only when the line break occurs after the `+` operator; a line break before `+` is invalid. Lists and inline objects MUST NOT be used as concatenation operands.
@@ -3357,13 +3350,14 @@ v1.0.0 RC 6, 2026-05-30
 - **Added:** For readability, added support for section marker separators `_`.
 - **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. If `@yini strict` is parsed in lenient mode, the parser MUST emit a mode-mismatch error. If `@yini lenient` is parsed in strict mode, the parser MUST emit a mode-mismatch warning.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
+- **Changed:** Standardized orphan-member handling in lenient mode. Conforming lenient-mode parsers MUST accept orphan members and mount them directly on the abstract document root alongside top-level sections. The previous implementation-dependent implicit `base` mapping is no longer part of the YINI data model.
 - **Changed:** Re-added `>` as a supported ASCII section marker based on feedback. It is now documented as a quote-like ASCII fallback marker, with a portability caveat because some email clients, forum renderers, and Markdown-like environments may treat it as a quote prefix.
 
 v1.0.0 RC 5, 2026-04-09
 - **Changed:** The document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
 - **Clarified:** Updated the specification text, validation rules, and strict/lenient mode table to reflect that strict mode requires `/END` at the end of the document.
 - **Clarified:** Clarified whitespace rules for section headers: repeated/basic section headers do not require a space before the section name, while numeric shorthand headers (such as `^7`) do.
-- **Clarified:** Defined top-level structure rules for lenient and strict mode. In lenient mode, orphan members may be exposed at the root or under an implicit base section; in strict mode, exactly one explicit top-level section is allowed, all additional sections MUST be nested beneath it, and top-level orphan members are forbidden.
+- **Clarified:** Defined top-level structure rules for lenient and strict mode. In RC5, lenient-mode orphan members could be exposed at the root or under an implicit base section; strict mode required exactly one explicit top-level section. The implementation-dependent lenient mapping was superseded by the standardized document-root mapping in RC6.
 - **Updated:** Added a third large real-world configuration example (C) for parsing in strict mode.
   - See Section **15.7**.
   - The full YINI and JSON versions of these examples are also included under  
@@ -3434,7 +3428,7 @@ Trailing commas after values or members inside lists or objects never produce `N
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
 | List nesting       | `list = [[1, 2], [3, 4]]`       | Using inner lists without brackets | All nested lists MUST be bracketed explicitly. |
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
-| Inline object member separator | `obj = { a: 1, b: 2 }` | `obj = { a = 1, b = 2 }` | `:` is the canonical separator inside inline objects. In lenient mode, `=` MAY be accepted, but formatters should normalize to `:`. In strict mode, `=` inside inline objects is invalid. |
+| Inline object member separator | `obj = { a: 1, b: 2 }` | Non-canonical lenient form: `obj = { a = 1, b = 2 }` | `:` is the canonical separator inside inline objects. The `=` form is valid in lenient mode and conforming lenient-mode parsers MUST accept it, but formatters SHOULD normalize it to `:`. In strict mode, `=` inside inline objects is invalid. |
 | Mixed object separators | `obj = { a: 1, b: 2 }` | `obj = { a: 1, b = 2 }` | Mixing `:` and `=` inside the same inline object is discouraged in lenient mode and invalid in strict mode. |
 | Quote characters | `text = "hello"` or `text = 'hello'` | Using curly quotes as delimiters (start/end characters): `text = “hello”` | String delimiters MUST be plain ASCII quotes: `'` U+0027 or `"` U+0022. Curly quotes may appear inside strings as ordinary text, but they do not delimit strings. |
 | String concatenation start | `text = "value: " + 123` | `text = 123 + " value"` | A concatenation expression MUST begin with a string literal. In lenient mode, later scalar operands may be numbers, booleans, or null. |
