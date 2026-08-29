@@ -170,7 +170,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;16.2. Acknowledgments  
 &nbsp;&nbsp;&nbsp;&nbsp;16.3. Author(s)  
 &nbsp;&nbsp;&nbsp;&nbsp;16.4. Spec Changes  
-&nbsp;&nbsp;&nbsp;&nbsp;16.5. Reserved: Grammar (Formal)  
+&nbsp;&nbsp;&nbsp;&nbsp;16.5. Formal Grammar  
 &nbsp;&nbsp;&nbsp;&nbsp;16.6. Appendix C – Common Mistakes and Pitfalls  
 &nbsp;&nbsp;&nbsp;&nbsp;16.7. 🧾 Unicode Whitespace Characters  
 
@@ -179,7 +179,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 ## 1. Introduction
 ### 1.1. What is YINI?
 **YINI** is a human-readable text format for representing structured information.  
-It is designed to be clear, predictable, and easy for humans to read and write, and is defined by a formal grammar that provides simplicity, flexibility, and a clear separation of concerns for configuration data.  
+It is designed to be clear, predictable, and easy for humans to read and write, and is defined by this specification together with its accompanying ANTLR4 grammar.  
 
 Its syntax is inspired by widely used configuration formats such as INI and YAML, as well as general-purpose languages and data notations including JSON, C, and Python.  
 YINI aims to offer a consistent and intuitive structure that is easy to parse and edit by both humans and machines.  
@@ -3304,8 +3304,26 @@ v1.0.0 RC 4, 2026-03-29
 
 ---
 
-### 16.5. Reserved: Grammar (Formal)
-Reserved for future inclusion of the formal grammar.
+### 16.5. Formal Grammar
+
+The formal ANTLR4 grammar is not reproduced directly in this specification
+document because of its length. It is included separately in the YINI
+specification repository and release package:
+
+- [ANTLR4 grammar directory](./Grammar-ANTLR4/)
+- [YINI lexer grammar](./Grammar-ANTLR4/YiniLexer.g4)
+- [YINI parser grammar](./Grammar-ANTLR4/YiniParser.g4)
+
+The grammar defines YINI's principal lexical and syntactic structure. Some
+validation requirements—such as parsing-mode rules, duplicate-name handling,
+section nesting, and other semantic constraints—are enforced outside the
+grammar and are defined by this specification.
+
+The grammar accompanying YINI Specification 1.0.0-RC.6 is version
+1.3.0-RC.1.
+
+If the grammar and this specification conflict, this specification takes
+precedence.
 
 ### 16.6. Appendix C – Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats such as YAML, JSON, or classic INI. This table clarifies syntax edge cases and helps avoid subtle bugs.
