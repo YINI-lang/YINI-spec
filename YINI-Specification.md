@@ -121,7 +121,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 **10. List Literals** ([Link ⇨](./YINI-Specification.md#10-list-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Bracketed Lists (`[...]`)  
 
-**11. Advanced Constructs** ([Link ⇨](./YINI-Specification.md#11-advanced-constructs))  
+**11. Reserved and Future Constructs** ([Link ⇨](./YINI-Specification.md#11-advanced-constructs))  
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Future / Reserved Features _(For Future Use)_  
 
 ---
@@ -134,7 +134,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;12.3. Lenient vs. Strict Modes  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.3.1. Table: Lenient vs. Strict Mode
 
-**13. Implementation Notes** ([Link ⇨](./YINI-Specification.md#13-implementation-notes))  
+**13. Implementation Rules** ([Link ⇨](./YINI-Specification.md#13-implementation-notes))  
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Top-Level Sections and Document Root  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Line Handling and Whitespace  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Value and Null Handling  
@@ -171,7 +171,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;16.3. Author(s)  
 &nbsp;&nbsp;&nbsp;&nbsp;16.4. Spec Changes  
 &nbsp;&nbsp;&nbsp;&nbsp;16.5. Formal Grammar  
-&nbsp;&nbsp;&nbsp;&nbsp;16.6. Appendix C – Common Mistakes and Pitfalls  
+&nbsp;&nbsp;&nbsp;&nbsp;16.6. Common Mistakes and Pitfalls  
 &nbsp;&nbsp;&nbsp;&nbsp;16.7. 🧾 Unicode Whitespace Characters  
 
 ---
@@ -250,7 +250,7 @@ YINI prioritizes **clarity, structure, and predictability**. The features below 
 
 - **Document Terminator:** YINI supports an optional document terminator (`/END`); see Section 3.5 for mode-specific requirements. When present, it provides an unambiguous signal of document completion, which is especially helpful for streaming parsers and documents embedded within larger payloads.
 
-## 1.5. Terminology
+### 1.5. Terminology
 These terms are used throughout this specification to describe YINI's grammar, structure, and semantics. The list also includes a few general English terms used with specific meaning in this document.
 
 | Term                      | Definition |
@@ -503,7 +503,7 @@ While both `//` and `#` are valid for inline comments, it is recommended to use 
 
 See also Section 3.6, "Disable Line", for a related mechanism used to deactivate valid lines of configuration.
 
-### 3.3.1. Inline Comments
+#### 3.3.1. Inline Comments
 YINI supports two syntaxes for inline comments.
 - **Double slash** `//` comments are the default — outside string literals, everything from `//` to the end of the line is treated as a comment:
     ```yini
@@ -1836,7 +1836,7 @@ linkItems = [
 ]
 ```
 
-## 11. Advanced Constructs
+## 11. Reserved and Future Constructs
 ### 11.1. Future / Reserved Features _(For Future Use)_
 The following features are reserved for potential support in future versions of the YINI specification. They are **not currently active** in this version, but their syntax and keywords **are reserved**.
 
@@ -2062,7 +2062,7 @@ list_bracketed3 = [1, 2]        // ✅ OK
 object6 = { a: 1, b: 2 }        // ✅ OK
 ```
 
-### 12.3.1. Table: Lenient vs. Strict Mode
+#### 12.3.1. Table: Lenient vs. Strict Mode
 | Feature                 | Lenient Mode (Default) | Strict Mode | Notes |
 |-------------------------|:----------------------:|:-----------:|-------|
 | Explicit string quoting               | ✅ | ✅ | All strings MUST be enclosed with `"` or `'` — no ambiguity over strings.|
@@ -2094,7 +2094,7 @@ key1 =         // ❌ error: missing value
 key2 = ,       // ❌ error: unexpected comma
 ```
 
-## 13. Implementation Notes
+## 13. Implementation Rules
 
 The following guidance is here to assist developers implementing YINI parsers, engines, or tools. These notes aim to promote consistent interpretation of YINI syntax across different platforms and environments.
 
@@ -3452,7 +3452,7 @@ document is well-formed or conforming. All normative syntactic, structural,
 mode-specific, and semantic requirements in this specification MUST still be
 validated.
 
-### 16.6. Appendix C – Common Mistakes and Pitfalls
+### 16.6. Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats such as YAML, JSON, or classic INI. This table clarifies syntax edge cases and helps avoid subtle bugs.
 
 #### Trailing commas in list and objects

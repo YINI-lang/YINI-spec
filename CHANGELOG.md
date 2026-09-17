@@ -31,6 +31,8 @@ Spec. changes:
 - **Added:** Classic strings now support `\`` for a literal backtick.
 - And more clarifications in the spec, for the full specification change history, see [§16.4, Spec Changes](./YINI-Specification.md#164-spec-changes).
 - **Fixed:** Corrected the strict-mode validation workflow to reference the existing `c-industrial-monitoring-and-automation-platform.strict.yini` example instead of a nonexistent `.smoke.yini` file.
+- **Clarified:** In the spec changed section name to `11. Reserved and Future Constructs` from `11. Advanced Constructs`.
+- **Clarified:** In the spec changed section name to `13. Implementation Rules` from `13. Implementation Notes`.
 
 ## Package 2026-05-30 (spec: v1.0.0-RC.6)
 - Revised `#` character handling and updated hexadecimal notation rules in the specification and ANTLR4 grammar:
