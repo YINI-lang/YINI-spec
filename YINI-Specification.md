@@ -3355,6 +3355,10 @@ Upcoming release / v1.0.0 RC 7
   parsers MUST accept both `:` and `=`, including mixed separators within the
   same inline object. The canonical separator remains `:`, and formatters
   SHOULD normalize object members to `:`.
+- **Clarified:** Appendix 16.7 is informational, not a list of accepted YINI
+  whitespace. Only `SPACE` and `TAB` are syntactic horizontal whitespace; only
+  `LF`, `CRLF`, and `CR` are line endings. Unicode line and paragraph separators
+  (`U+2028` and `U+2029`) are not YINI line endings.
 
 v1.0.0 RC 6, 2026-05-30
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
@@ -3459,9 +3463,12 @@ Trailing commas after values or members inside lists or objects never produce `N
 ---
 
 ### 16.7. 🧾 Unicode Whitespace Characters
-*Informational / reserved for future*
+*Informational; not part of YINI's syntactic whitespace rules.*
 
-Below is a categorized list of Unicode whitespace characters recognized as within <Unicode-WS>.
+In this version of YINI, `U+0020` `SPACE` and `U+0009` `TAB` are the only syntactic
+horizontal whitespace characters. `LF`, `CRLF`, and `CR` are the only recognized
+line endings, as defined in Section 3.2. The remaining characters in this
+table are neither syntactic whitespace nor line endings in YINI.
 
 | Code Point | Character Name                | Abbreviation | Unicode Category | Notes                                 |
 |------------|-------------------------------|--------------|------------------|----------------------------------------|
@@ -3485,8 +3492,8 @@ Below is a categorized list of Unicode whitespace characters recognized as withi
 | `U+202F`   | NARROW NO-BREAK SPACE         |              | Zs               | Used in Mongolian, etc.                |
 | `U+205F`   | MEDIUM MATHEMATICAL SPACE     |              | Zs               | Used in math layout                    |
 | `U+3000`   | IDEOGRAPHIC SPACE             |              | Zs               | Full-width space in CJK                |
-| `U+2028`   | LINE SEPARATOR                |              | Zl               | Treated as newline in some contexts    |
-| `U+2029`   | PARAGRAPH SEPARATOR           |              | Zp               | Paragraph break                        |
+| `U+2028`   | LINE SEPARATOR                |              | Zl               | Not a YINI line ending    |
+| `U+2029`   | PARAGRAPH SEPARATOR           |              | Zp               | Not a YINI line ending.                        |
 
 ---
 
