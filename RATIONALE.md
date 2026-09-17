@@ -6,6 +6,8 @@ This document outlines the **background**, **design motivations**, and **format 
 
 This document may evolve alongside the YINI specification as design decisions are refined.
 
+For explanations of individual rules organized by specification section, see [YINI Design Decisions by Specification Section](./Docs/Design-Decisions.md).
+
 ---
 
 ## Table of Contents
