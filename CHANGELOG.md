@@ -27,6 +27,10 @@ Spec. changes:
   parsers MUST accept both `:` and `=`, including mixed separators within the
   same inline object. The canonical separator remains `:`, and formatters
   SHOULD normalize object members to `:`.
+- **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
+- **Added:** Classic strings now support `\`` for a literal backtick.
+- And more clarifications in the spec, for the full specification change history, see [§16.4, Spec Changes](./YINI-Specification.md#164-spec-changes).
+- **Fixed:** Corrected the strict-mode validation workflow to reference the existing `c-industrial-monitoring-and-automation-platform.strict.yini` example instead of a nonexistent `.smoke.yini` file.
 
 ## Package 2026-05-30 (spec: v1.0.0-RC.6)
 - Revised `#` character handling and updated hexadecimal notation rules in the specification and ANTLR4 grammar:

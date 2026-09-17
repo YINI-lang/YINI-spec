@@ -595,6 +595,11 @@ An _**identifier**_ can be written in one of the following forms:
   ` name`
   `name `
   ```
+- `` \` `` produces a backtick and `\\` produces a backslash *inside a backticked identifier*.
+  Example:
+  ```yini
+  `a\`b` = 1
+  ```
 
 Example:
 ```yini
@@ -1130,6 +1135,7 @@ The following escape sequences are case-sensitive:
 - `\\` — Backslash.
 - `\'` — Single quotation mark.
 - `\"` — Double quotation mark.
+- `` \` `` — Backtick.
 - `\/` — Normal/forward slash (yields a plain `/`).
 - `\0` — Null byte.
 - `\?` — Literal question mark, provided for C/C++ compatibility.
@@ -2145,8 +2151,7 @@ Otherwise, an error MUST be reported.
 
 ### 13.2. Line Handling and Whitespace
 
-- Newline normalization is required:
-  * Support all three forms: LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`).
+- Parsers MUST recognize LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`) as logical line endings for syntax. They MUST preserve the original line-ending characters inside triple-quoted string values. Structural line-ending handling MUST NOT alter string content.
 - Spaces and tabs surrounding a key or section-name token are insignificant
   and MUST be ignored.
 - Content inside a backticked identifier MUST NOT be trimmed or otherwise
@@ -2330,7 +2335,7 @@ This section covers YINI's compatibility and interoperability principles.
 
 ### 14.1. Fallback Rules
 #### 14.1.1. Invalid Sections or Keys
-- In lenient mode, implementations MAY retain invalid key names or section headers as-is where possible, or MAY remap illegal characters, provided a warning diagnostic is reported. In strict mode, invalid key names or section headers MUST result in an error.
+- In lenient mode, invalid key names or section headers SHOULD result in an error with some diagnostic information. In strict mode, invalid key names or section headers MUST result in an error.
   
 #### 14.1.2. Graceful Degradation
 In lenient mode, implementations MAY report warnings for unsupported reserved constructs when recovery is possible.
@@ -2380,7 +2385,11 @@ This line is ignored by YINI parsers but may affect script execution in Unix env
 
 ### 14.4. JSON Compatibility
 
-**A well-formed YINI document can be converted to JSON while preserving its parsed data** structure, value types, and identifier names. Many JSON objects can also be represented as YINI documents, provided they are mapped according to YINI's section, member, identifier, and value rules.
+**YINI documents can be serialized (converted) to JSON while preserving their data hierarchy, value types, and identifier text, provided the target JSON implementation can represent those values without loss.**
+
+Comments and other YINI syntax-only constructs are not preserved in JSON.
+
+Converting JSON to YINI may require mapping choices and is subject to YINI's rules for identifiers and numeric values.
 
 Although YINI and JSON are distinct formats with different goals, their core data models are closely aligned.
 
@@ -2405,7 +2414,8 @@ Therefore, JSON-to-YINI conversion can preserve the same data model when a suita
 - 🚫 Metadata (such as comments and the document terminator) will not be carried over to JSON.
 
 #### Summary
-When converted carefully, a well-formed YINI document can be faithfully represented as a valid JSON object, preserving all structure, data types, and identifier names.  
+A well-formed YINI document can be converted to a JSON object with equivalent structure, value types, and identifier names, provided the converter represents its numeric values without loss. YINI-specific syntax, such as comments and the document terminator, is not preserved.  
+
 Conversely, a valid JSON object can be mapped into a YINI document, provided that JSON-specific constructs (such as deeply nested objects) are expressed as sections and that YINI syntax rules are respected.
 
 **Table: Correspondence Between YINI and JSON**
@@ -3359,6 +3369,11 @@ Upcoming release / v1.0.0 RC 7
   whitespace. Only `SPACE` and `TAB` are syntactic horizontal whitespace; only
   `LF`, `CRLF`, and `CR` are line endings. Unicode line and paragraph separators
   (`U+2028` and `U+2029`) are not YINI line endings.
+- **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
+- **Added:** Classic strings now support `\`` for a literal backtick.
+- **Clarified:** Parsers recognize LF, CRLF, and CR as logical line endings while preserving the original line-ending characters inside triple-quoted string values.
+- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Lenient-mode parsers SHOULD report an error with diagnostic information; strict-mode parsers MUST report an error.
+- **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
 
 v1.0.0 RC 6, 2026-05-30
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
@@ -3420,8 +3435,8 @@ validation requirements—such as parsing-mode rules, duplicate-name handling,
 section nesting, and other semantic constraints—are enforced outside the
 grammar and are defined by this specification.
 
-The grammar accompanying YINI Specification 1.0.0-RC.6 is version
-1.3.0-RC.1.
+The grammar accompanying YINI Specification 1.0.0-RC.7 is version
+1.3.0-RC.2.
 
 If the grammar and this specification conflict, this specification takes
 precedence.
