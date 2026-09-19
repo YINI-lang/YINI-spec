@@ -27,8 +27,15 @@ Spec. changes:
   parsers MUST accept both `:` and `=`, including mixed separators within the
   same inline object. The canonical separator remains `:`, and formatters
   SHOULD normalize object members to `:`.
+- **Clarified:** Appendix 16.7 is informational, not a list of accepted YINI
+  whitespace. Only `SPACE` and `TAB` are syntactic horizontal whitespace; only
+  `LF`, `CRLF`, and `CR` are line endings. Unicode line and paragraph separators
+  (`U+2028` and `U+2029`) are not YINI line endings.
 - **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
 - **Added:** Classic strings now support `\`` for a literal backtick.
+- **Clarified:** Parsers recognize LF, CRLF, and CR as logical line endings while preserving the original line-ending characters inside triple-quoted string values.
+- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Lenient-mode parsers SHOULD report an error with diagnostic information; strict-mode parsers MUST report an error.
+- **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
 - And more clarifications in the spec, for the full specification change history, see [§16.4, Spec Changes](./YINI-Specification.md#164-spec-changes).
 - **Fixed:** Corrected the strict-mode validation workflow to reference the existing `c-industrial-monitoring-and-automation-platform.strict.yini` example instead of a nonexistent `.smoke.yini` file.
 - **Clarified:** In the spec changed section name to `11. Reserved and Future Constructs` from `11. Advanced Constructs`.
