@@ -140,7 +140,8 @@ fragment IDENT_SIMPLE_LX
 //   : '`' ~[\u0000-\u001F`]* '`' // No newlines, tabs, or C0 controls.
 //   ;
 fragment IDENT_BACKTICKED
-  : '`' ( '\\' ('`' | '\\') | ~[\u0000-\u001F`\\] )* '`'
+//  : '`' ( '\\' ('`' | '\\') | ~[\u0000-\u001F`\\] )* '`'
+  : '`' ( '\\' ('`' | '\\') | ~[\u0000-\u001F\u007F-\u009F`\\] )* '`'
   ;
 
 fragment SECTION_NAME_PART
@@ -212,7 +213,7 @@ fragment REST_CHAR
  * ------------------------------------------------------------------ */
 
 SHEBANG
-  : '#!' ~[\r\n]* EOL
+  : '#!' ~[\r\n]* (EOL | EOF)
   ;
 
 YINI_TOKEN options { caseInsensitive = true; }
@@ -236,14 +237,14 @@ TERMINAL_TOKEN options { caseInsensitive = true; }
 // SECTION_HEAD: SECTION_MARKER HSPACE* WS* IDENT NL+;
 SECTION_HEAD
   // : SECTION_MARKER HSPACE* SECTION_NAME_PART HSPACE* EOL+ // Repeated/basic section headers do not require whitespace before the name.
-  : SECTION_MARKER_SHORTHAND HSPACE+ SECTION_NAME_PART HSPACE* EOL+
-  | SECTION_MARKER_BASIC_REPEAT HSPACE* SECTION_NAME_PART HSPACE* EOL+  
+  : SECTION_MARKER_SHORTHAND HSPACE+ SECTION_NAME_PART HSPACE* (EOL+ | SECTION_TAIL_COMMENT* EOF)
+  | SECTION_MARKER_BASIC_REPEAT HSPACE* SECTION_NAME_PART HSPACE* (EOL+ | SECTION_TAIL_COMMENT* EOF)
   ;
 
 INVALID_SECTION_HEAD
   // : (CARET | SS | GT | LT | SEP)+ ~[\r\n]* EOL+
   // : (CARET | SS | GT | LT | SEP) ~[\r\n]* EOL+
-  : (CARET | SS | GT | LT) ~[\r\n]* EOL+
+  : (CARET | SS | GT | LT) ~[\r\n]* (EOL+ | EOF)
   ;
 
 /* ------------------------------------------------------------------
@@ -392,6 +393,9 @@ fragment DISABLE_LINE_MARKER
   ;
 
 DISABLED_LINE
+  // STRING and backticked identifier rules retain '--' inside literal content.
+  // Host validation must check that this marker is the first non-space/tab
+  // content on its logical line. Keep the token visible for that check.
   // : DISABLE_LINE_MARKER ~[\r\n]*
   : DISABLE_LINE_MARKER ~[\r\n]* EOL?
   ;

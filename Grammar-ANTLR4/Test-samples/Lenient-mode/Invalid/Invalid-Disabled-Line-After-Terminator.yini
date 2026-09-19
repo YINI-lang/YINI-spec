@@ -1,0 +1,9 @@
+/*
+  Primary failure: syntactic.
+  Rule: only whitespace and comments may appear after the terminator.
+  A disabled line is a separate construct and is not permitted there.
+*/
+
+^ Config
+/END
+--key = 1

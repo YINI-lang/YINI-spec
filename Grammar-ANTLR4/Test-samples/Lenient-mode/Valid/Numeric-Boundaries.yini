@@ -1,0 +1,21 @@
+/*
+  Primary coverage: semantic.
+  Rule: integers are exact signed 64-bit values; floats use finite binary64.
+  These literals are all valid in both modes. Grammar recognition alone does
+  not verify numeric values, rounding, or preservation of negative zero.
+*/
+
+^ Numbers
+large_id = 9007199254740993
+minimum = -9223372036854775808
+maximum = 9223372036854775807
+minimum_hex = -0x8000000000000000
+maximum_hex = 0x7FFFFFFFFFFFFFFF
+ratio = 0.1
+large_float = 1e308
+subnormal = 5e-324
+zero_integer = -0
+zero_float = -0.0
+zero_exponent = -0e3
+
+/END

@@ -34,6 +34,7 @@ Spec. changes:
 - **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
 - **Added:** Classic strings now support `\`` for a literal backtick.
 - **Clarified:** Parsers recognize LF, CRLF, and CR as logical line endings while preserving the original line-ending characters inside triple-quoted string values.
+- **Clarified:** End-of-file (`EOF`) may terminate an otherwise complete final logical line in both lenient and strict mode. A trailing line ending is no longer required: a lenient document may end immediately after its final assignment, and a strict document may end immediately after `/END`. Updated the ANTLR grammar to match this rule.
 - **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Lenient-mode parsers SHOULD report an error with diagnostic information; strict-mode parsers MUST report an error.
 - **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
 - And more clarifications in the spec, for the full specification change history, see [§16.4, Spec Changes](./YINI-Specification.md#164-spec-changes).

@@ -9,13 +9,23 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Specification Package Version:** 1.0.0-RC.6 ([Version Mapping Table](./README.md#version-mapping-table))  
-**Date:** 2026-05-30  
+**Specification Package Version:** 1.0.0-RC.7 ([Version Mapping Table](./README.md#version-mapping-table))  
+**Date:** 2026-09-21  
 **Status:** Release Candidate  
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
 - [Latest updates/changes in this package](/CHANGELOG.md)  
 - [YINI Homepage](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=readme)  
+
+---
+
+## Specification and Repository Guide
+
+- [YINI Specification](./YINI-Specification.md) — syntax, data model, and validation rules.
+- [ANTLR4 Grammar](./Grammar-ANTLR4/) — lexer and parser grammars for implementers.
+- [YINI Examples](./Examples/README.md) — lenient and strict examples, with selected expected JSON outputs.
+
+The specification takes precedence if it conflicts with the grammar. Grammar recognition alone does not establish conformance; implementations must also enforce the specification's validation rules.
 
 ---
 
@@ -457,6 +467,7 @@ For more details, see section D.2, _"Acknowledgments & Special Thanks"_, in the 
 | 2026 Mar | 1.0.0-RC.4      | 1.0.0-RC.4   | 1.2.0-RC.1   | 1.2.0-RC.1    |
 | 2026 Apr | 1.0.0-RC.5      | 1.0.0-RC.5   | 1.2.0-RC.2   | 1.2.0-RC.2    |
 | 2026 May | 1.0.0-RC.6      | 1.0.0-RC.6   | 1.3.0-RC.1   | 1.3.0-RC.1    |
+| 2026 Sep | 1.0.0-RC.7      | 1.0.0-RC.7 WIP | 1.3.0-RC.2   | 1.3.0-RC.2    |
 | …        | …               | …            | …            | …             |
 
 ---

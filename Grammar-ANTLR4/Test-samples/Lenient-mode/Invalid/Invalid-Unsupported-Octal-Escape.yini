@@ -1,0 +1,10 @@
+/*
+  Primary failure: semantic.
+  Rule: C-style octal escapes are errors in both modes. Continuing after an
+  error must not turn a recovery result into a successful parse.
+*/
+
+^ Strings
+text = C"\123"
+
+/END

@@ -1,0 +1,41 @@
+/*
+  Primary coverage: syntactic and semantic.
+  Rules: keyword spellings are valid case-sensitive names; collections and
+  concatenation continuations accept full-line comments and disabled lines.
+  Host validation must still check marker positions and parsed string content.
+*/
+
+^ Config
+on = true
+On = false
+null = null
+
+obj = {
+    true: 1
+    , off: 2
+    ; Full-line comment inside an object.
+    --unused: 99
+    , NULL: 3
+}
+
+items = [
+    1,
+    ; Full-line comment inside a list.
+    --2,
+    3
+]
+
+text = "hello " +
+    --"temporarily excluded" +
+    ; Full-line comment in a concatenation continuation.
+    "world"
+
+raw = """
+--This line is string content.
+"""
+classic = C"""
+--This line is also string content.
+"""
+`--name` = "--value"
+
+/END

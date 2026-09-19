@@ -3,8 +3,8 @@ _YINI: A clear configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.6
-**Date:** 2026-05-30
+**Version:** 1.0.0-RC.7 WIP
+**Date:** 2026-09-21
 
 > **Status:** This is a release-candidate draft. Minor clarifications and corrections may still be made before YINI 1.0.0.
 
@@ -275,7 +275,7 @@ These terms are used throughout this specification to describe YINI's grammar, s
 | Key | The identifier on the left side of a member assignment. The identifier can either be _simple_ or _backticked_. |
 | Lenient mode | The default parsing mode. It is more permissive than strict mode, while still preserving predictable parsing behavior. |
 | List | An ordered compound value enclosed in `[` and `]`, containing zero or more comma-separated values. In JSON and many programming languages, this structure is commonly called an *array*. |
-| Logical line | A line of YINI source after recognizing supported line endings (`LF`, `CRLF`, or `CR`). Some constructs require tokens to appear on the same logical line. |
+| Logical line | A line of YINI source terminated by a supported line ending (`LF`, `CRLF`, or `CR`) or, for the final line, by end-of-file (`EOF`). Some constructs require tokens to appear on the same logical line. |
 | Member | A **key-value** (pair) entry at root or section level, written as `key = <value>`. For example: `num = 100` or `str = "Hello"`. |
 | Mode declaration | An optional declaration in the YINI marker, such as `@yini strict` or `@yini lenient`, that states the document's expected parsing mode. |
 | Nested section | A section contained under another section, represented by a greater section depth. |
@@ -478,6 +478,7 @@ While YINI is not indentation-sensitive, at least one space or tab is required b
 
 The following whitespace `<WS>` behaviors are defined:
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
+- End-of-file (`EOF`) MAY terminate the final logical line without an `LF`, `CRLF`, or `CR`. A trailing line ending is not required in either lenient or strict mode, provided that the final line is otherwise complete and valid.
 - Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are generally insignificant outside string literals and backticked identifiers, except where this specification explicitly requires or forbids them, such as in numeric shorthand section headers and between distinct lexical tokens.
 - Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
 
@@ -494,7 +495,7 @@ YINI supports three categories of comments, **using four comment syntaxes:**
 These rules apply:
 - Comments are ignored by the parser and have no effect on the parsed data model.
 - Comment markers are recognized only outside string literals and outside backticked identifiers. A comment marker appearing inside a quoted string, triple-quoted string, Classic string, or backticked identifier is treated as ordinary content.
-- Line comments begin at `//` or `#` and continue until the next line ending.
+- Line comments begin at `//` or `#` and continue until the next line ending or `EOF`.
 - Block comments begin at `/*` and end at the next `*/`. Nested block comments are not supported.
 - Comments may appear only where whitespace is allowed. A comment MUST NOT split an identifier, keyword, number literal, string prefix, string literal delimiter, section marker, or other token.
 - A line comment may begin immediately after a complete token; no whitespace is required before `//` or `#`.
@@ -582,9 +583,8 @@ An _**identifier**_ can be written in one of the following forms:
 
 - **Form 2: Backticked Identifier:**
   - The identifier MUST start and end with a backtick <code>`</code>.
-  - A backticked identifier MUST be written on a single logical line. It MUST NOT contain raw tabs, raw newlines, or control characters. Special control characters MUST NOT appear in backticked identifiers.
+  - A backticked identifier MUST be written on a single logical line. It MUST NOT contain raw control characters in the ranges U+0000–U+001F or U+007F–U+009F, including tabs and line endings. YINI defines no control-character escape sequences for backticked identifiers.
   - Ordinary spaces are allowed.
-  - Special control characters (U+0000–U+001F) MUST be escaped and MUST NOT appear as raw characters.
   - A backtick-quoted identifier MAY be empty (<code>``</code>).
     This permits representing an identifier equivalent to the JSON empty key <code>""</code>.
     Although permitted, empty identifiers are discouraged because they reduce readability.
@@ -618,6 +618,8 @@ Example:
 A YINI document MAY end with a terminator line in lenient mode.  
 A YINI document MUST end with a terminator line in strict mode.
 
+The terminator line MAY end directly at `EOF`; no trailing `LF`, `CRLF`, or `CR` is required in either mode. In strict mode, a valid `/END` followed immediately by `EOF` satisfies the document-terminator requirement.
+
 The document terminator explicitly marks the end of the configuration content
 and reduces ambiguity about whether the complete trailing portion of a document
 was received.
@@ -641,8 +643,17 @@ After the document terminator, only whitespace and comments are permitted.
 Any other content appearing after the terminator MUST result in an error.
 
 ### 3.6. Disable Line
-A disabled line is a line whose first non-whitespace characters are `--`.
-The entire line, including any otherwise valid YINI syntax, MUST be **ignored** by the parser.
+A disabled line begins with optional SPACE (U+0020) or TAB (U+0009) characters
+followed by `--`, provided that the marker occurs outside any string literal,
+backticked identifier, or comment.
+
+The marker and the remainder of that logical line MUST be ignored as
+configuration content. The line ending remains a logical line boundary.
+
+Inside a string literal, including Raw Strings, Classic Strings, and both forms
+of Triple-Quoted Strings, `--` MUST be treated as ordinary string content and
+MUST NOT disable the line. The same sequence inside a backticked identifier or
+comment has no line-disabling effect.
 
 Disabled lines are non-meaningful content. They do not contribute to empty-document detection.
 
@@ -664,6 +675,16 @@ port = 8080
 --login = true
 --notifications = false
 ```
+
+**Example 3: Preserved string content:**
+
+```yini
+text = """
+--This line is part of the string.
+"""
+```
+
+The `--` characters and the surrounding line endings are preserved in `text`.
 
 ## 4. Keys and Values
 YINI represents configuration and structured data through a series of _**members**_, each of which is a key-value pair. This section defines the syntax and rules for keys and values, including allowed characters, data types, quoting, and related behaviors.
@@ -1159,9 +1180,15 @@ Where:
 
 **Invalid escapes**
 
-Invalid escape sequences, such as `\z` or `\o378`, MUST result in a parse error in standard YINI parsing.
+Invalid escape sequences, such as `\z` or `\o378`, MUST result in an error
+diagnostic in both lenient and strict mode.
 
-**Additional recommendation:** Implementations SHOULD provide helpful diagnostics for unsupported escape-sequence forms. For example, C/C++-style octal escape sequences such as `\1` through `\377` are not valid YINI escape sequences. In strict mode, such sequences SHOULD be reported as errors. In lenient mode, implementations MAY recover by interpreting them as the corresponding YINI octal escape form, but any such recovery MUST be reported through diagnostics.
+**Additional recommendation:** Implementations SHOULD explain unsupported
+escape forms and suggest the valid YINI spelling. For example, C/C++-style octal
+escapes such as `\1` through `\377` are invalid in both modes; use `\o1`
+through `\o377` instead. A parser MAY continue after the error to report other
+problems, but it MUST still mark the document as invalid. See Section 14.1.2,
+"Graceful Degradation".
 
 ### 6.3. Triple-Quoted Strings
 A **Triple-Quoted String** is a string literal that:
@@ -1398,6 +1425,72 @@ Valid decimal number forms include:
 A decimal point MUST be followed by at least one digit. Therefore, `1.` is
 invalid. The exponent marker MUST be followed by an optional sign and at
 least one decimal digit.
+
+**Numeric interpretation (both modes):**
+
+The following rules define the numeric value of each literal. They apply in
+both lenient and strict mode.
+
+- **Integers:** Decimal literals without a decimal point or exponent, and all
+  supported non-decimal integer literals, MUST be interpreted exactly within
+  the signed 64-bit range: **-9223372036854775808 through 9223372036854775807**
+  (-2^63 through 2^63 - 1). Integers outside this range MUST produce an error
+  diagnostic. Integer `-0` has the same numeric value as `0`.
+- **Floating-point values:** Decimal literals containing a decimal point or
+  exponent MUST be converted to IEEE 754 binary64 (double precision), using
+  **round-to-nearest, ties-to-even**. This selects the nearest representable
+  value; if two values are equally close, the one with an even least-significant
+  significand bit is selected. Ordinary rounding, such as the binary64
+  approximation of `0.1`, is valid and does not require a warning.
+- **Overflow:** A floating-point literal that rounds to positive or negative
+  infinity MUST produce an error diagnostic. NaN and infinity are not YINI
+  numeric values.
+- **Underflow to zero:** A floating-point literal with a nonzero mathematical
+  value that rounds to zero MUST produce an error diagnostic. Small values that
+  round to a nonzero binary64 subnormal value are permitted. Subnormal values
+  are the smallest nonzero values binary64 can represent.
+- **Negative zero:** The sign of floating-point negative zero MUST be preserved,
+  for example in `-0.0` or `-0e3`.
+
+A conforming parser MUST support the integer range and floating-point values
+defined above. If its ordinary host-language type cannot hold an integer
+exactly, it MUST use another lossless numeric representation, such as an
+arbitrary-precision integer or a numeric wrapper. It MUST NOT silently round
+the integer or expose it as a string instead of a number.
+
+If a caller requests a later conversion to a host type that cannot preserve the
+parsed numeric value, that conversion MUST report an error rather than silently
+change the value.
+
+These numeric checks also apply to operands in lenient-mode concatenation.
+After validation, number-to-string conversion MUST use the source-literal
+normalization in Section 6.6, rather than formatting the rounded numeric value.
+For example, `"value: " + 1.50` produces `"value: 1.50"`. The source spelling
+of integer `-0` also remains `-0` during that normalization.
+
+**Valid numeric values in both modes:**
+
+```yini
+^ Numbers
+large_id = 9007199254740993       // Exact integer; must not be rounded.
+minimum_integer = -9223372036854775808
+maximum_integer = 9223372036854775807
+ratio = 0.1                     // The defined binary64 approximation.
+small = 5e-324                  // Rounds to the smallest positive subnormal.
+negative_zero = -0.0            // Preserves the floating-point sign.
+/END
+```
+
+**Invalid numeric values in both modes:**
+
+```yini
+^ InvalidNumbers
+too_large = 9223372036854775808  // Error: outside the signed 64-bit range.
+too_small = -9223372036854775809 // Error: outside the signed 64-bit range.
+overflow = 1e400                // Error: would round to infinity.
+underflow = 1e-400              // Error: nonzero value would round to zero.
+/END
+```
 
 ### 7.2. Digit Separators
 
@@ -1862,7 +1955,9 @@ Support for standardized date-time literals may be considered in a future versio
 YINI enforces a set of validation rules to ensure the structure and content of files are consistent, unambiguous, and semantically correct. These rules fall into two main categories: **reserved syntax protections** and **well-formedness**. Validation ensures compatibility across implementations and minimizes user errors.
 
 ### 12.1. Reserved Syntax
-Certain characters and keywords are **reserved** by the YINI specification for internal syntax or future use. Using them incorrectly SHOULD lead to a parse error.
+Certain characters and keywords are **reserved** by the YINI specification for
+internal syntax or future use. Using them outside their permitted contexts MUST
+produce an error diagnostic in both lenient and strict mode.
 
 #### 12.1.1. Reserved Characters
 The following characters are reserved by the YINI syntax and MUST not be used improperly outside of their defined contexts. They may appear inside quoted strings or backticked identifiers but are otherwise restricted:
@@ -1953,6 +2048,8 @@ Implementations MUST recognize the following line endings:
 In lenient mode, mixed line-ending forms are allowed but SHOULD produce a
 warning. In strict mode: A document MUST use one line-ending form
 consistently, mixed forms MUST result in an error.
+
+`EOF` MAY terminate an otherwise complete final logical line. Implementations MUST NOT reject an otherwise valid document solely because its final line has no trailing `LF`, `CRLF`, or `CR`. This rule applies in both lenient and strict mode.
   
 #### 12.2.4. Valid Value Types
 - Values MUST be one of the supported data types: **String**, **Number**, **Boolean**, **Null**, **List**, or **Object**.
@@ -1968,6 +2065,7 @@ consistently, mixed forms MUST result in an error.
 - See Section 3.5, "Document Terminator", for terminator syntax.
 - A valid YINI file in **strict mode** MUST end with the terminator marker (`/END`).
 - A valid YINI file in **lenient mode** MAY end with the terminator marker (`/END`).
+- A valid terminator line MAY end directly at `EOF`; a trailing line ending is not required.
 - Only one terminator is permitted per file.
 - Missing terminators:
   * **In lenient mode:** No error is required.
@@ -2076,8 +2174,8 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | Mixed `:` and `=` inside same inline object | ⚠️ Valid but discouraged | ❌ | Conforming lenient-mode parsers MUST accept mixed separators, but formatters SHOULD normalize all inline object members to `:`. |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient mode the comma is ignored, error in strict mode  |
 | Missing (empty) value (only in section/root-level)| ✅ | ❌ | Will result in a `Null` value in lenient mode  |
-| Empty value before comma | ❌ | ❌ | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Lenient implementations SHOULD report a warning or error; strict implementations MUST report an error. |
-| Invalid escape sequences | ❌ | ❌ | Invalid escape sequences MUST result in an error unless an implementation explicitly documents a non-standard extension. |
+| Empty value before comma | ❌ Error | ❌ Error | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Both modes MUST report an error; recovery does not make the document valid. |
+| Invalid escape sequences | ❌ Error | ❌ Error | Both modes MUST report an error. Continuing to collect diagnostics does not make the document valid. |
 | String concatenation with scalar operands | ✅ | ❌ | In lenient mode, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. |
 | Multi-line concatenation after `+` | ✅ | ✅ | A line break MAY occur after `+`, but MUST NOT occur before `+`. |
 
@@ -2087,7 +2185,7 @@ Example:
 ```yini
 // Lenient:
 key1 =         // ✅ key1 = null
-key2 = ,       // ❌ error: unexpected comma (may warn)
+key2 = ,       // ❌ error: unexpected comma
 
 // Strict:
 key1 =         // ❌ error: missing value
@@ -2152,6 +2250,7 @@ Otherwise, an error MUST be reported.
 ### 13.2. Line Handling and Whitespace
 
 - Parsers MUST recognize LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`) as logical line endings for syntax. They MUST preserve the original line-ending characters inside triple-quoted string values. Structural line-ending handling MUST NOT alter string content.
+- Parsers MUST also treat `EOF` as terminating an otherwise complete final logical line. A trailing line-ending sequence is not required in either lenient or strict mode.
 - Spaces and tabs surrounding a key or section-name token are insignificant
   and MUST be ignored.
 - Content inside a backticked identifier MUST NOT be trimmed or otherwise
@@ -2210,7 +2309,10 @@ Any empty slot inside `{ ... }`, for example:
 object = { a: 1, , b: 2 }
 ```
 
-is an error in strict mode and SHOULD be reported as at least a warning or error in lenient mode.
+MUST produce an error diagnostic in both lenient and strict mode. A parser MAY
+continue to collect diagnostics, but the document remains invalid. It MUST NOT
+accept the empty slot by inserting `null` or dropping the slot from a successful
+parse result.
 
 ### 13.6. Lists
 
@@ -2328,18 +2430,49 @@ Implementations are encouraged to provide the following features to improve pars
   * **Level 1 — Abort on errors:** Continue after warnings, but abort when an error is encountered.
   * **Level 2 — Abort on warnings and errors:** Abort when either a warning or an error is encountered.
 
-When recovering from invalid syntax, implementations MAY use internal placeholder names or recovery nodes. Such recovered constructs MUST be reported through diagnostics and MUST NOT be silently treated as valid source constructs.
+When recovering from invalid syntax, implementations MAY use internal placeholder
+names or recovery nodes. They MUST still report the required error diagnostics
+and mark the document as invalid. Any partial result MUST be clearly identified
+as a recovery result. See Section 14.1.2, "Graceful Degradation".
 
 ## 14. Compatibility and Versioning
 This section covers YINI's compatibility and interoperability principles.
 
 ### 14.1. Fallback Rules
 #### 14.1.1. Invalid Sections or Keys
-- In lenient mode, invalid key names or section headers SHOULD result in an error with some diagnostic information. In strict mode, invalid key names or section headers MUST result in an error.
+- Invalid key names or section headers MUST produce an error diagnostic in both
+  lenient and strict mode.
   
 #### 14.1.2. Graceful Degradation
-In lenient mode, implementations MAY report warnings for unsupported reserved constructs when recovery is possible.
-In strict mode, unsupported or unrecognized syntax MUST result in an error unless explicitly allowed by this specification.
+**Document validity and parser recovery are separate decisions.** A parser can
+continue looking for problems after an error without accepting the document as
+valid.
+
+Unless this specification explicitly permits a form in the active mode,
+violations of its syntax or semantic requirements MUST produce an error
+diagnostic in both modes. Unsupported or unrecognized syntax, including inactive
+reserved constructs, MUST also produce an error diagnostic.
+
+Implementations MAY continue parsing after an error to collect further
+diagnostics or produce a partial recovery result. Recovery MUST NOT lower the
+required diagnostic severity or change the document's invalid status. Any
+partial result MUST be clearly identified and MUST NOT be presented as a
+successful, conforming YINI parse result.
+
+Warning diagnostics for constructs explicitly permitted by the active mode do
+not, by themselves, make a document invalid. For example, first-wins duplicate
+handling is valid in lenient mode and requires a warning; empty collection slots
+and unsupported escapes are invalid in both modes and require errors.
+
+For example, both assignments below are invalid in both modes:
+
+```yini
+text = C"\123"     // Error: use the YINI escape \o123 instead.
+items = [1, , 3]   // Error: missing list value.
+```
+
+An editor may show a partial result to help locate more errors. An application
+must still be told that the document is invalid.
 
 ### 14.2. Versioning Strategy
 The YINI Specification uses Semantic Versioning-style version numbers to signal format evolution.
@@ -3370,9 +3503,11 @@ Upcoming release / v1.0.0 RC 7
   `LF`, `CRLF`, and `CR` are line endings. Unicode line and paragraph separators
   (`U+2028` and `U+2029`) are not YINI line endings.
 - **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
+- **Changed:** Backticked identifiers now reject raw C1 control characters (U+007F–U+009F) in addition to C0 control characters (U+0000–U+001F). Only `` \` `` and `\\` are valid escape sequences; control-character escapes are not supported.
 - **Added:** Classic strings now support `\`` for a literal backtick.
 - **Clarified:** Parsers recognize LF, CRLF, and CR as logical line endings while preserving the original line-ending characters inside triple-quoted string values.
-- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Lenient-mode parsers SHOULD report an error with diagnostic information; strict-mode parsers MUST report an error.
+- **Clarified:** End-of-file (`EOF`) may terminate an otherwise complete final logical line in both lenient and strict mode. A lenient document may end immediately after its final assignment, and a strict document may end immediately after `/END`, without a trailing line ending.
+- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Both lenient-mode and strict-mode parsers MUST report an error with diagnostic information.
 - **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
 
 v1.0.0 RC 6, 2026-05-30
