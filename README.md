@@ -472,4 +472,4 @@ This project is licensed under the Apache License 2.0 — see the [LICENSE](./LI
 > 
 > It has a formal specification and a defined grammar.
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=readme_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_medium=referral&utm_content=readme_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
