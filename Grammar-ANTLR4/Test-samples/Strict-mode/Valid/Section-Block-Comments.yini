@@ -1,0 +1,9 @@
+/* Valid (lexical): block comments in section header gaps. */
+^ Root /* trailing */ # line comment
+key = 1
+^^ /* between marker and name */ Child /* trailing
+   across lines */
+key = 2
+^3 /* after required numeric space */ Grandchild
+key = 3
+/END

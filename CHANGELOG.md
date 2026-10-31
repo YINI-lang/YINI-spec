@@ -7,6 +7,7 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## [Upcoming/Unreleased] - FUTURE
+- **Fixed:** Updated the `ANTLR4` lexer to recognize block comments in section headers where whitespace is allowed, such as `^ A /* note */`, while preserving the required space after numeric shorthand markers.
 Spec. changes:
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
