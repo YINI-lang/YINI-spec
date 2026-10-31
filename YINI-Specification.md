@@ -2112,7 +2112,7 @@ Some YINI parsers may support multiple **validation modes**:
   - Root-level orphan members are permitted and MUST be accepted. In the abstract YINI data model, they are mounted directly on the document root alongside explicitly defined top-level sections.
   - The document terminator (`/END`) is optional in lenient mode and MAY be omitted entirely. If present, it marks the end of the YINI document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
   - All typing rules still apply. For example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
-  - Empty values are allowed ONLY for members at section top level:
+  - Empty values are allowed ONLY for root-level or section-level members in lenient mode:
     - A missing/empty value (ONLY outside lists and objects) is treated as `Null`.
     - A trailing comma after the last value/member inside a list or object is ignored ONLY in lenient mode. In strict mode, it is a parse error.
   - Inside inline objects, authors MAY use `=` as an alternative to `:` for object member separation. Conforming lenient-mode parsers MUST accept both separators, including when they are mixed within the same inline object. This is a lenient-mode compatibility feature only. The canonical form remains `key: "value"`.
