@@ -1,0 +1,5 @@
+// Rule: A Command String's closing delimiter must be alone on its line, apart from leading spaces.
+// Primary failure: semantic; the host validator must reject this grammar-recognized token.
+script = command"""
+    echo "hello"
+""" # trailing content is not permitted

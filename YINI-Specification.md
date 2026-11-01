@@ -100,9 +100,10 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.2. Classic Strings (C-Strings)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.1. Escape Sequences  
 &nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
-&nbsp;&nbsp;&nbsp;&nbsp;6.4. String Types Summary  
-&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;6.6. Scalar Conversion in Lenient Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;6.4. Command Strings\
+&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Types Summary\
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Concatenation\
+&nbsp;&nbsp;&nbsp;&nbsp;6.7. Scalar Conversion in Lenient Concatenation
 
 **7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
@@ -1042,17 +1043,18 @@ Numeric shorthand does not permit skipping intermediate nesting levels. It is on
 
 **Prefix Glossary Table:**
 
-Prefix letters are **case-insensitive**, e.g. lowercase `r` behaves identically to `R`.
+Single-letter prefixes are **case-insensitive**, e.g. lowercase `r` behaves identically to `R`. The `command` prefix is lowercase only.
 
 |Prefix| Type Name      | Behavior Summary|
 |------|----------------|---|
 |_none_| Raw String     | Raw (default) if no prefix is used |
 | R _(optional and has no functional effect)_   | Raw String     | No escapes, preserves text exactly (default) |
 | C or E | Classic String (Escaped String) | Supports escape sequences like `\n`, `\t` |
+| command | Command String | Multiline literal content with structural indentation removed |
 
 Prefix R is optional and has no functional effect — raw strings are the default.
 
-YINI defines two string behaviors and two delimiter forms:
+YINI defines two ordinary string behaviors and two delimiter forms:
 - Behavior:
   * Raw behavior: escape sequences are not interpreted.
   * Classic behavior: escape sequences are interpreted.
@@ -1061,6 +1063,8 @@ YINI defines two string behaviors and two delimiter forms:
   * Triple-quoted form: `"""..."""`.
 
 Combining these gives Raw Strings, Classic Strings (also called Escaped Strings), Raw Triple-Quoted Strings, and Classic Triple-Quoted Strings. The `E` and `e` prefixes are aliases for `C` and `c`.
+
+Command Strings are a separate triple-quoted form that removes structural indentation and preserves line breaks. See Section 6.4.
 
 String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
 
@@ -1073,7 +1077,7 @@ Typographic or curly quotation marks such as `‘`, `’`, `“`, and `”` are 
 
 **Note:** Text MUST be enclosed in quotation marks to be parsed as a string literal.
 
-**YINI supports a number of string literal forms:** single-line quoted strings, Classic strings, and Triple-Quoted strings. String behavior is determined by the optional prefix before the opening quote sequence.
+**YINI supports a number of string literal forms:** single-line quoted strings, Classic strings, Triple-Quoted strings, and Command Strings. Ordinary string behavior is determined by the optional prefix before the opening quote sequence.
 
 The `R` prefix is optional and has no semantic effect because Raw strings are the default. The `C` and `E` prefixes enable the same escape-sequence interpretation.
 
@@ -1085,11 +1089,11 @@ String behavior is controlled by an optional prefix before the opening quote seq
 - `R` or `r`: Raw string behavior; allowed for explicitness only.
 - `C`, `c`, `E`, or `e`: Classic (Escaped) string behavior; escape sequences are interpreted.
 
-This applies to both single-line quoted strings and Triple-Quoted Strings. Triple-Quoted Strings without a prefix are Raw by default.
+This applies to both single-line quoted strings and ordinary Triple-Quoted Strings. Triple-Quoted Strings without a prefix are Raw by default. The `command` prefix selects the separate Command String form.
 
 **Rules and Behavior for Strings:**
-- All string literals **MUST start and finish on the same line**, except for **Triple-Quoted Strings** (see section 6.3.), which can span multiple lines.
-- Multiple string literals can be **concatenated** to create longer strings (see section 6.5, "String Concatenation").
+- All string literals **MUST start and finish on the same line**, except for **Triple-Quoted Strings** (see Section 6.3), which can span multiple lines, and **Command Strings** (see Section 6.4), which must span multiple lines.
+- Multiple string literals can be **concatenated** to create longer strings (see Section 6.6, "String Concatenation").
 
 **String Overview**
 
@@ -1099,6 +1103,7 @@ This applies to both single-line quoted strings and Triple-Quoted Strings. Tripl
 | Classic String (C or E) | `C'...'` or `e"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
 | Triple-Quoted (Raw)    | `"""..."""`              | ✅ Yes     | ❌ No   | ❌ No             | Multi-line raw text                  | Python raw triple-quote |
 | Classic Triple-Quoted  | `C"""..."""` or `e"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
+| Command String         | `command"""` followed by a line break | ✅ Required | ❌ No | ✅ Structural indentation only | Literal command or script lines | YAML literal block scalar |
 
 ### 6.1. Raw Strings (R-Strings)
 A raw string is enclosed in either single quotes (`'...'`) or double quotes (`"..."`).
@@ -1242,9 +1247,36 @@ E"""This also interprets \n as a newline."""
 
 Triple-Quoted Strings always preserve their contents exactly — including all whitespace and line breaks (new lines) — unless prefixed with `C`, `c`, `E`, or `e`, in which case escape sequences are interpreted.
 
-### 6.4. String Types Summary
+### 6.4. Command Strings
 
-YINI string behavior is determined by two independent choices:
+A **Command String** is a multiline string for commands, scripts, and other line-oriented content. It uses the lowercase `command` prefix immediately followed by triple double quotes (`"""`). The opening delimiter MUST be followed immediately by a line break. The closing delimiter MUST appear on a line containing only optional spaces before `"""`; no content or trailing whitespace is permitted on that line. The closing line MAY end with a line break or end-of-file.
+
+```yini
+build = command"""
+    npm install
+    npm run build
+      --verbose
+    npm test
+"""
+```
+
+This produces the string `npm install`, `npm run build`, `  --verbose`, and `npm test` on four successive lines, with no line break after `npm test`.
+
+The line break immediately after the opening delimiter and the line break immediately before the closing delimiter are structural and are not part of the value. All other line breaks, including those around blank content lines, are preserved as written. As with ordinary Triple-Quoted Strings, implementations MUST preserve the source line-ending characters (`LF`, `CRLF`, or `CR`) in the resulting string.
+
+The **structural indentation** is the number of leading U+0020 spaces on the first nonempty content line. A nonempty line contains at least one character other than U+0020 space. Each nonempty content line MUST have at least that many leading spaces; those spaces are removed, and any additional spaces are preserved. Tabs are content, not structural indentation, and MUST NOT be expanded or removed as indentation. A leading space-only line with more spaces than the first nonempty line is invalid.
+
+On a space-only content line, spaces up to the structural indentation are removed. If the line has additional spaces, those spaces remain in the value. If there are no nonempty content lines, the structural indentation is the greatest number of spaces on any content line; all such lines become empty lines. Blank lines remain in the value, except for the structural line break immediately before the closing delimiter.
+
+Content after the opening delimiter on the same line is invalid. A `"""` sequence within a content line is literal unless it is the first non-space content on the line. In that position it begins the closing delimiter, so any subsequent characters on that line make the Command String invalid. There is no escape form for a closing delimiter.
+
+Backslashes and ordinary single and double quote characters are literal; Command Strings do not interpret YINI escape sequences. The `command` prefix is the only Command String prefix. In particular, `c"""..."""` remains a Classic Triple-Quoted String and is not a Command String; `command"..."` and `command'...'` are invalid.
+
+A Command String produces an ordinary YINI string value. YINI does not execute its content or assign shell semantics to it.
+
+### 6.5. String Types Summary
+
+Ordinary YINI string behavior is determined by two independent choices:
 
 1. The optional string prefix:
    - No prefix, `R`, or `r` means Raw string behavior.
@@ -1256,9 +1288,11 @@ YINI string behavior is determined by two independent choices:
 
 Raw strings are the default. The `R` prefix is allowed for explicitness only and has no semantic effect. The `C` and `E` prefixes enable the same escape-sequence interpretation.
 
+Command Strings use `command"""` and the distinct multiline and indentation rules in Section 6.4.
+
 For the full table of supported string forms, see the overview table at the beginning of Section 6.
 
-### 6.5. String Concatenation
+### 6.6. String Concatenation
 
 YINI supports explicit string **concatenation** using the plus sign (`+`).  
 
@@ -1341,7 +1375,7 @@ message = "hello "
 
 For longer human-authored text where exact line breaks should be preserved, authors SHOULD use Triple-Quoted Strings instead. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
 
-### 6.6. Scalar Conversion in Lenient Concatenation
+### 6.7. Scalar Conversion in Lenient Concatenation
 
 Scalar conversion to strings is allowed only in lenient-mode concatenation expressions.
 
@@ -1481,7 +1515,7 @@ change the value.
 
 These numeric checks also apply to operands in lenient-mode concatenation.
 After validation, number-to-string conversion MUST use the source-literal
-normalization in Section 6.6, rather than formatting the rounded numeric value.
+normalization in Section 6.7, rather than formatting the rounded numeric value.
 For example, `"value: " + 1.50` produces `"value: 1.50"`. The source spelling
 of integer `-0` also remains `-0` during that normalization.
 
@@ -2099,6 +2133,7 @@ consistently, mixed forms MUST result in an error.
 #### 12.2.6. Escaping and String Literals
 - Escape sequences are **ONLY allowed** in Classic (Escaped) strings and their Triple-Quoted forms, prefixed with `C`, `c`, `E`, or `e`.
 - Triple-Quoted Strings MUST use `"""` for both opening and closing (`'''` is not supported).
+- Command Strings MUST use `command"""` and satisfy the multiline delimiter and indentation rules in Section 6.4.
 
 #### 12.2.7. Shortest Valid YINI Documents in Strict Mode
 - **Valid short documents in strict mode:**
@@ -2403,6 +2438,7 @@ Implementations SHOULD report invalid concatenation with diagnostics that identi
 | Classic (Escaped) String | `C`, `c`, `E`, or `e` | `e"..."` | Escape sequences are interpreted|
 | Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
 | Classic Triple-Quoted String | `C`, `c`, `E`, or `e` | `E"""..."""` | Can be multi-line, escapes interpreted, preserves all whitespace, including line breaks |
+| Command String | `command` | `command"""` followed by a line break | Multiline literal; preserves line breaks and removes structural indentation |
 
 ### 13.9. Comments
 
@@ -3497,6 +3533,7 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 Upcoming release / v1.0.0 RC 7
+- **Added:** Command Strings using the lowercase `command"""` form. They preserve command lines while removing structural indentation and have no execution semantics. The `c` prefix remains Classic, not a Command String alias.
 - **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. All four prefixes use the same escape rules and produce the same string values.
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation

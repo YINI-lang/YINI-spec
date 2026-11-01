@@ -377,7 +377,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### String Literals in YINI
-YINI defines four main string literal forms: Raw Strings, Classic (Escaped) Strings, Raw Triple-Quoted Strings, and Classic Triple-Quoted Strings.
+YINI defines five main string literal forms: Raw Strings, Classic (Escaped) Strings, Raw Triple-Quoted Strings, Classic Triple-Quoted Strings, and Command Strings.
 
 These forms differ in how they handle escape sequences and multi-line content.
 
@@ -399,6 +399,12 @@ TripleQuotedString = """
 This is a triple-quoted
 string literal — characters
 are preserved exactly, without escapes.
+"""
+
+// Command strings remove structural indentation while keeping line breaks.
+CommandString = command"""
+    npm install
+    npm run build
 """
 ```
 

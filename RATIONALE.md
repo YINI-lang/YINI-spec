@@ -486,10 +486,14 @@ This feature was removed because it introduced another string form with separate
 
 --TODO: mention, that if there is strong argument for this it might get reintroduced, propably not due to not wanting to add yet another string type since there might appear a more important or needed string type...---
 
-### 6.4. String Types Summary
+### 6.4. Command Strings
+
+Command strings let authors write command sequences as one readable, indented block without quoting or concatenating each line. This is similar to [YAML's literal block scalar (`|`)](https://yaml.org/spec/1.2.2/#812-literal-style), using YINI's `command"""..."""` syntax. Removing structural indentation lets a script fit within an indented configuration while preserving the indentation that belongs to the script itself.
+
+### 6.5. String Types Summary
 -
 
-### 6.5. String Concatenation
+### 6.6. String Concatenation
 
 <a id="b29-string-concatenation-and-non-arithmetic-"></a>
 
@@ -509,7 +513,7 @@ value = 1 + 2 + "3"
 
 It produces neither `"123"` nor `"33"`; the expression does not begin with a string, and YINI defines no numeric addition. Lists and objects stay excluded because their string forms would require another set of potentially implementation-dependent choices.
 
-### 6.6. Scalar Conversion in Lenient Concatenation
+### 6.7. Scalar Conversion in Lenient Concatenation
 
 The conversion rules give permitted scalar operands one predictable spelling. 
 
@@ -530,7 +534,7 @@ number type would round them. Ordinary floating-point rounding remains valid,
 while overflow and rounding a nonzero value to zero produce errors in both modes.
 This keeps common configuration numbers practical without letting the host
 language silently determine their meaning. Concatenation retains its separate
-source-spelling normalization under §6.6.
+source-spelling normalization under §6.7.
 
 **Similar behavior:** Python also rejects nonzero decimal integer literals with leading zeros, such as `01`. YINI additionally rejects forms such as `00`, `00.5`, and `01e3`. See [Python integer literals](https://docs.python.org/3/reference/lexical_analysis.html#integer-literals).
 
@@ -757,11 +761,11 @@ Mapping the accepted boolean spellings to two logical values prevents source spe
 
 ### 13.7. String Concatenation
 
---TODO: Add implementation-specific motivation beyond the rules and scalar conversion in §§6.5–6.6.--
+--TODO: Add implementation-specific motivation beyond the rules and scalar conversion in §§6.6–6.7.--
 
 ### 13.8. String Literal Types
 
-TODO: Add implementation-specific motivation beyond the distinctions in §§6.1–6.4.
+TODO: Add implementation-specific motivation beyond the distinctions in §§6.1–6.5.
 
 ### 13.9. Comments
 

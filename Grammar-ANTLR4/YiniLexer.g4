@@ -311,6 +311,7 @@ STRING
   | CLASSIC_SINGLE_OR_DOUBLE_STRING
   | ESCAPED_SINGLE_OR_DOUBLE_STRING
   | RAW_SINGLE_OR_DOUBLE_STRING
+  | COMMAND_TRIPLE_QUOTED_STRING
   ;
 
 fragment RAW_TRIPLE_QUOTED_STRING
@@ -339,6 +340,18 @@ fragment CLASSIC_SINGLE_OR_DOUBLE_STRING
 fragment ESCAPED_SINGLE_OR_DOUBLE_STRING
   : [Ee] '\'' ('\\' ~[\r\n] | ~['\\\r\n])* '\''
   | [Ee] '"'  ('\\' ~[\r\n] | ~["\\\r\n])* '"'
+  ;
+
+// Command Strings are line-oriented. The host validator checks the complete
+// closing line, indentation, and the resulting value as specified in Section 6.4.
+fragment COMMAND_TRIPLE_QUOTED_STRING
+  : 'command' '"""' COMMAND_LINE_BREAK
+    ( ~[\r\n]* COMMAND_LINE_BREAK )*?
+    [ ]* '"""'
+  ;
+
+fragment COMMAND_LINE_BREAK
+  : '\r' '\n'? | '\n'
   ;
 
 // NOTE: This NUMBER rule must come before KEY, IDENT, etc.

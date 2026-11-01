@@ -1,0 +1,23 @@
+^Scripts
+
+build = command"""
+    npm install
+    npm run build
+      --verbose
+
+    echo "done"
+    printf '""" inside content'
+"""
+
+empty = command"""
+"""
+
+indented_close = command"""
+  echo "ok"
+  """
+
+joined = "run: " + command"""
+    npm test
+"""
+
+/END
