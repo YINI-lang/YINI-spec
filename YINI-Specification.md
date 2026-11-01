@@ -507,18 +507,18 @@ See also Section 3.6, "Disable Line", for a related mechanism used to deactivate
 
 #### 3.3.1. Inline Comments
 YINI supports two syntaxes for inline comments.
-- **Double slash** `//` comments are the default — outside string literals, everything from `//` to the end of the line is treated as a comment:
+- **Double slash** `//` comments are the default — outside string literals and backticked identifiers, everything from `//` to the end of the line is treated as a comment:
     ```yini
     key = "value" // This is an inline comment.
     key = true//This is also an inline comment.
     ```
-- **Hash `#` comments** are supported too — outside string literals, everything from `#` to the end of the line is treated as a comment:
+- **Hash `#` comments** are supported too — outside string literals and backticked identifiers, everything from `#` to the end of the line is treated as a comment:
     ```yini
     key = "value" # This is an inline comment.
     key = true#This is also an inline comment.
     ```
 
-Outside string literals, the `#` character always begins a comment. Everything from `#` to the end of the line is ignored by the parser. No whitespace is required before or after `#`.
+Outside string literals and backticked identifiers, the `#` character always begins a comment. Everything from `#` to the end of the line is ignored by the parser. No whitespace is required before or after `#`.
 
 ✅ **Valid `#` comments:**
   - `# This is a comment`
@@ -528,7 +528,7 @@ Outside string literals, the `#` character always begins a comment. Everything f
   - `#FF9900` — Interpreted as a comment.
   - `##` — Also a comment.
 
-Because `#` always begins a comment outside string literals, it cannot appear inside identifiers, prefixes, or other tokens.
+Because `#` begins a comment outside string literals and backticked identifiers, it cannot appear inside simple identifiers, prefixes, or other tokens.
 
 ```txt
 ^ MySection # comment      // Valid: comment after a section header.
@@ -1595,7 +1595,7 @@ color2 = Hex:Fa90
 color3 = HEX:FA90
 ```
 
-The `#` character is not a hexadecimal prefix in YINI. Outside string literals, `#` always begins a comment.
+The `#` character is not a hexadecimal prefix in YINI. Outside string literals and backticked identifiers, `#` always begins a comment.
 
 In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits and permitted digit separators only. The `0x` prefix is not used inside the `hex:` form.
 
@@ -1985,7 +1985,7 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `<` | Section header (ASCII fallback) | Used to denote section start |
 | `/* */` | Block comment | Marks multi-line comment block |
 | `//` | Inline comment |   |
-| `#` | Comment | Begins a comment outside string literals; everything from `#` to the end of the line is ignored |
+| `#` | Comment | Begins a comment outside string literals and backticked identifiers; everything from `#` to the end of the line is ignored |
 | `;` | Full-line comment |   |
 | `[ ]` | List literal |  |
 | `{ }` | Object literal |  |
@@ -2337,10 +2337,10 @@ The syntax for a list is:
   * In lenient mode, a trailing comma in `[ ]` is ignored.
   * In strict mode, a trailing comma in `[ ]` MUST result in an error.
 
-**Lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the value is interpreted as `null`, not a list):
+**Lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the member has no explicit value: `null` in lenient mode, a missing-value error in strict mode):
   ```yini
-  invalidList = // Null!
-  [1, 2, 3]     // Not parsed as a list!
+  invalidList = // No explicit value: null in lenient mode, error in strict mode.
+  [1, 2, 3]     // Invalid standalone line; not the value of invalidList.
   ```
 
 ### 13.7. String Concatenation
@@ -3619,8 +3619,8 @@ Trailing commas after values or members inside lists or objects never produce `N
 | Root/section member / List | `name = "John"` / `items = ["a", "b", "c"]` | `name: "John"` / `items:` | `:` is not valid assignment syntax for root-level or section-level members; use `=` for ordinary members and lists. |
 | Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | The line break leaves `items` without an explicit value (`null` in lenient mode; error in strict mode). The `[` on the next line is not its value. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
-| Comments | `# Comment`, `#Comment`, or `// Comment` | Assuming `#Comment` is not a comment | Outside string literals, `#` always begins a comment. No whitespace is required. |
-| Hex values | `color = 0xFF0033` or `color = hex:FF0033` | `color = #FF0033` | `#` is not a hex prefix in YINI. It begins a comment outside string literals. |
+| Comments | `# Comment`, `#Comment`, or `// Comment` | Assuming `#Comment` is not a comment | Outside string literals and backticked identifiers, `#` always begins a comment. No whitespace is required. |
+| Hex values | `color = 0xFF0033` or `color = hex:FF0033` | `color = #FF0033` | `#` is not a hex prefix in YINI. It begins a comment outside string literals and backticked identifiers. |
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
 | List nesting       | `list = [[1, 2], [3, 4]]`       | Using inner lists without brackets | All nested lists MUST be bracketed explicitly. |
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
