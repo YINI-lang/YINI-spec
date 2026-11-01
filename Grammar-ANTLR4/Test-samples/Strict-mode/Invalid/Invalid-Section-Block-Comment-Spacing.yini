@@ -1,0 +1,5 @@
+// Invalid (lexical): a block comment cannot replace the required space after numeric shorthand.
+^ Root
+^^ Child
+^3/* comment */ Grandchild
+/END

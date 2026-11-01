@@ -7,6 +7,7 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
 ## [Upcoming/Unreleased] - FUTURE
+- **Fixed:** Updated the `ANTLR4` lexer to recognize block comments in section headers where whitespace is allowed, such as `^ A /* note */`, while preserving the required space after numeric shorthand markers.
 Spec. changes:
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
@@ -27,6 +28,20 @@ Spec. changes:
   parsers MUST accept both `:` and `=`, including mixed separators within the
   same inline object. The canonical separator remains `:`, and formatters
   SHOULD normalize object members to `:`.
+- **Clarified:** Appendix 16.7 is informational, not a list of accepted YINI
+  whitespace. Only `SPACE` and `TAB` are syntactic horizontal whitespace; only
+  `LF`, `CRLF`, and `CR` are line endings. Unicode line and paragraph separators
+  (`U+2028` and `U+2029`) are not YINI line endings.
+- **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
+- **Added:** Classic strings now support `\`` for a literal backtick.
+- **Clarified:** Parsers recognize LF, CRLF, and CR as logical line endings while preserving the original line-ending characters inside triple-quoted string values.
+- **Clarified:** End-of-file (`EOF`) may terminate an otherwise complete final logical line in both lenient and strict mode. A trailing line ending is no longer required: a lenient document may end immediately after its final assignment, and a strict document may end immediately after `/END`. Updated the ANTLR grammar to match this rule.
+- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Lenient-mode parsers SHOULD report an error with diagnostic information; strict-mode parsers MUST report an error.
+- **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
+- And more clarifications in the spec, for the full specification change history, see [§16.4, Spec Changes](./YINI-Specification.md#164-spec-changes).
+- **Fixed:** Corrected the strict-mode validation workflow to reference the existing `c-industrial-monitoring-and-automation-platform.strict.yini` example instead of a nonexistent `.smoke.yini` file.
+- **Clarified:** In the spec changed section name to `11. Reserved and Future Constructs` from `11. Advanced Constructs`.
+- **Clarified:** In the spec changed section name to `13. Implementation Rules` from `13. Implementation Notes`.
 
 ## Package 2026-05-30 (spec: v1.0.0-RC.6)
 - Revised `#` character handling and updated hexadecimal notation rules in the specification and ANTLR4 grammar:

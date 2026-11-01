@@ -1,0 +1,10 @@
+/*
+  Primary failure: syntactic.
+  Rule: empty list slots and object member slots are errors in both modes.
+*/
+
+^ Collections
+items = [1, , 3]
+obj = { a: 1, , b: 2 }
+
+/END

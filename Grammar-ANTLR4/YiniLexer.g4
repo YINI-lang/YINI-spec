@@ -11,7 +11,7 @@
   This LEXER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Version:
-  1.3.0-rc.1 - 2026 May (v1.0.0-rc.6 YINI Spec Package).
+  1.3.0-rc.2 - 2026 Sep (v1.0.0-rc.7 YINI Spec Package).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -136,8 +136,12 @@ fragment IDENT_SIMPLE_LX
   ;
 
 // IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
+// fragment IDENT_BACKTICKED
+//   : '`' ~[\u0000-\u001F`]* '`' // No newlines, tabs, or C0 controls.
+//   ;
 fragment IDENT_BACKTICKED
-  : '`' ~[\u0000-\u001F`]* '`' // No newlines, tabs, or C0 controls.
+//  : '`' ( '\\' ('`' | '\\') | ~[\u0000-\u001F`\\] )* '`'
+  : '`' ( '\\' ('`' | '\\') | ~[\u0000-\u001F\u007F-\u009F`\\] )* '`'
   ;
 
 fragment SECTION_NAME_PART
@@ -209,7 +213,7 @@ fragment REST_CHAR
  * ------------------------------------------------------------------ */
 
 SHEBANG
-  : '#!' ~[\r\n]* EOL
+  : '#!' ~[\r\n]* (EOL | EOF)
   ;
 
 YINI_TOKEN options { caseInsensitive = true; }
@@ -233,14 +237,18 @@ TERMINAL_TOKEN options { caseInsensitive = true; }
 // SECTION_HEAD: SECTION_MARKER HSPACE* WS* IDENT NL+;
 SECTION_HEAD
   // : SECTION_MARKER HSPACE* SECTION_NAME_PART HSPACE* EOL+ // Repeated/basic section headers do not require whitespace before the name.
-  : SECTION_MARKER_SHORTHAND HSPACE+ SECTION_NAME_PART HSPACE* EOL+
-  | SECTION_MARKER_BASIC_REPEAT HSPACE* SECTION_NAME_PART HSPACE* EOL+  
+  : SECTION_MARKER_SHORTHAND HSPACE+
+    (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)* SECTION_NAME_PART
+    (HSPACE | SECTION_BLOCK_COMMENT)* (EOL+ | SECTION_TAIL_COMMENT* EOF)
+  | SECTION_MARKER_BASIC_REPEAT
+    (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)* SECTION_NAME_PART
+    (HSPACE | SECTION_BLOCK_COMMENT)* (EOL+ | SECTION_TAIL_COMMENT* EOF)
   ;
 
 INVALID_SECTION_HEAD
   // : (CARET | SS | GT | LT | SEP)+ ~[\r\n]* EOL+
   // : (CARET | SS | GT | LT | SEP) ~[\r\n]* EOL+
-  : (CARET | SS | GT | LT) ~[\r\n]* EOL+
+  : (CARET | SS | GT | LT) ~[\r\n]* (EOL+ | EOF)
   ;
 
 /* ------------------------------------------------------------------
@@ -370,6 +378,15 @@ fragment SECTION_TAIL_COMMENT
   | '#' ~[\r\n]*
   ;
 
+// A section name must begin on the same line as its marker.
+fragment SECTION_SINGLE_LINE_BLOCK_COMMENT
+  : '/*' ~[\r\n]*? '*/'
+  ;
+
+fragment SECTION_BLOCK_COMMENT
+  : '/*' .*? '*/'
+  ;
+
 WS
   : HSPACE+ -> skip
   ;
@@ -389,6 +406,9 @@ fragment DISABLE_LINE_MARKER
   ;
 
 DISABLED_LINE
+  // STRING and backticked identifier rules retain '--' inside literal content.
+  // Host validation must check that this marker is the first non-space/tab
+  // content on its logical line. Keep the token visible for that check.
   // : DISABLE_LINE_MARKER ~[\r\n]*
   : DISABLE_LINE_MARKER ~[\r\n]* EOL?
   ;

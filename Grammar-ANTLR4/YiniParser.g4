@@ -11,7 +11,7 @@
   This PARSER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Version:
-  1.3.0-rc.1 - 2026 May (v1.0.0-rc.6 YINI Spec Package).
+  1.3.0-rc.2 - 2026 Sep (v1.0.0-rc.7 YINI Spec Package).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -96,7 +96,7 @@ invalid_section_stmt
 meta_stmt
   : directive
   | annotation
-  | bad_meta_text eol
+  | bad_meta_text line_end
   ;
 
 /*
@@ -106,11 +106,11 @@ meta_stmt
  */
 directive
   : yini_directive
-  | INCLUDE_TOKEN string_literal? eol
+  | INCLUDE_TOKEN string_literal? line_end
   ;
 
 yini_directive
-  : YINI_TOKEN yini_mode_declaration? eol
+  : YINI_TOKEN yini_mode_declaration? line_end
   ;
 
 // IMPORTANT: Do not add lexer tokens like STRICT_MODE and LENIENT_MODE,
@@ -128,7 +128,7 @@ yini_mode_declaration
  * @note Experimental / for future / testing.
  */
 annotation
-  : DEPRECATED_TOKEN eol
+  : DEPRECATED_TOKEN line_end
   ;
 
 /* A single physical "end-of-line" unit.
@@ -137,22 +137,40 @@ eol
   : NL+
   ;
 
+// EOF may terminate an otherwise complete final logical line.
+line_end
+  : eol
+  | EOF
+  ;
+
 /* ------------------------------------------------------------------
  * Members / assignments
  * ------------------------------------------------------------------ */
 
-/* Assignment is always: KEY = value/literal */
+// Previous wording: Assignment is always: KEY = value/literal.
+/* Assignment is always: identifier = value/literal */
 assignment
-  : member eol
+  : member line_end
   ;
 
 /*
- * @note KEY, EQ, and the first value token MUST be on the same logical line.
+ * Previous wording: KEY, EQ, and the first value token MUST be on the same logical line.
+ * @note The identifier, EQ, and the first value token MUST be on the same logical line.
  * A concatenation expression may continue onto following lines only when
  * the previous line ends with PLUS.
  */
+// Boolean and null spellings are also valid names in identifier positions.
+// Preserve the token's original text: identifiers remain case-sensitive.
+identifier
+  : KEY
+  | BOOLEAN_TRUE
+  | BOOLEAN_FALSE
+  | NULL
+  ;
+
 member
-  : KEY EQ value? // Missing value is validated by mode in host code.
+  // : KEY EQ value? // Missing value is validated by mode in host code.
+  : identifier EQ value? // Missing value is validated by mode in host code.
   ;
 
 /* ------------------------------------------------------------------
@@ -212,7 +230,8 @@ concat_expression
   ;
 
 concat_tail
-  : PLUS NL* concat_operand
+  // : PLUS NL* concat_operand
+  : PLUS multiline_trivia* concat_operand
   ;
 
 concat_operand
@@ -234,8 +253,10 @@ string_literal
  * by semantic validation.
  */
 object_literal
-  : OC NL* object_members? NL* CC NL*
-  | EMPTY_OBJECT NL*
+  // : OC NL* object_members? NL* CC NL*
+  // | EMPTY_OBJECT NL*
+  : OC multiline_trivia* object_members? multiline_trivia* CC
+  | EMPTY_OBJECT
   ;
 
 // Object members are one or more key/value entries separated by commas.
@@ -243,11 +264,15 @@ object_literal
 // In lenient mode, `key = value` may also be accepted (in the host parser).
 // In the host parser, strict mode validation must reject `=` inside inline objects.
 object_members
-  : object_member (COMMA NL* object_member)* COMMA?
+  // : object_member (COMMA NL* object_member)* COMMA?
+  : object_member
+    (multiline_trivia* COMMA multiline_trivia* object_member)*
+    (multiline_trivia* COMMA)?
   ;
 
 object_member
-  : KEY object_member_separator value
+  // : KEY object_member_separator value
+  : identifier object_member_separator value
   ;
 
 object_member_separator
@@ -257,15 +282,31 @@ object_member_separator
 
 /* [ value, ... ] with optional trailing comma and newlines tolerated */
 list_literal
-  : OB NL* elements? NL* CB NL*
-  | EMPTY_LIST NL*
+  // : OB NL* elements? NL* CB NL*
+  // | EMPTY_LIST NL*
+  : OB multiline_trivia* elements? multiline_trivia* CB
+  | EMPTY_LIST
   ;
 
 /** Folded, comma-separated values (list elements), for bracketed lists.
  *  Elements are regular values only.
  */
 elements
-  : value (NL* COMMA NL* value)* COMMA?
+  // : value (NL* COMMA NL* value)* COMMA?
+  : value
+    (multiline_trivia* COMMA multiline_trivia* value)*
+    (multiline_trivia* COMMA)?
+  ;
+
+// Tokens allowed where a construct permits continuation onto another line.
+// Host validation must check that comment and disabled-line markers are the
+// first non-space/tab content on their source line. A comma starting a list
+// line must still be rejected under specification section 13.6.
+// These tokens stay visible so their positions can be checked.
+multiline_trivia
+  : NL
+  | DISABLED_LINE
+  | FULL_LINE_COMMENT
   ;
 
 /* ------------------------------------------------------------------

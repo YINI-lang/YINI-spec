@@ -1,0 +1,5 @@
+// Invalid (syntactic): a line ending inside a block comment separates = from [1].
+^ Config
+x = /*
+*/ [1]
+/END

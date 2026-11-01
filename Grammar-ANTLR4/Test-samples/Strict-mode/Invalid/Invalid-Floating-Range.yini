@@ -1,0 +1,11 @@
+/*
+  Primary failure: semantic.
+  Rule: floating-point overflow and nonzero values rounding to zero are errors
+  in both modes.
+*/
+
+^ Numbers
+overflow = 1e400
+underflow = 1e-400
+
+/END

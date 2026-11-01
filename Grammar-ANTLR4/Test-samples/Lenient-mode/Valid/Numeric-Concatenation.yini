@@ -1,0 +1,16 @@
+/*
+  Primary coverage: semantic, lenient mode only.
+  Rule: validate numeric operands, then normalize their source spelling without
+  converting through a potentially lossy host-language number.
+  The comments record the expected string values for a full parser check.
+*/
+
+^ Labels
+decimal = "number: " + 1.50              // "number: 1.50"
+exponent = "number: " + 1E+03            // "number: 1e03"
+large_integer = "id: " + 9007199254740993 // "id: 9007199254740993"
+integer_zero = "zero: " + -0             // "zero: -0"
+float_zero = "zero: " + -0.0             // "zero: -0.0"
+hexadecimal = "hex: " + 0x7FFFFFFFFFFFFFFF // "hex: 9223372036854775807"
+
+/END
