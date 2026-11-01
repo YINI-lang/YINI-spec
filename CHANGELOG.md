@@ -9,6 +9,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 ## [Upcoming/Unreleased] - FUTURE
 - **Fixed:** Updated the `ANTLR4` lexer to recognize block comments in section headers where whitespace is allowed, such as `^ A /* note */`, while preserving the required space after numeric shorthand markers.
 Spec. changes:
+- **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. The ANTLR lexer recognizes both prefixes with the existing escape rules.
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source

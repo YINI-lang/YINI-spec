@@ -428,9 +428,9 @@ The trade-off is that an author must choose a different string form when the val
 
 <a id="b262-classic-strings"></a>
 
-The explicit `C` prefix opts into escape processing when a value needs an embedded newline or tab, a quote inside the quoted value, a control character, or a Unicode escape. Making this behavior the default would shorten some escaped values but make ordinary backslashes surprising. Requiring the prefix gives the author control at the cost of another string form to learn.
+An explicit `C` or `E` prefix opts into escape processing when a value needs an embedded newline or tab, a quote inside the quoted value, a control character, or a Unicode escape. Making this behavior the default would shorten some escaped values but make ordinary backslashes surprising. Requiring the prefix gives the author control at the cost of another string form to learn. `E` and `e` are aliases for `C` and `c`.
 
---TODO: explain why C char (inspired by Classic and the name C (the language)), one could argue to use E or?--
+--TODO: explain why C was chosen (Classic and the C language), and why E is also supported.--
 
 #### 6.2.1. Escape Sequences
 
@@ -453,7 +453,7 @@ TODO: Confirm the authorial motivation for retaining `` \` `` in Classic strings
 
 Triple quotes make multi-line text possible without concatenating many single-line literals. They suit embedded text blocks, templates, SQL, prompts, email bodies, certificates, long descriptions, and script fragments.
 
-Preserving content and line breaks suits values whose layout matters; it also means source formatting and line-ending changes can change the value. Parsers recognize LF, CRLF, and CR structurally while preserving the original line-ending characters inside the parsed Triple-Quoted string. This prevents platform-oriented line handling from silently rewriting string data. A `C` prefix remains available when the text needs escapes.
+Preserving content and line breaks suits values whose layout matters; it also means source formatting and line-ending changes can change the value. Parsers recognize LF, CRLF, and CR structurally while preserving the original line-ending characters inside the parsed Triple-Quoted string. This prevents platform-oriented line handling from silently rewriting string data. A `C` or `E` prefix remains available when the text needs escapes.
 
 **Similar behavior:** Python also uses triple quotes for multiline strings, although its default escape and line-ending rules differ from YINI's Raw Triple-Quoted Strings. See [Python string literals](https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals).
 

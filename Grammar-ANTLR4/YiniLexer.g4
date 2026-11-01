@@ -289,7 +289,7 @@ EMPTY_LIST
 //   ;
 
 /**
- * Common rule for RAW and CLASSIC string literals.
+ * Common rule for RAW, CLASSIC, and ESCAPED string literals.
  * Illegal characters are deferred to the parser, which gives more control
  * and enables better user feedback (e.g., pinpointing the exact location of
  * invalid characters). Additionally, this simplifies the lexer rule.
@@ -306,8 +306,10 @@ EMPTY_LIST
 
 STRING
   : CLASSIC_TRIPLE_QUOTED_STRING
+  | ESCAPED_TRIPLE_QUOTED_STRING
   | RAW_TRIPLE_QUOTED_STRING
   | CLASSIC_SINGLE_OR_DOUBLE_STRING
+  | ESCAPED_SINGLE_OR_DOUBLE_STRING
   | RAW_SINGLE_OR_DOUBLE_STRING
   ;
 
@@ -320,6 +322,10 @@ fragment CLASSIC_TRIPLE_QUOTED_STRING
   : [Cc] '"""' ( '\\' . | . )*? '"""'
   ;
 
+fragment ESCAPED_TRIPLE_QUOTED_STRING
+  : [Ee] '"""' ( '\\' . | . )*? '"""'
+  ;
+
 fragment RAW_SINGLE_OR_DOUBLE_STRING
   : [Rr]? '\'' ~['\r\n]* '\''
   | [Rr]? '"'  ~["\r\n]* '"'
@@ -328,6 +334,11 @@ fragment RAW_SINGLE_OR_DOUBLE_STRING
 fragment CLASSIC_SINGLE_OR_DOUBLE_STRING
   : [Cc] '\'' ('\\' ~[\r\n] | ~['\\\r\n])* '\''
   | [Cc] '"'  ('\\' ~[\r\n] | ~["\\\r\n])* '"'
+  ;
+
+fragment ESCAPED_SINGLE_OR_DOUBLE_STRING
+  : [Ee] '\'' ('\\' ~[\r\n] | ~['\\\r\n])* '\''
+  | [Ee] '"'  ('\\' ~[\r\n] | ~["\\\r\n])* '"'
   ;
 
 // NOTE: This NUMBER rule must come before KEY, IDENT, etc.
