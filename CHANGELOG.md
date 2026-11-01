@@ -11,6 +11,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 Spec. changes:
 - **Added:** Command Strings using `command"""` for multiline command or script content. They preserve line breaks, remove structural indentation, and produce ordinary string values; `c` remains a Classic String prefix.
 - **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. The ANTLR lexer recognizes both prefixes with the existing escape rules.
+- **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` in new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source

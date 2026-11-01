@@ -428,7 +428,7 @@ The trade-off is that an author must choose a different string form when the val
 
 <a id="b262-classic-strings"></a>
 
-An explicit `C` or `E` prefix opts into escape processing when a value needs an embedded newline or tab, a quote inside the quoted value, a control character, or a Unicode escape. Making this behavior the default would shorten some escaped values but make ordinary backslashes surprising. Requiring the prefix gives the author control at the cost of another string form to learn. `E` and `e` are aliases for `C` and `c`.
+An explicit `C` or `E` prefix opts into escape processing when a value needs an embedded newline or tab, a quote inside the quoted value, a control character, or a Unicode escape. Making this behavior the default would shorten some escaped values but make ordinary backslashes surprising. Requiring the prefix gives the author control at the cost of another string form to learn. The Escaped String name and `E`/`e` prefixes are preferred; the Classic String name and `C`/`c` prefixes remain supported but are deprecated.
 
 --TODO: explain why C was chosen (Classic and the C language), and why E is also supported.--
 

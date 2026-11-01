@@ -377,7 +377,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### String Literals in YINI
-YINI defines five main string literal forms: Raw Strings, Classic (Escaped) Strings, Raw Triple-Quoted Strings, Classic Triple-Quoted Strings, and Command Strings.
+YINI defines five main string literal forms: Raw Strings, Escaped Strings, Raw Triple-Quoted Strings, Escaped Triple-Quoted Strings, and Command Strings.
 
 These forms differ in how they handle escape sequences and multi-line content.
 
@@ -387,10 +387,9 @@ These forms differ in how they handle escape sequences and multi-line content.
 # may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
 
-// Classic (Escaped) strings are prefixed with C, c, E, or e — they support
-// escape sequences.
-ClassicString = C"Hello\nWorld\n"
-EscapedString = e"Hello\nWorld\n" // same value as ClassicString
+// Escaped strings use E or e and support escape sequences.
+EscapedString = e"Hello\nWorld\n"
+ClassicString = C"Hello\nWorld\n" // deprecated prefix; same value
 
 /* Triple-quoted strings can span multiple lines and
    preserve all characters as-is, including tabs and newlines.
