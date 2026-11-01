@@ -338,8 +338,8 @@ A `#!` sequence that appears after leading whitespace, after a blank line, or an
 
 If such a misplaced shebang-like sequence appears where `#` would otherwise begin a comment, it MUST be treated as a comment.
 
-- In lenient mode, a misplaced shebang-like sequence SHOULD be reported as a warning.
-- In strict mode, a misplaced shebang-like sequence SHOULD be reported as an error.
+- In lenient mode, a misplaced shebang-like sequence remains valid as a comment and SHOULD be reported as a warning.
+- In strict mode, a document containing any misplaced shebang-like sequence is invalid. An implementation MUST report an error for at least the first such sequence.
 - To avoid repeated diagnostics and unnecessarily complex implementation logic, an implementation SHOULD report only the first misplaced shebang-like sequence per document.
 
 Example:
@@ -351,7 +351,7 @@ Example:
 key = "value"
 ```
 
-This is not a valid shebang: ` #!/usr/bin/env yini`, because it has leading whitespace. It is treated as a comment in lenient mode, but SHOULD produce a warning in lenient mode, and SHOULD produce an error in strict mode.
+This is not a valid shebang: ` #!/usr/bin/env yini`, because it has leading whitespace. It is treated as a comment in both modes. It SHOULD produce a warning in lenient mode; in strict mode, it MUST produce an error and make the document invalid.
 
 ### 2.4. YINI Marker (`@yini`)
 The optional YINI marker (`@yini`) MAY be used and is RECOMMENDED for clarity and identification. If present, the YINI marker MUST appear before any meaningful YINI content. It MAY be preceded only by a shebang line, comments, or whitespace. (If both a shebang and a YINI marker are present, the shebang MUST appear first.)
@@ -498,6 +498,7 @@ These rules apply:
 - Line comments begin at `//` or `#` and continue until the next line ending or `EOF`.
 - Block comments begin at `/*` and end at the next `*/`. Nested block comments are not supported.
 - Comments may appear only where whitespace is allowed. A comment MUST NOT split an identifier, keyword, number literal, string prefix, string literal delimiter, section marker, or other token.
+- A line ending inside a block comment remains a logical-line boundary. Ignoring the comment MUST NOT make tokens on opposite sides of that line ending count as being on the same logical line.
 - A line comment may begin immediately after a complete token; no whitespace is required before `//` or `#`.
 
 While both `//` and `#` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
@@ -729,7 +730,18 @@ This section describes how values (on the right-hand side of `=`) are interprete
 
 Inside inline objects (`{ ... }`), `:` is the canonical member separator. In lenient mode only, authors MAY also use `=` as a compatibility convenience, and conforming lenient-mode parsers MUST accept it. In strict mode, inline object members MUST use `:`.
 
-For compound values written after `=`, the opening `[` or `{` **MUST appear on the same logical line** as the `=`. A newline immediately after `=` means the member has no explicit value.
+For compound values written after `=`, the opening `[` or `{` **MUST appear on the same logical line** as the `=`. If the logical line ends before a value begins, the member has no explicit value, even when the line ending occurs inside a block comment.
+
+For example, this document is invalid in both modes:
+
+```yini
+^ Config
+x = /*
+*/ [1]
+/END
+```
+
+The line ending inside the comment leaves `x` without an explicit value: it is `null` in lenient mode and a missing-value error in strict mode. The `[1]` on the next logical line is not a valid standalone statement, so the document is invalid in both modes.
 
 #### Strings
 If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`) — even in lenient mode.
@@ -2400,6 +2412,7 @@ In summary:
 - Comments may appear only where whitespace is allowed and MUST NOT split tokens.
 
 Implementations SHOULD remove or ignore comments during parsing before semantic interpretation, while preserving source-position information when useful for diagnostics.
+They MUST still account for line endings inside block comments when enforcing same-logical-line requirements.
 
 ### 13.10. Additional Implementation Guidance
 
@@ -3587,6 +3600,13 @@ document is well-formed or conforming. All normative syntactic, structural,
 mode-specific, and semantic requirements in this specification MUST still be
 validated.
 
+The implementing parser or validator MUST enforce same-logical-line rules using
+the source's line boundaries, including those inside skipped block comments,
+and MUST check the original placement of shebang-like sequences. These checks
+need not be enforced by the ANTLR4 grammar. A lexer token or grammar error for a
+misplaced `#!` MUST NOT override its required treatment as a comment in lenient
+mode.
+
 ### 16.6. Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats such as YAML, JSON, or classic INI. This table clarifies syntax edge cases and helps avoid subtle bugs.
 
@@ -3597,7 +3617,7 @@ Trailing commas after values or members inside lists or objects never produce `N
 | **Element**       | **Correct Syntax**              | **Common Mistake**              | **Clarification** |
 |-------------------|----------------------------------|----------------------------------|--------------------|
 | Root/section member / List | `name = "John"` / `items = ["a", "b", "c"]` | `name: "John"` / `items:` | `:` is not valid assignment syntax for root-level or section-level members; use `=` for ordinary members and lists. |
-| Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | Line break after `=` causes the value of `items` to be parsed as null. |
+| Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | The line break leaves `items` without an explicit value (`null` in lenient mode; error in strict mode). The `[` on the next line is not its value. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
 | Comments | `# Comment`, `#Comment`, or `// Comment` | Assuming `#Comment` is not a comment | Outside string literals, `#` always begins a comment. No whitespace is required. |
 | Hex values | `color = 0xFF0033` or `color = hex:FF0033` | `color = #FF0033` | `#` is not a hex prefix in YINI. It begins a comment outside string literals. |

@@ -13,6 +13,8 @@ failure is lexical, syntactic, or semantic.
 Grammar recognition alone does not validate semantic fixtures. In particular,
 numeric bounds and rounding, invalid escape sequences, marker positions, and
 recovery-result validity must be checked by the implementing parser or validator.
+The same applies to line endings inside skipped block comments and the position
+of shebang-like comments.
 The numeric-boundary and recovery fixtures cover both lenient and strict mode.
 
 User-facing examples live in `../../Examples/`.

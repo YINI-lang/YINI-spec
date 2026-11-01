@@ -197,6 +197,8 @@ YINI only defines where the shebang may appear and how it is treated by the pars
 
 Restricting the shebang to the beginning of the document prevents later `#!` text from conflicting with YINI's ordinary `#` comment syntax. For encoding and platform compatibility considerations, see [§14.3.3](#1433-shebang-line-optional).
 
+Treating a misplaced `#!` as a `#` comment keeps its lexical meaning consistent. A required strict-mode error makes invalid shebang placement deterministic, while lenient mode retains the comment and recommends a warning.
+
 ### 2.4. YINI Marker (`@yini`)
 
 The `@yini` marker is optional because **it is an identification declaration**, not syntax required to determine a document's structure or active parsing mode. A caller already selects the YINI parser and its mode externally. The marker is recommended when a document should identify itself to people or tools—especially when its filename, extension, or surrounding context is unavailable—but requiring it would reject otherwise valid YINI documents and break compatibility with documents written before the marker was introduced.
@@ -282,6 +284,8 @@ color2 = hex:FF0033
 ### 3.3.2. Multi-line Block Comments
 
 The `/* ... */` form completes YINI's C-style comment model and allows explanations or temporarily disabled regions to span several lines without placing a separate marker on every line. Following the conventional C-style rule, a block comment ends at the next `*/` and block comments do not nest. This keeps their boundaries easy to recognize and avoids introducing a separate YINI-specific nesting rule.
+
+Line endings inside block comments remain logical-line boundaries. Preserving those boundaries prevents a comment from making a value on the next source line appear to start on the assignment's line.
 
 **Similar behavior:** TypeScript inherits JavaScript's nonnested `/* ... */` block-comment form. See [ECMAScript comments](https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#sec-comments).
 

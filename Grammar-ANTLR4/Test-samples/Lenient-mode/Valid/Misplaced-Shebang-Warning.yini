@@ -1,0 +1,3 @@
+ #! misplaced shebang-like comment after leading whitespace; warning recommended
+^ Config
+x = 1
