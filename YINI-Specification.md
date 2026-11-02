@@ -934,8 +934,7 @@ _^ Section       // ❌ Invalid leading underscore.
 
 #### 5.3.2. Shorthand Section Heading
 
-**Shorthand Section Headings:**
-Numeric shorthand is required for nesting levels greater than 9. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `>`, `<`) and `<n>` is an integer ≥ 1 indicating the nesting level. For levels 1–9, repeated markers such as `^`, `^^`, `^^^` are RECOMMENDED. (Using the shorthand is optionally valid for levels 1–9 as well, though repeated markers are RECOMMENDED but not required).
+Numeric shorthand uses `<marker><n> <name>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `>`, `<`) and `<n>` is a decimal section depth from 1 to 255. The first digit of `<n>` MUST be `1`–`9`; leading zeros are invalid. At least one space or tab MUST separate `<n>` from the section name. Numeric shorthand MAY be used at any depth and MUST be used for depths greater than 9. For levels 1–9, repeated markers such as `^`, `^^`, and `^^^` are RECOMMENDED. The nesting rules in Section 5.3 still apply.
 
 For example:
 - To go from depth 9 to depth 10: write `^10 SectionName`.  
@@ -995,7 +994,6 @@ Numeric shorthand may also be used for levels 1–9:
 ^1     Level1      // depth 1
 ^2     Level2      // depth 2
 ^3     Level3      // depth 3
-^9     Level9      // depth 9
 ```
 
 Going back to a shallower level is allowed:
@@ -1029,6 +1027,12 @@ A numeric shorthand section header requires whitespace after the number:
 
 ```yini
 ^7Level7           // ❌ Invalid: shorthand requires at least one space or tab after the number
+```
+
+A numeric shorthand section depth MUST NOT have a leading zero:
+
+```yini
+^01 Name           // ❌ Invalid: leading zero; use ^1 Name
 ```
 
 Using ten or more repeated section markers is invalid:
@@ -1251,7 +1255,9 @@ Triple-Quoted Strings always preserve their contents exactly — including all w
 
 ### 6.4. Command Strings
 
-A **Command String** is a multiline string for commands, scripts, and other line-oriented content. It uses the lowercase `command` prefix immediately followed by triple double quotes (`"""`). The opening delimiter MUST be followed immediately by a line break. The closing delimiter MUST appear on a line containing only optional spaces before `"""`; no content or trailing whitespace is permitted on that line. The closing line MAY end with a line break or end-of-file.
+A Command String holds multiline, line-oriented text as an ordinary YINI string value. Its content is not executed.
+
+It begins with the lowercase `command` prefix immediately followed by `"""` and a line break. The closing `"""` MUST appear on its own line, preceded only by optional spaces and followed only by a line break or end-of-file. Content after the opening or closing delimiter on the same line is invalid.
 
 ```yini
 build = command"""
@@ -1262,19 +1268,17 @@ build = command"""
 """
 ```
 
-This produces the string `npm install`, `npm run build`, `  --verbose`, and `npm test` on four successive lines, with no line break after `npm test`.
+The value has four lines: `npm install`, `npm run build`, `  --verbose`, and `npm test`. It has no line break after `npm test`.
 
-The line break immediately after the opening delimiter and the line break immediately before the closing delimiter are structural and are not part of the value. All other line breaks, including those around blank content lines, are preserved as written. As with ordinary Triple-Quoted Strings, implementations MUST preserve the source line-ending characters (`LF`, `CRLF`, or `CR`) in the resulting string.
+The line breaks immediately after the opening delimiter and before the closing delimiter are structural and are excluded from the value. All other line breaks are preserved as written (`LF`, `CRLF`, or `CR`).
 
-The **structural indentation** is the number of leading U+0020 spaces on the first nonempty content line. A nonempty line contains at least one character other than U+0020 space. Each nonempty content line MUST have at least that many leading spaces; those spaces are removed, and any additional spaces are preserved. Tabs are content, not structural indentation, and MUST NOT be expanded or removed as indentation. A leading space-only line with more spaces than the first nonempty line is invalid.
+Structural indentation is the number of leading spaces (U+0020) on the first content line that contains a non-space character. Every such line MUST have at least that many leading spaces; those spaces are removed, and any additional spaces are preserved. Tabs are content and are never expanded or removed as indentation.
 
-On a space-only content line, spaces up to the structural indentation are removed. If the line has additional spaces, those spaces remain in the value. If there are no nonempty content lines, the structural indentation is the greatest number of spaces on any content line; all such lines become empty lines. Blank lines remain in the value, except for the structural line break immediately before the closing delimiter.
+On a space-only content line, remove up to the structural indentation and preserve any extra spaces. A space-only line before the first nonempty line is invalid if it has more spaces than the structural indentation. If there are no nonempty content lines, use the greatest number of spaces on any content line as the structural indentation; all such lines become empty. Blank content lines and their intervening line breaks remain in the value.
 
-Content after the opening delimiter on the same line is invalid. A `"""` sequence within a content line is literal unless it is the first non-space content on the line. In that position it begins the closing delimiter, so any subsequent characters on that line make the Command String invalid. There is no escape form for a closing delimiter.
+A `"""` sequence within a content line is literal unless it is the first non-space content on that line. In that position it begins the closing delimiter; any following characters make the Command String invalid. There is no escape for a closing delimiter.
 
-Backslashes and ordinary single and double quote characters are literal; Command Strings do not interpret YINI escape sequences. The `command` prefix is the only Command String prefix. In particular, `c"""..."""` remains a Classic Triple-Quoted String and is not a Command String; `command"..."` and `command'...'` are invalid.
-
-A Command String produces an ordinary YINI string value. YINI does not execute its content or assign shell semantics to it.
+Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only lowercase `command` selects this form. `c"""..."""` remains a Classic Triple-Quoted String; `command"..."` and `command'...'` are invalid.
 
 ### 6.5. String Types Summary
 
