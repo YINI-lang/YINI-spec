@@ -689,7 +689,7 @@ text = """
 """
 ```
 
-The `--` characters and the surrounding line endings are preserved in `text`.
+The `--` characters and the surrounding line breaks remain in `text`. Each source line ending becomes LF in the value; see Section 6.3.
 
 ## 4. Keys and Values
 YINI represents configuration and structured data through a series of _**members**_, each of which is a key-value pair. This section defines the syntax and rules for keys and values, including allowed characters, data types, quoting, and related behaviors.
@@ -1054,7 +1054,7 @@ Single-letter prefixes are **case-insensitive**, e.g. lowercase `r` behaves iden
 |Prefix| Type Name      | Behavior Summary|
 |------|----------------|---|
 |_none_| Raw String     | Raw (default) if no prefix is used |
-| R _(optional and has no functional effect)_   | Raw String     | No escapes, preserves text exactly (default) |
+| R _(optional and has no functional effect)_   | Raw String     | No escapes; backslashes are literal (default) |
 | E or e; C or c (deprecated) | Escaped String (Classic String) | Supports escape sequences like `\n`, `\t` |
 | command | Command String | Multiline literal content with structural indentation removed |
 
@@ -1070,7 +1070,9 @@ YINI defines two ordinary string behaviors and two delimiter forms:
 
 Combining these gives Raw Strings, Escaped Strings (also called Classic Strings), Raw Triple-Quoted Strings, and Escaped Triple-Quoted Strings. The `C` and `c` prefixes are aliases for `E` and `e`.
 
-Command Strings are a separate triple-quoted form that removes structural indentation and preserves line breaks. See Section 6.4.
+Command Strings are a separate triple-quoted form that removes structural indentation and keeps content line breaks as LF. See Section 6.4.
+
+In both parsing modes, source line endings (`LF`, `CRLF`, or `CR`) become LF in all multiline string values. This also applies to Raw strings: Raw means that escape sequences are not interpreted. See Sections 6.3 and 6.4.
 
 String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
 
@@ -1253,7 +1255,9 @@ C"""Quotes inside: "double" and 'single'"""
 E"""This also interprets \n as a newline."""
 ```
 
-Triple-Quoted Strings always preserve their contents exactly — including all whitespace and line breaks (new lines) — unless prefixed with `C`, `c`, `E`, or `e`, in which case escape sequences are interpreted.
+Triple-Quoted Strings keep spaces, tabs, blank lines, and the positions of line breaks. In both lenient and strict mode, each source line ending (`LF`, `CRLF`, or `CR`) in the content MUST become one LF (`U+000A`) in the parsed value. This applies with or without a prefix.
+
+Raw Triple-Quoted Strings keep backslashes literal. In Escaped Triple-Quoted Strings, source line endings MUST be normalized before escape sequences are interpreted. Characters produced by escapes MUST NOT be normalized. For example, `\r` produces CR, and `\r\n` produces CRLF. Use Escaped Strings when exact CR or CRLF characters are needed.
 
 ### 6.4. Command Strings
 
@@ -1272,7 +1276,7 @@ build = command"""
 
 The value has four lines: `npm install`, `npm run build`, `  --verbose`, and `npm test`. It has no line break after `npm test`.
 
-The line breaks immediately after the opening delimiter and before the closing delimiter are structural and are excluded from the value. All other line breaks are preserved as written (`LF`, `CRLF`, or `CR`).
+The line breaks immediately after the opening delimiter and before the closing delimiter are structural and are excluded from the value. Each remaining source line ending (`LF`, `CRLF`, or `CR`) MUST become one LF (`U+000A`) in the parsed value, in both parsing modes.
 
 Structural indentation is the number of leading spaces (U+0020) on the first content line that contains a non-space character. Every such line MUST have at least that many leading spaces; those spaces are removed, and any additional spaces are preserved. Tabs are content and are never expanded or removed as indentation.
 
@@ -1281,6 +1285,8 @@ On a space-only content line, remove up to the structural indentation and preser
 A `"""` sequence within a content line is literal unless it is the first non-space content on that line. In that position it begins the closing delimiter; any following characters make the Command String invalid. There is no escape for a closing delimiter.
 
 Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only lowercase `command` selects this form. `c"""..."""` remains a Classic Triple-Quoted String; `command"..."` and `command'...'` are invalid.
+
+**Application note:** Command Strings contain text. An application that runs the commands chooses the shell or terminal interface and converts LF to another line-ending form if needed. YINI does not guarantee that the commands work across operating systems or shells.
 
 ### 6.5. String Types Summary
 
@@ -1381,7 +1387,7 @@ message = "hello "
         + "world"  // ❌ Invalid: newline before +
 ```
 
-For longer human-authored text where exact line breaks should be preserved, authors SHOULD use Triple-Quoted Strings instead. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
+For longer human-authored text where line breaks should be kept, authors SHOULD use Triple-Quoted Strings instead. Source line endings become LF; see Section 6.3. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
 
 ### 6.7. Scalar Conversion in Lenient Concatenation
 
@@ -2111,6 +2117,8 @@ In lenient mode, mixed line-ending forms are allowed but SHOULD produce a
 warning. In strict mode: A document MUST use one line-ending form
 consistently, mixed forms MUST result in an error.
 
+Parsers MUST check the file's original line endings before normalizing string values. Characters produced by escape sequences do not count as source line endings.
+
 `EOF` MAY terminate an otherwise complete final logical line. Implementations MUST NOT reject an otherwise valid document solely because its final line has no trailing `LF`, `CRLF`, or `CR`. This rule applies in both lenient and strict mode.
   
 #### 12.2.4. Valid Value Types
@@ -2312,7 +2320,8 @@ Otherwise, an error MUST be reported.
 
 ### 13.2. Line Handling and Whitespace
 
-- Parsers MUST recognize LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`) as logical line endings for syntax. They MUST preserve the original line-ending characters inside triple-quoted string values. Structural line-ending handling MUST NOT alter string content.
+- Parsers MUST recognize LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`) as logical line endings for syntax. They MUST check the original source line endings as specified in Section 12.2.3.
+- In both parsing modes, each source line ending kept in a Triple-Quoted String or Command String value MUST become one LF (`U+000A`). This includes Raw forms. Normalization MUST occur before escape sequences are interpreted. Characters produced by escapes MUST NOT be normalized. See Sections 6.3 and 6.4.
 - Parsers MUST also treat `EOF` as terminating an otherwise complete final logical line. A trailing line-ending sequence is not required in either lenient or strict mode.
 - Spaces and tabs surrounding a key or section-name token are insignificant
   and MUST be ignored.
@@ -2447,9 +2456,9 @@ Implementations SHOULD report invalid concatenation with diagnostics that identi
 |------------------------|------------------|------------|----------|
 | (Raw) String           | _None_, `R`, or `r`| "Some text"| Text is as-is (raw), no escaping,  backslash is literal, preserves all whitespace|
 | Escaped (Classic) String | `E` or `e`; `C`/`c` deprecated | `e"..."` | Escape sequences are interpreted|
-| Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
-| Escaped Triple-Quoted String | `E` or `e`; `C`/`c` deprecated | `E"""..."""` | Can be multi-line, escapes interpreted, preserves all whitespace, including line breaks |
-| Command String | `command` | `command"""` followed by a line break | Multiline literal; preserves line breaks and removes structural indentation |
+| Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Multiline; keeps spaces, tabs, and line breaks; backslashes are literal; source line endings become LF |
+| Escaped Triple-Quoted String | `E` or `e`; `C`/`c` deprecated | `E"""..."""` | Multiline; source line endings become LF before escape processing; escape results stay unchanged |
+| Command String | `command` | `command"""` followed by a line break | Multiline literal; keeps content line breaks as LF; removes structural indentation |
 
 ### 13.9. Comments
 
@@ -3573,7 +3582,7 @@ Upcoming release / v1.0.0 RC 7
 - **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
 - **Changed:** Backticked identifiers now reject raw C1 control characters (U+007F–U+009F) in addition to C0 control characters (U+0000–U+001F). Only `` \` `` and `\\` are valid escape sequences; control-character escapes are not supported.
 - **Added:** Classic strings now support `\`` for a literal backtick.
-- **Clarified:** Parsers recognize LF, CRLF, and CR as logical line endings while preserving the original line-ending characters inside triple-quoted string values.
+- **Changed:** Source LF, CRLF, and CR line endings now become LF in all multiline string values, including Raw and Escaped Triple-Quoted Strings and Command Strings, in both modes. Previously, their original characters were preserved. Escape results stay unchanged. Mixed-line-ending checks still use the original source.
 - **Clarified:** End-of-file (`EOF`) may terminate an otherwise complete final logical line in both lenient and strict mode. A lenient document may end immediately after its final assignment, and a strict document may end immediately after `/END`, without a trailing line ending.
 - **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Both lenient-mode and strict-mode parsers MUST report an error with diagnostic information.
 - **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
