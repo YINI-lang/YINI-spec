@@ -3,8 +3,8 @@ _YINI: A clear configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.7 WIP
-**Date:** 2026-11-02
+**Version:** 1.0.0-RC.6x WIP
+**Date:** 2026-11-04
 
 > **Status:** This is a release-candidate draft. Minor clarifications and corrections may still be made before YINI 1.0.0.
 
@@ -122,7 +122,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 **10. List Literals** ([Link ⇨](./YINI-Specification.md#10-list-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Bracketed Lists (`[...]`)  
 
-**11. Reserved and Future Constructs** ([Link ⇨](./YINI-Specification.md#11-advanced-constructs))  
+**11. Reserved and Future Constructs** ([Link ⇨](./YINI-Specification.md#11-reserved-and-future-constructs))\
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Future / Reserved Features _(For Future Use)_  
 
 ---
@@ -135,7 +135,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;12.3. Lenient vs. Strict Modes  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.3.1. Table: Lenient vs. Strict Mode
 
-**13. Implementation Rules** ([Link ⇨](./YINI-Specification.md#13-implementation-notes))  
+**13. Implementation Rules** ([Link ⇨](./YINI-Specification.md#13-implementation-rules))\
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Top-Level Sections and Document Root  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Line Handling and Whitespace  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Value and Null Handling  
@@ -252,6 +252,8 @@ YINI prioritizes **clarity, structure, and predictability**. The features below 
 - **Document Terminator:** YINI supports an optional document terminator (`/END`); see Section 3.5 for mode-specific requirements. When present, it provides an unambiguous signal of document completion, which is especially helpful for streaming parsers and documents embedded within larger payloads.
 
 ### 1.5. Terminology
+Uppercase requirement keywords—including MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY—carry the meanings defined by BCP 14 ([RFC 2119](https://www.rfc-editor.org/rfc/rfc2119.html) and [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174.html)). These special meanings apply only when the keywords are written entirely in uppercase.
+
 These terms are used throughout this specification to describe YINI's grammar, structure, and semantics. The list also includes a few general English terms used with specific meaning in this document.
 
 | Term                      | Definition |
@@ -2017,7 +2019,7 @@ internal syntax or future use. Using them outside their permitted contexts MUST
 produce an error diagnostic in both lenient and strict mode.
 
 #### 12.1.1. Reserved Characters
-The following characters are reserved by the YINI syntax and MUST not be used improperly outside of their defined contexts. They may appear inside quoted strings or backticked identifiers but are otherwise restricted:
+The following characters and character sequences are reserved by the YINI syntax and MUST NOT be used improperly outside of their defined contexts. They may appear inside quoted strings or backticked identifiers but are otherwise restricted:
 
 | Character	| Usage Context	| Description |
 |-----------|---------------|-------------|
@@ -2025,6 +2027,7 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `^` | Section header | Used to denote section start |
 | `:` | Object member separator | Canonical separator between keys and values inside inline objects |
 | `,` | Item separator | Used in lists |
+| `+` | String concatenation / numeric sign | Joins concatenation operands; also used as a positive sign in numeric literals and exponents |
 | `§` | Section header (Unicode alternative) | Used to denote section start |
 | `>` | Section header (quote-like ASCII fallback) | Used to denote section start |
 | `<` | Section header (ASCII fallback) | Used to denote section start |
@@ -2034,13 +2037,15 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `;` | Full-line comment |   |
 | `[ ]` | List literal |  |
 | `{ }` | Object literal |  |
+| `` ` `` | Identifier delimiter | Opens and closes a backticked identifier |
 | `--` | Line disabling |  |
+| `/END` | Document terminator | Marks the end of a YINI document; case-insensitive, optional in lenient mode, and required in strict mode |
 | `%` | Binary prefix | Begins binary number |
 | `hex:` | Hexadecimal number prefix | Begins an explicit hexadecimal number literal; case-insensitive |
 | `@` | Directive prefix | Reserved for future syntax |
 
 #### 12.1.2. Reserved Keywords
-The following keywords are restricted and SHOULD not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
+The following keywords are restricted and SHOULD NOT be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
 - `/END` _(case-insensitive)_
 - `@ver`, `@version`
 - `@include`, `@anchor`, `@alias`
@@ -2379,11 +2384,11 @@ The syntax for a list is:
   ```yini
   items = ["a", "b", "c"]
   ```
-  * A bracketed list line MUST not begin with a comma.
+  * A bracketed list line MUST NOT begin with a comma.
   * In lenient mode, a trailing comma in `[ ]` is ignored.
   * In strict mode, a trailing comma in `[ ]` MUST result in an error.
 
-**Lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the member has no explicit value: `null` in lenient mode, a missing-value error in strict mode):
+**Lists MUST NOT** have a newline between `=` and the opening bracket `[` (otherwise, the member has no explicit value: `null` in lenient mode, a missing-value error in strict mode):
   ```yini
   invalidList = // No explicit value: null in lenient mode, error in strict mode.
   [1, 2, 3]     // Invalid standalone line; not the value of invalidList.
