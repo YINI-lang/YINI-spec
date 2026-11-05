@@ -486,7 +486,7 @@ My name is John Doe, and this is a test string.
 
 This feature was removed because it introduced another string form with separate whitespace-normalization rules. That increased the language's conceptual surface, parser complexity, documentation burden, and the number of overlapping choices for multiline text. Ordinary Raw strings and Triple-Quoted strings cover the common configuration use cases without those additional rules. H-Strings are historical and are not valid YINI syntax.
 
---TODO: mention, that if there is strong argument for this it might get reintroduced, propably not due to not wanting to add yet another string type since there might appear a more important or needed string type...---
+--TODO: mention, that if there is strong argument for this it might get reintroduced, propably not due to not wanting to add yet another string type since the effect of H-strings can be done in the host program pretty easily. ---
 
 ### 6.4. Command Strings
 
@@ -558,7 +558,7 @@ Exponent notation expresses very large or small decimal values compactly. TODO: 
 
 ### 7.4. Number Formats
 
-Base prefixes make a number's base explicit. 
+YINI deliberately keeps a `0`-prefixed form for each non-decimal base: `0b`, `0o`, `0z`, and `0x`. Selected aliases offer shorter or more descriptive spellings. Octal has no extra alias. This adds notation to learn, but each form has a fixed meaning. Aliases do not change the numeric value or range.
 
 The removed `#` hexadecimal form was compact and familiar for colors, design systems, and UI configuration, but conflicted with the comment marker. Supporting both uses required a whitespace-sensitive distinction that was workable but unnecessarily surprising.
 
@@ -573,7 +573,11 @@ invalid = hex: FF0033  // No space is allowed after the prefix.
 
 Using one unambiguous meaning for `#` simplifies tokenization and supports YINI's preference for predictable syntax.
 
-TODO: Explain the uses for each supported non-decimal base and its alternative notation.
+Binary makes flags and bit masks easy to read. The `%` alias was inspired by the author's experience with assembly programming on the Commodore Amiga under AmigaOS. It offers a shorter spelling familiar from assemblers; see [vasm's Motorola syntax](https://github.com/Leffmann/vasm/blob/master/doc/syntax_mot.texi) and [ca65's binary prefix](https://cc65.github.io/doc/ca65.html#ss4.2).
+
+Octal suits Unix file permissions.
+
+Duodecimal supports settings for base-12 counters or educational tools; `0z10` means decimal `12`. The `A`/`B` digits follow the letter-digit pattern used in hexadecimal. The `X`/`E` aliases support another established dozenal convention. See the [Dozenal Society's digit discussion](https://dozenal.org/).
 
 **Similar behavior:** TypeScript and Python also use `0b`, `0o`, and `0x` prefixes for binary, octal, and hexadecimal integer literals. YINI additionally defines word-based and symbolic forms. See [ECMAScript numeric literals](https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#sec-literals-numeric-literals) and [Python integer literals](https://docs.python.org/3/reference/lexical_analysis.html#integer-literals).
 

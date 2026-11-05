@@ -1632,6 +1632,10 @@ In addition to standard decimal numbers (base-10), YINI supports other number ba
 
 Binary and hexadecimal values also allow **alternative notations** for convenience and readability.
 
+All integer forms below MUST follow the signed 64-bit range in [Section 7.1](#71-numbers), in both parsing modes. A base prefix does not change the numeric type or range.
+
+For example, `0x7FFFFFFFFFFFFFFF` is valid. `0x8000000000000000` and `0xFFFFFFFFFFFFFFFF` exceed the maximum and MUST produce an error diagnostic.
+
 | Number Format (case-insensitive) | Alternative Format | Description | Base | Notes |
 |----------|--|---|---|---|
 | `3e4`    | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
@@ -3557,6 +3561,7 @@ Upcoming release / v1.0.0 RC 7
 - **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. All four prefixes use the same escape rules and produce the same string values.
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
+- **Clarified:** Section 7.4 now states that non-decimal integer literals share the signed 64-bit range in both modes, with hexadecimal overflow examples.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source
   spelling: digit separators and unnecessary plus signs are removed, and `E`
