@@ -589,7 +589,9 @@ The `yes`/`no` and `on`/`off` aliases express familiar configuration choices, su
 
 ### 8.2. Null Literal
 
-Explicit `null` works in every mode and position. A missing root-level or section-level value becomes null only in lenient mode; missing values inside collections stay invalid so separators cannot silently create extra elements.
+Explicit `null` works in every mode and position. In lenient mode, a missing root-level or section-level value becomes `null` with a required warning. Missing values inside collections remain errors in both modes.
+
+The warning helps catch accidental omissions, including `color = #FF9900`, where `#` starts a comment. Write `null` explicitly to make the intent clear and avoid this warning.
 
 --TODO: Explain the choice to treat an empty member value as null rather than as an empty string.--
 
@@ -761,7 +763,7 @@ Validation checks the original source line endings, so strict mode still rejects
 
 ### 13.3. Value and Null Handling
 
-Lenient empty values have a defined null meaning. First-wins duplicate handling avoids silently replacing an earlier setting; a diagnostic still alerts the author. See §§8.2 and 12.2.1.
+Lenient missing values become `null` with a required warning. First-wins duplicate handling avoids silently replacing an earlier setting and also requires a warning. See §§8.2 and 12.2.1.
 
 ### 13.4. Boolean Canonicalization
 
