@@ -354,9 +354,9 @@ Native date, time, date-time, and other specialized types are desirable, but the
 
 ### 4.3. Type Rules
 
-Syntax determines a value's type. Quoting every string prevents an unquoted word from changing meaning when a keyword or number form is added. Requiring an opening bracket or brace on the assignment line distinguishes a compound value from a missing value followed by another line.
+Syntax determines a value's type. Quoting strings keeps text distinct from number and keyword literals. Requiring an opening bracket or brace on the assignment line distinguishes a compound value from a missing value followed by another line.
 
---TODO: describe that always quoting strings avoids the Norway problem with Booleans--
+Requiring quotes in both modes reduces the ambiguity behind YAML 1.1's "Norway problem". In YINI, `"NO"` is a string, unquoted `NO` is `false`, and unquoted `SE` is an error. Omitting the quotes can still produce an unintended boolean when the text matches a boolean word.
 
 ## [5. Section Headers](./YINI-Specification.md#5-section-headers)
 
@@ -585,7 +585,7 @@ Duodecimal supports settings for base-12 counters or educational tools; `0z10` m
 
 ### 8.1. Booleans
 
-TODO: Explain why `yes`/`no` and `on`/`off` are accepted alongside `true`/`false`, including the choice to make them case-insensitive.
+The `yes`/`no` and `on`/`off` aliases express familiar configuration choices, such as `enabled = yes` or `logging = on`. They produce the same boolean values as `true` and `false`, in both modes. Case-insensitive matching also allows spellings such as `Yes` and `OFF` without changing their meaning. Quoted forms such as `"no"` remain strings.
 
 ### 8.2. Null Literal
 
