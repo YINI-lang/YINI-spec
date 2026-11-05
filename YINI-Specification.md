@@ -3,8 +3,8 @@ _YINI: A clear configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.7 WIP
-**Date:** 2026-09-21
+**Version:** 1.0.0-RC.6x WIP
+**Date:** 2026-11-04
 
 > **Status:** This is a release-candidate draft. Minor clarifications and corrections may still be made before YINI 1.0.0.
 
@@ -100,9 +100,10 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;6.2. Classic Strings (C-Strings)  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.1. Escape Sequences  
 &nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
-&nbsp;&nbsp;&nbsp;&nbsp;6.4. String Types Summary  
-&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Concatenation  
-&nbsp;&nbsp;&nbsp;&nbsp;6.6. Scalar Conversion in Lenient Concatenation  
+&nbsp;&nbsp;&nbsp;&nbsp;6.4. Command Strings\
+&nbsp;&nbsp;&nbsp;&nbsp;6.5. String Types Summary\
+&nbsp;&nbsp;&nbsp;&nbsp;6.6. String Concatenation\
+&nbsp;&nbsp;&nbsp;&nbsp;6.7. Scalar Conversion in Lenient Concatenation
 
 **7. Number Literals** ([Link ⇨](./YINI-Specification.md#7-number-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;7.1. Numbers  
@@ -121,7 +122,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 **10. List Literals** ([Link ⇨](./YINI-Specification.md#10-list-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;10.1. Bracketed Lists (`[...]`)  
 
-**11. Reserved and Future Constructs** ([Link ⇨](./YINI-Specification.md#11-advanced-constructs))  
+**11. Reserved and Future Constructs** ([Link ⇨](./YINI-Specification.md#11-reserved-and-future-constructs))\
 &nbsp;&nbsp;&nbsp;&nbsp;11.1. Future / Reserved Features _(For Future Use)_  
 
 ---
@@ -134,7 +135,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 &nbsp;&nbsp;&nbsp;&nbsp;12.3. Lenient vs. Strict Modes  
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;12.3.1. Table: Lenient vs. Strict Mode
 
-**13. Implementation Rules** ([Link ⇨](./YINI-Specification.md#13-implementation-notes))  
+**13. Implementation Rules** ([Link ⇨](./YINI-Specification.md#13-implementation-rules))\
 &nbsp;&nbsp;&nbsp;&nbsp;13.1. Top-Level Sections and Document Root  
 &nbsp;&nbsp;&nbsp;&nbsp;13.2. Line Handling and Whitespace  
 &nbsp;&nbsp;&nbsp;&nbsp;13.3. Value and Null Handling  
@@ -251,6 +252,8 @@ YINI prioritizes **clarity, structure, and predictability**. The features below 
 - **Document Terminator:** YINI supports an optional document terminator (`/END`); see Section 3.5 for mode-specific requirements. When present, it provides an unambiguous signal of document completion, which is especially helpful for streaming parsers and documents embedded within larger payloads.
 
 ### 1.5. Terminology
+Uppercase requirement keywords—including MUST, MUST NOT, SHOULD, SHOULD NOT, and MAY—carry the meanings defined by BCP 14 ([RFC 2119](https://www.rfc-editor.org/rfc/rfc2119.html) and [RFC 8174](https://www.rfc-editor.org/rfc/rfc8174.html)). These special meanings apply only when the keywords are written entirely in uppercase.
+
 These terms are used throughout this specification to describe YINI's grammar, structure, and semantics. The list also includes a few general English terms used with specific meaning in this document.
 
 | Term                      | Definition |
@@ -259,7 +262,7 @@ These terms are used throughout this specification to describe YINI's grammar, s
 | Backticked identifier | An identifier enclosed in backticks, such as `` `display name` ``, allowing names that cannot be written as simple identifiers. |
 | Boolean literal | A case-insensitive literal representing `true` or `false`, such as `true`, `false`, `yes`, `no`, `on`, or `off`. |
 | Canonical form | The preferred syntax form for a construct, used by documentation and recommended for formatters. |
-| Classic string | A string literal prefixed with `C` or `c`, where supported escape sequences are interpreted. |
+| Classic string | Deprecated name for an Escaped String; the `C` and `c` prefixes remain valid but are deprecated. |
 | Comment | Text ignored by the parser and not represented in the parsed data model. |
 | Compound value | A value that contains one or more nested values. In YINI, lists and inline objects are compound values. |
 | Configuration | A structured set of sections and members representing settings or data. |
@@ -267,6 +270,7 @@ These terms are used throughout this specification to describe YINI's grammar, s
 | Diagnostic | A warning or error reported by a parser or implementation. |
 | Disabled line | A line whose first non-whitespace characters are `--`; the entire line is ignored by the parser. |
 | Document terminator | The `/END` marker that explicitly marks the end of a YINI document. It is optional in lenient mode and required in strict mode. |
+| Escaped string | A string literal prefixed with `E` or `e`, where supported escape sequences are interpreted. The deprecated `C` and `c` prefixes have the same behavior. |
 | Explicit | Written or stated directly in the source text, code, or specification. |
 | Identifier | A name used for a key, object member key, or section name. |
 | Implementation | A parser, validator, formatter, syntax highlighter, tool, library, or host integration that supports YINI. |
@@ -685,7 +689,7 @@ text = """
 """
 ```
 
-The `--` characters and the surrounding line endings are preserved in `text`.
+The `--` characters and the surrounding line breaks remain in `text`. Each source line ending becomes LF in the value; see Section 6.3.
 
 ## 4. Keys and Values
 YINI represents configuration and structured data through a series of _**members**_, each of which is a key-value pair. This section defines the syntax and rules for keys and values, including allowed characters, data types, quoting, and related behaviors.
@@ -932,8 +936,7 @@ _^ Section       // ❌ Invalid leading underscore.
 
 #### 5.3.2. Shorthand Section Heading
 
-**Shorthand Section Headings:**
-Numeric shorthand is required for nesting levels greater than 9. The syntax is `<marker><n>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `>`, `<`) and `<n>` is an integer ≥ 1 indicating the nesting level. For levels 1–9, repeated markers such as `^`, `^^`, `^^^` are RECOMMENDED. (Using the shorthand is optionally valid for levels 1–9 as well, though repeated markers are RECOMMENDED but not required).
+Numeric shorthand uses `<marker><n> <name>`, where `<marker>` is one of the allowed section marker characters (`^`, `§`, `>`, `<`) and `<n>` is a decimal section depth from 1 to 255. The first digit of `<n>` MUST be `1`–`9`; leading zeros are invalid. At least one space or tab MUST separate `<n>` from the section name. Numeric shorthand MAY be used at any depth and MUST be used for depths greater than 9. For levels 1–9, repeated markers such as `^`, `^^`, and `^^^` are RECOMMENDED. The nesting rules in Section 5.3 still apply.
 
 For example:
 - To go from depth 9 to depth 10: write `^10 SectionName`.  
@@ -993,7 +996,6 @@ Numeric shorthand may also be used for levels 1–9:
 ^1     Level1      // depth 1
 ^2     Level2      // depth 2
 ^3     Level3      // depth 3
-^9     Level9      // depth 9
 ```
 
 Going back to a shallower level is allowed:
@@ -1029,6 +1031,12 @@ A numeric shorthand section header requires whitespace after the number:
 ^7Level7           // ❌ Invalid: shorthand requires at least one space or tab after the number
 ```
 
+A numeric shorthand section depth MUST NOT have a leading zero:
+
+```yini
+^01 Name           // ❌ Invalid: leading zero; use ^1 Name
+```
+
 Using ten or more repeated section markers is invalid:
 
 ```yini
@@ -1041,17 +1049,18 @@ Numeric shorthand does not permit skipping intermediate nesting levels. It is on
 
 **Prefix Glossary Table:**
 
-Prefix letters are **case-insensitive**, e.g. lowercase `r` behaves identically to `R`.
+Single-letter prefixes are **case-insensitive**, e.g. lowercase `r` behaves identically to `R`. The `command` prefix is lowercase only.
 
 |Prefix| Type Name      | Behavior Summary|
 |------|----------------|---|
 |_none_| Raw String     | Raw (default) if no prefix is used |
-| R _(optional and has no functional effect)_   | Raw String     | No escapes, preserves text exactly (default) |
-| C    | Classic String | Supports escape sequences like `\n`, `\t` |
+| R _(optional and has no functional effect)_   | Raw String     | No escapes; backslashes are literal (default) |
+| E or e; C or c (deprecated) | Escaped String (Classic String) | Supports escape sequences like `\n`, `\t` |
+| command | Command String | Multiline literal content with structural indentation removed |
 
 Prefix R is optional and has no functional effect — raw strings are the default.
 
-YINI defines two string behaviors and two delimiter forms:
+YINI defines two ordinary string behaviors and two delimiter forms:
 - Behavior:
   * Raw behavior: escape sequences are not interpreted.
   * Classic behavior: escape sequences are interpreted.
@@ -1059,7 +1068,11 @@ YINI defines two string behaviors and two delimiter forms:
   * Single-line quoted form: `'...'` or `"..."`.
   * Triple-quoted form: `"""..."""`.
 
-Combining these gives Raw Strings, Classic Strings, Raw Triple-Quoted Strings, and C-Triple-Quoted Strings.
+Combining these gives Raw Strings, Escaped Strings (also called Classic Strings), Raw Triple-Quoted Strings, and Escaped Triple-Quoted Strings. The `C` and `c` prefixes are aliases for `E` and `e`.
+
+Command Strings are a separate triple-quoted form that removes structural indentation and keeps content line breaks as LF. See Section 6.4.
+
+In both parsing modes, source line endings (`LF`, `CRLF`, or `CR`) become LF in all multiline string values. This also applies to Raw strings: Raw means that escape sequences are not interpreted. See Sections 6.3 and 6.4.
 
 String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
 
@@ -1072,32 +1085,33 @@ Typographic or curly quotation marks such as `‘`, `’`, `“`, and `”` are 
 
 **Note:** Text MUST be enclosed in quotation marks to be parsed as a string literal.
 
-**YINI supports a number of string literal forms:** single-line quoted strings, Classic strings, and Triple-Quoted strings. String behavior is determined by the optional prefix before the opening quote sequence.
+**YINI supports a number of string literal forms:** single-line quoted strings, Classic strings, Triple-Quoted strings, and Command Strings. Ordinary string behavior is determined by the optional prefix before the opening quote sequence.
 
-The `R` prefix is optional and has no semantic effect because Raw strings are the default. The `C` prefix enables escape-sequence interpretation.
+The `R` prefix is optional and has no semantic effect because Raw strings are the default. The `C` and `E` prefixes enable the same escape-sequence interpretation.
 
-Triple-Quoted Strings may also use the `R` or `C` prefix. Without a prefix, a Triple-Quoted String is Raw by default. YINI supports multi-line strings via Triple-Quoted Strings.
+Triple-Quoted Strings may also use the `R`, `C`, or `E` prefix. Without a prefix, a Triple-Quoted String is Raw by default. YINI supports multi-line strings via Triple-Quoted Strings.
 
 String behavior is controlled by an optional prefix before the opening quote sequence:
 
 - No prefix: Raw string behavior.
 - `R` or `r`: Raw string behavior; allowed for explicitness only.
-- `C` or `c`: Classic string behavior; escape sequences are interpreted.
+- `C`, `c`, `E`, or `e`: Classic (Escaped) string behavior; escape sequences are interpreted.
 
-This applies to both single-line quoted strings and Triple-Quoted Strings. Triple-Quoted Strings without a prefix are Raw by default.
+This applies to both single-line quoted strings and ordinary Triple-Quoted Strings. Triple-Quoted Strings without a prefix are Raw by default. The `command` prefix selects the separate Command String form.
 
 **Rules and Behavior for Strings:**
-- All string literals **MUST start and finish on the same line**, except for **Triple-Quoted Strings** (see section 6.3.), which can span multiple lines.
-- Multiple string literals can be **concatenated** to create longer strings (see section 6.5, "String Concatenation").
+- All string literals **MUST start and finish on the same line**, except for **Triple-Quoted Strings** (see Section 6.3), which can span multiple lines, and **Command Strings** (see Section 6.4), which must span multiple lines.
+- Multiple string literals can be **concatenated** to create longer strings (see Section 6.6, "String Concatenation").
 
 **String Overview**
 
 | Type                   | Quotes Used              | Multi-Line | Escapes | Trims Whitespace | Description                          | Similar To            |
 |------------------------|--------------------------|------------|---------|------------------|--------------------------------------|------------------------|
 | Raw String             | `'...'` or `"..."`       | ❌ No      | ❌ No   | ❌ No             | Simple 1-line literal                | Raw literal strings    |
-| Classic String (C)     | `C'...'` or `c"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
+| Escaped String (E or C) | `E'...'` or `e"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
 | Triple-Quoted (Raw)    | `"""..."""`              | ✅ Yes     | ❌ No   | ❌ No             | Multi-line raw text                  | Python raw triple-quote |
-| C-Triple-Quoted        | `C"""..."""` or `c"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
+| Escaped Triple-Quoted  | `E"""..."""` or `e"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
+| Command String         | `command"""` followed by a line break | ✅ Required | ❌ No | ✅ Structural indentation only | Literal command or script lines | YAML literal block scalar |
 
 ### 6.1. Raw Strings (R-Strings)
 A raw string is enclosed in either single quotes (`'...'`) or double quotes (`"..."`).
@@ -1140,24 +1154,28 @@ In the above example, the outer `"` characters are plain ASCII double quotes and
 Any string enclosed in single quotes (`'`) or double quotes (`"`) MAY be prefixed with `R` or `r` to explicitly mark it as a Raw String. This prefix is optional because strings are raw by default.
 
 ### 6.2. Classic Strings (C-Strings)
-A Classic String is a string literal prefixed with `C` or `c`. Classic Strings interpret escape sequences before the final string value is produced. The parsed value is a normal string; the `C` prefix is not preserved in the resulting data model.
+An Escaped String, also called a Classic String, is a string literal prefixed with `E`, `e`, `C`, or `c`. All four prefixes use the same escape sequences and produce the same string values. Escaped Strings interpret escape sequences before the final string value is produced. The prefix is not preserved in the resulting data model.
 
-C-Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Thus, all special control characters (U+0000–U+001F), except for space and tab, MUST be written using escape sequences — they cannot appear directly in Classic Strings.
+**Deprecated:** The name *Classic String* and the `C`/`c` prefixes are deprecated. New documents SHOULD use the `E`/`e` prefixes, and documentation SHOULD use the name *Escaped String*. `C`/`c` strings, including Triple-Quoted forms, remain valid in both parsing modes and follow the same escape rules.
 
-Classic strings MUST begin and end on the same logical line.
+Escaped Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Thus, all special control characters (U+0000–U+001F), except for space and tab, MUST be written using escape sequences — they cannot appear directly in Escaped Strings.
+
+Escaped strings MUST begin and end on the same logical line.
 
 Examples:
 ```yini
 text1 = C"hello\nworld"
 
 text2 = c"This is a newline \n and this is a tab \t character."
+
+text3 = e"hello\nworld"
 ```
 
-Both `text1` and `text2` parse to a string containing an actual newline, not the two characters `\` and `n` or `\t`.
+`text1`, `text2`, and `text3` parse to strings containing an actual newline, not the two characters `\` and `n`. The `\t` in `text2` produces a tab.
 
 #### 6.2.1. Escape Sequences
 
-Escape sequences are supported only in Classic Strings (C-Strings) and C-Triple-Quoted Strings.
+Escape sequences are supported only in Classic (Escaped) Strings and their Triple-Quoted forms.
 
 Unicode escape sequences MUST represent valid Unicode scalar values.  
 Surrogate code points in the range U+D800 to U+DFFF are invalid.  
@@ -1206,14 +1224,14 @@ problems, but it MUST still mark the document as invalid. See Section 14.1.2,
 A **Triple-Quoted String** is a string literal that:
 - **Begins** with `"""` and **ends** at the next `"""` sequence that is recognized as the closing delimiter.
 - **May span multiple lines**, including embedded newline characters.
-- In a Raw Triple-Quoted String, the sequence `"""` cannot appear as content because it terminates the string. In a C-Triple-Quoted String, quote characters may be escaped using `\"`.
+- In a Raw Triple-Quoted String, the sequence `"""` cannot appear as content because it terminates the string. In a Classic Triple-Quoted String, quote characters may be escaped using `\"`.
 - Without a prefix, a Triple-Quoted String is Raw: escape sequences are not interpreted.
-- With a `C` or `c` prefix, escape sequences are interpreted using the same rules as Classic Strings.
+- With a `C`, `c`, `E`, or `e` prefix, escape sequences are interpreted using the same rules as Classic Strings.
 - With an `R` or `r` prefix, behavior is identical to the unprefixed Raw form. The `R` prefix is allowed only for explicitness.
 
 By default, Triple-Quoted Strings are treated as **Raw** — escape sequences are not interpreted. To explicitly indicate that a Triple-Quoted String is raw, a prefix `R` (or `r`) MAY be used. This prefix is purely **syntactic sugar** and does not affect its default behavior.
 
-If **prefixed with `C` or `c`**, the string supports escape sequences, just like Classic Strings (C-Strings). This includes support for: `\n`, `\t`, `\\`, `\"`, `\xhh`, `\u1234`, `\o123`, etc.
+If **prefixed with `C`, `c`, `E`, or `e`**, the string supports escape sequences, just like Classic Strings (C-Strings). This includes support for: `\n`, `\t`, `\\`, `\"`, `\xhh`, `\u1234`, `\o123`, etc.
 
 #### Examples
 
@@ -1228,32 +1246,67 @@ three lines."""
 """You can use double quotes (") inside."""
 ```
 
-C-Triple-Quoted Strings (with escapes enabled):
+Classic Triple-Quoted Strings (with `C` or `E` prefix and escapes enabled):
 ```yini
 C"""This spans multiple lines with a tab\tand newline\n"""
 
 C"""Quotes inside: "double" and 'single'"""
+
+E"""This also interprets \n as a newline."""
 ```
 
-Triple-Quoted Strings always preserve their contents exactly — including all whitespace and line breaks (new lines) — unless prefixed with `C` (or `c`), in which case escape sequences are interpreted.
+Triple-Quoted Strings keep spaces, tabs, blank lines, and the positions of line breaks. In both lenient and strict mode, each source line ending (`LF`, `CRLF`, or `CR`) in the content MUST become one LF (`U+000A`) in the parsed value. This applies with or without a prefix.
 
-### 6.4. String Types Summary
+Raw Triple-Quoted Strings keep backslashes literal. In Escaped Triple-Quoted Strings, source line endings MUST be normalized before escape sequences are interpreted. Characters produced by escapes MUST NOT be normalized. For example, `\r` produces CR, and `\r\n` produces CRLF. Use Escaped Strings when exact CR or CRLF characters are needed.
 
-YINI string behavior is determined by two independent choices:
+### 6.4. Command Strings
+
+A Command String holds multiline, line-oriented text as an ordinary YINI string value. Its content is not executed.
+
+It begins with the lowercase `command` prefix immediately followed by `"""` and a line break. The closing `"""` MUST appear on its own line, preceded only by optional spaces and followed only by a line break or end-of-file. Content after the opening or closing delimiter on the same line is invalid.
+
+```yini
+build = command"""
+    npm install
+    npm run build
+      --verbose
+    npm test
+"""
+```
+
+The value has four lines: `npm install`, `npm run build`, `  --verbose`, and `npm test`. It has no line break after `npm test`.
+
+The line breaks immediately after the opening delimiter and before the closing delimiter are structural and are excluded from the value. Each remaining source line ending (`LF`, `CRLF`, or `CR`) MUST become one LF (`U+000A`) in the parsed value, in both parsing modes.
+
+Structural indentation is the number of leading spaces (U+0020) on the first content line that contains a non-space character. Every such line MUST have at least that many leading spaces; those spaces are removed, and any additional spaces are preserved. Tabs are content and are never expanded or removed as indentation.
+
+On a space-only content line, remove up to the structural indentation and preserve any extra spaces. A space-only line before the first nonempty line is invalid if it has more spaces than the structural indentation. If there are no nonempty content lines, use the greatest number of spaces on any content line as the structural indentation; all such lines become empty. Blank content lines and their intervening line breaks remain in the value.
+
+A `"""` sequence within a content line is literal unless it is the first non-space content on that line. In that position it begins the closing delimiter; any following characters make the Command String invalid. There is no escape for a closing delimiter.
+
+Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only lowercase `command` selects this form. `c"""..."""` remains a Classic Triple-Quoted String; `command"..."` and `command'...'` are invalid.
+
+**Application note:** Command Strings contain text. An application that runs the commands chooses the shell or terminal interface and converts LF to another line-ending form if needed. YINI does not guarantee that the commands work across operating systems or shells.
+
+### 6.5. String Types Summary
+
+Ordinary YINI string behavior is determined by two independent choices:
 
 1. The optional string prefix:
    - No prefix, `R`, or `r` means Raw string behavior.
-   - `C` or `c` means Classic string behavior, where escape sequences are interpreted.
+   - `C`, `c`, `E`, or `e` means Classic (Escaped) string behavior, where escape sequences are interpreted.
 
 2. The delimiter form:
    - Single-line quoted strings use `'...'` or `"..."`.
    - Triple-Quoted Strings use `"""..."""` and may span multiple lines.
 
-Raw strings are the default. The `R` prefix is allowed for explicitness only and has no semantic effect. The `C` prefix enables escape-sequence interpretation.
+Raw strings are the default. The `R` prefix is allowed for explicitness only and has no semantic effect. The `C` and `E` prefixes enable the same escape-sequence interpretation.
+
+Command Strings use `command"""` and the distinct multiline and indentation rules in Section 6.4.
 
 For the full table of supported string forms, see the overview table at the beginning of Section 6.
 
-### 6.5. String Concatenation
+### 6.6. String Concatenation
 
 YINI supports explicit string **concatenation** using the plus sign (`+`).  
 
@@ -1273,7 +1326,7 @@ greeting = "Hi, hello there"
 
 The `+` operator in YINI is exclusively a string concatenation operator. YINI does not define numeric addition. For readability, whitespace around `+` is recommended, but not required.
 
-**In strict mode**, all concatenation operands MUST be string literals. This includes Raw/R-prefixed, Classic/C-prefixed, or any Triple-Quoted strings.
+**In strict mode**, all concatenation operands MUST be string literals. This includes Raw/R-prefixed, Classic/C- or E-prefixed, or any Triple-Quoted strings.
 
 **In lenient mode**, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not performed. Non-string scalar operands MUST first be converted to their parsed scalar canonical string representation before concatenation.
 
@@ -1334,9 +1387,9 @@ message = "hello "
         + "world"  // ❌ Invalid: newline before +
 ```
 
-For longer human-authored text where exact line breaks should be preserved, authors SHOULD use Triple-Quoted Strings instead. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
+For longer human-authored text where line breaks should be kept, authors SHOULD use Triple-Quoted Strings instead. Source line endings become LF; see Section 6.3. Triple-Quoted String literals MAY still be used as operands in a concatenation expression.
 
-### 6.6. Scalar Conversion in Lenient Concatenation
+### 6.7. Scalar Conversion in Lenient Concatenation
 
 Scalar conversion to strings is allowed only in lenient-mode concatenation expressions.
 
@@ -1476,7 +1529,7 @@ change the value.
 
 These numeric checks also apply to operands in lenient-mode concatenation.
 After validation, number-to-string conversion MUST use the source-literal
-normalization in Section 6.6, rather than formatting the rounded numeric value.
+normalization in Section 6.7, rather than formatting the rounded numeric value.
 For example, `"value: " + 1.50` produces `"value: 1.50"`. The source spelling
 of integer `-0` also remains `-0` during that normalization.
 
@@ -1972,7 +2025,7 @@ internal syntax or future use. Using them outside their permitted contexts MUST
 produce an error diagnostic in both lenient and strict mode.
 
 #### 12.1.1. Reserved Characters
-The following characters are reserved by the YINI syntax and MUST not be used improperly outside of their defined contexts. They may appear inside quoted strings or backticked identifiers but are otherwise restricted:
+The following characters and character sequences are reserved by the YINI syntax and MUST NOT be used improperly outside of their defined contexts. They may appear inside quoted strings or backticked identifiers but are otherwise restricted:
 
 | Character	| Usage Context	| Description |
 |-----------|---------------|-------------|
@@ -1980,6 +2033,7 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `^` | Section header | Used to denote section start |
 | `:` | Object member separator | Canonical separator between keys and values inside inline objects |
 | `,` | Item separator | Used in lists |
+| `+` | String concatenation / numeric sign | Joins concatenation operands; also used as a positive sign in numeric literals and exponents |
 | `§` | Section header (Unicode alternative) | Used to denote section start |
 | `>` | Section header (quote-like ASCII fallback) | Used to denote section start |
 | `<` | Section header (ASCII fallback) | Used to denote section start |
@@ -1989,13 +2043,15 @@ The following characters are reserved by the YINI syntax and MUST not be used im
 | `;` | Full-line comment |   |
 | `[ ]` | List literal |  |
 | `{ }` | Object literal |  |
+| `` ` `` | Identifier delimiter | Opens and closes a backticked identifier |
 | `--` | Line disabling |  |
+| `/END` | Document terminator | Marks the end of a YINI document; case-insensitive, optional in lenient mode, and required in strict mode |
 | `%` | Binary prefix | Begins binary number |
 | `hex:` | Hexadecimal number prefix | Begins an explicit hexadecimal number literal; case-insensitive |
 | `@` | Directive prefix | Reserved for future syntax |
 
 #### 12.1.2. Reserved Keywords
-The following keywords are restricted and SHOULD not be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
+The following keywords are restricted and SHOULD NOT be used as bare identifiers (e.g., for keys, values, or section names) unless enclosed in quotes or backticks:
 - `/END` _(case-insensitive)_
 - `@ver`, `@version`
 - `@include`, `@anchor`, `@alias`
@@ -2061,6 +2117,8 @@ In lenient mode, mixed line-ending forms are allowed but SHOULD produce a
 warning. In strict mode: A document MUST use one line-ending form
 consistently, mixed forms MUST result in an error.
 
+Parsers MUST check the file's original line endings before normalizing string values. Characters produced by escape sequences do not count as source line endings.
+
 `EOF` MAY terminate an otherwise complete final logical line. Implementations MUST NOT reject an otherwise valid document solely because its final line has no trailing `LF`, `CRLF`, or `CR`. This rule applies in both lenient and strict mode.
   
 #### 12.2.4. Valid Value Types
@@ -2092,8 +2150,9 @@ consistently, mixed forms MUST result in an error.
 | Strict  | Required |
 
 #### 12.2.6. Escaping and String Literals
-- Escape sequences are **ONLY allowed** in C-Triple-quoted and Classic strings (quoted with `'` or `"`, **and prefixed** with `C` or `c`).
+- Escape sequences are **ONLY allowed** in Classic (Escaped) strings and their Triple-Quoted forms, prefixed with `C`, `c`, `E`, or `e`.
 - Triple-Quoted Strings MUST use `"""` for both opening and closing (`'''` is not supported).
+- Command Strings MUST use `command"""` and satisfy the multiline delimiter and indentation rules in Section 6.4.
 
 #### 12.2.7. Shortest Valid YINI Documents in Strict Mode
 - **Valid short documents in strict mode:**
@@ -2261,7 +2320,8 @@ Otherwise, an error MUST be reported.
 
 ### 13.2. Line Handling and Whitespace
 
-- Parsers MUST recognize LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`) as logical line endings for syntax. They MUST preserve the original line-ending characters inside triple-quoted string values. Structural line-ending handling MUST NOT alter string content.
+- Parsers MUST recognize LF (`0x0A`), CRLF (`0x0D 0x0A`), and CR (`0x0D`) as logical line endings for syntax. They MUST check the original source line endings as specified in Section 12.2.3.
+- In both parsing modes, each source line ending kept in a Triple-Quoted String or Command String value MUST become one LF (`U+000A`). This includes Raw forms. Normalization MUST occur before escape sequences are interpreted. Characters produced by escapes MUST NOT be normalized. See Sections 6.3 and 6.4.
 - Parsers MUST also treat `EOF` as terminating an otherwise complete final logical line. A trailing line-ending sequence is not required in either lenient or strict mode.
 - Spaces and tabs surrounding a key or section-name token are insignificant
   and MUST be ignored.
@@ -2333,11 +2393,11 @@ The syntax for a list is:
   ```yini
   items = ["a", "b", "c"]
   ```
-  * A bracketed list line MUST not begin with a comma.
+  * A bracketed list line MUST NOT begin with a comma.
   * In lenient mode, a trailing comma in `[ ]` is ignored.
   * In strict mode, a trailing comma in `[ ]` MUST result in an error.
 
-**Lists MUST not** have a newline between `=` and the opening bracket `[` (otherwise, the member has no explicit value: `null` in lenient mode, a missing-value error in strict mode):
+**Lists MUST NOT** have a newline between `=` and the opening bracket `[` (otherwise, the member has no explicit value: `null` in lenient mode, a missing-value error in strict mode):
   ```yini
   invalidList = // No explicit value: null in lenient mode, error in strict mode.
   [1, 2, 3]     // Invalid standalone line; not the value of invalidList.
@@ -2395,9 +2455,10 @@ Implementations SHOULD report invalid concatenation with diagnostics that identi
 | Type                   | Prefix           | Example    | Behavior |
 |------------------------|------------------|------------|----------|
 | (Raw) String           | _None_, `R`, or `r`| "Some text"| Text is as-is (raw), no escaping,  backslash is literal, preserves all whitespace|
-| Classic String         | `C` or `c`       | `C"..."`   | Escape sequences are interpreted|
-| Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Can be multi-line, text is as-is (raw), preserves all whitespace, including line breaks |
-| C-Triple-Quoted String | `C`, or `c`       | `C"""..."""`   | Can be multi-line, escapes interpreted, preserves all whitespace, including line breaks |
+| Escaped (Classic) String | `E` or `e`; `C`/`c` deprecated | `e"..."` | Escape sequences are interpreted|
+| Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Multiline; keeps spaces, tabs, and line breaks; backslashes are literal; source line endings become LF |
+| Escaped Triple-Quoted String | `E` or `e`; `C`/`c` deprecated | `E"""..."""` | Multiline; source line endings become LF before escape processing; escape results stay unchanged |
+| Command String | `command` | `command"""` followed by a line break | Multiline literal; keeps content line breaks as LF; removes structural indentation |
 
 ### 13.9. Comments
 
@@ -3492,6 +3553,9 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 Upcoming release / v1.0.0 RC 7
+- **Added:** Command Strings using the lowercase `command"""` form. They preserve command lines while removing structural indentation and have no execution semantics. The `c` prefix remains Classic, not a Command String alias.
+- **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. All four prefixes use the same escape rules and produce the same string values.
+- **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source
@@ -3518,7 +3582,7 @@ Upcoming release / v1.0.0 RC 7
 - **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
 - **Changed:** Backticked identifiers now reject raw C1 control characters (U+007F–U+009F) in addition to C0 control characters (U+0000–U+001F). Only `` \` `` and `\\` are valid escape sequences; control-character escapes are not supported.
 - **Added:** Classic strings now support `\`` for a literal backtick.
-- **Clarified:** Parsers recognize LF, CRLF, and CR as logical line endings while preserving the original line-ending characters inside triple-quoted string values.
+- **Changed:** Source LF, CRLF, and CR line endings now become LF in all multiline string values, including Raw and Escaped Triple-Quoted Strings and Command Strings, in both modes. Previously, their original characters were preserved. Escape results stay unchanged. Mixed-line-ending checks still use the original source.
 - **Clarified:** End-of-file (`EOF`) may terminate an otherwise complete final logical line in both lenient and strict mode. A lenient document may end immediately after its final assignment, and a strict document may end immediately after `/END`, without a trailing line ending.
 - **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Both lenient-mode and strict-mode parsers MUST report an error with diagnostic information.
 - **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.

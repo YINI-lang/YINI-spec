@@ -7,6 +7,7 @@ three lines."""
 // In C-Tripple-quoted strings
 // must use escape codes.
 b = C"""He said, \"hello\" and left.""" 
+escaped = e"""He said, \"hello\" and left."""
 
 c = """You can use "" double quotes inside."""
 

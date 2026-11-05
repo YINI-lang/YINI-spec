@@ -9,8 +9,8 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Specification Package Version:** 1.0.0-RC.7 ([Version Mapping Table](./README.md#version-mapping-table))  
-**Date:** 2026-09-21  
+**Specification Package Version:** 1.0.0-RC.6x ([Version Mapping Table](./README.md#version-mapping-table))  
+**Date:** 2026-11-02  
 **Status:** Release Candidate  
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
@@ -377,7 +377,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### String Literals in YINI
-YINI defines four main string literal forms: Raw Strings, Classic Strings, Raw Triple-Quoted Strings, and C-Triple-Quoted Strings.  
+YINI defines five main string literal forms: Raw Strings, Escaped Strings, Raw Triple-Quoted Strings, Escaped Triple-Quoted Strings, and Command Strings.
 
 These forms differ in how they handle escape sequences and multi-line content.
 
@@ -387,9 +387,9 @@ These forms differ in how they handle escape sequences and multi-line content.
 # may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
 
-// Classic strings (C-Strings) are prefixed with C or c — they support
-// escape sequences.
-ClassicString = C"Hello\nWorld\n"
+// Escaped strings use E or e and support escape sequences.
+EscapedString = e"Hello\nWorld\n"
+ClassicString = C"Hello\nWorld\n" // deprecated prefix; same value
 
 /* Triple-quoted strings can span multiple lines and
    preserve all characters as-is, including tabs and newlines.
@@ -398,6 +398,12 @@ TripleQuotedString = """
 This is a triple-quoted
 string literal — characters
 are preserved exactly, without escapes.
+"""
+
+// Command strings remove structural indentation while keeping line breaks.
+CommandString = command"""
+    npm install
+    npm run build
 """
 ```
 
@@ -467,7 +473,7 @@ For more details, see section D.2, _"Acknowledgments & Special Thanks"_, in the 
 | 2026 Mar | 1.0.0-RC.4      | 1.0.0-RC.4   | 1.2.0-RC.1   | 1.2.0-RC.1    |
 | 2026 Apr | 1.0.0-RC.5      | 1.0.0-RC.5   | 1.2.0-RC.2   | 1.2.0-RC.2    |
 | 2026 May | 1.0.0-RC.6      | 1.0.0-RC.6   | 1.3.0-RC.1   | 1.3.0-RC.1    |
-| 2026 Sep | 1.0.0-RC.7      | 1.0.0-RC.7 WIP | 1.3.0-RC.2   | 1.3.0-RC.2    |
+| 2026 Nov | 1.0.0-RC.6x     | 1.0.0-RC.6x  | 1.4.0-RC.1   | 1.4.0-RC.1    |
 | …        | …               | …            | …            | …             |
 
 ---

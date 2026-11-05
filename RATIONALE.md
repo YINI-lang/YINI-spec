@@ -222,7 +222,7 @@ Allowing a document to change the active parsing mode would let the input choose
 
 **Validation policy should be controlled by the application, not by the data being validated.** — If the document can control its own validation policy, it can potentially weaken or alter the checks applied to itself. Keeping validation policy in the application gives the application consistent, predictable control over what it accepts.
 
-Instead, a mismatch produces a diagnostic. A strict declaration parsed in lenient mode is an error because otherwise the document could be accepted under rules looser than its author requested. A lenient declaration parsed in strict mode produces the diagnostic required by the specification, so the author's declared intent is not silently ignored.
+Instead, a mismatch produces a diagnostic. A strict declaration parsed in lenient mode is an error because otherwise the document could be accepted under rules looser than its author requested. This could give users the false impression that the document passed strict validation. A lenient declaration parsed in strict mode produces the diagnostic required by the specification, so the author's declared intent is not silently ignored.
 
 This is useful for production configuration, CI validation, generated files, and shared project files where validation intent should be visible. The declaration remains optional so ordinary hand-edited files can stay lightweight and let the surrounding parser configuration decide.
 
@@ -428,9 +428,9 @@ The trade-off is that an author must choose a different string form when the val
 
 <a id="b262-classic-strings"></a>
 
-The explicit `C` prefix opts into escape processing when a value needs an embedded newline or tab, a quote inside the quoted value, a control character, or a Unicode escape. Making this behavior the default would shorten some escaped values but make ordinary backslashes surprising. Requiring the prefix gives the author control at the cost of another string form to learn.
+An explicit `C` or `E` prefix opts into escape processing when a value needs an embedded newline or tab, a quote inside the quoted value, a control character, or a Unicode escape. Making this behavior the default would shorten some escaped values but make ordinary backslashes surprising. Requiring the prefix gives the author control at the cost of another string form to learn. The Escaped String name and `E`/`e` prefixes are preferred; the Classic String name and `C`/`c` prefixes remain supported but are deprecated.
 
---TODO: explain why C char (inspired by Classic and the name C (the language)), one could argue to use E or?--
+--TODO: explain why C was chosen (Classic and the C language), and why E is also supported.--
 
 #### 6.2.1. Escape Sequences
 
@@ -453,9 +453,11 @@ TODO: Confirm the authorial motivation for retaining `` \` `` in Classic strings
 
 Triple quotes make multi-line text possible without concatenating many single-line literals. They suit embedded text blocks, templates, SQL, prompts, email bodies, certificates, long descriptions, and script fragments.
 
-Preserving content and line breaks suits values whose layout matters; it also means source formatting and line-ending changes can change the value. Parsers recognize LF, CRLF, and CR structurally while preserving the original line-ending characters inside the parsed Triple-Quoted string. This prevents platform-oriented line handling from silently rewriting string data. A `C` prefix remains available when the text needs escapes.
+Keeping spaces, tabs, blank lines, and the positions of line breaks preserves the text's layout. For line endings, YINI gives portability priority over keeping the exact source characters: LF, CRLF, and CR all become LF in the parsed value. Changing a file's line-ending form in an editor or during checkout therefore does not change its multiline string values.
 
-**Similar behavior:** Python also uses triple quotes for multiline strings, although its default escape and line-ending rules differ from YINI's Raw Triple-Quoted Strings. See [Python string literals](https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals).
+Raw means that backslashes stay literal. The same line-ending rule applies to Raw, Escaped, and Command Strings, so authors do not need to choose a string form for portability. When exact CR or CRLF characters are needed, an Escaped String can express them with `\r` or `\r\n`. Those escape results stay unchanged.
+
+**Similar behavior:** Python also uses triple quotes for multiline strings and converts source line endings to LF, even in raw literals. Unlike YINI, Python interprets escape sequences in strings without a prefix. Python uses `r` to make backslashes literal, while YINI makes backslashes literal by default. See [Python string literals](https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals) and [Python physical lines](https://docs.python.org/3/reference/lexical_analysis.html#physical-lines).
 
 #### Rejected alternative: H-Strings
 
@@ -486,10 +488,18 @@ This feature was removed because it introduced another string form with separate
 
 --TODO: mention, that if there is strong argument for this it might get reintroduced, propably not due to not wanting to add yet another string type since there might appear a more important or needed string type...---
 
-### 6.4. String Types Summary
+### 6.4. Command Strings
+
+Command strings let authors write command sequences as one readable, indented block without quoting or concatenating each line. This is similar to [YAML's literal block scalar (`|`)](https://yaml.org/spec/1.2.2/#812-literal-style), using YINI's `command"""..."""` syntax. Removing structural indentation lets a script fit within an indented configuration while preserving the indentation that belongs to the script itself.
+
+Using LF gives the same command text the same value, whether the source file uses LF, CRLF, or CR. YAML also [normalizes line endings to LF](https://yaml.org/spec/1.2.2/#54-line-break-characters) in its literal blocks (`|`).
+
+YINI does not run the commands. The application chooses the shell or terminal interface. If needed, it converts LF to CRLF for a script file or submits each line through the terminal's input API. Keeping the source file's line endings would not ensure that they match the target. The commands themselves may still depend on a particular operating system or shell.
+
+### 6.5. String Types Summary
 -
 
-### 6.5. String Concatenation
+### 6.6. String Concatenation
 
 <a id="b29-string-concatenation-and-non-arithmetic-"></a>
 
@@ -509,7 +519,7 @@ value = 1 + 2 + "3"
 
 It produces neither `"123"` nor `"33"`; the expression does not begin with a string, and YINI defines no numeric addition. Lists and objects stay excluded because their string forms would require another set of potentially implementation-dependent choices.
 
-### 6.6. Scalar Conversion in Lenient Concatenation
+### 6.7. Scalar Conversion in Lenient Concatenation
 
 The conversion rules give permitted scalar operands one predictable spelling. 
 
@@ -530,7 +540,7 @@ number type would round them. Ordinary floating-point rounding remains valid,
 while overflow and rounding a nonzero value to zero produce errors in both modes.
 This keeps common configuration numbers practical without letting the host
 language silently determine their meaning. Concatenation retains its separate
-source-spelling normalization under §6.6.
+source-spelling normalization under §6.7.
 
 **Similar behavior:** Python also rejects nonzero decimal integer literals with leading zeros, such as `01`. YINI additionally rejects forms such as `00`, `00.5`, and `01e3`. See [Python integer literals](https://docs.python.org/3/reference/lexical_analysis.html#integer-literals).
 
@@ -687,6 +697,8 @@ See §2.1. --TODO: Add any motivation specific to validation of malformed UTF-8.
 
 Recognizing LF, CRLF, and CR lets files from different environments be parsed. Strict mode rejects mixed forms to make inconsistency visible; lenient mode accepts them with a warning.
 
+These checks use the file's original line endings, so normalization cannot hide mixed forms. Characters produced by escapes belong to the value and do not count as source line endings.
+
 #### 12.2.4. Valid Value Types
 
 The limited set of types keeps parsed values predictable. See §4.2.
@@ -735,9 +747,13 @@ One explicit top-level section gives strict documents a visible root and rules o
 
 ### 13.2. Line Handling and Whitespace
 
-Logical line recognition is needed for syntax across platforms. Normalizing every CRLF or CR to LF would make multiline values look the same across operating systems, but it would also change text that a triple-quoted string promises to preserve. 
+YINI accepts source files using LF, CRLF, or CR, but multiline string values always use LF for source line breaks. This gives portability priority over preserving the exact line-ending characters. Changing a file's line-ending form should not silently change its configuration values.
 
-The chosen rule recognizes all supported line endings for structure while retaining their original characters inside the string. This means rewriting a file with different line endings can change a multiline value.
+Source line endings are normalized before escape sequences are interpreted. This lets Escaped Strings request exact CR or CRLF characters with `\r` or `\r\n`. Normalizing those escape results would change the characters the author requested.
+
+**Similar behavior:** Both Python and YAML convert source CRLF and CR line endings to LF. Python does this even in raw string literals, and YAML does it even in literal blocks (`|`). YINI follows the same rule. See [Python physical lines](https://docs.python.org/3/reference/lexical_analysis.html#physical-lines) and [YAML line break characters](https://yaml.org/spec/1.2.2/#54-line-break-characters).
+
+Validation checks the original source line endings, so strict mode still rejects mixed forms. Applications handle command execution and convert line endings for the target when needed; see §6.4.
 
 ### 13.3. Value and Null Handling
 
@@ -757,11 +773,11 @@ Mapping the accepted boolean spellings to two logical values prevents source spe
 
 ### 13.7. String Concatenation
 
---TODO: Add implementation-specific motivation beyond the rules and scalar conversion in §§6.5–6.6.--
+--TODO: Add implementation-specific motivation beyond the rules and scalar conversion in §§6.6–6.7.--
 
 ### 13.8. String Literal Types
 
-TODO: Add implementation-specific motivation beyond the distinctions in §§6.1–6.4.
+TODO: Add implementation-specific motivation beyond the distinctions in §§6.1–6.5.
 
 ### 13.9. Comments
 

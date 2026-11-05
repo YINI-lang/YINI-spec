@@ -15,6 +15,9 @@ numeric bounds and rounding, invalid escape sequences, marker positions, and
 recovery-result validity must be checked by the implementing parser or validator.
 The same applies to line endings inside skipped block comments and the position
 of shebang-like comments.
+For Command Strings, the host validator must also check structural indentation
+and that the closing delimiter occupies its own line. The lexer recognizes the
+multiline token but does not perform those value and placement checks.
 The numeric-boundary and recovery fixtures cover both lenient and strict mode.
 
 User-facing examples live in `../../Examples/`.

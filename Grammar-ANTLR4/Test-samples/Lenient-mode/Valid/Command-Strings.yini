@@ -1,0 +1,10 @@
+script = command"""
+  echo "first"
+
+    echo 'nested'
+  echo C:\source\file.txt
+"""
+
+literal_quotes = command"""
+    echo '""" stays literal inside this line'
+"""
