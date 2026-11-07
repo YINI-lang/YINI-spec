@@ -492,9 +492,17 @@ This feature was removed because it introduced another string form with separate
 
 Command strings let authors write command sequences as one readable, indented block without quoting or concatenating each line. This is similar to [YAML's literal block scalar (`|`)](https://yaml.org/spec/1.2.2/#812-literal-style), using YINI's `command"""..."""` syntax. Removing structural indentation lets a script fit within an indented configuration while preserving the indentation that belongs to the script itself.
 
-Using LF gives the same command text the same value, whether the source file uses LF, CRLF, or CR. YAML also [normalizes line endings to LF](https://yaml.org/spec/1.2.2/#54-line-break-characters) in its literal blocks (`|`).
+Line breaks between content lines are kept, including blank lines. Each becomes LF (`\n`), whether the source file uses LF, CRLF, or CR. This gives the same command text the same value across source line-ending forms. YAML also [normalizes line endings to LF](https://yaml.org/spec/1.2.2/#54-line-break-characters) in its literal blocks (`|`).
 
-YINI does not run the commands. The application chooses the shell or terminal interface. If needed, it converts LF to CRLF for a script file or submits each line through the terminal's input API. Keeping the source file's line endings would not ensure that they match the target. The commands themselves may still depend on a particular operating system or shell.
+The line breaks immediately after the opening delimiter and before the closing delimiter are left out. YINI adds no extra line breaks. This avoids an unexpected final newline becoming part of a command or argument. Authors can include a final LF by writing an empty content line before the closing delimiter:
+
+| Content inside the block | Parsed value (`\n` represents one LF) |
+|---|---|
+| One line | `"echo first"` |
+| Two lines | `"echo first\necho second"` |
+| Two lines followed by an empty content line | `"echo first\necho second\n"` |
+
+YINI does not run the commands. The application chooses the shell or terminal interface. If needed, it converts LF to CRLF for a script file or submits each line through the terminal's input API. It can also add a final newline when the input interface requires one. Keeping the source file's line endings would not ensure that they match the target. The commands themselves may still depend on a particular operating system or shell.
 
 ### 6.5. String Types Summary
 -
