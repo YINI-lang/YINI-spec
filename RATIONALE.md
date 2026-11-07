@@ -700,7 +700,12 @@ Collecting validation requirements gives implementers a checklist across the syn
 
 #### 12.2.1. Structural Requirements
 
+- **Declare:** Introduce an entity with a given name.
+- **Define:** Specify the entity's content or initial value.
+
 **Author's words:** *The first-wins rule was also chosen by following a common principle from programming languages: once an entity has been declared and defined (a key-value pair is seen as both a declaration and a definition in YINI), it cannot simply be redeclared without being flagged as a duplicate. On the other hand, explicitly giving an existing declaration a new definition is a different matter, but that goes a little beyond the scope of this rationale.*
+
+---
 
 Duplicate names force a choice: a later definition could replace, merge with, or be ignored in favor of the earlier one. Replacement or merging would let a later definition silently change a setting written above it. A YINI key-value pair both declares its key and defines its value. Following the common rule against redeclaring an already defined entity, a duplicate key does not replace the first value: lenient mode keeps the first value and warns, while strict mode rejects the duplicate. Explicit redefinition is a separate question. Duplicate sections are errors in both modes because a section may contain members and child sections, making an ignored duplicate block's boundaries and contents harder to interpret predictably.
 
@@ -942,7 +947,7 @@ This section records changes to the specification rather than introducing additi
 
 ### 16.5. Formal Grammar
 
-The maintained ANTLR4 grammar is stored separately in the repository's [`Grammar-ANTLR4/`](./Grammar-ANTLR4/) directory. Keeping the grammar in dedicated source files avoids duplicating a long implementation artifact in the prose specification and allows grammar tooling to consume it directly. The grammar accompanying YINI Specification 1.0.0-RC.7 is version 1.3.0-RC.2.
+The maintained ANTLR4 grammar is stored separately in the repository's [`Grammar-ANTLR4/`](./Grammar-ANTLR4/) directory. Keeping the grammar in dedicated source files avoids duplicating a long implementation artifact in the prose specification and allows grammar tooling to consume it directly. The grammar accompanying YINI Specification 1.0.0-RC.7 is version 1.4.0-RC.1.
 
 **NOTE:**
 The grammar deliberately recognizes some invalid forms so an implementing parser can produce more useful diagnostics. Parsing-mode rules, duplicate-name handling, section nesting, and other semantic constraints remain defined by the specification and are enforced outside the grammar. The specification therefore remains the authority for conformance if the grammar and prose differ.

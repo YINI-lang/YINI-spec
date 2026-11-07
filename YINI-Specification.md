@@ -3686,7 +3686,7 @@ section nesting, and other semantic constraints—are enforced outside the
 grammar and are defined by this specification.
 
 The grammar accompanying YINI Specification 1.0.0-RC.7 is version
-1.3.0-RC.2.
+1.4.0-RC.1.
 
 If the grammar and this specification conflict, this specification takes
 precedence.
