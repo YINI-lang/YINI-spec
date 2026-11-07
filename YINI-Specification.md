@@ -403,18 +403,18 @@ A mode declaration states which parsing mode the document expects. It forms part
 
 Mode declarations are not treated as ordinary syntax compatibility. They are a guard against accidentally parsing a document under weaker or stronger rules than the author intended.
 
-If the declared mode does not match the active parser mode, the parser MUST report a **mode mismatch diagnostic**. A document declaring `@yini strict` is invalid when parsed in lenient mode. A document declaring `@yini lenient` MAY still be parsed in strict mode, but the parser MUST emit a warning diagnostic.
+If a document explicitly declares `@yini strict` or `@yini lenient`, the declared mode MUST match the parser's active mode. A mismatch MUST result in a **mode mismatch error diagnostic**, and the document MUST be rejected.
 
 | Declaration | Parsed in lenient mode | Parsed in strict mode |
 |---|---:|---:|
 | `@yini strict` | ❌ Error | ✅ Valid mode match |
-| `@yini lenient` | ✅ Valid mode match | ⚠️ Valid + mode mismatch warning |
+| `@yini lenient` | ✅ Valid mode match | ❌ Error |
 | `@yini` | ✅ Allowed | ✅ Allowed |
 | No marker | ✅ Allowed | ✅ Allowed |
 
 The parser MUST already be operating in the selected active mode. It MUST NOT silently switch modes because of the declaration.
 
-A mode declaration does not by itself make a document valid. A document declaring `@yini strict` MUST still satisfy all strict-mode requirements.
+A mode declaration does not by itself make a document valid. A document whose declaration matches the active parser mode MUST still satisfy all requirements of that mode.
 
 Important: The parsing mode is always determined by external configuration — the parser, tool, API, CLI option, or host application — regardless of whether a mode declaration is present.
 
@@ -2105,10 +2105,12 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
   1. In lenient mode, the first definition wins: the first key definition MUST be kept, later duplicate key definitions MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
   2. In strict mode, any duplicate key MUST result in an error.
   3. In neither mode may an implementation silently overwrite an earlier key with a later one. This rule reflects an intentionally conservative approach. It avoids surprising behavior in large files and prevents accidental overrides later in the document.
-- **Duplicate sections** with the same name under the **same parent section** are not allowed.
-  1. In lenient mode, the first section definition wins: the first section MUST be kept, later duplicate section definitions at the same level MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
-  2. In strict mode, any duplicate section at the same level MUST result in an error.
-  3. Implementations MUST NOT silently merge, overwrite, or extend an earlier section with a later section of the same name. If a repeated section definition is rejected, all assignments belonging to that duplicate section block MUST also be rejected or ignored; they MUST NOT be reinterpreted as belonging to another section or context.
+- **Duplicate sections** with the same name under the **same parent section or document root** are not allowed.
+  A duplicate section MUST produce an error diagnostic in both lenient and strict
+  mode and make the document invalid. Implementations MUST NOT merge, overwrite,
+  or extend the earlier section with the later section. A partial recovery
+  result MUST NOT reinterpret the duplicate block's contents as belonging to
+  another section or context. See Section 14.1.2 for partial recovery rules.
 - **Member and subsection names share one namespace within a container.**
   A member and an immediate child section under the same document root or
   parent section MUST NOT have the same identifier.
@@ -2228,7 +2230,7 @@ Some YINI parsers may support multiple **validation modes**:
   - Empty values are not allowed; they MUST always be written explicitly as `null`, `Null`, or `NULL`.
   - Stray trailing commas after the last value/member inside lists and objects are not permitted.
   - Strict mode requires exactly one explicit top-level section. Any additional sections MUST appear only as subsections nested within that section. Top-level orphan members are not allowed in strict mode. Otherwise, an error MUST be reported.
-  - If a mode declaration is present, it is checked against the active parser mode. If `@yini strict` is parsed in lenient mode, the parser MUST emit a mode-mismatch error. If `@yini lenient` is parsed in strict mode, the parser MUST emit a mode-mismatch warning. Mode declarations do not replace strict-mode validation, and strict mode MAY still be used when the declaration is absent.
+  - If a mode declaration is present, it MUST match the active parser mode. A document declaring `@yini lenient` is invalid in strict mode and MUST produce a mode-mismatch error. Mode declarations do not replace strict-mode validation, and strict mode MAY still be used when the declaration is absent.
   - The document terminator (`/END`) MUST be present in a YINI document in strict mode. It marks the end of the document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
     **Note:** Because strict mode also requires the document terminator `/END`, the end of the document is made explicit rather than being inferred from EOF alone. This improves deterministic parsing, reduces ambiguity about incomplete input, and makes **truncated, partially copied, or prematurely cut-off documents** easier to detect. Together with the requirement for exactly one explicit top-level section, this provides increased robustness: if a YINI document is split into two halves, **both halves will be invalid**.
     * The **first half** is invalid because it is missing the required `/END` marker.
@@ -2268,7 +2270,7 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | Explicit string quoting               | ✅ | ✅ | All strings MUST be enclosed with `"` or `'` — no ambiguity over strings.|
 | Empty sections allowed                | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
 | Duplicate keys | ⚠️ First wins | ❌ Error | Later duplicate keys are ignored in lenient mode and MUST produce a warning diagnostic. |
-| Duplicate sections at same level | ⚠️ First wins | ❌ Error | Later duplicate sections are ignored in lenient mode. Implementations MUST NOT merge or overwrite sections. |
+| Duplicate sections under the same parent | ❌ Error | ❌ Error | A duplicate section makes the document invalid in both modes. Implementations MUST NOT merge or overwrite sections. |
 | Exactly one explicit top-level section required | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
 | Top-level orphan members allowed      | ✅ | ❌ | In lenient mode they are mounted directly on the document root. |
 | `/END` required at end of document                       | ❌ | ✅ |   |
@@ -2566,9 +2568,9 @@ successful, conforming YINI parse result.
 
 Warning diagnostics for constructs explicitly permitted by the active mode do
 not, by themselves, make a document invalid. For example, first-wins duplicate
-handling and missing root-level or section-level values are valid in lenient
-mode and require warnings. Empty collection slots and unsupported escapes are
-invalid in both modes and require errors.
+key handling and missing root-level or section-level values are valid in lenient
+mode and require warnings. Duplicate sections, empty collection slots, and
+unsupported escapes are invalid in both modes and require errors.
 
 For example, both assignments below are invalid in both modes:
 
@@ -3585,6 +3587,8 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 Upcoming release / v1.0.0 RC 7
+- **Changed:** Duplicate sections under the same parent now produce an error and invalidate the document in both modes. Lenient first-wins handling for duplicate keys is unchanged.
+- **Changed:** An explicit `@yini strict` or `@yini lenient` declaration MUST match the active parser mode. Either mismatch now produces an error and invalidates the document; declarations still do not switch parser modes.
 - **Added:** Command Strings using the lowercase `command"""` form. They preserve command lines while removing structural indentation and have no execution semantics. The `c` prefix remains Classic, not a Command String alias.
 - **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. All four prefixes use the same escape rules and produce the same string values.
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.

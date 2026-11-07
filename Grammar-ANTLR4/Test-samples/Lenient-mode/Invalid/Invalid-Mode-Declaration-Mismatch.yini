@@ -1,0 +1,5 @@
+# Primary failure: semantic mode mismatch; the declaration requires strict mode.
+@yini strict
+^ Config
+value = 1
+/END

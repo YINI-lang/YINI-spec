@@ -110,7 +110,7 @@ YINI also follows the **principle of least surprise** / **least astonishment** (
 
 The principle **explicit is better than implicit** is reflected throughout the format. YINI favors visible section structure, explicit string delimiters (start/end characters), explicit list and object delimiters, and explicit strict-mode document completion using `/END`.
 
-YINI uses an **explicit mode contract**. A mode declaration states how the document expects to be parsed. The parser checks that expectation against its active mode and reports a mismatch rather than silently changing modes.
+YINI uses an **explicit mode contract**. A mode declaration states how the document expects to be parsed. The parser checks that expectation against its active mode and rejects a mismatch rather than silently changing modes.
 
 At the same time, YINI does not try to follow every possible principle to its extreme. It does not aim for maximum compactness, maximum flexibility, or a large expression system. In several cases, YINI deliberately chooses a slightly more explicit or restricted rule because configuration files are often read, reviewed, edited, and validated over time.
 
@@ -222,7 +222,7 @@ Allowing a document to change the active parsing mode would let the input choose
 
 **Validation policy should be controlled by the application, not by the data being validated.** — If the document can control its own validation policy, it can potentially weaken or alter the checks applied to itself. Keeping validation policy in the application gives the application consistent, predictable control over what it accepts.
 
-Instead, a mismatch produces a diagnostic. A strict declaration parsed in lenient mode is an error because otherwise the document could be accepted under rules looser than its author requested. This could give users the false impression that the document passed strict validation. A lenient declaration parsed in strict mode produces the diagnostic required by the specification, so the author's declared intent is not silently ignored.
+An explicit mode declaration must match the parser's active mode. Either mismatch is an error and the document is rejected. Accepting a strict declaration in lenient mode could give users the false impression that the document passed strict validation; accepting a lenient declaration in strict mode would apply different rules from those the author declared. Rejecting both avoids confusion and keeps the declared intent aligned with the validation actually performed.
 
 This is useful for production configuration, CI validation, generated files, and shared project files where validation intent should be visible. The declaration remains optional so ordinary hand-edited files can stay lightweight and let the surrounding parser configuration decide.
 
@@ -700,7 +700,9 @@ Collecting validation requirements gives implementers a checklist across the syn
 
 #### 12.2.1. Structural Requirements
 
-Duplicate names force a choice: a later definition could replace, merge with, or be ignored in favor of the earlier one. Replacement or merging would let a later block silently change a setting written above it. Lenient mode keeps the first definition and warns; strict mode rejects the duplicate. 
+**Author's words:** *The first-wins rule was also chosen by following a common principle from programming languages: once an entity has been declared and defined (a key-value pair is seen as both a declaration and a definition in YINI), it cannot simply be redeclared without being flagged as a duplicate. On the other hand, explicitly giving an existing declaration a new definition is a different matter, but that goes a little beyond the scope of this rationale.*
+
+Duplicate names force a choice: a later definition could replace, merge with, or be ignored in favor of the earlier one. Replacement or merging would let a later definition silently change a setting written above it. A YINI key-value pair both declares its key and defines its value. Following the common rule against redeclaring an already defined entity, a duplicate key does not replace the first value: lenient mode keeps the first value and warns, while strict mode rejects the duplicate. Explicit redefinition is a separate question. Duplicate sections are errors in both modes because a section may contain members and child sections, making an ignored duplicate block's boundaries and contents harder to interpret predictably.
 
 First-wins can also surprise an author expecting an override, which is why the warning matters. Member and child-section names share a namespace so each container can become one object without collisions.
 
@@ -773,7 +775,7 @@ Validation checks the original source line endings, so strict mode still rejects
 
 ### 13.3. Value and Null Handling
 
-Lenient missing values become `null` with a required warning. First-wins duplicate handling avoids silently replacing an earlier setting and also requires a warning. See §§8.2 and 12.2.1.
+Lenient missing values become `null` with a required warning. First-wins duplicate-key handling avoids silently replacing an earlier setting and also requires a warning. See §§8.2 and 12.2.1.
 
 ### 13.4. Boolean Canonicalization
 
@@ -826,8 +828,8 @@ Continuing after an error helps an editor show several problems at once. It does
 not establish that the recovered data is safe to use as valid configuration.
 Keeping recovery results explicitly partial and the document invalid allows
 helpful diagnostics without letting a parser's chosen repairs change what counts
-as valid YINI. Warnings for defined lenient forms, such as first-wins duplicates,
-remain separate from errors for invalid syntax.
+as valid YINI. Warnings for defined lenient forms, such as first-wins duplicate
+keys, remain separate from errors for duplicate sections and invalid syntax.
 
 ### 14.2. Versioning Strategy
 

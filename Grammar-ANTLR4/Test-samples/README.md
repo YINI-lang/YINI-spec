@@ -13,6 +13,10 @@ failure is lexical, syntactic, or semantic.
 Grammar recognition alone does not validate semantic fixtures. In particular,
 numeric bounds and rounding, invalid escape sequences, marker positions, and
 recovery-result validity must be checked by the implementing parser or validator.
+The mode-declaration mismatch fixtures are also semantic: either declared mode
+must match the active mode, or the document is invalid.
+The duplicate-section fixtures are semantic errors in both modes; duplicate-key
+handling remains mode-specific.
 The same applies to line endings inside skipped block comments and the position
 of shebang-like comments.
 Leading numeric signs are separate tokens. Host validation must reject whitespace
