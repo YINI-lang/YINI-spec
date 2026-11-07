@@ -205,7 +205,7 @@ fragment SECTION_MARKER_INVALID
 fragment REST_CHAR
   // : ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
   // :~([@#> \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
-  : ~([@#^§>< \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+  : ~([@#^§>< \t\r\n'"`=,+0123456789/-] | '[' | ']' | '{' | '}' | ':')
   ;
 
 /* ------------------------------------------------------------------
@@ -355,10 +355,12 @@ fragment COMMAND_LINE_BREAK
   ;
 
 // NOTE: This NUMBER rule must come before KEY, IDENT, etc.
+// Leading signs are separate tokens so '+' can also separate concatenation operands.
+// Exponent signs remain part of the NUMBER token.
 NUMBER
-  : SIGN? INTEGER FRACTION? EXPONENT?
-  | SIGN? FRACTION EXPONENT?
-  | SIGN? (BIN_INTEGER | OCT_INTEGER | DUO_INTEGER | HEX_INTEGER)
+  : INTEGER FRACTION? EXPONENT?
+  | FRACTION EXPONENT?
+  | BIN_INTEGER | OCT_INTEGER | DUO_INTEGER | HEX_INTEGER
   ;
 
 /* ------------------------------------------------------------------
@@ -379,6 +381,7 @@ CB: ']'; // Closing Bracket.
 OC: '{'; // Opening Curly Brace.
 CC: '}'; // Closing Curly Brace.
 PLUS: '+';
+MINUS: '-';
 DOLLAR: '$';
 // ASTERIX: '*';
 PC: '%'; // PerCent sign.

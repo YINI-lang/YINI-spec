@@ -15,6 +15,10 @@ numeric bounds and rounding, invalid escape sequences, marker positions, and
 recovery-result validity must be checked by the implementing parser or validator.
 The same applies to line endings inside skipped block comments and the position
 of shebang-like comments.
+Leading numeric signs are separate tokens. Host validation must reject whitespace
+or comments between a sign and its number, and include the sign when validating
+the numeric value or normalizing its source spelling. Numeric concatenation
+operands remain invalid in strict mode even when grammar recognition succeeds.
 For Command Strings, the host validator must also check structural indentation
 and that the closing delimiter occupies its own line. The lexer recognizes the
 multiline token but does not perform those value and placement checks.

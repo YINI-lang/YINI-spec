@@ -17,5 +17,10 @@ subnormal = 5e-324
 zero_integer = -0
 zero_float = -0.0
 zero_exponent = -0e3
+positive = +3
+positive_fraction = +.5
+positive_exponent = +4E+8
+signed_list = [-1, +2, -.5]
+signed_object = { positive: +3, negative: -4 }
 
 /END

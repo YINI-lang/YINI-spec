@@ -13,6 +13,7 @@ Spec. changes:
 - **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. The ANTLR lexer recognizes both prefixes with the existing escape rules.
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` in new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
+- **Fixed:** Clarified numeric signs and the concatenation `+` operator in the specification and examples, and corrected the ANTLR4 grammar to recognize compact forms such as `"a"+42` and `"a"++42` (valid in lenient mode).
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source
   spelling: digit separators and unnecessary plus signs are removed, and `E`

@@ -1,6 +1,6 @@
 # YINI Rationale
 
-**Applies to:** YINI Specification v1.0.0-RC.7
+**Applies to:** YINI Specification v1.0.0-RC.6x
 **Author:** Marko K. Seppänen  
 **Project:** YINI-lang
 
@@ -512,6 +512,8 @@ YINI does not run the commands. The application chooses the shell or terminal in
 <a id="b29-string-concatenation-and-non-arithmetic-"></a>
 
 The `+` operator joins strings without adding arithmetic or a general expression language. Requiring the first operand to be a string rules out expressions such as `1 + 2 + "3"`, which could otherwise suggest either addition or concatenation. Strict mode requires every operand to be a string for an explicit, simple contract. Lenient mode permits later scalar operands for convenience, but needs conversion rules as a result. 
+
+Optional spacing keeps compact expressions valid without making spaces change their meaning. A numeric operand can still have an explicit sign: in `"a"++42`, the first `+` joins the operands and the second marks the number as positive. Spaces remain recommended because `"a" + +42` is easier to read.
 
 For example, this lenient-mode expression:
 

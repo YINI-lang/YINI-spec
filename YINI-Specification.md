@@ -4,7 +4,7 @@ _YINI: A clear configuration file format — clean, readable, structured._
 
 # Specification for the YINI Format
 **Version:** 1.0.0-RC.6x WIP
-**Date:** 2026-11-04
+**Date:** 2026-11-07
 
 > **Status:** This is a release-candidate draft. Minor clarifications and corrections may still be made before YINI 1.0.0.
 
@@ -1338,6 +1338,8 @@ greeting = "Hi, hello there"
 
 The `+` operator in YINI is exclusively a string concatenation operator. YINI does not define numeric addition. For readability, whitespace around `+` is recommended, but not required.
 
+Between concatenation operands, `+` MUST be interpreted as the operator, even without surrounding whitespace. A numeric operand MAY have its own leading `+` or `-` sign. Thus, `"a"+42` joins `"a"` and `42`, while `"a"++42` joins `"a"` and `+42`.
+
 **In strict mode**, all concatenation operands MUST be string literals. This includes Raw/R-prefixed, Classic/C- or E-prefixed, or any Triple-Quoted strings.
 
 **In lenient mode**, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not performed. Non-string scalar operands MUST first be converted to their parsed scalar canonical string representation before concatenation.
@@ -1364,6 +1366,15 @@ str2 = "1" + 2 + 3
 
 str3 = "a" + +42
 // "a42"
+
+str4 = "a"+42
+// "a42"
+
+str5 = "a"++42
+// "a42"
+
+str6 = "a"+-42
+// "a-42"
 ```
 
 **Invalid in both modes:**
@@ -1476,6 +1487,8 @@ In strict mode, this is invalid because `5432` is not a string literal (it's a n
 ## 7. Number Literals
 ### 7.1. Numbers
 YINI supports both integer and floating-point literals. Numbers may be signed and written in decimal notation.
+
+A leading `+` or `-` sign MUST immediately precede the number, without whitespace or comments between them. Signs within exponents follow the same adjacency rule.
 
 - **Integers:** A sequence of digits, optionally prefixed with + or -.
 
@@ -3691,6 +3704,8 @@ and MUST check the original placement of shebang-like sequences. These checks
 need not be enforced by the ANTLR4 grammar. A lexer token or grammar error for a
 misplaced `#!` MUST NOT override its required treatment as a comment in lenient
 mode.
+
+The grammar recognizes leading numeric signs as separate tokens. The implementing parser or validator MUST check that each sign immediately precedes its number without intervening whitespace or comments.
 
 ### 16.6. Common Mistakes and Pitfalls
 Below are some common mistakes and misunderstandings when writing YINI files, especially for users familiar with other formats such as YAML, JSON, or classic INI. This table clarifies syntax edge cases and helps avoid subtle bugs.
