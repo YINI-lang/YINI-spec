@@ -902,14 +902,25 @@ Although indentation has no semantic meaning, authors SHOULD visually indent nes
 
 #### 5.3.1. Section Marker Separators
 
-For readability, underscores (`_`) MAY be placed between repeated section markers. These underscores are visual separators only and do not change the section depth. Section marker separators are supported only in repeated section marker form. They MUST NOT be used in numeric shorthand section headers.
+For readability, underscores (`_`) MAY be placed between repeated section markers.
 
-Rules:
+Rules for separator underscores:
+
 - An underscore MAY appear only between two repeated occurrences of the same section marker character.
 - An underscore MUST NOT appear at the beginning or end of the section marker sequence.
 - An underscore MUST NOT appear adjacent to another `_`.
 - Section marker separators are supported only in repeated section marker form, not in numeric shorthand form.
 - Section marker separators do not count toward the section depth. Only actual section marker characters are counted.
+
+These rules do not restrict underscores in section names. A section name MAY begin with `_`, even without whitespace after the marker sequence. That underscore is part of the name.
+
+For example:
+```yini
+^_name          // Depth 1, name "_name".
+^ _name         // The same header with a space for readability.
+^^_^_name       // Depth 3, name "_name"; marker sequence "^^_^".
+^_              // Depth 1, name "_".
+```
 
 For example, the following are equivalent:
 ```yini
@@ -925,11 +936,11 @@ For example, the following are equivalent:
 
 These following examples are all invalid:
 ```yini
-^^_ Section      // ❌ Invalid trailing underscore.
+^^_ Section      // ❌ Invalid: extra text after the section name "_".
 ^__^ Section     // ❌ Invalid adjacent underscores.
 
 _^ Section       // ❌ Invalid leading underscore.
-^_ Section       // ❌ Invalid trailing underscore.
+^_ Section       // ❌ Invalid: extra text after the section name "_".
 
 ^_< Section      // ❌ Invalid: section marker characters must not be mixed.
 ^1_0 Section      // ❌ Invalid: separators are not allowed in numeric shorthand section headers.

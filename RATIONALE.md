@@ -362,7 +362,7 @@ Requiring quotes in both modes reduces the ambiguity behind YAML 1.1's "Norway p
 
 ### 5.1. Syntax
 
-A header makes a section boundary visible without relying on indentation. TODO: Explain the spacing difference between repeated markers and numeric shorthand.
+A header makes a section boundary visible without relying on indentation. Optional spacing allows compact repeated-marker headers such as `^name`; adding a space can make the name easier to read. Numeric shorthand requires a space or tab to keep the depth number separate from the name.
 
 ### 5.2. Section Markers (`^`, `§`, `>`, or `<`)
 
@@ -399,9 +399,9 @@ TODO: Explain the chosen maximum depth of 255.
 
 --TODO: tell from where this was inspired, java? etc... Also a user wish--
 
-Optional underscores make longer repeated-marker sequences easier to count without changing their depth. 
+Optional underscores make longer repeated-marker sequences easier to count without changing their depth. For example, `^^^_^^^_^^^` is easier to scan than `^^^^^^^^^`.
 
-They add another valid spelling for the same header, but allow levels through 9 to stay visible as repeated markers without becoming one hard-to-count run. For example, `^^^_^^^_^^^` is easier to scan than `^^^^^^^^^`.
+Keeping `_` available at the start of a section name preserves the same identifier rules for keys and sections. In `^_name`, the underscore starts the name because it is not between two identical markers. A space, as in `^ _name`, makes the boundary easier to read while keeping compact headers valid.
 
 Earlier drafts used a lower maximum repeated-marker depth. Adding separators made levels 1–9 readable enough to write directly, allowing the limit to increase from 6 to 9.
 
