@@ -583,7 +583,9 @@ invalid = hex: FF0033  // No space is allowed after the prefix.
 
 Using one unambiguous meaning for `#` simplifies tokenization and supports YINI's preference for predictable syntax.
 
-Binary makes flags and bit masks easy to read. The `%` alias was inspired by the author's experience with assembly programming on the Commodore Amiga under AmigaOS. It offers a shorter spelling familiar from assemblers; see [vasm's Motorola syntax](https://github.com/Leffmann/vasm/blob/master/doc/syntax_mot.texi) and [ca65's binary prefix](https://cc65.github.io/doc/ca65.html#ss4.2).
+Binary makes flags and bit masks easy to read. The `%` binary prefix is deprecated because it is less conventional, and `%` is commonly associated with modulo operations or percentages in programming. Preferring the explicit `0b` prefix improves readability for developers unfamiliar with number bases.
+
+**Historical note:** The `%` alias was inspired by the author's experience with assembly programming on the Commodore Amiga under AmigaOS. It offered a shorter spelling familiar from assemblers; see [vasm's Motorola syntax](https://github.com/Leffmann/vasm/blob/master/doc/syntax_mot.texi) and [ca65's binary prefix](https://cc65.github.io/doc/ca65.html#ss4.2).
 
 Octal suits Unix file permissions.
 

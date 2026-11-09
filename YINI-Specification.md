@@ -1448,7 +1448,7 @@ In lenient mode, scalar operands are **converted to strings before concatenation
   * `0xFF` becomes `255`.
 - Booleans are converted to `true` or `false`.
 - Null is converted to `null`.
-- Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion.
+- Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion. The `%` prefix is deprecated; see [Section 7.4](#74-number-formats).
 - Lists and inline objects MUST NOT be converted to strings and MUST NOT be used as operands in concatenation expressions.
 
 Example:
@@ -1588,7 +1588,7 @@ For readability, an underscore (`_`) MAY be used as a digit separator inside num
 
 Underscores are permitted:
 - Between two digits.
-- Immediately after a supported base prefix: `0b`, `0o`, `0x`, `0z`, `hex:`, or `%`.
+- Immediately after a supported base prefix: `0b`, `0o`, `0x`, `0z`, `hex:`, or the deprecated `%` prefix (see [Section 7.4](#74-number-formats)).
 - Between digit groups in base-prefixed number literals, such as `0xFF_AA`, `0b1010_1100`, or `0o755_644`.
 - Underscores MAY appear between digits in the integer part, fractional part, or exponent part of a decimal number.
 
@@ -1608,7 +1608,7 @@ hex2 = 0xCafe_Babe
 hex3 = 0x_ab_cd_12_34_ef
 hex4 = hex:_FF_AA_00
 binary_grouped = 0b1111_0001
-binary_alt = %_1010
+binary_alt = %_1010  // Deprecated: use 0b_1010 instead.
 octal_grouped = 0o6_4_0
 duodecimal = 0z_2EX9
 ```
@@ -1655,7 +1655,7 @@ bad_exp2 = 1e_10      // ❌ Invalid: underscore after exponent marker.
 ### 7.4. Number Formats
 In addition to standard decimal numbers (base-10), YINI supports other number base literals as well.
 
-Binary and hexadecimal values also allow **alternative notations** for convenience and readability.
+Hexadecimal values also allow **alternative notations** for convenience and readability. Binary values retain the deprecated `%` alternative described below.
 
 All integer forms below MUST follow the signed 64-bit range in [Section 7.1](#71-numbers), in both parsing modes. A base prefix does not change the numeric type or range.
 
@@ -1664,10 +1664,12 @@ For example, `0x7FFFFFFFFFFFFFFF` is valid. `0x8000000000000000` and `0xFFFFFFFF
 | Number Format (case-insensitive) | Alternative Format | Description | Base | Notes |
 |----------|--|---|---|---|
 | `3e4`    | - | Exponent notation number | 10-base | Result: `3 × 10⁴`
-| `0b1010` | `%1010` | Binary number prefix | 2-base | Digits: `0` and `1` only
+| `0b1010` | `%1010` (deprecated) | Binary number prefix | 2-base | Digits: `0` and `1` only
 | `0o7477` | - | Octal number | 8-base prefix | Digits: `0`–`7`
 | `0z2EX9` | `0z2BA9` | Duodecimal (AKA dozenal) prefix | 12-base | `X` = `A` = 10, `E` = `B` = 11 (case-insensitive)
 | `0xF390` | `hex:F390`, `HEX:f390` | Hexadecimal number prefix | 16-base | `0`–`9`, `a`–`f` (or `A`–`F`) = 10–15 
+
+**Deprecated:** The `%` binary prefix is deprecated. New documents SHOULD use the `0b` prefix. The `%` form remains valid in both parsing modes and has the same numeric value, range, and digit-separator rules as the `0b` form. In both parsing modes, implementations SHOULD issue a deprecation warning when encountering a `%`-prefixed binary literal, recommending the `0b` prefix instead. For example: "The `%` binary prefix is deprecated. Use `0b` instead."
 
 **Note:** All prefix-based number formats in YINI are case-insensitive. For example, `0xF390`, `0XF390`, `0xf390`, and `0Xf390` are all valid hexadecimal literals.
 
@@ -2077,7 +2079,7 @@ The following characters and character sequences are reserved by the YINI syntax
 | `` ` `` | Identifier delimiter | Opens and closes a backticked identifier |
 | `--` | Line disabling |  |
 | `/END` | Document terminator | Marks the end of a YINI document; case-insensitive, optional in lenient mode, and required in strict mode |
-| `%` | Binary prefix | Begins binary number |
+| `%` | Binary prefix (deprecated) | Begins a binary number; use `0b` instead (see [Section 7.4](#74-number-formats)) |
 | `hex:` | Hexadecimal number prefix | Begins an explicit hexadecimal number literal; case-insensitive |
 | `@` | Directive prefix | Reserved for future syntax |
 
@@ -3587,13 +3589,10 @@ Notes:
 - All dates in international format, YYYY-MM-DD.
 
 Upcoming release / v1.0.0 RC 7
+- **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
+- **Deprecated:** The `%` binary prefix in favor of `0b`. It remains valid in both parsing modes; implementations SHOULD issue a deprecation warning recommending `0b`.
 - **Changed:** Duplicate sections under the same parent now produce an error and invalidate the document in both modes. Lenient first-wins handling for duplicate keys is unchanged.
 - **Changed:** An explicit `@yini strict` or `@yini lenient` declaration MUST match the active parser mode. Either mismatch now produces an error and invalidates the document; declarations still do not switch parser modes.
-- **Added:** Command Strings using the lowercase `command"""` form. They preserve command lines while removing structural indentation and have no execution semantics. The `c` prefix remains Classic, not a Command String alias.
-- **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. All four prefixes use the same escape rules and produce the same string values.
-- **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
-- **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
-- **Clarified:** Section 7.4 now states that non-decimal integer literals share the signed 64-bit range in both modes, with hexadecimal overflow examples.
 - **Changed:** In lenient mode, a missing root-level or section-level value still becomes `null`, but now MUST produce a warning diagnostic. This includes assignments followed only by a comment, such as `color = #FF9900`. Strict mode still rejects missing values.
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source
@@ -3608,6 +3607,15 @@ Upcoming release / v1.0.0 RC 7
   of the YINI data model. In practice, orphan members and top-level sections
   appear as siblings in the parsed output rather than placing orphan members
   inside a separate `base` object.
+- **Changed:** Backticked identifiers now reject raw C1 control characters (U+007F–U+009F) in addition to C0 control characters (U+0000–U+001F). Only `` \` `` and `\\` are valid escape sequences; control-character escapes are not supported.
+- **Changed:** Source LF, CRLF, and CR line endings now become LF in all multiline string values, including Raw and Escaped Triple-Quoted Strings and Command Strings, in both modes. Previously, their original characters were preserved. Escape results stay unchanged. Mixed-line-ending checks still use the original source.
+- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Both lenient-mode and strict-mode parsers MUST report an error with diagnostic information.
+- **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
+- **Added:** Command Strings using the lowercase `command"""` form. They preserve command lines while removing structural indentation and have no execution semantics. The `c` prefix remains Classic, not a Command String alias.
+- **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. All four prefixes use the same escape rules and produce the same string values.
+- **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
+- **Added:** Classic strings now support `\`` for a literal backtick.
+- **Clarified:** Section 7.4 now states that non-decimal integer literals share the signed 64-bit range in both modes, with hexadecimal overflow examples.
 - **Clarified:** The `=` inline object member separator is valid YINI syntax
   in lenient mode, not an optional parser extension. Conforming lenient-mode
   parsers MUST accept both `:` and `=`, including mixed separators within the
@@ -3617,12 +3625,7 @@ Upcoming release / v1.0.0 RC 7
   whitespace. Only `SPACE` and `TAB` are syntactic horizontal whitespace; only
   `LF`, `CRLF`, and `CR` are line endings. Unicode line and paragraph separators
   (`U+2028` and `U+2029`) are not YINI line endings.
-- **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
-- **Changed:** Backticked identifiers now reject raw C1 control characters (U+007F–U+009F) in addition to C0 control characters (U+0000–U+001F). Only `` \` `` and `\\` are valid escape sequences; control-character escapes are not supported.
-- **Added:** Classic strings now support `\`` for a literal backtick.
-- **Changed:** Source LF, CRLF, and CR line endings now become LF in all multiline string values, including Raw and Escaped Triple-Quoted Strings and Command Strings, in both modes. Previously, their original characters were preserved. Escape results stay unchanged. Mixed-line-ending checks still use the original source.
 - **Clarified:** End-of-file (`EOF`) may terminate an otherwise complete final logical line in both lenient and strict mode. A lenient document may end immediately after its final assignment, and a strict document may end immediately after `/END`, without a trailing line ending.
-- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Both lenient-mode and strict-mode parsers MUST report an error with diagnostic information.
 - **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
 
 v1.0.0 RC 6, 2026-05-30
