@@ -110,7 +110,7 @@ YINI also follows the **principle of least surprise** / **least astonishment** (
 
 The principle **explicit is better than implicit** is reflected throughout the format. YINI favors visible section structure, explicit string delimiters (start/end characters), explicit list and object delimiters, and explicit strict-mode document completion using `/END`.
 
-YINI uses an **explicit mode contract**. A mode declaration states how the document expects to be parsed. The parser checks that expectation against its active mode and rejects a mismatch rather than silently changing modes.
+YINI uses an **explicit mode contract**. A mode declaration states how the document expects to be parsed. The parser checks that expectation against its active mode and reports an error or warning according to the direction of the mismatch, without changing modes.
 
 At the same time, YINI does not try to follow every possible principle to its extreme. It does not aim for maximum compactness, maximum flexibility, or a large expression system. In several cases, YINI deliberately chooses a slightly more explicit or restricted rule because configuration files are often read, reviewed, edited, and validated over time.
 
@@ -218,11 +218,13 @@ A mode declaration records the document's expected validation mode:
 
 **The declaration expresses intent; it does not select or change the parser's active mode.** 
 
-Allowing a document to change the active parsing mode would let the input choose the rules used to validate itself. For example, a file could request lenient parsing even though the calling application requires strict validation, causing input that the application intended to reject to be accepted. Keeping mode selection outside the document makes the validation policy predictable and under the caller's control. The declaration therefore records the author's intent and detects mismatches, but does not override the selected mode.
+**Safety and security come first; user experience comes second.** Validation policy belongs to the application, not to the data being validated. For example, allowing a document to select lenient parsing when the application requires strict validation could cause input that the application intended to reject to be accepted. Keeping mode selection outside the document prevents the declaration from weakening that policy.
 
-**Validation policy should be controlled by the application, not by the data being validated.** — If the document can control its own validation policy, it can potentially weaken or alter the checks applied to itself. Keeping validation policy in the application gives the application consistent, predictable control over what it accepts.
+**Declared strict, parsed leniently:** The parser is applying weaker rules than the document requires. This creates false assurance: the file may contain errors that strict mode would catch but lenient mode accepts. Of the two mismatch directions, this is the more dangerous one because required validation is missing. An error prevents acceptance under that unmet requirement.
 
-An explicit mode declaration must match the parser's active mode. Either mismatch is an error and the document is rejected. Accepting a strict declaration in lenient mode could give users the false impression that the document passed strict validation; accepting a lenient declaration in strict mode would apply different rules from those the author declared. Rejecting both avoids confusion and keeps the declared intent aligned with the validation actually performed.
+**Declared lenient, parsed strictly:** A configuration written for lenient parsing may also satisfy every strict requirement. The application can validate that file strictly without requiring the author to change its declaration first. A warning makes the difference visible without rejecting otherwise valid input. Every strict validation requirement still applies.
+
+A file authored for lenient mode may contain trailing commas, `=` separators inside inline objects, or missing values. Strict mode rejects these constructs. Presenting the mode-mismatch warning before any resulting content errors helps users understand their common cause, instead of confronting them with several apparently unrelated failures. The warning explains the situation; it does not suppress strict validation errors.
 
 This is useful for production configuration, CI validation, generated files, and shared project files where validation intent should be visible. The declaration remains optional so ordinary hand-edited files can stay lightweight and let the surrounding parser configuration decide.
 
