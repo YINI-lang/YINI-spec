@@ -56,3 +56,13 @@ When preparing a release:
    with the intended release.
 5. Follow the [Maintainer Guide](./Maintainer-Doc.md#release-process)
    for release preparation and publication.
+
+## Version Checks
+
+The [Version Consistency](../.github/workflows/check-versions.yml) workflow
+runs the version checker and its tests on pull requests.
+
+To run it manually, open **Actions → Version Consistency → Run workflow**,
+choose a branch, and click **Run workflow**.
+
+Manual runs are available once the workflow is on the repository's default branch.
