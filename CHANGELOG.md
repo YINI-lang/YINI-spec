@@ -8,6 +8,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 
 ## [Upcoming/Unreleased] - FUTURE
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` in new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
+- **Deprecated:** The `%` binary prefix in favor of `0b`. It remains valid in both parsing modes; implementations SHOULD issue a deprecation warning recommending `0b`.
 - **Changed:** Duplicate sections under the same parent now produce an error and invalidate the document in both lenient and strict mode. Lenient first-wins handling for duplicate keys is unchanged.
 - **Changed:** `@yini strict` and `@yini lenient` declarations now MUST match the active parser mode. Either mismatch produces an error and rejects the document; declarations still do not change the active mode.
 - **Fixed:** Updated the `ANTLR4` lexer to recognize block comments in section headers where whitespace is allowed, such as `^ A /* note */`, while preserving the required space after numeric shorthand markers.

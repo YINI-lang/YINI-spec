@@ -10,8 +10,8 @@
 /* 
   This PARSER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
-  Version:
-  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.6x YINI Spec Package).
+  Grammar version:
+  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.6x Spec).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors

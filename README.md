@@ -465,16 +465,16 @@ For more details, see section D.2, _"Acknowledgments & Special Thanks"_, in the 
 
 ## Version Mapping Table
 
-| Date     | Specification Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
-|----------|-----------------|--------------|--------------|---------------|
-| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
-| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   | 1.0.0-RC.2   | 1.0.0-RC.2    |
-| 2025 Sep | 1.0.0-RC.3      | 1.0.0-RC.3   | 1.1.0-RC.1   | 1.1.0-RC.1    |
-| 2026 Mar | 1.0.0-RC.4      | 1.0.0-RC.4   | 1.2.0-RC.1   | 1.2.0-RC.1    |
-| 2026 Apr | 1.0.0-RC.5      | 1.0.0-RC.5   | 1.2.0-RC.2   | 1.2.0-RC.2    |
-| 2026 May | 1.0.0-RC.6      | 1.0.0-RC.6   | 1.3.0-RC.1   | 1.3.0-RC.1    |
-| 2026 Nov | 1.0.0-RC.6x     | 1.0.0-RC.6x  | 1.4.0-RC.1   | 1.4.0-RC.1    |
-| …        | …               | …            | …            | …             |
+| Date     |Specification v. |Grammar ANTLR4 lexer/parser  v.|
+|----------|-----------------|-------------------------------|
+| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   |
+| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   |
+| 2025 Sep | 1.0.0-RC.3      | 1.1.0-RC.1   |
+| 2026 Mar | 1.0.0-RC.4      | 1.2.0-RC.1   |
+| 2026 Apr | 1.0.0-RC.5      | 1.2.0-RC.2   |
+| 2026 May | 1.0.0-RC.6      | 1.3.0-RC.1   |
+| 2026 Nov | 1.0.0-RC.6x     | 1.4.0-RC.1   |
+| …        | …               | …            |
 
 ---
 
