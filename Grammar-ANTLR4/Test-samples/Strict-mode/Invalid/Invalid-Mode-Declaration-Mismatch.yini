@@ -1,5 +1,0 @@
-# Primary failure: semantic mode mismatch; the declaration requires lenient mode.
-@yini lenient
-^ Config
-value = 1
-/END

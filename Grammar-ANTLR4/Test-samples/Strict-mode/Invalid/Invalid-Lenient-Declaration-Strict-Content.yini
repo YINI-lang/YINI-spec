@@ -1,0 +1,5 @@
+# Primary failure: semantic strict-mode trailing comma; the declaration does not select lenient mode.
+@yini lenient
+^ Config
+value = [1,]
+/END

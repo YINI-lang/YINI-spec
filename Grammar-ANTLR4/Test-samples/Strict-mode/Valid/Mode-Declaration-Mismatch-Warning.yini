@@ -1,0 +1,5 @@
+# Valid with a warning: the lenient declaration does not disable strict validation.
+@yini lenient
+^ Config
+value = 1
+/END

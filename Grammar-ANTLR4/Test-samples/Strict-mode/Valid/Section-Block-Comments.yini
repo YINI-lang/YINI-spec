@@ -2,8 +2,7 @@
 ^ Root /* trailing */ # line comment
 key = 1
 ^^ /* between marker and name */ Child /* trailing
-   across lines */
-key = 2
-^3 /* after required numeric space */ Grandchild
-key = 3
+   across lines */ key = 2
+^3 /* after required numeric space */ Grandchild /* trailing
+   numeric header */ key = 3
 /END

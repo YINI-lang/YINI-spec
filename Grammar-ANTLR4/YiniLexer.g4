@@ -239,10 +239,12 @@ SECTION_HEAD
   // : SECTION_MARKER HSPACE* SECTION_NAME_PART HSPACE* EOL+ // Repeated/basic section headers do not require whitespace before the name.
   : SECTION_MARKER_SHORTHAND HSPACE+
     (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)* SECTION_NAME_PART
-    (HSPACE | SECTION_BLOCK_COMMENT)* (EOL+ | SECTION_TAIL_COMMENT* EOF)
+    (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)*
+    (EOL+ | SECTION_TAIL_COMMENT* EOF | SECTION_MULTILINE_BLOCK_COMMENT)
   | SECTION_MARKER_BASIC_REPEAT
     (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)* SECTION_NAME_PART
-    (HSPACE | SECTION_BLOCK_COMMENT)* (EOL+ | SECTION_TAIL_COMMENT* EOF)
+    (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)*
+    (EOL+ | SECTION_TAIL_COMMENT* EOF | SECTION_MULTILINE_BLOCK_COMMENT)
   ;
 
 INVALID_SECTION_HEAD
@@ -407,11 +409,15 @@ fragment SECTION_TAIL_COMMENT
 
 // A section name must begin on the same line as its marker.
 fragment SECTION_SINGLE_LINE_BLOCK_COMMENT
-  : '/*' ~[\r\n]*? '*/'
+  : '/*' ( ~[*\r\n] | '*'+ ~[*/\r\n] )* '*'+ '/'
   ;
 
-fragment SECTION_BLOCK_COMMENT
-  : '/*' .*? '*/'
+// A newline in a trailing block comment ends the logical section header.
+// Consume the closing delimiter before lexing content on the following line.
+// The prefix must reach a newline without crossing an earlier closing delimiter.
+fragment SECTION_MULTILINE_BLOCK_COMMENT
+  : '/*' ( ~[*\r\n] | '*'+ ~[*/\r\n] )* '*'* ('\r' '\n'? | '\n')
+    .*? '*/'
   ;
 
 WS

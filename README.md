@@ -10,7 +10,7 @@
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
 **Specification Package Version:** 1.0.0-RC.6x ([Version Mapping Table](./README.md#version-mapping-table))  
-**Date:** 2026-11-02  
+**Date:** 2026-11-13  
 **Status:** Release Candidate  
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
