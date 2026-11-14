@@ -1,0 +1,11 @@
+/*
+  Primary failure: syntactic.
+  Rule: a string and a following number require a concatenation operator.
+  A negative sign alone is not an operator.
+*/
+
+^ Strings
+missing = "a"42
+negative = "a"-42
+
+/END

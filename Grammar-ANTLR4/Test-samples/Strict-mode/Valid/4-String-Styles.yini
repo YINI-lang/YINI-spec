@@ -3,6 +3,8 @@
 raw        = R"path\to\file.txt"    # or simply "path\to\file.txt"
 
 classic    = C"Line1\nLine2"         # escape processing
+escaped    = e"Line1\nLine2"         # same escape processing
+escapedQ   = E'Line1\nLine2'         # uppercase alias, single quotes
 
 tripleRaw  = """
 Exact
@@ -14,5 +16,7 @@ tripleC    = C"""
 LineA\n
   LineB\tTabbed
 """
+
+tripleE    = E"""LineA\nLineB"""
 
 /END // (required in strict mode)

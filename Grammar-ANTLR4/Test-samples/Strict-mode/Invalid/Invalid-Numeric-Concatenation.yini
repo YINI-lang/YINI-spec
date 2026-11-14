@@ -1,0 +1,13 @@
+/*
+  Primary failure: semantic.
+  Rule: strict-mode concatenation requires string operands, including when
+  the operator and numeric sign are adjacent. Grammar recognition succeeds;
+  the host validator must reject these numeric operands.
+*/
+
+^ Strings
+unsigned = "a"+42
+positive = "a"++42
+negative = "a"+-42
+
+/END
