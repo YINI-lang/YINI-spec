@@ -9,6 +9,7 @@
 *.temp
 
 *.local
+*.local.md
 
 .env
 .WORK
