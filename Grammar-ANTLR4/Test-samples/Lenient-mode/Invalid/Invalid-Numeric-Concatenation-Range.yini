@@ -1,0 +1,12 @@
+/*
+  Primary failure: semantic, lenient mode.
+  Rule: numeric range checks also apply to concatenation operands. Source-text
+  normalization does not make an invalid number literal valid.
+*/
+
+^ Labels
+integer = "number: " + 9223372036854775808
+overflow = "number: " + 1e400
+underflow = "number: " + 1e-400
+
+/END

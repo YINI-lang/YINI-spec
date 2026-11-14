@@ -9,13 +9,23 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Specification Package Version:** 1.0.0-RC.6 ([Version Mapping Table](./README.md#version-mapping-table))  
-**Date:** 2026-05-30  
+**Specification Package Version:** 1.0.0-RC.7 ([Version Mapping Table](./README.md#version-mapping-table))  
+**Date:** 2026-11-14  
 **Status:** Release Candidate  
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
 - [Latest updates/changes in this package](/CHANGELOG.md)  
-- [YINI Homepage](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=readme)  
+- [YINI Homepage](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_content=readme&utm_medium=referral)  
+
+---
+
+## Specification and Repository Guide
+
+- [YINI Specification](./YINI-Specification.md) — syntax, data model, and validation rules.
+- [ANTLR4 Grammar](./Grammar-ANTLR4/) — lexer and parser grammars for implementers.
+- [YINI Examples](./Examples/README.md) — lenient and strict examples, with selected expected JSON outputs.
+
+The specification takes precedence if it conflicts with the grammar. Grammar recognition alone does not establish conformance; implementations must also enforce the specification's validation rules.
 
 ---
 
@@ -162,7 +172,7 @@ YINI is designed to prioritize **readability, clarity, and explicit structure**.
 - ✔️ **Flexible strings** using single quotes, double quotes, Classic escaped strings, and Triple-Quoted Strings.
 - ✔️ **Supports the `null` value type.**
 - ✔️ **Explicit string concatenation** using `+`; concatenation expressions must begin with a string literal.
-- ✔️ **Optional mode declarations** with `@yini strict` and `@yini lenient`, declarations state intent but do not switch parser mode.
+- ✔️ **Optional mode declarations** — `@yini strict` and `@yini lenient` state which mode the file is intended for. They do not switch the parser mode by themselves; the parser or tool chooses the actual mode.
 
 ---
 
@@ -367,7 +377,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### String Literals in YINI
-YINI defines four main string literal forms: Raw Strings, Classic Strings, Raw Triple-Quoted Strings, and C-Triple-Quoted Strings.  
+YINI defines five main string literal forms: Raw Strings, Escaped Strings, Raw Triple-Quoted Strings, Escaped Triple-Quoted Strings, and Command Strings.
 
 These forms differ in how they handle escape sequences and multi-line content.
 
@@ -377,9 +387,9 @@ These forms differ in how they handle escape sequences and multi-line content.
 # may be used for clarity. Escape sequences are not interpreted.
 String = "D:\folder\file"
 
-// Classic strings (C-Strings) are prefixed with C or c — they support
-// escape sequences.
-ClassicString = C"Hello\nWorld\n"
+// Escaped strings use E or e and support escape sequences.
+EscapedString = e"Hello\nWorld\n"
+ClassicString = C"Hello\nWorld\n" // deprecated prefix; same value
 
 /* Triple-quoted strings can span multiple lines and
    preserve all characters as-is, including tabs and newlines.
@@ -388,6 +398,12 @@ TripleQuotedString = """
 This is a triple-quoted
 string literal — characters
 are preserved exactly, without escapes.
+"""
+
+// Command strings remove structural indentation while keeping line breaks.
+CommandString = command"""
+    npm install
+    npm run build
 """
 ```
 
@@ -425,7 +441,6 @@ YINI is a text-based configuration format inspired by INI, JSON, Python, and YAM
 | Designed to remain readable as files grow| ✅ | ❌ | ➖ | ❌ | ➖ |
 | Designed to work well with tooling and schemas| ✅ | ❌ | ✅ | ➖ | ✅ |
 | Supports mixed data & config     | ✅ | ➖ | ✅ | ✅ | ✅ |
-| Human-friendly by default | ✅ | ➖ | ❌ | ✅ | ➖ |
 
 > This table is a simplified comparison intended to highlight common characteristics. Exact behavior depends on the specific parser or implementation.
 > YINI is intended for configuration files where readability, structure, and predictable parsing are important.
@@ -450,15 +465,16 @@ For more details, see section D.2, _"Acknowledgments & Special Thanks"_, in the 
 
 ## Version Mapping Table
 
-| Date     | Specification Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
-|----------|-----------------|--------------|--------------|---------------|
-| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
-| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   | 1.0.0-RC.2   | 1.0.0-RC.2    |
-| 2025 Sep | 1.0.0-RC.3      | 1.0.0-RC.3   | 1.1.0-RC.1   | 1.1.0-RC.1    |
-| 2026 Mar | 1.0.0-RC.4      | 1.0.0-RC.4   | 1.2.0-RC.1   | 1.2.0-RC.1    |
-| 2026 Apr | 1.0.0-RC.5      | 1.0.0-RC.5   | 1.2.0-RC.2   | 1.2.0-RC.2    |
-| 2026 May | 1.0.0-RC.6      | 1.0.0-RC.6   | 1.3.0-RC.1   | 1.3.0-RC.1    |
-| …        | …               | …            | …            | …             |
+| Date     |Specification v. |Grammar ANTLR4 lexer/parser  v.|
+|----------|-----------------|-------------------------------|
+| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   |
+| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   |
+| 2025 Sep | 1.0.0-RC.3      | 1.1.0-RC.1   |
+| 2026 Mar | 1.0.0-RC.4      | 1.2.0-RC.1   |
+| 2026 Apr | 1.0.0-RC.5      | 1.2.0-RC.2   |
+| 2026 May | 1.0.0-RC.6      | 1.3.0-RC.1   |
+| 2026 Nov | 1.0.0-RC.7      | 1.4.0-RC.1   |
+| …        | …               | …            |
 
 ---
 
@@ -473,4 +489,4 @@ This project is licensed under the Apache License 2.0 — see the [LICENSE](./LI
 > 
 > It has a formal specification and a defined grammar.
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=readme_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_content=readme_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

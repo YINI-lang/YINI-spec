@@ -1,0 +1,10 @@
+# Primary failure: semantic duplicate section under the same parent.
+^ Root
+^^ Service
+port = 1
+^^ Service
+^^^ Child
+enabled = true
+^^ Other
+value = 2
+/END

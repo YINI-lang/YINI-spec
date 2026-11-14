@@ -10,8 +10,8 @@
 /* 
   This LEXER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
-  Version:
-  1.3.0-rc.1 - 2026 May (v1.0.0-rc.6 YINI Spec Package).
+  Grammar version:
+  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.7 Spec).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -136,8 +136,12 @@ fragment IDENT_SIMPLE_LX
   ;
 
 // IDENT_BACKTICKED: '`' ~[\u0000-\u001F`]* '`'; // No newlines, tabs, or C0 controls.
+// fragment IDENT_BACKTICKED
+//   : '`' ~[\u0000-\u001F`]* '`' // No newlines, tabs, or C0 controls.
+//   ;
 fragment IDENT_BACKTICKED
-  : '`' ~[\u0000-\u001F`]* '`' // No newlines, tabs, or C0 controls.
+//  : '`' ( '\\' ('`' | '\\') | ~[\u0000-\u001F`\\] )* '`'
+  : '`' ( '\\' ('`' | '\\') | ~[\u0000-\u001F\u007F-\u009F`\\] )* '`'
   ;
 
 fragment SECTION_NAME_PART
@@ -201,7 +205,7 @@ fragment SECTION_MARKER_INVALID
 fragment REST_CHAR
   // : ~([@ \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
   // :~([@#> \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
-  : ~([@#^§>< \t\r\n'"`=,0123456789/-] | '[' | ']' | '{' | '}' | ':')
+  : ~([@#^§>< \t\r\n'"`=,+0123456789/-] | '[' | ']' | '{' | '}' | ':')
   ;
 
 /* ------------------------------------------------------------------
@@ -209,7 +213,7 @@ fragment REST_CHAR
  * ------------------------------------------------------------------ */
 
 SHEBANG
-  : '#!' ~[\r\n]* EOL
+  : '#!' ~[\r\n]* (EOL | EOF)
   ;
 
 YINI_TOKEN options { caseInsensitive = true; }
@@ -233,14 +237,20 @@ TERMINAL_TOKEN options { caseInsensitive = true; }
 // SECTION_HEAD: SECTION_MARKER HSPACE* WS* IDENT NL+;
 SECTION_HEAD
   // : SECTION_MARKER HSPACE* SECTION_NAME_PART HSPACE* EOL+ // Repeated/basic section headers do not require whitespace before the name.
-  : SECTION_MARKER_SHORTHAND HSPACE+ SECTION_NAME_PART HSPACE* EOL+
-  | SECTION_MARKER_BASIC_REPEAT HSPACE* SECTION_NAME_PART HSPACE* EOL+  
+  : SECTION_MARKER_SHORTHAND HSPACE+
+    (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)* SECTION_NAME_PART
+    (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)*
+    (EOL+ | SECTION_TAIL_COMMENT* EOF | SECTION_MULTILINE_BLOCK_COMMENT)
+  | SECTION_MARKER_BASIC_REPEAT
+    (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)* SECTION_NAME_PART
+    (HSPACE | SECTION_SINGLE_LINE_BLOCK_COMMENT)*
+    (EOL+ | SECTION_TAIL_COMMENT* EOF | SECTION_MULTILINE_BLOCK_COMMENT)
   ;
 
 INVALID_SECTION_HEAD
   // : (CARET | SS | GT | LT | SEP)+ ~[\r\n]* EOL+
   // : (CARET | SS | GT | LT | SEP) ~[\r\n]* EOL+
-  : (CARET | SS | GT | LT) ~[\r\n]* EOL+
+  : (CARET | SS | GT | LT) ~[\r\n]* (EOL+ | EOF)
   ;
 
 /* ------------------------------------------------------------------
@@ -281,7 +291,7 @@ EMPTY_LIST
 //   ;
 
 /**
- * Common rule for RAW and CLASSIC string literals.
+ * Common rule for RAW, CLASSIC, and ESCAPED string literals.
  * Illegal characters are deferred to the parser, which gives more control
  * and enables better user feedback (e.g., pinpointing the exact location of
  * invalid characters). Additionally, this simplifies the lexer rule.
@@ -298,9 +308,12 @@ EMPTY_LIST
 
 STRING
   : CLASSIC_TRIPLE_QUOTED_STRING
+  | ESCAPED_TRIPLE_QUOTED_STRING
   | RAW_TRIPLE_QUOTED_STRING
   | CLASSIC_SINGLE_OR_DOUBLE_STRING
+  | ESCAPED_SINGLE_OR_DOUBLE_STRING
   | RAW_SINGLE_OR_DOUBLE_STRING
+  | COMMAND_TRIPLE_QUOTED_STRING
   ;
 
 fragment RAW_TRIPLE_QUOTED_STRING
@@ -310,6 +323,10 @@ fragment RAW_TRIPLE_QUOTED_STRING
 fragment CLASSIC_TRIPLE_QUOTED_STRING
   // : [Cc] '"""' .*? '"""'
   : [Cc] '"""' ( '\\' . | . )*? '"""'
+  ;
+
+fragment ESCAPED_TRIPLE_QUOTED_STRING
+  : [Ee] '"""' ( '\\' . | . )*? '"""'
   ;
 
 fragment RAW_SINGLE_OR_DOUBLE_STRING
@@ -322,11 +339,30 @@ fragment CLASSIC_SINGLE_OR_DOUBLE_STRING
   | [Cc] '"'  ('\\' ~[\r\n] | ~["\\\r\n])* '"'
   ;
 
+fragment ESCAPED_SINGLE_OR_DOUBLE_STRING
+  : [Ee] '\'' ('\\' ~[\r\n] | ~['\\\r\n])* '\''
+  | [Ee] '"'  ('\\' ~[\r\n] | ~["\\\r\n])* '"'
+  ;
+
+// Command Strings are line-oriented. The host validator checks the complete
+// closing line, indentation, and the resulting value as specified in Section 6.4.
+fragment COMMAND_TRIPLE_QUOTED_STRING
+  : 'command' '"""' COMMAND_LINE_BREAK
+    ( ~[\r\n]* COMMAND_LINE_BREAK )*?
+    [ ]* '"""'
+  ;
+
+fragment COMMAND_LINE_BREAK
+  : '\r' '\n'? | '\n'
+  ;
+
 // NOTE: This NUMBER rule must come before KEY, IDENT, etc.
+// Leading signs are separate tokens so '+' can also separate concatenation operands.
+// Exponent signs remain part of the NUMBER token.
 NUMBER
-  : SIGN? INTEGER FRACTION? EXPONENT?
-  | SIGN? FRACTION EXPONENT?
-  | SIGN? (BIN_INTEGER | OCT_INTEGER | DUO_INTEGER | HEX_INTEGER)
+  : INTEGER FRACTION? EXPONENT?
+  | FRACTION EXPONENT?
+  | BIN_INTEGER | OCT_INTEGER | DUO_INTEGER | HEX_INTEGER
   ;
 
 /* ------------------------------------------------------------------
@@ -347,6 +383,7 @@ CB: ']'; // Closing Bracket.
 OC: '{'; // Opening Curly Brace.
 CC: '}'; // Closing Curly Brace.
 PLUS: '+';
+MINUS: '-';
 DOLLAR: '$';
 // ASTERIX: '*';
 PC: '%'; // PerCent sign.
@@ -370,6 +407,19 @@ fragment SECTION_TAIL_COMMENT
   | '#' ~[\r\n]*
   ;
 
+// A section name must begin on the same line as its marker.
+fragment SECTION_SINGLE_LINE_BLOCK_COMMENT
+  : '/*' ( ~[*\r\n] | '*'+ ~[*/\r\n] )* '*'+ '/'
+  ;
+
+// A newline in a trailing block comment ends the logical section header.
+// Consume the closing delimiter before lexing content on the following line.
+// The prefix must reach a newline without crossing an earlier closing delimiter.
+fragment SECTION_MULTILINE_BLOCK_COMMENT
+  : '/*' ( ~[*\r\n] | '*'+ ~[*/\r\n] )* '*'* ('\r' '\n'? | '\n')
+    .*? '*/'
+  ;
+
 WS
   : HSPACE+ -> skip
   ;
@@ -389,6 +439,9 @@ fragment DISABLE_LINE_MARKER
   ;
 
 DISABLED_LINE
+  // STRING and backticked identifier rules retain '--' inside literal content.
+  // Host validation must check that this marker is the first non-space/tab
+  // content on its logical line. Keep the token visible for that check.
   // : DISABLE_LINE_MARKER ~[\r\n]*
   : DISABLE_LINE_MARKER ~[\r\n]* EOL?
   ;

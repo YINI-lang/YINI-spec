@@ -33,4 +33,4 @@ jobs:
           npx yini-cli@latest validate --strict \
             "./Examples/Strict" \
             "./Grammar-ANTLR4/Test-samples/Strict-mode/Valid" \
-            "./Examples/Large-Scale Real-World Configuration Examples/c-industrial-monitoring-and-automation-platform.smoke.yini"
+            "./Examples/Large-Scale Real-World Configuration Examples/c-industrial-monitoring-and-automation-platform.strict.yini"
