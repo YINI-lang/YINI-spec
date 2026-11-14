@@ -1,0 +1,13 @@
+/*
+  Primary failure: semantic.
+  Rule: disabled-line and semicolon markers must be the first non-space/tab
+  content on their logical line. The grammar keeps their tokens for validation.
+*/
+
+^ Collections
+items = [1, --Invalid inline disabled-line marker.
+    3]
+obj = { a: 1, ; Invalid inline semicolon comment.
+    b: 2 }
+
+/END

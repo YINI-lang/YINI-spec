@@ -1,0 +1,29 @@
+name: Version Consistency
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-versions:
+    name: Check version consistency
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.11'
+
+      - name: Check version consistency
+        run: python scripts/check-versions.py
+
+      - name: Test version checker
+        run: python -B -m unittest discover -s scripts -p "test_*.py" -v
