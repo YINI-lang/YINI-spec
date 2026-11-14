@@ -6,7 +6,7 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
-## [Upcoming/Unreleased] - FUTURE
+## 1.0.0-RC.7 - 2026 Nov
 
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` in new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
 - **Deprecated:** The `%` binary prefix in favor of `0b`. It remains valid in both parsing modes; implementations SHOULD issue a deprecation warning recommending `0b`.
@@ -240,4 +240,4 @@ in YINI files, specifically related to bad syntax members.
 **^YINI ≡**  
 > YINI is a human-readable configuration format designed for clarity, explicit structure, and predictable parsing.  
 
-[yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org?utm_source=github&utm_campaign=yini_spec&utm_content=doc_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

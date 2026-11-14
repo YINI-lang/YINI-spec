@@ -1,6 +1,6 @@
 # YINI Rationale
 
-**Applies to:** YINI Specification v1.0.0-RC.6x
+**Applies to:** YINI Specification v1.0.0-RC.7
 **Author:** Marko K. Seppänen  
 **Project:** YINI-lang
 
@@ -1010,4 +1010,4 @@ YINI aims to make structured configuration easier to read, maintain, validate, a
 
 > A clear, structured, and human-friendly configuration format.
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_content=doc_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)

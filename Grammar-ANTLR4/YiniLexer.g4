@@ -11,7 +11,7 @@
   This LEXER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Grammar version:
-  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.6x Spec).
+  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.7 Spec).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors

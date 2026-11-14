@@ -40,4 +40,4 @@ This project is licensed under the Apache License 2.0.
 **^YINI ≡**  
 > A simple, structured, and human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_content=doc_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

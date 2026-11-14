@@ -3,10 +3,10 @@ _YINI: A clear configuration file format — clean, readable, structured._
 ---
 
 # Specification for the YINI Format
-**Version:** 1.0.0-RC.6x WIP
-**Date:** 2026-11-07
+**Version:** 1.0.0-RC.7
+**Date:** 2026-11-14
 
-> **Status:** This is a release-candidate draft. Minor clarifications and corrections may still be made before YINI 1.0.0.
+> **Status:** This is a release-candidate version. Minor clarifications and corrections may still be made before YINI 1.0.0.
 
 © 2024-2026 Marko K. Seppänen. Licensed under the Apache License, Version 2.0.
 See the full license text at the end of this document.
@@ -3591,7 +3591,7 @@ Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-Upcoming release / v1.0.0 RC 7
+v1.0.0 RC 7
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
 - **Deprecated:** The `%` binary prefix in favor of `0b`. It remains valid in both parsing modes; implementations SHOULD issue a deprecation warning recommending `0b`.
 - **Changed:** Duplicate sections under the same parent now produce an error and invalidate the document in both modes. Lenient first-wins handling for duplicate keys is unchanged.
@@ -3780,4 +3780,4 @@ table are neither syntactic whitespace nor line endings in YINI.
 **^ YINI Specification ≡**  
 > A clear, structured, and human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang/?utm_content=spec_footer)  
+[yini-lang.org](https://yini-lang.org?utm_source=github&utm_campaign=yini_spec_rc7&utm_content=spec_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang/)  
