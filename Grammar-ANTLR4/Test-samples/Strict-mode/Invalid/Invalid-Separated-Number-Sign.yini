@@ -1,0 +1,11 @@
+/*
+  Primary failure: semantic.
+  Rule: a leading numeric sign must touch its number. Host validation must
+  reject intervening whitespace or comments even though the grammar skips them.
+*/
+
+^ Numbers
+positive = + 42
+negative = -/* gap */42
+
+/END

@@ -13,7 +13,7 @@
 **^YINI ≡**  
 > A simple, structured, and human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_content=doc&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
 ```
 
 Should use it on:
@@ -80,7 +80,7 @@ Tagline may be used:
 Below is good for logo area, headers, or minimal contexts (e.g., website banner, favicon tooltip, GitHub repo subtitle):
 > _YINI: Clean. Readable. Structured._
 
-[yini-lang.org](https://yini-lang.org)
+[yini-lang.org](https://yini-lang.org?utm_source=github&utm_campaign=yini_spec&utm_content=doc&utm_medium=referral)
 
 ---
 
@@ -141,4 +141,4 @@ Suggestions for a "logo" for YINI.
 **^YINI ≡**  
 > A simple, structured, and human-friendly configuration format.  
 
-[yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org?utm_source=github&utm_campaign=yini_spec&utm_content=doc_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

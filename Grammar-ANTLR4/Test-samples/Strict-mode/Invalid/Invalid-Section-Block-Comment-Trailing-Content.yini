@@ -1,0 +1,4 @@
+# Primary failure: syntactic trailing header content between separate block comments.
+^ Root /* first */ invalid /*
+*/ key = 1
+/END

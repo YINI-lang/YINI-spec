@@ -1,0 +1,4 @@
+ #! Invalid (semantic): leading whitespace before a shebang-like comment.
+^ Config
+x = 1
+/END

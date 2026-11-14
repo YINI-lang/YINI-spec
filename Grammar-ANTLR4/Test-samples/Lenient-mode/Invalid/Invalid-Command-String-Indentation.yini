@@ -1,0 +1,6 @@
+// Rule: Each nonempty content line must have at least the indentation of the first nonempty line.
+// Primary failure: semantic; the host validator must reject this grammar-recognized token.
+script = command"""
+    first
+  second
+"""
