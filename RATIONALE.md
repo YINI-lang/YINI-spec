@@ -110,7 +110,7 @@ YINI also follows the **principle of least surprise** / **least astonishment** (
 
 The principle **explicit is better than implicit** is reflected throughout the format. YINI favors visible section structure, explicit string delimiters (start/end characters), explicit list and object delimiters, and explicit strict-mode document completion using `/END`.
 
-YINI uses an **explicit mode contract**. A mode declaration states how the document expects to be parsed. The parser checks that expectation against its active mode and reports a mismatch rather than silently changing modes.
+YINI uses an **explicit mode contract**. A mode declaration states how the document expects to be parsed. The parser checks that expectation against its active mode and reports an error or warning according to the direction of the mismatch, without changing modes.
 
 At the same time, YINI does not try to follow every possible principle to its extreme. It does not aim for maximum compactness, maximum flexibility, or a large expression system. In several cases, YINI deliberately chooses a slightly more explicit or restricted rule because configuration files are often read, reviewed, edited, and validated over time.
 
@@ -218,11 +218,13 @@ A mode declaration records the document's expected validation mode:
 
 **The declaration expresses intent; it does not select or change the parser's active mode.** 
 
-Allowing a document to change the active parsing mode would let the input choose the rules used to validate itself. For example, a file could request lenient parsing even though the calling application requires strict validation, causing input that the application intended to reject to be accepted. Keeping mode selection outside the document makes the validation policy predictable and under the caller's control. The declaration therefore records the author's intent and detects mismatches, but does not override the selected mode.
+**Safety and security come first; user experience comes second.** Validation policy belongs to the application, not to the data being validated. For example, allowing a document to select lenient parsing when the application requires strict validation could cause input that the application intended to reject to be accepted. Keeping mode selection outside the document prevents the declaration from weakening that policy.
 
-**Validation policy should be controlled by the application, not by the data being validated.** — If the document can control its own validation policy, it can potentially weaken or alter the checks applied to itself. Keeping validation policy in the application gives the application consistent, predictable control over what it accepts.
+**Declared strict, parsed leniently:** The parser is applying weaker rules than the document requires. This creates false assurance: the file may contain errors that strict mode would catch but lenient mode accepts. Of the two mismatch directions, this is the more dangerous one because required validation is missing. An error prevents acceptance under that unmet requirement.
 
-Instead, a mismatch produces a diagnostic. A strict declaration parsed in lenient mode is an error because otherwise the document could be accepted under rules looser than its author requested. This could give users the false impression that the document passed strict validation. A lenient declaration parsed in strict mode produces the diagnostic required by the specification, so the author's declared intent is not silently ignored.
+**Declared lenient, parsed strictly:** A configuration written for lenient parsing may also satisfy every strict requirement. The application can validate that file strictly without requiring the author to change its declaration first. A warning makes the difference visible without rejecting otherwise valid input. Every strict validation requirement still applies.
+
+A file authored for lenient mode may contain trailing commas, `=` separators inside inline objects, or missing values. Strict mode rejects these constructs. Presenting the mode-mismatch warning before any resulting content errors helps users understand their common cause, instead of confronting them with several apparently unrelated failures. The warning explains the situation; it does not suppress strict validation errors.
 
 This is useful for production configuration, CI validation, generated files, and shared project files where validation intent should be visible. The declaration remains optional so ordinary hand-edited files can stay lightweight and let the surrounding parser configuration decide.
 
@@ -354,15 +356,15 @@ Native date, time, date-time, and other specialized types are desirable, but the
 
 ### 4.3. Type Rules
 
-Syntax determines a value's type. Quoting every string prevents an unquoted word from changing meaning when a keyword or number form is added. Requiring an opening bracket or brace on the assignment line distinguishes a compound value from a missing value followed by another line.
+Syntax determines a value's type. Quoting strings keeps text distinct from number and keyword literals. Requiring an opening bracket or brace on the assignment line distinguishes a compound value from a missing value followed by another line.
 
---TODO: describe that always quoting strings avoids the Norway problem with Booleans--
+Requiring quotes in both modes reduces the ambiguity behind YAML 1.1's "Norway problem". In YINI, `"NO"` is a string, unquoted `NO` is `false`, and unquoted `SE` is an error. Omitting the quotes can still produce an unintended boolean when the text matches a boolean word.
 
 ## [5. Section Headers](./YINI-Specification.md#5-section-headers)
 
 ### 5.1. Syntax
 
-A header makes a section boundary visible without relying on indentation. TODO: Explain the spacing difference between repeated markers and numeric shorthand.
+A header makes a section boundary visible without relying on indentation. Optional spacing allows compact repeated-marker headers such as `^name`; adding a space can make the name easier to read. Numeric shorthand requires a space or tab to keep the depth number separate from the name.
 
 ### 5.2. Section Markers (`^`, `§`, `>`, or `<`)
 
@@ -399,9 +401,9 @@ TODO: Explain the chosen maximum depth of 255.
 
 --TODO: tell from where this was inspired, java? etc... Also a user wish--
 
-Optional underscores make longer repeated-marker sequences easier to count without changing their depth. 
+Optional underscores make longer repeated-marker sequences easier to count without changing their depth. For example, `^^^_^^^_^^^` is easier to scan than `^^^^^^^^^`.
 
-They add another valid spelling for the same header, but allow levels through 9 to stay visible as repeated markers without becoming one hard-to-count run. For example, `^^^_^^^_^^^` is easier to scan than `^^^^^^^^^`.
+Keeping `_` available at the start of a section name preserves the same identifier rules for keys and sections. In `^_name`, the underscore starts the name because it is not between two identical markers. A space, as in `^ _name`, makes the boundary easier to read while keeping compact headers valid.
 
 Earlier drafts used a lower maximum repeated-marker depth. Adding separators made levels 1–9 readable enough to write directly, allowing the limit to increase from 6 to 9.
 
@@ -486,15 +488,23 @@ My name is John Doe, and this is a test string.
 
 This feature was removed because it introduced another string form with separate whitespace-normalization rules. That increased the language's conceptual surface, parser complexity, documentation burden, and the number of overlapping choices for multiline text. Ordinary Raw strings and Triple-Quoted strings cover the common configuration use cases without those additional rules. H-Strings are historical and are not valid YINI syntax.
 
---TODO: mention, that if there is strong argument for this it might get reintroduced, propably not due to not wanting to add yet another string type since there might appear a more important or needed string type...---
+--TODO: mention, that if there is strong argument for this it might get reintroduced, propably not due to not wanting to add yet another string type since the effect of H-strings can be done in the host program pretty easily. ---
 
 ### 6.4. Command Strings
 
 Command strings let authors write command sequences as one readable, indented block without quoting or concatenating each line. This is similar to [YAML's literal block scalar (`|`)](https://yaml.org/spec/1.2.2/#812-literal-style), using YINI's `command"""..."""` syntax. Removing structural indentation lets a script fit within an indented configuration while preserving the indentation that belongs to the script itself.
 
-Using LF gives the same command text the same value, whether the source file uses LF, CRLF, or CR. YAML also [normalizes line endings to LF](https://yaml.org/spec/1.2.2/#54-line-break-characters) in its literal blocks (`|`).
+Line breaks between content lines are kept, including blank lines. Each becomes LF (`\n`), whether the source file uses LF, CRLF, or CR. This gives the same command text the same value across source line-ending forms. YAML also [normalizes line endings to LF](https://yaml.org/spec/1.2.2/#54-line-break-characters) in its literal blocks (`|`).
 
-YINI does not run the commands. The application chooses the shell or terminal interface. If needed, it converts LF to CRLF for a script file or submits each line through the terminal's input API. Keeping the source file's line endings would not ensure that they match the target. The commands themselves may still depend on a particular operating system or shell.
+The line breaks immediately after the opening delimiter and before the closing delimiter are left out. YINI adds no extra line breaks. This avoids an unexpected final newline becoming part of a command or argument. Authors can include a final LF by writing an empty content line before the closing delimiter:
+
+| Content inside the block | Parsed value (`\n` represents one LF) |
+|---|---|
+| One line | `"echo first"` |
+| Two lines | `"echo first\necho second"` |
+| Two lines followed by an empty content line | `"echo first\necho second\n"` |
+
+YINI does not run the commands. The application chooses the shell or terminal interface. If needed, it converts LF to CRLF for a script file or submits each line through the terminal's input API. It can also add a final newline when the input interface requires one. Keeping the source file's line endings would not ensure that they match the target. The commands themselves may still depend on a particular operating system or shell.
 
 ### 6.5. String Types Summary
 -
@@ -504,6 +514,8 @@ YINI does not run the commands. The application chooses the shell or terminal in
 <a id="b29-string-concatenation-and-non-arithmetic-"></a>
 
 The `+` operator joins strings without adding arithmetic or a general expression language. Requiring the first operand to be a string rules out expressions such as `1 + 2 + "3"`, which could otherwise suggest either addition or concatenation. Strict mode requires every operand to be a string for an explicit, simple contract. Lenient mode permits later scalar operands for convenience, but needs conversion rules as a result. 
+
+Optional spacing keeps compact expressions valid without making spaces change their meaning. A numeric operand can still have an explicit sign: in `"a"++42`, the first `+` joins the operands and the second marks the number as positive. Spaces remain recommended because `"a" + +42` is easier to read.
 
 For example, this lenient-mode expression:
 
@@ -558,7 +570,7 @@ Exponent notation expresses very large or small decimal values compactly. TODO: 
 
 ### 7.4. Number Formats
 
-Base prefixes make a number's base explicit. 
+YINI deliberately keeps a `0`-prefixed form for each non-decimal base: `0b`, `0o`, `0z`, and `0x`. Selected aliases offer shorter or more descriptive spellings. Octal has no extra alias. This adds notation to learn, but each form has a fixed meaning. Aliases do not change the numeric value or range.
 
 The removed `#` hexadecimal form was compact and familiar for colors, design systems, and UI configuration, but conflicted with the comment marker. Supporting both uses required a whitespace-sensitive distinction that was workable but unnecessarily surprising.
 
@@ -573,7 +585,13 @@ invalid = hex: FF0033  // No space is allowed after the prefix.
 
 Using one unambiguous meaning for `#` simplifies tokenization and supports YINI's preference for predictable syntax.
 
-TODO: Explain the uses for each supported non-decimal base and its alternative notation.
+Binary makes flags and bit masks easy to read. The `%` binary prefix is deprecated because it is less conventional, and `%` is commonly associated with modulo operations or percentages in programming. Preferring the explicit `0b` prefix improves readability for developers unfamiliar with number bases.
+
+**Historical note:** The `%` alias was inspired by the author's experience with assembly programming on the Commodore Amiga under AmigaOS. It offered a shorter spelling familiar from assemblers; see [vasm's Motorola syntax](https://github.com/Leffmann/vasm/blob/master/doc/syntax_mot.texi) and [ca65's binary prefix](https://cc65.github.io/doc/ca65.html#ss4.2).
+
+Octal suits Unix file permissions.
+
+Duodecimal supports settings for base-12 counters or educational tools; `0z10` means decimal `12`. The `A`/`B` digits follow the letter-digit pattern used in hexadecimal. The `X`/`E` aliases support another established dozenal convention. See the [Dozenal Society's digit discussion](https://dozenal.org/).
 
 **Similar behavior:** TypeScript and Python also use `0b`, `0o`, and `0x` prefixes for binary, octal, and hexadecimal integer literals. YINI additionally defines word-based and symbolic forms. See [ECMAScript numeric literals](https://tc39.es/ecma262/multipage/ecmascript-language-lexical-grammar.html#sec-literals-numeric-literals) and [Python integer literals](https://docs.python.org/3/reference/lexical_analysis.html#integer-literals).
 
@@ -581,11 +599,13 @@ TODO: Explain the uses for each supported non-decimal base and its alternative n
 
 ### 8.1. Booleans
 
-TODO: Explain why `yes`/`no` and `on`/`off` are accepted alongside `true`/`false`, including the choice to make them case-insensitive.
+The `yes`/`no` and `on`/`off` aliases express familiar configuration choices, such as `enabled = yes` or `logging = on`. They produce the same boolean values as `true` and `false`, in both modes. Case-insensitive matching also allows spellings such as `Yes` and `OFF` without changing their meaning. Quoted forms such as `"no"` remain strings.
 
 ### 8.2. Null Literal
 
-Explicit `null` works in every mode and position. A missing root-level or section-level value becomes null only in lenient mode; missing values inside collections stay invalid so separators cannot silently create extra elements.
+Explicit `null` works in every mode and position. In lenient mode, a missing root-level or section-level value becomes `null` with a required warning. Missing values inside collections remain errors in both modes.
+
+The warning helps catch accidental omissions, including `color = #FF9900`, where `#` starts a comment. Write `null` explicitly to make the intent clear and avoid this warning.
 
 --TODO: Explain the choice to treat an empty member value as null rather than as an empty string.--
 
@@ -684,7 +704,14 @@ Collecting validation requirements gives implementers a checklist across the syn
 
 #### 12.2.1. Structural Requirements
 
-Duplicate names force a choice: a later definition could replace, merge with, or be ignored in favor of the earlier one. Replacement or merging would let a later block silently change a setting written above it. Lenient mode keeps the first definition and warns; strict mode rejects the duplicate. 
+- **Declare:** Introduce an entity with a given name.
+- **Define:** Specify the entity's content or initial value.
+
+**Author's words:** *The first-wins rule was also chosen by following a common principle from programming languages: once an entity has been declared and defined (a key-value pair is seen as both a declaration and a definition in YINI), it cannot simply be redeclared without being flagged as a duplicate. On the other hand, explicitly giving an existing declaration a new definition is a different matter, but that goes a little beyond the scope of this rationale.*
+
+---
+
+Duplicate names force a choice: a later definition could replace, merge with, or be ignored in favor of the earlier one. Replacement or merging would let a later definition silently change a setting written above it. A YINI key-value pair both declares its key and defines its value. Following the common rule against redeclaring an already defined entity, a duplicate key does not replace the first value: lenient mode keeps the first value and warns, while strict mode rejects the duplicate. Explicit redefinition is a separate question. Duplicate sections are errors in both modes because a section may contain members and child sections, making an ignored duplicate block's boundaries and contents harder to interpret predictably.
 
 First-wins can also surprise an author expecting an override, which is why the warning matters. Member and child-section names share a namespace so each container can become one object without collisions.
 
@@ -757,7 +784,7 @@ Validation checks the original source line endings, so strict mode still rejects
 
 ### 13.3. Value and Null Handling
 
-Lenient empty values have a defined null meaning. First-wins duplicate handling avoids silently replacing an earlier setting; a diagnostic still alerts the author. See §§8.2 and 12.2.1.
+Lenient missing values become `null` with a required warning. First-wins duplicate-key handling avoids silently replacing an earlier setting and also requires a warning. See §§8.2 and 12.2.1.
 
 ### 13.4. Boolean Canonicalization
 
@@ -810,8 +837,8 @@ Continuing after an error helps an editor show several problems at once. It does
 not establish that the recovered data is safe to use as valid configuration.
 Keeping recovery results explicitly partial and the document invalid allows
 helpful diagnostics without letting a parser's chosen repairs change what counts
-as valid YINI. Warnings for defined lenient forms, such as first-wins duplicates,
-remain separate from errors for invalid syntax.
+as valid YINI. Warnings for defined lenient forms, such as first-wins duplicate
+keys, remain separate from errors for duplicate sections and invalid syntax.
 
 ### 14.2. Versioning Strategy
 
@@ -924,7 +951,7 @@ This section records changes to the specification rather than introducing additi
 
 ### 16.5. Formal Grammar
 
-The maintained ANTLR4 grammar is stored separately in the repository's [`Grammar-ANTLR4/`](./Grammar-ANTLR4/) directory. Keeping the grammar in dedicated source files avoids duplicating a long implementation artifact in the prose specification and allows grammar tooling to consume it directly. The grammar accompanying YINI Specification 1.0.0-RC.7 is version 1.3.0-RC.2.
+The maintained ANTLR4 grammar is stored separately in the repository's [`Grammar-ANTLR4/`](./Grammar-ANTLR4/) directory. Keeping the grammar in dedicated source files avoids duplicating a long implementation artifact in the prose specification and allows grammar tooling to consume it directly. The grammar accompanying YINI Specification 1.0.0-RC.7 is version 1.4.0-RC.1.
 
 **NOTE:**
 The grammar deliberately recognizes some invalid forms so an implementing parser can produce more useful diagnostics. Parsing-mode rules, duplicate-name handling, section nesting, and other semantic constraints remain defined by the specification and are enforced outside the grammar. The specification therefore remains the authority for conformance if the grammar and prose differ.
@@ -983,4 +1010,4 @@ YINI aims to make structured configuration easier to read, maintain, validate, a
 
 > A clear, structured, and human-friendly configuration format.
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=doc_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_content=doc_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)

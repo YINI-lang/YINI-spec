@@ -6,13 +6,21 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
-## [Upcoming/Unreleased] - FUTURE
-- **Fixed:** Updated the `ANTLR4` lexer to recognize block comments in section headers where whitespace is allowed, such as `^ A /* note */`, while preserving the required space after numeric shorthand markers.
+## 1.0.0-RC.7 - 2026 Nov
+
+- **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` in new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
+- **Deprecated:** The `%` binary prefix in favor of `0b`. It remains valid in both parsing modes; implementations SHOULD issue a deprecation warning recommending `0b`.
+- **Changed:** Duplicate sections under the same parent now produce an error and invalidate the document in both lenient and strict mode. Lenient first-wins handling for duplicate keys is unchanged.
+- **Changed:** Mode declarations do not change the active parser mode. Declaring `@yini strict` while parsing leniently requires rejection; declaring `@yini lenient` while parsing strictly requires a warning and successful strict validation. Corrected the accompanying fixtures and documentation.
+- **Fixed:** Updated the ANTLR4 lexer to recognize members immediately after multiline section-header comments. Header block comments now stop at the first `*/`, preventing invalid content between separate comments from being swallowed.
+- **Added:** Strict and lenient regression fixtures for multiline comments after repeated and numeric shorthand section headers, and for invalid content between block comments.
+
 Spec. changes:
+
 - **Added:** Command Strings using `command"""` for multiline command or script content. They preserve line breaks, remove structural indentation, and produce ordinary string values; `c` remains a Classic String prefix.
 - **Added:** `E` and `e` as aliases for `C` and `c` on Classic (Escaped) strings, including Triple-Quoted strings. The ANTLR lexer recognizes both prefixes with the existing escape rules.
-- **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` in new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
 - **Fixed:** `\xhh` defined now as a short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
+- **Fixed:** Clarified numeric signs and the concatenation `+` operator in the specification and examples, and corrected the ANTLR4 grammar to recognize compact forms such as `"a"+42` and `"a"++42` (valid in lenient mode).
 - **Changed:** Made number-to-string conversion in lenient-mode concatenation
   deterministic. Decimal numbers keep a normalized form of their source
   spelling: digit separators and unnecessary plus signs are removed, and `E`
@@ -37,9 +45,10 @@ Spec. changes:
   (`U+2028` and `U+2029`) are not YINI line endings.
 - **Added:** Backticked identifiers now support `\`` for a literal backtick and `\\` for a literal backslash. Updated the ANTLR lexer to recognize these forms.
 - **Added:** Classic strings now support `\`` for a literal backtick.
-- **Clarified:** Parsers recognize LF, CRLF, and CR as logical line endings while preserving the original line-ending characters inside triple-quoted string values.
+- **Clarified:** ource LF, CRLF, and CR line endings inside Triple-Quoted Strings and Command Strings become LF in parsed values. Characters produced by escapes remain unchanged.
 - **Clarified:** End-of-file (`EOF`) may terminate an otherwise complete final logical line in both lenient and strict mode. A trailing line ending is no longer required: a lenient document may end immediately after its final assignment, and a strict document may end immediately after `/END`. Updated the ANTLR grammar to match this rule.
-- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Lenient-mode parsers SHOULD report an error with diagnostic information; strict-mode parsers MUST report an error.
+- **Clarified:** Strict-mode section and terminator requirements help detect incomplete documents but do not guarantee that every truncated or split fragment is invalid.
+- **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Parsers MUST report an error in both modes.
 - **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
 - And more clarifications in the spec, for the full specification change history, see [§16.4, Spec Changes](./YINI-Specification.md#164-spec-changes).
 - **Fixed:** Corrected the strict-mode validation workflow to reference the existing `c-industrial-monitoring-and-automation-platform.strict.yini` example instead of a nonexistent `.smoke.yini` file.
@@ -231,4 +240,4 @@ in YINI files, specifically related to bad syntax members.
 **^YINI ≡**  
 > YINI is a human-readable configuration format designed for clarity, explicit structure, and predictable parsing.  
 
-[yini-lang.org](https://yini-lang.org) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org?utm_source=github&utm_campaign=yini_spec&utm_content=doc_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

@@ -9,13 +9,13 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Specification Package Version:** 1.0.0-RC.6x ([Version Mapping Table](./README.md#version-mapping-table))  
-**Date:** 2026-11-02  
+**Specification Package Version:** 1.0.0-RC.7 ([Version Mapping Table](./README.md#version-mapping-table))  
+**Date:** 2026-11-14  
 **Status:** Release Candidate  
 
 - [YINI Downloads](https://github.com/YINI-lang/YINI-spec/wiki/Get-YINI-Tools)  
 - [Latest updates/changes in this package](/CHANGELOG.md)  
-- [YINI Homepage](https://yini-lang.org/?utm_source=github&utm_medium=referral&utm_campaign=yini_spec&utm_content=readme)  
+- [YINI Homepage](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_content=readme&utm_medium=referral)  
 
 ---
 
@@ -465,16 +465,16 @@ For more details, see section D.2, _"Acknowledgments & Special Thanks"_, in the 
 
 ## Version Mapping Table
 
-| Date     | Specification Package Version | Spec Version | ANTLR4 Lexer | ANTLR4 Parser |
-|----------|-----------------|--------------|--------------|---------------|
-| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   | 1.0.0-RC.1   | 1.0.0-RC.1    |
-| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   | 1.0.0-RC.2   | 1.0.0-RC.2    |
-| 2025 Sep | 1.0.0-RC.3      | 1.0.0-RC.3   | 1.1.0-RC.1   | 1.1.0-RC.1    |
-| 2026 Mar | 1.0.0-RC.4      | 1.0.0-RC.4   | 1.2.0-RC.1   | 1.2.0-RC.1    |
-| 2026 Apr | 1.0.0-RC.5      | 1.0.0-RC.5   | 1.2.0-RC.2   | 1.2.0-RC.2    |
-| 2026 May | 1.0.0-RC.6      | 1.0.0-RC.6   | 1.3.0-RC.1   | 1.3.0-RC.1    |
-| 2026 Nov | 1.0.0-RC.6x     | 1.0.0-RC.6x  | 1.4.0-RC.1   | 1.4.0-RC.1    |
-| …        | …               | …            | …            | …             |
+| Date     |Specification v. |Grammar ANTLR4 lexer/parser  v.|
+|----------|-----------------|-------------------------------|
+| 2025 Jul | 1.0.0-RC.1      | 1.0.0-RC.1   |
+| 2025 Aug | 1.0.0-RC.2      | 1.0.0-RC.2   |
+| 2025 Sep | 1.0.0-RC.3      | 1.1.0-RC.1   |
+| 2026 Mar | 1.0.0-RC.4      | 1.2.0-RC.1   |
+| 2026 Apr | 1.0.0-RC.5      | 1.2.0-RC.2   |
+| 2026 May | 1.0.0-RC.6      | 1.3.0-RC.1   |
+| 2026 Nov | 1.0.0-RC.7      | 1.4.0-RC.1   |
+| …        | …               | …            |
 
 ---
 
@@ -489,4 +489,4 @@ This project is licensed under the Apache License 2.0 — see the [LICENSE](./LI
 > 
 > It has a formal specification and a defined grammar.
 
-[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_medium=referral&utm_content=readme_footer) · [YINI-lang on GitHub](https://github.com/YINI-lang)  
+[yini-lang.org](https://yini-lang.org/?utm_source=github&utm_campaign=yini_spec&utm_content=readme_footer&utm_medium=referral) · [YINI-lang on GitHub](https://github.com/YINI-lang)  

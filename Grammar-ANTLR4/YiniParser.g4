@@ -10,8 +10,8 @@
 /* 
   This PARSER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
-  Version:
-  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.6x YINI Spec Package).
+  Grammar version:
+  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.7 Spec).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -205,7 +205,7 @@ scalar_value
  * Strict-vs-lenient validation:
  * - Strict mode: every concat operand MUST be STRING.
  * - Lenient mode: the first operand MUST be STRING.
- *   Later operands MAY be STRING, NUMBER, BOOLEAN, or NULL.
+ *   Later operands may be strings, signed numbers, booleans, or null.
  */
 // This accepts:
 //
@@ -236,7 +236,7 @@ concat_tail
 
 concat_operand
   : STRING
-  | NUMBER
+  | number_literal
   | BOOLEAN_TRUE
   | BOOLEAN_FALSE
   | NULL
@@ -313,8 +313,11 @@ multiline_trivia
  * Terminals forwarded from the lexer
  * ------------------------------------------------------------------ */
 
+// Host validation must check that a leading sign immediately precedes NUMBER.
+// The sign and number together form the literal used for numeric validation
+// and source-spelling normalization.
 number_literal
-  : NUMBER
+  : (PLUS | MINUS)? NUMBER
   ;
 
 null_literal

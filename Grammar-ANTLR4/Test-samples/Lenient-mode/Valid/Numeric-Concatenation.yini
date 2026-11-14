@@ -13,4 +13,15 @@ integer_zero = "zero: " + -0             // "zero: -0"
 float_zero = "zero: " + -0.0             // "zero: -0.0"
 hexadecimal = "hex: " + 0x7FFFFFFFFFFFFFFF // "hex: 9223372036854775807"
 
+compact = "a"+42                        // "a42"
+space_before = "a" +42                  // "a42"
+space_after = "a"+ 42                   // "a42"
+explicit_positive = "a"++42             // "a42"
+spaced_positive = "a" + +42             // "a42"
+explicit_negative = "a"+-42             // "a-42"
+chain = "a"+1+2                         // "a12"
+signed_chain = "a"++1+-2                // "a1-2"
+compact_exponent = "n"+1E+03            // "n1e03"
+signed_hex = "hex: "++0x2A              // "hex: 42"
+
 /END
