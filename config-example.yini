@@ -1,0 +1,69 @@
+
+@yini
+
+/*
+  EXAMPLE APPLICATION CONFIGURATION
+
+  Copy this file to 'config.yini' and change the settings
+  to match your application.
+
+  Quick Guide:
+  - Use ^ to start a section.
+  - Use ^^ or ^^^ to create sections inside other sections.
+  - Spaces and indentation do not affect section structure.
+  - Use = to assign a value to a key.
+  - Values can be strings, numbers, booleans, null, lists, or objects.
+  - Use // or # for single-line comments.
+*/
+
+^ app
+name =        'My Cool Service'
+environment = 'development' // development, staging, or production
+debug =       true
+
+    // Settings for the web server
+    ^^ server
+    host =           '127.0.0.1'
+    port =           8080
+    allowedOrigins = [
+        'http://localhost:3000',
+        'http://localhost:5173'
+    ]
+
+        // Limit how many requests a client can make
+        ^^^ rateLimit
+        enabled =       true
+        maxRequests =   100
+        windowSeconds = 60
+
+    // Database connection settings
+    ^^ database
+    host =     'localhost'
+    port =     5432
+    name =     'app_dev_db'
+    user =     'db_user'
+    password = null // Set this securely for your environment
+    ssl =      false
+
+        // Database connection pool settings
+        ^^^ pool
+        minConnections = 2
+        maxConnections = 10
+
+    // Settings for application logs
+    ^^ logging
+    level =  'info' // debug, info, warn, or error
+    output = { format: 'json', file: 'logs/app.log' }
+
+    ^^ extra
+    // Escaped string: \n becomes a newline character
+    message = e'Hello\nWorld'
+
+    // Multiline command string with indentation removed
+    build = command"""
+        npm install
+        npm run build
+        npm test
+    """
+
+/END  // Optional in lenient mode.
