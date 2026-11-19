@@ -1,0 +1,39 @@
+^Scripts
+
+build = block"""
+    npm install
+    npm run build
+      --verbose
+
+    echo "done"
+    printf '""" inside content'
+"""
+
+empty = BLOCK"""
+"""
+
+indented_close = Block"""
+  echo "ok"
+  """
+
+joined = "run: " + b"""
+    npm test
+"""
+
+query = B"""
+    SELECT id, name
+    FROM users
+    WHERE active = TRUE;
+"""
+
+mixed_case = bLoCk"""
+    Keep MiXeD CaSe and literal \n.
+"""
+
+// Prefix spellings remain valid identifiers when not introducing a string.
+block = "full prefix as a key"
+b = "short prefix as a key"
+binary = 0b1010
+classic = c"classic\nstring"
+
+/END

@@ -457,7 +457,7 @@ Triple quotes make multi-line text possible without concatenating many single-li
 
 Keeping spaces, tabs, blank lines, and the positions of line breaks preserves the text's layout. For line endings, YINI gives portability priority over keeping the exact source characters: LF, CRLF, and CR all become LF in the parsed value. Changing a file's line-ending form in an editor or during checkout therefore does not change its multiline string values.
 
-Raw means that backslashes stay literal. The same line-ending rule applies to Raw, Escaped, and Command Strings, so authors do not need to choose a string form for portability. When exact CR or CRLF characters are needed, an Escaped String can express them with `\r` or `\r\n`. Those escape results stay unchanged.
+Raw means that backslashes stay literal. The same line-ending rule applies to Raw, Escaped, and Block Strings, so authors do not need to choose a string form for portability. When exact CR or CRLF characters are needed, an Escaped String can express them with `\r` or `\r\n`. Those escape results stay unchanged.
 
 **Similar behavior:** Python also uses triple quotes for multiline strings and converts source line endings to LF, even in raw literals. Unlike YINI, Python interprets escape sequences in strings without a prefix. Python uses `r` to make backslashes literal, while YINI makes backslashes literal by default. See [Python string literals](https://docs.python.org/3/reference/lexical_analysis.html#string-and-bytes-literals) and [Python physical lines](https://docs.python.org/3/reference/lexical_analysis.html#physical-lines).
 
@@ -490,13 +490,24 @@ This feature was removed because it introduced another string form with separate
 
 --TODO: mention, that if there is strong argument for this it might get reintroduced, propably not due to not wanting to add yet another string type since the effect of H-strings can be done in the host program pretty easily. ---
 
-### 6.4. Command Strings
+### 6.4. Block Strings
 
-Command strings let authors write command sequences as one readable, indented block without quoting or concatenating each line. This is similar to [YAML's literal block scalar (`|`)](https://yaml.org/spec/1.2.2/#812-literal-style), using YINI's `command"""..."""` syntax. Removing structural indentation lets a script fit within an indented configuration while preserving the indentation that belongs to the script itself.
+Block Strings let authors write multiline text as one readable, indented block without quoting or concatenating each line. The name “Block String” describes the form and its broader purpose more accurately than “Command String”: these strings are intended for shell scripts, SQL queries, and similar multiline content. This is similar to [YAML's literal block scalar (`|`)](https://yaml.org/spec/1.2.2/#812-literal-style), using YINI's `block"""..."""` or `b"""..."""` syntax, with either prefix accepted in any capitalization. Removing structural indentation lets the text fit within an indented configuration while preserving indentation that belongs to the content itself.
 
-Line breaks between content lines are kept, including blank lines. Each becomes LF (`\n`), whether the source file uses LF, CRLF, or CR. This gives the same command text the same value across source line-ending forms. YAML also [normalizes line endings to LF](https://yaml.org/spec/1.2.2/#54-line-break-characters) in its literal blocks (`|`).
+Block Strings resemble YAML's [literal block scalar with strip chomping (`|-`)](https://yaml.org/spec/1.2.2/#8112-block-chomping-indicator) in that no final newline is added automatically. However, YINI preserves explicitly written trailing empty content lines, whereas YAML's `|-` removes trailing empty lines. In YINI, an empty content line before the closing delimiter includes a final LF.
 
-The line breaks immediately after the opening delimiter and before the closing delimiter are left out. YINI adds no extra line breaks. This avoids an unexpected final newline becoming part of a command or argument. Authors can include a final LF by writing an empty content line before the closing delimiter:
+Line breaks between content lines are kept, including blank lines. Each becomes LF (`\n`), whether the source file uses LF, CRLF, or CR. This gives the same text the same value across source line-ending forms. YAML also [normalizes line endings to LF](https://yaml.org/spec/1.2.2/#54-line-break-characters) in its literal blocks (`|`).
+
+The line breaks immediately after the opening delimiter and before the closing delimiter are left out. YINI adds no extra line breaks. This avoids an unexpected final newline becoming part of the text, such as a command or argument. Authors can include a final LF by writing an empty content line before the closing delimiter:
+
+```yini
+cmd = b"""
+  npm i
+
+"""
+```
+
+This produces `"npm i\n"`; without the empty content line, it produces `"npm i"`. The same rule applies to multiple content lines:
 
 | Content inside the block | Parsed value (`\n` represents one LF) |
 |---|---|
@@ -504,7 +515,7 @@ The line breaks immediately after the opening delimiter and before the closing d
 | Two lines | `"echo first\necho second"` |
 | Two lines followed by an empty content line | `"echo first\necho second\n"` |
 
-YINI does not run the commands. The application chooses the shell or terminal interface. If needed, it converts LF to CRLF for a script file or submits each line through the terminal's input API. It can also add a final newline when the input interface requires one. Keeping the source file's line endings would not ensure that they match the target. The commands themselves may still depend on a particular operating system or shell.
+YINI does not execute or otherwise interpret the content. The application decides whether to submit it as a SQL query, run it as a script, or use it for another purpose. For scripts, the application chooses the shell or terminal interface. If needed, it converts LF to CRLF for a script file or submits each line through the terminal's input API. It can also add a final newline when the input interface requires one. Keeping the source file's line endings would not ensure that they match the target. Commands may still depend on a particular operating system or shell.
 
 ### 6.5. String Types Summary
 -
@@ -780,7 +791,7 @@ Source line endings are normalized before escape sequences are interpreted. This
 
 **Similar behavior:** Both Python and YAML convert source CRLF and CR line endings to LF. Python does this even in raw string literals, and YAML does it even in literal blocks (`|`). YINI follows the same rule. See [Python physical lines](https://docs.python.org/3/reference/lexical_analysis.html#physical-lines) and [YAML line break characters](https://yaml.org/spec/1.2.2/#54-line-break-characters).
 
-Validation checks the original source line endings, so strict mode still rejects mixed forms. Applications handle command execution and convert line endings for the target when needed; see §6.4.
+Validation checks the original source line endings, so strict mode still rejects mixed forms. Applications decide how to use Block String content and convert line endings for the target when needed; see §6.4.
 
 ### 13.3. Value and Null Handling
 

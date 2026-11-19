@@ -11,7 +11,7 @@
   This LEXER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Grammar version:
-  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.7 Spec).
+  1.4.0-RC.1+UPDATES - 2026 Nov+FUTURE (v1.0.0-rc.7x/rc.8wip Spec).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -313,7 +313,7 @@ STRING
   | CLASSIC_SINGLE_OR_DOUBLE_STRING
   | ESCAPED_SINGLE_OR_DOUBLE_STRING
   | RAW_SINGLE_OR_DOUBLE_STRING
-  | COMMAND_TRIPLE_QUOTED_STRING
+  | BLOCK_TRIPLE_QUOTED_STRING
   ;
 
 fragment RAW_TRIPLE_QUOTED_STRING
@@ -344,15 +344,17 @@ fragment ESCAPED_SINGLE_OR_DOUBLE_STRING
   | [Ee] '"'  ('\\' ~[\r\n] | ~["\\\r\n])* '"'
   ;
 
-// Command Strings are line-oriented. The host validator checks the complete
-// closing line, indentation, and the resulting value as specified in Section 6.4.
-fragment COMMAND_TRIPLE_QUOTED_STRING
-  : 'command' '"""' COMMAND_LINE_BREAK
-    ( ~[\r\n]* COMMAND_LINE_BREAK )*?
+// Block Strings use case-insensitive block or b prefixes and are line-oriented.
+// The former command prefix is not recognized as a string prefix.
+// The host validator checks the complete closing line, indentation, and the
+// resulting value as specified in Section 6.4.
+fragment BLOCK_TRIPLE_QUOTED_STRING
+  : ([bB][lL][oO][cC][kK] | [bB]) '"""' BLOCK_LINE_BREAK
+    ( ~[\r\n]* BLOCK_LINE_BREAK )*?
     [ ]* '"""'
   ;
 
-fragment COMMAND_LINE_BREAK
+fragment BLOCK_LINE_BREAK
   : '\r' '\n'? | '\n'
   ;
 

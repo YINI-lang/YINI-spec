@@ -59,8 +59,8 @@ debug =       true
     // Escaped string: \n becomes a newline character
     message = e'Hello\nWorld'
 
-    // Multiline command string with indentation removed
-    build = command"""
+    // Multiline Block String with structural indentation removed.
+    build = block"""
         npm install
         npm run build
         npm test

@@ -6,6 +6,10 @@ Edits and updates **in this repository and package**. (Very minor changes are no
 
 More details of feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 
+## --Upcoming-- - 1.0.0-RC.7x/RC.8-WIP - 2026 FUTURE
+
+- **Changed:** Renamed Command Strings to Block Strings, with case-insensitive `block` and `b` prefixes for multiline text such as scripts and SQL queries. The former `command` prefix is no longer supported in either parsing mode. Updated the specification, rationale, ANTLR lexer and parser documentation, and grammar fixtures.
+
 ## 1.0.0-RC.7 - 2026 Nov
 
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` in new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.

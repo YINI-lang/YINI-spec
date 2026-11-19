@@ -1,0 +1,33 @@
+script = block"""
+  echo "first"
+
+    echo 'nested'
+  echo C:\source\file.txt
+"""
+
+literal_quotes = Block"""
+    echo '""" stays literal inside this line'
+"""
+
+empty = BLOCK"""
+"""
+
+query = bLoCk"""
+    SELECT id, name
+    FROM users
+    WHERE active = TRUE;
+"""
+
+indented_close = b"""
+  Keep MiXeD CaSe and literal \n.
+  """
+
+joined = "run: " + B"""
+    npm test
+"""
+
+// Prefix spellings remain valid identifiers when not introducing a string.
+block = "full prefix as a key"
+b = "short prefix as a key"
+binary = 0b1010
+classic = C"classic\nstring"

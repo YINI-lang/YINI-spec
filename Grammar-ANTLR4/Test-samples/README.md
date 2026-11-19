@@ -27,7 +27,10 @@ Leading numeric signs are separate tokens. Host validation must reject whitespac
 or comments between a sign and its number, and include the sign when validating
 the numeric value or normalizing its source spelling. Numeric concatenation
 operands remain invalid in strict mode even when grammar recognition succeeds.
-For Command Strings, the host validator must also check structural indentation
+Block Strings accept `block` and `b` prefixes in any capitalization. The former
+`command` prefix is invalid in both modes. The Block String fixtures cover mixed-case
+prefixes, the short forms, literal content, and string concatenation.
+For Block Strings, the host validator must also check structural indentation
 and that the closing delimiter occupies its own line. The lexer recognizes the
 multiline token but does not perform those value and placement checks.
 The numeric-boundary and recovery fixtures cover both lenient and strict mode.

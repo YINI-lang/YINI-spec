@@ -9,7 +9,7 @@
 [![License: Apache-2.0](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](./LICENSE)
 ![Status: Release Candidate](https://img.shields.io/badge/status-rc-blueviolet)
 
-**Specification Package Version:** 1.0.0-RC.7 ([Version Mapping Table](./README.md#version-mapping-table))  
+**Specification Package Version:** 1.0.0-RC.7x/RC.8-WIP ([Version Mapping Table](./README.md#version-mapping-table))  
 **Date:** 2026-11-14  
 **Status:** Release Candidate  
 
@@ -377,7 +377,7 @@ Strings in YINI must always be enclosed in quotes — either in double quotes (`
 **Note:** If a value is not quoted, it is not treated as a string — no exceptions. (No ambiguity over strings or keywords.)
 
 ### String Literals in YINI
-YINI defines five main string literal forms: Raw Strings, Escaped Strings, Raw Triple-Quoted Strings, Escaped Triple-Quoted Strings, and Command Strings.
+YINI defines five main string literal forms: Raw Strings, Escaped Strings, Raw Triple-Quoted Strings, Escaped Triple-Quoted Strings, and Block Strings.
 
 These forms differ in how they handle escape sequences and multi-line content.
 
@@ -400,8 +400,9 @@ string literal — characters
 are preserved exactly, without escapes.
 """
 
-// Command strings remove structural indentation while keeping line breaks.
-CommandString = command"""
+// Block Strings remove structural indentation while keeping line breaks.
+// Use block or b in any capitalization for scripts, SQL queries, or similar text.
+BlockString = block"""
     npm install
     npm run build
 """

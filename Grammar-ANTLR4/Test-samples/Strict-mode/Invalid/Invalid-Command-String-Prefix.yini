@@ -1,0 +1,7 @@
+// Rule: The former command prefix is no longer supported; use block or b.
+// Primary failure: syntactic; command is an identifier, not part of STRING.
+^Scripts
+script = command"""
+    echo "hello"
+"""
+/END

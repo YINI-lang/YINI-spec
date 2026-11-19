@@ -11,7 +11,7 @@
   This PARSER grammar aims to follow, as closely as possible (*),
   the latest released version of the YINI format specification 1.0.0.
   Grammar version:
-  1.4.0-RC.1 - 2026 Nov (v1.0.0-rc.7 Spec).
+  1.4.0-RC.1+UPDATES - 2026 Nov+FUTURE (v1.0.0-rc.7x/rc.8wip Spec).
 
   *) NOTE: Some rules are intentionally more permissive than the specification
   requires. This relaxation allows the host parser to detect syntax errors
@@ -225,6 +225,8 @@ scalar_value
 // txt2 = 1 + 2 + "3"
 //
 // because concatenation must begin with a string literal.
+// STRING includes Block Strings with case-insensitive block or b prefixes.
+// Their closing-line restrictions still apply when used as string operands.
 concat_expression
   : STRING concat_tail+
   ;
@@ -242,6 +244,8 @@ concat_operand
   | NULL
   ;
 
+// Block Strings are ordinary string values carried by the lexer's STRING token.
+// The host validator enforces their delimiter and indentation rules in Section 6.4.
 string_literal
   : STRING
   ;

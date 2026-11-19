@@ -1,0 +1,6 @@
+// Rule: A Block String's opening delimiter must be followed immediately by a line break.
+// Primary failure: syntactic.
+^Scripts
+script = block"""echo "hello"
+"""
+/END

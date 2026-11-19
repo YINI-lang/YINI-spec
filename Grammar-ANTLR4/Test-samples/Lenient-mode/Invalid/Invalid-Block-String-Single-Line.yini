@@ -1,0 +1,3 @@
+// Rule: Block String prefixes require triple quotes and a following line break.
+// Primary failure: syntactic; Block is an identifier before an ordinary STRING.
+script = Block'echo hello'
