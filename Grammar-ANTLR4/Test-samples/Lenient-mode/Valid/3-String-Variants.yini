@@ -1,10 +1,10 @@
 @yini
 
 /*
-  Raw and C-strings (escape sequences) parsed correctly.
+  Raw and Escaped Strings (escape sequences) parsed correctly.
 */
 
 ^ Strings
 a = "normal"
 b = 'also normal'
-c = c"This is a tab:\t and a newline:\n"
+c = e"This is a tab:\t and a newline:\n"

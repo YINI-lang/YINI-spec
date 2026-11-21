@@ -1,0 +1,8 @@
+/*
+  Primary failure: lexical/syntactic.
+  Rule: Single-line Escaped Strings cannot contain raw line breaks.
+*/
+
+^ Strings
+str = E"Yes
+mate"

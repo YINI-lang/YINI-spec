@@ -30,4 +30,4 @@ joined = "run: " + B"""
 block = "full prefix as a key"
 b = "short prefix as a key"
 binary = 0b1010
-classic = C"classic\nstring"
+classic = E"classic\nstring"

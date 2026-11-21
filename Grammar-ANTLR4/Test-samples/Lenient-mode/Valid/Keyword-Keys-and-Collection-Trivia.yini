@@ -33,7 +33,7 @@ text = "hello " +
 raw = """
 --This line is string content.
 """
-classic = C"""
+classic = E"""
 --This line is also string content.
 """
 `--name` = "--value"

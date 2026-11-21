@@ -1,0 +1,7 @@
+/*
+  Primary failure: semantic.
+  Rule: Escaped Strings must use only supported escape sequences.
+*/
+
+^ Strings
+str = E"bad \z escape"

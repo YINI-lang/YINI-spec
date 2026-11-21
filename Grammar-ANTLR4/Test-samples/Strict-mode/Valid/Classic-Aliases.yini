@@ -1,0 +1,15 @@
+// Rule: Deprecated Classic prefixes remain aliases for E/e in both parsing modes.
+// The E/e forms are primary; the C/c forms below explicitly test compatibility.
+^Strings
+
+escaped_upper = E"Line1\nLine2\tTabbed"
+escaped_lower = e'Line1\nLine2\tTabbed'
+classic_upper = C"Line1\nLine2\tTabbed"
+classic_lower = c'Line1\nLine2\tTabbed'
+
+escaped_triple_upper = E"""Line1\nLine2\tTabbed"""
+escaped_triple_lower = e"""Line1\nLine2\tTabbed"""
+classic_triple_upper = C"""Line1\nLine2\tTabbed"""
+classic_triple_lower = c"""Line1\nLine2\tTabbed"""
+
+/END

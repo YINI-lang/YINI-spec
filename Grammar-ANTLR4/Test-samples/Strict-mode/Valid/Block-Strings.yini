@@ -34,6 +34,6 @@ mixed_case = bLoCk"""
 block = "full prefix as a key"
 b = "short prefix as a key"
 binary = 0b1010
-classic = c"classic\nstring"
+classic = e"classic\nstring"
 
 /END

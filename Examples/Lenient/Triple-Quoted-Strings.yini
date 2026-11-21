@@ -8,11 +8,11 @@ test2 = """He said, "hello" and left."""
 
 test3 = """You can use "" double quotes inside."""
 
-test4 = C"""\t He said,
+test4 = E"""\t He said,
 \t "hello" and left.
 """
 
-test5 = C"""\t He said,\n
+test5 = E"""\t He said,\n
 \t "hello" and\n
 \t left.\n
 """

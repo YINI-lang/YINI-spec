@@ -97,7 +97,7 @@ For more feedback details, see section D.2, _“Acknowledgments & Special Thanks
 
 **6. String Literals** ([Link ⇨](./YINI-Specification.md#6-string-literals))  
 &nbsp;&nbsp;&nbsp;&nbsp;6.1. Raw Strings (R-Strings)  
-&nbsp;&nbsp;&nbsp;&nbsp;6.2. Classic Strings (C-Strings)  
+&nbsp;&nbsp;&nbsp;&nbsp;6.2. Escaped Strings (E-Strings)\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;6.2.1. Escape Sequences  
 &nbsp;&nbsp;&nbsp;&nbsp;6.3. Triple-Quoted Strings  
 &nbsp;&nbsp;&nbsp;&nbsp;6.4. Block Strings\
@@ -241,7 +241,7 @@ YINI prioritizes **clarity, structure, and predictability**. The features below 
 
 - **Nested Sections:** YINI supports hierarchically nested sections, allowing complex configurations to be expressed with explicit structure.
 
-- **Multiple String Forms:** YINI supports several string forms for different needs, including single-quoted strings, double-quoted strings, raw strings, classic escaped strings, and triple-quoted multi-line strings.
+- **Multiple String Forms:** YINI supports several string forms for different needs, including single-quoted strings, double-quoted strings, raw strings, escaped strings, and triple-quoted multi-line strings.
 
 - **Multi-line Strings:** YINI supports multi-line string literals for longer text values, without requiring unrelated document structure to be affected.
 
@@ -505,7 +505,7 @@ YINI supports three categories of comments, **using four comment syntaxes:**
 
 These rules apply:
 - Comments are ignored by the parser and have no effect on the parsed data model.
-- Comment markers are recognized only outside string literals and outside backticked identifiers. A comment marker appearing inside a quoted string, triple-quoted string, Classic string, or backticked identifier is treated as ordinary content.
+- Comment markers are recognized only outside string literals and outside backticked identifiers. A comment marker appearing inside a quoted string, triple-quoted string, Escaped string, or backticked identifier is treated as ordinary content.
 - Line comments begin at `//` or `#` and continue until the next line ending or `EOF`.
 - Block comments begin at `/*` and end at the next `*/`. Nested block comments are not supported.
 - Comments may appear only where whitespace is allowed. A comment MUST NOT split an identifier, keyword, number literal, string prefix, string literal delimiter, section marker, or other token.
@@ -547,7 +547,7 @@ Because `#` begins a comment outside string literals and backticked identifiers,
 
 na#commentme = "Kim"       // Invalid: `#` begins a comment after `na`, leaving an incomplete/invalid member.
 hex:#FF                    // Invalid: `#` begins a comment before any hexadecimal digits.
-C#comment"hello"           // Invalid: `#` begins a comment after `C`, splitting the string prefix from its literal.
+E#comment"hello"           // Invalid: `#` begins a comment after `E`, splitting the string prefix from its literal.
 ```
 
 ### 3.3.2. Multi-line Block Comments
@@ -662,7 +662,7 @@ backticked identifier, or comment.
 The marker and the remainder of that logical line MUST be ignored as
 configuration content. The line ending remains a logical line boundary.
 
-Inside a string literal, including Raw Strings, Classic Strings, and both forms
+Inside a string literal, including Raw Strings, Escaped Strings, and both forms
 of Triple-Quoted Strings, `--` MUST be treated as ordinary string content and
 MUST NOT disable the line. The same sequence inside a backticked identifier or
 comment has no line-disabling effect.
@@ -1074,7 +1074,7 @@ String prefixes are **case-insensitive**, e.g. lowercase `r` behaves identically
 |------|----------------|---|
 |_none_| Raw String     | Raw (default) if no prefix is used |
 | R _(optional and has no functional effect)_   | Raw String     | No escapes; backslashes are literal (default) |
-| E or e; C or c (deprecated) | Escaped String (Classic String) | Supports escape sequences like `\n`, `\t` |
+| E or e; C or c (deprecated aliases) | Escaped String | Supports escape sequences like `\n`, `\t` |
 | block or b | Block String | Multiline literal content with structural indentation removed |
 
 Prefix R is optional and has no functional effect — raw strings are the default.
@@ -1082,12 +1082,12 @@ Prefix R is optional and has no functional effect — raw strings are the defaul
 YINI defines two ordinary string behaviors and two delimiter forms:
 - Behavior:
   * Raw behavior: escape sequences are not interpreted.
-  * Classic behavior: escape sequences are interpreted.
+  * Escaped behavior: escape sequences are interpreted.
 - Delimiter form:  
   * Single-line quoted form: `'...'` or `"..."`.
   * Triple-quoted form: `"""..."""`.
 
-Combining these gives Raw Strings, Escaped Strings (also called Classic Strings), Raw Triple-Quoted Strings, and Escaped Triple-Quoted Strings. The `C` and `c` prefixes are aliases for `E` and `e`.
+Combining these gives Raw Strings, Escaped Strings, Raw Triple-Quoted Strings, and Escaped Triple-Quoted Strings. The `C` and `c` prefixes remain supported as deprecated aliases for `E` and `e`; see Section 6.2.
 
 Block Strings are a separate triple-quoted form that removes structural indentation and keeps content line breaks as LF. See Section 6.4.
 
@@ -1104,17 +1104,17 @@ Typographic or curly quotation marks such as `‘`, `’`, `“`, and `”` are 
 
 **Note:** Text MUST be enclosed in quotation marks to be parsed as a string literal.
 
-**YINI supports a number of string literal forms:** single-line quoted strings, Classic strings, Triple-Quoted strings, and Block Strings. Ordinary string behavior is determined by the optional prefix before the opening quote sequence.
+**YINI supports a number of string literal forms:** single-line quoted strings, Escaped strings, Triple-Quoted strings, and Block Strings. Ordinary string behavior is determined by the optional prefix before the opening quote sequence.
 
-The `R` prefix is optional and has no semantic effect because Raw strings are the default. The `C` and `E` prefixes enable the same escape-sequence interpretation.
+The `R` prefix is optional and has no semantic effect because Raw strings are the default. The `E`/`e` prefixes enable escape-sequence interpretation; the deprecated `C`/`c` aliases have the same behavior.
 
-Triple-Quoted Strings may also use the `R`, `C`, or `E` prefix. Without a prefix, a Triple-Quoted String is Raw by default. YINI supports multi-line strings via Triple-Quoted Strings.
+Triple-Quoted Strings may also use the `R`/`r` or `E`/`e` prefixes, including the deprecated `C`/`c` aliases for `E`/`e`. Without a prefix, a Triple-Quoted String is Raw by default. YINI supports multi-line strings via Triple-Quoted Strings.
 
 String behavior is controlled by an optional prefix before the opening quote sequence:
 
 - No prefix: Raw string behavior.
 - `R` or `r`: Raw string behavior; allowed for explicitness only.
-- `C`, `c`, `E`, or `e`: Classic (Escaped) string behavior; escape sequences are interpreted.
+- `E` or `e`: Escaped string behavior; escape sequences are interpreted. The deprecated `C`/`c` aliases have the same behavior.
 
 This applies to both single-line quoted strings and ordinary Triple-Quoted Strings. Triple-Quoted Strings without a prefix are Raw by default. The case-insensitive `block` or `b` prefix selects the separate Block String form.
 
@@ -1127,7 +1127,7 @@ This applies to both single-line quoted strings and ordinary Triple-Quoted Strin
 | Type                   | Quotes Used              | Multi-Line | Escapes | Trims Whitespace | Description                          | Similar To            |
 |------------------------|--------------------------|------------|---------|------------------|--------------------------------------|------------------------|
 | Raw String             | `'...'` or `"..."`       | ❌ No      | ❌ No   | ❌ No             | Simple 1-line literal                | Raw literal strings    |
-| Escaped String (E or C) | `E'...'` or `e"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
+| Escaped String         | `E'...'` or `e"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
 | Triple-Quoted (Raw)    | `"""..."""`              | ✅ Yes     | ❌ No   | ❌ No             | Multi-line raw text                  | Python raw triple-quote |
 | Escaped Triple-Quoted  | `E"""..."""` or `e"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
 | Block String           | `block"""` or `b"""` (case-insensitive), followed by a line break | ✅ Required | ❌ No | ✅ Structural indentation only | Literal multiline text, such as scripts or SQL queries | YAML literal block scalar |
@@ -1172,20 +1172,22 @@ In the above example, the outer `"` characters are plain ASCII double quotes and
 #### Raw String Prefix
 Any string enclosed in single quotes (`'`) or double quotes (`"`) MAY be prefixed with `R` or `r` to explicitly mark it as a Raw String. This prefix is optional because strings are raw by default.
 
-### 6.2. Classic Strings (C-Strings)
-An Escaped String, also called a Classic String, is a string literal prefixed with `E`, `e`, `C`, or `c`. All four prefixes use the same escape sequences and produce the same string values. Escaped Strings interpret escape sequences before the final string value is produced. The prefix is not preserved in the resulting data model.
+<a id="62-classic-strings-c-strings"></a>
 
-**Deprecated:** The name *Classic String* and the `C`/`c` prefixes are deprecated. New documents SHOULD use the `E`/`e` prefixes, and documentation SHOULD use the name *Escaped String*. `C`/`c` strings, including Triple-Quoted forms, remain valid in both parsing modes and follow the same escape rules.
+### 6.2. Escaped Strings (E-Strings)
+An Escaped String is a string literal prefixed with `E` or `e`. Escaped Strings interpret escape sequences before the final string value is produced. The prefix is not preserved in the resulting data model.
+
+**Deprecated aliases:** *Classic String* is the deprecated name for an Escaped String. The `C`/`c` prefixes remain supported as deprecated aliases for `E`/`e`, with identical escape rules and resulting string values in both parsing modes, including Triple-Quoted forms. New documents SHOULD use `E`/`e`, and documentation SHOULD use the name *Escaped String*.
 
 Escaped Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Thus, all special control characters (U+0000–U+001F), except for space and tab, MUST be written using escape sequences — they cannot appear directly in Escaped Strings.
 
-Escaped strings MUST begin and end on the same logical line.
+Single-line quoted Escaped Strings MUST begin and end on the same logical line.
 
 Examples:
 ```yini
-text1 = C"hello\nworld"
+text1 = E"hello\nworld"
 
-text2 = c"This is a newline \n and this is a tab \t character."
+text2 = e"This is a newline \n and this is a tab \t character."
 
 text3 = e"hello\nworld"
 ```
@@ -1194,7 +1196,7 @@ text3 = e"hello\nworld"
 
 #### 6.2.1. Escape Sequences
 
-Escape sequences are supported only in Classic (Escaped) Strings and their Triple-Quoted forms.
+Escape sequences are supported only in Escaped Strings and their Triple-Quoted forms.
 
 Unicode escape sequences MUST represent valid Unicode scalar values.  
 Surrogate code points in the range U+D800 to U+DFFF are invalid.  
@@ -1243,14 +1245,14 @@ problems, but it MUST still mark the document as invalid. See Section 14.1.2,
 A **Triple-Quoted String** is a string literal that:
 - **Begins** with `"""` and **ends** at the next `"""` sequence that is recognized as the closing delimiter.
 - **May span multiple lines**, including embedded newline characters.
-- In a Raw Triple-Quoted String, the sequence `"""` cannot appear as content because it terminates the string. In a Classic Triple-Quoted String, quote characters may be escaped using `\"`.
+- In a Raw Triple-Quoted String, the sequence `"""` cannot appear as content because it terminates the string. In an Escaped Triple-Quoted String, quote characters may be escaped using `\"`.
 - Without a prefix, a Triple-Quoted String is Raw: escape sequences are not interpreted.
-- With a `C`, `c`, `E`, or `e` prefix, escape sequences are interpreted using the same rules as Classic Strings.
+- With an `E` or `e` prefix, escape sequences are interpreted using the same rules as Escaped Strings. The deprecated `C`/`c` aliases have the same behavior.
 - With an `R` or `r` prefix, behavior is identical to the unprefixed Raw form. The `R` prefix is allowed only for explicitness.
 
 By default, Triple-Quoted Strings are treated as **Raw** — escape sequences are not interpreted. To explicitly indicate that a Triple-Quoted String is raw, a prefix `R` (or `r`) MAY be used. This prefix is purely **syntactic sugar** and does not affect its default behavior.
 
-If **prefixed with `C`, `c`, `E`, or `e`**, the string supports escape sequences, just like Classic Strings (C-Strings). This includes support for: `\n`, `\t`, `\\`, `\"`, `\xhh`, `\u1234`, `\o123`, etc.
+If **prefixed with `E` or `e`**, the string supports escape sequences, just like single-line quoted Escaped Strings. The deprecated `C`/`c` aliases have the same behavior. This includes support for: `\n`, `\t`, `\\`, `\"`, `\xhh`, `\u1234`, `\o123`, etc.
 
 #### Examples
 
@@ -1265,11 +1267,11 @@ three lines."""
 """You can use double quotes (") inside."""
 ```
 
-Classic Triple-Quoted Strings (with `C` or `E` prefix and escapes enabled):
+Escaped Triple-Quoted Strings (with `E` or `e` prefix and escapes enabled):
 ```yini
-C"""This spans multiple lines with a tab\tand newline\n"""
+E"""This spans multiple lines with a tab\tand newline\n"""
 
-C"""Quotes inside: "double" and 'single'"""
+e"""Quotes inside: "double" and 'single'"""
 
 E"""This also interprets \n as a newline."""
 ```
@@ -1324,7 +1326,7 @@ On a space-only content line, remove up to the structural indentation and preser
 
 A `"""` sequence within a content line is literal unless it is the first non-space content on that line. In that position it begins the closing delimiter; any following characters make the Block String invalid. There is no escape for a closing delimiter.
 
-Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only `block` and `b`, in any capitalization, select this form. `c"""..."""` and `C"""..."""` remain Classic Triple-Quoted Strings. The Block String prefixes MUST NOT be used with single-line quoted strings: `block"..."`, `block'...'`, `b"..."`, and `b'...'` are invalid in any capitalization. The former `command` prefix is no longer supported and MUST be rejected in both parsing modes.
+Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only `block` and `b`, in any capitalization, select this form. `e"""..."""` and `E"""..."""` remain Escaped Triple-Quoted Strings. The Block String prefixes MUST NOT be used with single-line quoted strings: `block"..."`, `block'...'`, `b"..."`, and `b'...'` are invalid in any capitalization. The former `command` prefix is no longer supported and MUST be rejected in both parsing modes.
 
 **Application note:** Block Strings contain text. The application decides how to use that text, such as submitting a SQL query or running a script, and converts LF to another line-ending form if needed. For scripts, the application chooses the shell or terminal interface; YINI does not guarantee that commands work across operating systems or shells.
 
@@ -1334,13 +1336,13 @@ Ordinary YINI string behavior is determined by two independent choices:
 
 1. The optional string prefix:
    - No prefix, `R`, or `r` means Raw string behavior.
-   - `C`, `c`, `E`, or `e` means Classic (Escaped) string behavior, where escape sequences are interpreted.
+   - `E` or `e` means Escaped string behavior, where escape sequences are interpreted. The deprecated `C`/`c` aliases have the same behavior.
 
 2. The delimiter form:
    - Single-line quoted strings use `'...'` or `"..."`.
    - Triple-Quoted Strings use `"""..."""` and may span multiple lines.
 
-Raw strings are the default. The `R` prefix is allowed for explicitness only and has no semantic effect. The `C` and `E` prefixes enable the same escape-sequence interpretation.
+Raw strings are the default. The `R` prefix is allowed for explicitness only and has no semantic effect. The `E`/`e` prefixes enable escape-sequence interpretation; the deprecated `C`/`c` aliases have the same behavior.
 
 Block Strings use `block"""` or `b"""` (case-insensitive) and the distinct multiline and indentation rules in Section 6.4.
 
@@ -1368,19 +1370,19 @@ The `+` operator in YINI is exclusively a string concatenation operator. YINI do
 
 Between concatenation operands, `+` MUST be interpreted as the operator, even without surrounding whitespace. A numeric operand MAY have its own leading `+` or `-` sign. Thus, `"a"+42` joins `"a"` and `42`, while `"a"++42` joins `"a"` and `+42`.
 
-**In strict mode**, all concatenation operands MUST be string literals. This includes Raw/R-prefixed strings, Classic/C- or E-prefixed strings, ordinary Triple-Quoted Strings, and Block Strings.
+**In strict mode**, all concatenation operands MUST be string literals. This includes Raw/R-prefixed strings, Escaped/E-prefixed strings (including deprecated `C`/`c` aliases), ordinary Triple-Quoted Strings, and Block Strings.
 
 **In lenient mode**, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not performed. Non-string scalar operands MUST first be converted to their parsed scalar canonical string representation before concatenation.
 
 Lists and inline objects MUST NOT be operands in concatenation expressions.
 
-Each string literal is interpreted according to its own string type before concatenation. For example, Classic Strings interpret escape sequences before being joined, while Raw Strings preserve backslashes literally.
+Each string literal is interpreted according to its own string type before concatenation. For example, Escaped Strings interpret escape sequences before being joined, while Raw Strings preserve backslashes literally.
 
 Block Strings retain the delimiter and indentation rules in Section 6.4, including the requirement that the closing delimiter occupy its own line.
 
 **Valid in both lenient and strict mode:**
 ```yini
-escaped = C"Line 1\n" + "Line 2"
+escaped = E"Line 1\n" + "Line 2"
 
 longText = "This is a long string that is split " +
            "across multiple source lines."
@@ -2215,7 +2217,7 @@ Parsers MUST check the file's original line endings before normalizing string va
 | Strict  | Required |
 
 #### 12.2.6. Escaping and String Literals
-- Escape sequences are **ONLY allowed** in Classic (Escaped) strings and their Triple-Quoted forms, prefixed with `C`, `c`, `E`, or `e`.
+- Escape sequences are **ONLY allowed** in Escaped strings and their Triple-Quoted forms, prefixed with `E`/`e` or the deprecated `C`/`c` aliases.
 - Triple-Quoted Strings MUST use `"""` for both opening and closing (`'''` is not supported).
 - Block Strings MUST use a case-insensitive `block` or `b` prefix immediately followed by `"""` and satisfy the multiline delimiter and indentation rules in Section 6.4.
 
@@ -2516,9 +2518,9 @@ Implementations SHOULD report invalid concatenation with diagnostics that identi
 | Type                   | Prefix           | Example    | Behavior |
 |------------------------|------------------|------------|----------|
 | (Raw) String           | _None_, `R`, or `r`| "Some text"| Text is as-is (raw), no escaping,  backslash is literal, preserves all whitespace|
-| Escaped (Classic) String | `E` or `e`; `C`/`c` deprecated | `e"..."` | Escape sequences are interpreted|
+| Escaped String | `E` or `e`; `C`/`c` deprecated aliases | `e"..."` | Escape sequences are interpreted|
 | Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Multiline; keeps spaces, tabs, and line breaks; backslashes are literal; source line endings become LF |
-| Escaped Triple-Quoted String | `E` or `e`; `C`/`c` deprecated | `E"""..."""` | Multiline; source line endings become LF before escape processing; escape results stay unchanged |
+| Escaped Triple-Quoted String | `E` or `e`; `C`/`c` deprecated aliases | `E"""..."""` | Multiline; source line endings become LF before escape processing; escape results stay unchanged |
 | Block String | `block` or `b` (case-insensitive) | `block"""` or `b"""` followed by a line break | Multiline literal; keeps content line breaks as LF; removes structural indentation |
 
 ### 13.9. Comments
@@ -2603,7 +2605,7 @@ unsupported escapes are invalid in both modes and require errors.
 For example, both assignments below are invalid in both modes:
 
 ```yini
-text = C"\123"     // Error: use the YINI escape \o123 instead.
+text = E"\123"     // Error: use the YINI escape \o123 instead.
 items = [1, , 3]   // Error: missing list value.
 ```
 

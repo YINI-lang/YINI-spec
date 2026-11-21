@@ -2,9 +2,9 @@
 
 raw        = R"path\to\file.txt"    # or simply "path\to\file.txt"
 
-classic    = C"Line1\nLine2"         # escape processing
+classic    = E"Line1\nLine2"         # escape processing
 escaped    = e"Line1\nLine2"         # same escape processing
-escapedQ   = E'Line1\nLine2'         # uppercase alias, single quotes
+escapedQ   = E'Line1\nLine2'         # uppercase prefix, single quotes
 
 tripleRaw  = """
 Exact
@@ -12,7 +12,7 @@ Exact
 and line breaks
 """
 
-tripleC    = C"""
+tripleC    = E"""
 LineA\n
   LineB\tTabbed
 """

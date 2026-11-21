@@ -5,6 +5,6 @@ host        = "localhost"
 port        = 8080
 useTls      = true
 maxClients  = 100
-retryDelay  = C"5\n"        # C-string with escape sequence
+retryDelay  = E"5\n"        # Escaped String with an escape sequence.
 
 /END // (required in strict mode)

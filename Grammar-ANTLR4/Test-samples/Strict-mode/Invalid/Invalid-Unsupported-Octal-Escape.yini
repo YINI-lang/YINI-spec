@@ -5,6 +5,6 @@
 */
 
 ^ Strings
-text = C"\123"
+text = E"\123"
 
 /END

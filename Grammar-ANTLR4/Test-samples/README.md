@@ -35,4 +35,8 @@ and that the closing delimiter occupies its own line. The lexer recognizes the
 multiline token but does not perform those value and placement checks.
 The numeric-boundary and recovery fixtures cover both lenient and strict mode.
 
+General escaped-string fixtures use `E`/`e`. The `Classic-Aliases.yini` fixtures
+explicitly cover the deprecated `C`/`c` aliases for both single-line and
+triple-quoted forms in each parsing mode.
+
 User-facing examples live in `../../Examples/`.
