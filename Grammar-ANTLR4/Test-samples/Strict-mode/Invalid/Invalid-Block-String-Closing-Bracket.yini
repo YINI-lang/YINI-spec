@@ -1,0 +1,7 @@
+// Rule: A list's closing bracket cannot directly follow a Block String's closing quotes on the same line.
+// Primary failure: the grammar recognizes the list, but closing-line validation must reject the bracket.
+^Strings
+items = [b"""
+  one
+"""]
+/END

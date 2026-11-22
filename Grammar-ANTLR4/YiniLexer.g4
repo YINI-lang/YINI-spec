@@ -347,9 +347,9 @@ fragment ESCAPED_SINGLE_OR_DOUBLE_STRING
 // Block Strings start with b or B, or block in any capitalization (ASCII letters).
 // All spellings produce STRING tokens; content keeps its original case.
 // The former command prefix is not recognized as a string prefix.
-// The token ends at the closing quotes. The host checks the rest of that source
-// line for anything other than ASCII spaces or tabs, and applies Section 6.4
-// when removing indentation and computing the value.
+// The token ends at the closing quotes. On the original source line, the host
+// skips ASCII spaces and tabs after the quotes and checks for a line ending,
+// EOF, a '//' or '#' line comment, or a legal '+' or ',' (Section 6.4).
 fragment BLOCK_TRIPLE_QUOTED_STRING
   : ([bB][lL][oO][cC][kK] | [bB]) '"""' HSPACE* BLOCK_LINE_BREAK
     // A content line may contain tabs. LF and CR are handled by BLOCK_LINE_BREAK.
@@ -465,7 +465,8 @@ FULL_LINE_COMMENT
 
 /*
  INLINE_COMMENT:
- Remains in input, but hidden (doesn't interfere with parsing).
+ Skip the rest of the line, including when this rule matches just after the
+ closing quotes of a Block String. Markers inside the STRING token are text.
  */
 INLINE_COMMENT
   : ('//' | '#') ~[\r\n]* -> skip

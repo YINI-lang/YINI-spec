@@ -227,7 +227,7 @@ scalar_value
 // because concatenation must begin with a string literal.
 // STRING includes Block Strings starting with b, B, or block in any capitalization.
 // Prefix capitalization does not change the case of the string content.
-// Their closing-line restrictions still apply when used as string operands.
+// A '+' on the closing line can continue a Block String as a concatenation.
 concat_expression
   : STRING concat_tail+
   ;
@@ -246,7 +246,9 @@ concat_operand
   ;
 
 // Block Strings are ordinary string values carried by the lexer's STRING token.
-// The host validator enforces their delimiter and indentation rules in Section 6.4.
+// A following '+' or ',' is parsed by the surrounding expression or collection.
+// The lexer skips line and block comments outside the STRING token. The host
+// checks comment placement on the original closing line and enforces Section 6.4.
 string_literal
   : STRING
   ;

@@ -32,9 +32,11 @@ Block Strings accept `b` or `B`, or `block` in any capitalization, such as `BLOC
 the content. The former `command` prefix is invalid in both modes. The Block String
 fixtures cover these spellings, literal content, and string concatenation.
 For Block Strings, the host validator must also check structural indentation
-and that the closing delimiter occupies its own line. Only ASCII spaces and tabs
-may follow either delimiter on its line. The `Block-String-Delimiter-Whitespace.yini`
-fixtures include these characters after both delimiters and on a content line.
+and the original closing line. After the closing quotes and any ASCII spaces
+or tabs, the line may end, take a `//` or `#` line comment, or continue with
+a legal `+` or `,`. A `/* ... */` comment may follow that punctuation.
+The `Block-String-Delimiter-Whitespace.yini` fixtures include ASCII spaces
+and tabs after both delimiters and on a content line.
 The lexer recognizes the multiline token. The host performs the value and
 closing-line checks.
 The numeric-boundary and recovery fixtures cover both lenient and strict mode.

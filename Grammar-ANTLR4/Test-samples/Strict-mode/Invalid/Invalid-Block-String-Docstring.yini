@@ -1,0 +1,7 @@
+// Rule: Triple quotes after only ASCII spaces close the block.
+// Primary failure: unexpected text after the closing quotes.
+^Strings
+text = b"""
+  """Docstring"""
+"""
+/END

@@ -28,6 +28,35 @@ joined = "run: " + B"""
     npm test
 """
 
+// Both values are Hello. Comments after closing quotes are outside the block.
+slash_note = b"""
+  Hello
+""" // A comment
+hash_note = b"""
+  Hello
+"""# A comment
+
+// Comment markers on content lines are literal text.
+markers = b"""
+  // one
+  # two
+  /* three */
+"""
+
+// The punctuation after each block belongs to the surrounding expression.
+message = b"""
+  Hello
+""" + /* Add punctuation. */ "!"
+items = [b"""
+  one
+""", /* The next item
+        is on the following line. */
+  "two"]
+object = {first: b"""
+  red
+""", second: "blue"}
+quoted = '"""Docstring"""'
+
 // Prefix spellings remain valid identifiers when not introducing a string.
 block = "full prefix as a key"
 b = "short prefix as a key"

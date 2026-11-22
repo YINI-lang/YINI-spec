@@ -1,7 +1,7 @@
-// Rule: Only ASCII spaces and tabs may follow the closing quotes before the end of the line.
+// Rule: A block comment cannot directly follow the closing quotes, even after a space.
 // Primary failure: semantic; the host validator must reject this grammar-recognized token.
 ^Scripts
 script = BLOCK"""
     echo "hello"
-""" # trailing content is not permitted
+""" /* note */
 /END

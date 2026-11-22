@@ -494,13 +494,13 @@ The following whitespace `<WS>` behaviors are defined:
 - You can indent section headers and members for readability. Section markers determine nesting. Inside a Block String, leading ASCII spaces set the margin described in [§6.4, Block Strings](#64-block-strings).
 
 ### 3.3. Comments
-YINI supports the following comment forms. The positions in the table have one exception for Block Strings. A comment after the opening or closing quotes on the same line makes the block invalid (Section 6.4).
+YINI supports the following comment forms. On a Block String delimiter line, the opening quotes may be followed only by ASCII spaces or tabs before the line break. The closing quotes may be followed by a `//` or `#` line comment. Section 6.4 gives examples.
 
 | Syntax | Type | Valid position |
 |--------|------|----------------|
 | `//` | Line comment | **Anywhere whitespace is allowed**; ignores the rest of the line |
 | `#` | Line comment | **Anywhere whitespace is allowed**; ignores the rest of the line |
-| `/* ... */` | Block comment | **Anywhere whitespace is allowed**; may span multiple lines |
+| `/* ... */` | Block comment | Where whitespace is allowed, except directly after either Block String delimiter (§6.4). May span multiple lines. |
 | `;` | Full-line comment | Only at the beginning of a logical line, after optional spaces or tabs |
 
 These rules apply:
@@ -510,7 +510,7 @@ These rules apply:
 - Block comments begin at `/*` and end at the next `*/`. Nested block comments are not supported.
 - Comments may appear only where whitespace is allowed. A comment MUST NOT split an identifier, keyword, number literal, string prefix, string literal delimiter, section marker, or other token.
 - A line ending inside a block comment remains a logical-line boundary. Ignoring the comment MUST NOT make tokens on opposite sides of that line ending count as being on the same logical line.
-- A line comment may begin immediately after a complete token; no whitespace is required before `//` or `#`.
+- Where a line comment is allowed, it may begin immediately after a complete token. No whitespace is required before `//` or `#`.
 
 While both `//` and `#` are valid for inline comments, it is recommended to use **only one style per file** to maintain clarity and consistency for human readers.
 
@@ -1286,9 +1286,43 @@ A Block String holds multiline, line-oriented text, such as a script or SQL quer
 
 A Block String starts with `b`, `B`, or the word `block` in any capitalization, immediately followed by `"""`. The opening line MUST end with a line break. For `block`, uppercase and lowercase ASCII letters can be mixed: `block`, `BLOCK`, `Block`, and `bLoCk` all work. All these spellings have identical behavior in both parsing modes. Changing the prefix's capitalization does not change the case of the string content.
 
-The closing `"""` MUST appear on its own line. Only ASCII spaces may precede it. The closing line may end with a line break or at end-of-file.
+The closing `"""` MUST start a new line. Only ASCII spaces may precede it on that line.
 
-In both modes, any number of ASCII spaces (`U+0020`) and tabs (`U+0009`) may follow the opening or closing quotes on the same line. The parser MUST ignore these spaces and tabs. Any other character after the quotes on that line, including a comment marker, is an error. On content lines, trailing spaces and tabs are part of the value after the indentation rules below are applied.
+In both modes, the parser MUST ignore any ASCII spaces (`U+0020`) and tabs (`U+0009`) immediately after either delimiter. After those spaces and tabs, the opening line MUST end. The closing line may end with a line break or at end-of-file. The following forms are also allowed after the closing quotes, with or without a space or tab before them.
+
+- `//` or `#` starts a line comment. The parser ignores the rest of the line. The comment adds nothing to the string value.
+- `+` joins the Block String to the next operand under the concatenation rules in §6.6.
+- `,` may follow a Block String wherever a list or inline object permits a comma. A comma after the last item is valid only in lenient mode.
+
+Any other character in that position is an error. For example, `""" /* note */` is invalid. After a valid `+` or `,`, the usual comment rules apply, including `/* ... */` comments that span lines. Inside the block, comment markers are literal text. On content lines, trailing spaces and tabs are part of the value after the indentation rules below are applied.
+
+**Valid in both modes.** Both values are `Hello`.
+
+```yini
+greeting = b"""
+  Hello
+""" // A comment
+
+message = b"""
+  Hello
+""" # A comment
+```
+
+**Valid in both modes.** The first value is `Hello!`. The list contains the strings `one` and `two`.
+
+```yini
+message = b"""
+  Hello
+""" + /* Add punctuation. */ "!"
+
+items = [
+  b"""
+    one
+  """, /* The next item
+          is on the following line. */
+  "two"
+]
+```
 
 ```yini
 build = block"""
@@ -1345,6 +1379,20 @@ On a space-only content line, remove up to the structural indentation and preser
 
 A `"""` sequence at the start of a line or after only ASCII spaces begins the closing delimiter. A `"""` sequence anywhere else on a content line is literal. There is no escape for a closing delimiter.
 
+**Invalid in both modes.** The quotes before `Docstring` close the block. The word that follows them is an error on that line.
+
+```yini
+text = b"""
+  """Docstring"""
+"""
+```
+
+**Valid in both modes.** To store that one line, enclose it in single quotes. All six double quotes are part of the value.
+
+```yini
+text = '"""Docstring"""'
+```
+
 Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only `b`, `B`, and `block` in any capitalization select this form. `e"""..."""` and `E"""..."""` remain Escaped Triple-Quoted Strings. The Block String prefixes MUST NOT be used with single-line quoted strings: `block"..."`, `block'...'`, `b"..."`, and `b'...'` are invalid in any capitalization. The former `command` prefix is no longer supported and MUST be rejected in both parsing modes.
 
 **Application note:** Block Strings contain text. The application decides how to use that text, such as submitting a SQL query or running a script, and converts LF to another line-ending form if needed. For scripts, the application chooses the shell or terminal interface; YINI does not guarantee that commands work across operating systems or shells.
@@ -1397,7 +1445,7 @@ Lists and inline objects MUST NOT be operands in concatenation expressions.
 
 Each string literal is interpreted according to its own string type before concatenation. For example, Escaped Strings interpret escape sequences before being joined, while Raw Strings preserve backslashes literally.
 
-Block Strings retain the delimiter and indentation rules in Section 6.4, including the requirement that the closing delimiter occupy its own line.
+To join another operand after a Block String, put `+` on the same line as the closing quotes, as shown in §6.4. Starting the next line with `+` is invalid.
 
 **Valid in both lenient and strict mode:**
 ```yini
@@ -1876,7 +1924,7 @@ The following structural rules apply to inline objects:
 - In lenient mode only, a trailing comma after the last member is permitted and ignored.
 - In strict mode, trailing commas are invalid.
 - Whitespace is ignored except inside quoted strings and backticked identifiers.
-- Line comments may begin after a complete token, even without preceding whitespace. However, a comment marker MUST NOT split a token.
+- Where §3.3 allows a line comment, it may begin after a complete token, even without preceding whitespace. A comment marker MUST NOT split a token.
 - Object member keys MUST be unique within the same inline object.
   * In lenient mode, the first object member definition wins: the first member MUST be kept, later duplicate object members MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
   * In strict mode, any duplicate object member key MUST result in an error.
@@ -2553,7 +2601,7 @@ In summary:
 - `;` begins a full-line comment only when it is the first non-whitespace character on a line.
 - Nested block comments are not supported.
 - Comments may appear only where whitespace is allowed and MUST NOT split tokens.
-- A parser MUST reject a comment after a Block String delimiter on the same line, even if spaces or tabs separate it from the quotes (Section 6.4).
+- On the same line as a Block String delimiter, a parser MUST reject a comment directly after the opening quotes. After the closing quotes, it MUST accept a `//` or `#` line comment, including after optional ASCII spaces or tabs. A `/* ... */` comment may follow a valid `+` or `,` as described in Section 6.4.
 
 Implementations SHOULD remove or ignore comments during parsing before semantic interpretation, while preserving source-position information when useful for diagnostics.
 They MUST still account for line endings inside block comments when enforcing same-logical-line requirements.
@@ -3641,6 +3689,8 @@ v1.0.0-RC.7x/RC.8-WIP
 - **Changed:** Renamed Command Strings to Block Strings and replaced the `command` prefix with case-insensitive `block` and `b` prefixes. The `command` prefix is no longer supported in either parsing mode.
 - **Changed:** Both modes now reject literal control characters from `U+0000` through `U+001F` in Block Strings, except for tab, LF, and CR.
 - **Changed:** Both modes now allow trailing ASCII spaces and tabs after either Block String delimiter.
+- **Changed:** A Block String can be followed on its closing line by a concatenation operator or a comma allowed by the surrounding list or inline object.
+- **Changed:** Both modes accept `//` and `#` line comments directly after the closing quotes of a Block String.
 
 v1.0.0 RC 7
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.

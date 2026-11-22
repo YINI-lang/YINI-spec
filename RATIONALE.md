@@ -519,6 +519,12 @@ Line breaks between content lines are kept, including blank lines. Each becomes 
 
 A stray space or tab after the opening or closing quotes is easy to miss in an editor. Allowing it lets authors add or remove that whitespace without changing the string. On a content line, a trailing space or tab can belong to the text, so YINI keeps it after removing the structural margin.
 
+Closing quotes at the start of a line, after any ASCII spaces, give the reader a clear place where the text ends. If someone types `"""Docstring"""` there, the parser can point to the unexpected word on that line. Treating the whole line as text could hide a mistyped ending and pull later settings into the string. A short piece of text containing triple double quotes is easy to write with single quotes, as in `'"""Docstring"""'`.
+
+Two familiar punctuation marks can follow the closing quotes. With `""" + "!"`, the reader sees immediately that another string will be joined. With `""",`, a block can be one of several list items or object member values. Both forms put the punctuation next to the value it belongs to, just as they do for an ordinary quoted string.
+
+Authors can also put a short note beside a finished Block String with `""" // note` or `""" # note`. The closing quotes show where the value ends, and the line comment runs to the end of that line. Inside the block, the same characters may belong to a script or another piece of text, so YINI keeps them.
+
 The line break ending the opening line and the line break before the closing line are left out. YINI adds no extra line breaks. This avoids an unexpected final newline becoming part of the text, such as a command or argument. Authors can include a final LF by writing an empty content line before the closing delimiter:
 
 ```yini
