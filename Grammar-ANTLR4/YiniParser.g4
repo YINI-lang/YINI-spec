@@ -225,7 +225,8 @@ scalar_value
 // txt2 = 1 + 2 + "3"
 //
 // because concatenation must begin with a string literal.
-// STRING includes Block Strings with case-insensitive block or b prefixes.
+// STRING includes Block Strings starting with b, B, or block in any capitalization.
+// Prefix capitalization does not change the case of the string content.
 // Their closing-line restrictions still apply when used as string operands.
 concat_expression
   : STRING concat_tail+

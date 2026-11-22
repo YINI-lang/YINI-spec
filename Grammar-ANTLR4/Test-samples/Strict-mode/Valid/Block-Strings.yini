@@ -1,3 +1,5 @@
+// Rule: b, B, and every capitalization of block select the same string form.
+// Prefix capitalization does not change the case of the content.
 ^Scripts
 
 build = block"""

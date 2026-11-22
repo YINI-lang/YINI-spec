@@ -315,7 +315,7 @@ YINI documents MUST be encoded in UTF-8.
 
 - **Character Set:** YINI documents use Unicode. Control characters and other non-printable characters SHOULD be avoided except where explicitly allowed, such as tabs, spaces, and line endings, or when represented through valid string literal forms. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-Quoted Strings.
 
-For details about whitespace and control characters, see Section 3.2, "Whitespace and Indentation".
+For details about whitespace and control characters, see Section 3.2, "Whitespace and Indentation". Section 6.4 defines which control characters may appear directly in Block Strings.
 
 ### 2.2. File Extension
 YINI files SHOULD use the `.yini` file extension. This extension makes it easier to identify the file type and ensures proper handling by tools and parsers designed for the YINI format.
@@ -1075,7 +1075,7 @@ String prefixes are **case-insensitive**, e.g. lowercase `r` behaves identically
 |_none_| Raw String     | Raw (default) if no prefix is used |
 | R _(optional and has no functional effect)_   | Raw String     | No escapes; backslashes are literal (default) |
 | E or e; C or c (deprecated aliases) | Escaped String | Supports escape sequences like `\n`, `\t` |
-| block or b | Block String | Multiline literal content with structural indentation removed |
+| b, B, or block in any capitalization | Block String | Multiline literal content with structural indentation removed |
 
 Prefix R is optional and has no functional effect — raw strings are the default.
 
@@ -1116,7 +1116,7 @@ String behavior is controlled by an optional prefix before the opening quote seq
 - `R` or `r`: Raw string behavior; allowed for explicitness only.
 - `E` or `e`: Escaped string behavior; escape sequences are interpreted. The deprecated `C`/`c` aliases have the same behavior.
 
-This applies to both single-line quoted strings and ordinary Triple-Quoted Strings. Triple-Quoted Strings without a prefix are Raw by default. The case-insensitive `block` or `b` prefix selects the separate Block String form.
+This applies to both single-line quoted strings and ordinary Triple-Quoted Strings. Triple-Quoted Strings without a prefix are Raw by default. The `b` or `B` prefix, or `block` in any capitalization, selects the separate Block String form.
 
 **Rules and Behavior for Strings:**
 - All string literals **MUST start and finish on the same line**, except for **Triple-Quoted Strings** (see Section 6.3), which can span multiple lines, and **Block Strings** (see Section 6.4), which must span multiple lines.
@@ -1130,7 +1130,7 @@ This applies to both single-line quoted strings and ordinary Triple-Quoted Strin
 | Escaped String         | `E'...'` or `e"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
 | Triple-Quoted (Raw)    | `"""..."""`              | ✅ Yes     | ❌ No   | ❌ No             | Multi-line raw text                  | Python raw triple-quote |
 | Escaped Triple-Quoted  | `E"""..."""` or `e"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
-| Block String           | `block"""` or `b"""` (case-insensitive), followed by a line break | ✅ Required | ❌ No | ✅ Structural indentation only | Literal multiline text, such as scripts or SQL queries | YAML literal block scalar |
+| Block String           | `b"""`, `B"""`, or `block"""` (any capitalization), followed by a line break | ✅ Required | ❌ No | ✅ Structural indentation only | Literal multiline text, such as scripts or SQL queries | YAML literal block scalar |
 
 ### 6.1. Raw Strings (R-Strings)
 A raw string is enclosed in either single quotes (`'...'`) or double quotes (`"..."`).
@@ -1284,7 +1284,9 @@ Raw Triple-Quoted Strings keep backslashes literal. In Escaped Triple-Quoted Str
 
 A Block String holds multiline, line-oriented text, such as a script or SQL query, as an ordinary YINI string value. Its content is not executed.
 
-It begins with the `block` or `b` prefix immediately followed by `"""` and a line break. Both prefixes are ASCII case-insensitive: `block`, `BLOCK`, `Block`, `bLoCk`, `b`, and `B` all select this form. The closing `"""` MUST appear on its own line, preceded only by optional spaces and followed only by a line break or end-of-file. Content after the opening or closing delimiter on the same line is invalid.
+A Block String starts with `b`, `B`, or the word `block` in any capitalization, immediately followed by `"""` and a line break. For `block`, uppercase and lowercase ASCII letters can be mixed: `block`, `BLOCK`, `Block`, and `bLoCk` all work. All these spellings have identical behavior in both parsing modes. Changing the prefix's capitalization does not change the case of the string content.
+
+The closing `"""` MUST appear on its own line, preceded only by optional spaces and followed only by a line break or end-of-file. Content after the opening or closing delimiter on the same line is invalid.
 
 ```yini
 build = block"""
@@ -1309,6 +1311,8 @@ query = B"""
 
 The line breaks immediately after the opening delimiter and before the closing delimiter are structural and are excluded from the value. Each remaining source line ending (`LF`, `CRLF`, or `CR`) MUST become one LF (`U+000A`) in the parsed value, in both parsing modes.
 
+In both strict and lenient mode, a parser MUST reject a Block String containing a literal character from `U+0000` through `U+001F`, except for tab (`U+0009`), LF (`U+000A`), and CR (`U+000D`).
+
 To include a final LF in the value, leave an empty content line immediately before the closing delimiter:
 
 ```yini
@@ -1320,13 +1324,15 @@ cmd = b"""
 
 The parsed value is `"npm i\n"`. Without the empty content line, it is `"npm i"`.
 
-Structural indentation is the number of leading spaces (U+0020) on the first content line that contains a non-space character. Every such line MUST have at least that many leading spaces; those spaces are removed, and any additional spaces are preserved. Tabs are content and are never expanded or removed as indentation.
+Structural indentation is the number of leading spaces (U+0020) on the first content line that contains a non-space character. Every such line MUST have at least that many leading spaces; those spaces are removed, and any additional spaces are preserved. Tabs are content and are never expanded or removed as indentation. Unicode space characters are also content and MUST NOT be counted or removed as structural indentation.
+
+A line containing a tab or a Unicode space character is not an empty or space-only line, even if it looks blank. It MUST satisfy the same structural indentation rule as any other line containing a non-space character. If it is the first such line, it sets the structural indentation. For example, when the structural indentation is two ASCII spaces, a line containing two ASCII spaces followed by a tab is valid and keeps the tab in the value. A line starting directly with a tab is invalid in that case.
 
 On a space-only content line, remove up to the structural indentation and preserve any extra spaces. A space-only line before the first nonempty line is invalid if it has more spaces than the structural indentation. If there are no nonempty content lines, use the greatest number of spaces on any content line as the structural indentation; all such lines become empty. Blank content lines and their intervening line breaks remain in the value.
 
 A `"""` sequence within a content line is literal unless it is the first non-space content on that line. In that position it begins the closing delimiter; any following characters make the Block String invalid. There is no escape for a closing delimiter.
 
-Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only `block` and `b`, in any capitalization, select this form. `e"""..."""` and `E"""..."""` remain Escaped Triple-Quoted Strings. The Block String prefixes MUST NOT be used with single-line quoted strings: `block"..."`, `block'...'`, `b"..."`, and `b'...'` are invalid in any capitalization. The former `command` prefix is no longer supported and MUST be rejected in both parsing modes.
+Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only `b`, `B`, and `block` in any capitalization select this form. `e"""..."""` and `E"""..."""` remain Escaped Triple-Quoted Strings. The Block String prefixes MUST NOT be used with single-line quoted strings: `block"..."`, `block'...'`, `b"..."`, and `b'...'` are invalid in any capitalization. The former `command` prefix is no longer supported and MUST be rejected in both parsing modes.
 
 **Application note:** Block Strings contain text. The application decides how to use that text, such as submitting a SQL query or running a script, and converts LF to another line-ending form if needed. For scripts, the application chooses the shell or terminal interface; YINI does not guarantee that commands work across operating systems or shells.
 
@@ -1344,7 +1350,7 @@ Ordinary YINI string behavior is determined by two independent choices:
 
 Raw strings are the default. The `R` prefix is allowed for explicitness only and has no semantic effect. The `E`/`e` prefixes enable escape-sequence interpretation; the deprecated `C`/`c` aliases have the same behavior.
 
-Block Strings use `block"""` or `b"""` (case-insensitive) and the distinct multiline and indentation rules in Section 6.4.
+Block Strings use `b"""`, `B"""`, or `block"""` in any capitalization, with the distinct multiline and indentation rules in Section 6.4.
 
 For the full table of supported string forms, see the overview table at the beginning of Section 6.
 
@@ -2219,7 +2225,7 @@ Parsers MUST check the file's original line endings before normalizing string va
 #### 12.2.6. Escaping and String Literals
 - Escape sequences are **ONLY allowed** in Escaped strings and their Triple-Quoted forms, prefixed with `E`/`e` or the deprecated `C`/`c` aliases.
 - Triple-Quoted Strings MUST use `"""` for both opening and closing (`'''` is not supported).
-- Block Strings MUST use a case-insensitive `block` or `b` prefix immediately followed by `"""` and satisfy the multiline delimiter and indentation rules in Section 6.4.
+- Block Strings MUST use `b`, `B`, or `block` in any capitalization as the prefix immediately followed by `"""`, and satisfy the multiline delimiter and indentation rules in Section 6.4.
 
 #### 12.2.7. Shortest Valid YINI Documents in Strict Mode
 - **Valid short documents in strict mode:**
@@ -2521,7 +2527,7 @@ Implementations SHOULD report invalid concatenation with diagnostics that identi
 | Escaped String | `E` or `e`; `C`/`c` deprecated aliases | `e"..."` | Escape sequences are interpreted|
 | Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Multiline; keeps spaces, tabs, and line breaks; backslashes are literal; source line endings become LF |
 | Escaped Triple-Quoted String | `E` or `e`; `C`/`c` deprecated aliases | `E"""..."""` | Multiline; source line endings become LF before escape processing; escape results stay unchanged |
-| Block String | `block` or `b` (case-insensitive) | `block"""` or `b"""` followed by a line break | Multiline literal; keeps content line breaks as LF; removes structural indentation |
+| Block String | `b`, `B`, or `block` in any capitalization | `b"""`, `B"""`, or `block"""` followed by a line break | Multiline literal; keeps content line breaks as LF; removes structural indentation |
 
 ### 13.9. Comments
 
@@ -3618,7 +3624,8 @@ Notes:
 
 v1.0.0-RC.7x/RC.8-WIP
 
-- **Changed:** Renamed Command Strings to Block Strings and replaced the `command` prefix with case-insensitive `block` and `b` prefixes. The `command` prefix is no longer supported in either parsing mode. Multiline content and indentation rules remain unchanged.
+- **Changed:** Renamed Command Strings to Block Strings and replaced the `command` prefix with case-insensitive `block` and `b` prefixes. The `command` prefix is no longer supported in either parsing mode.
+- **Changed:** Both modes now reject literal control characters from `U+0000` through `U+001F` in Block Strings, except for tab, LF, and CR.
 
 v1.0.0 RC 7
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.

@@ -174,7 +174,7 @@ YINI is designed to prioritize **readability, clarity, and explicit structure**.
 - ✔️ **Flexible booleans** with `true`/`false`, `on`/`off`, `yes`/`no` (all case-insensitive).
 - ✔️ **Number formats** include decimal, binary, octal, duodecimal (base 12), hexadecimal, and exponent notation.
 - ✔️ **Visible value types** — strings are quoted, lists use `[]`, and inline objects use `{}`.
-- ✔️ **String forms** include Raw Strings, Escaped Strings (`E`/`e`), Triple-Quoted Strings, and Block Strings (`block`/`b`).
+- ✔️ **String forms** include Raw Strings, Escaped Strings (`E`/`e`), Triple-Quoted Strings, and Block Strings (`b`, `B`, or `block` in any capitalization).
 - ✔️ **Supports the `null` value type.**
 - ✔️ **Explicit string concatenation** using `+`; concatenation expressions must begin with a string literal.
 - ✔️ **Optional mode declarations** — `@yini strict` and `@yini lenient` state which mode the file is intended for. They do not switch the parser mode by themselves; the parser or tool chooses the actual mode.
@@ -388,6 +388,8 @@ YINI defines five main string literal forms: Raw Strings, Escaped Strings, Raw T
 
 These forms differ in how they handle escape sequences and multi-line content.
 
+Block Strings accept `b` or `B`, or the word `block` in any capitalization: `block`, `BLOCK`, `Block`, and `bLoCk` all work. Changing the prefix's capitalization does not change the case of the content.
+
 Source line endings (LF, CRLF, or CR) become LF (`\n`) in all multiline string values. Block Strings also remove structural indentation. See the [string rules](./YINI-Specification.md#6-string-literals).
 
 ```ini
@@ -409,7 +411,7 @@ stay literal, without escapes.
 """
 
 // Block Strings remove structural indentation while keeping line breaks.
-// Use block or b in any capitalization for scripts, SQL queries, or similar text.
+// Use b or B, or block in any capitalization, for scripts, SQL queries, or similar text.
 BlockString = block"""
     npm install
     npm run build

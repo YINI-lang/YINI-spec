@@ -492,7 +492,26 @@ This feature was removed because it introduced another string form with separate
 
 ### 6.4. Block Strings
 
-Block Strings let authors write multiline text as one readable, indented block without quoting or concatenating each line. The name “Block String” describes the form and its broader purpose more accurately than “Command String”: these strings are intended for shell scripts, SQL queries, and similar multiline content. This is similar to [YAML's literal block scalar (`|`)](https://yaml.org/spec/1.2.2/#812-literal-style), using YINI's `block"""..."""` or `b"""..."""` syntax, with either prefix accepted in any capitalization. Removing structural indentation lets the text fit within an indented configuration while preserving indentation that belongs to the content itself.
+Block Strings let authors write multiline text as one readable, indented block without quoting or concatenating each line. The name “Block String” describes the form and its broader purpose more accurately than “Command String”: these strings are intended for shell scripts, SQL queries, and similar multiline content. This is similar to [YAML's literal block scalar (`|`)](https://yaml.org/spec/1.2.2/#812-literal-style), using YINI's `block"""..."""`, `b"""..."""`, or `B"""..."""` syntax. Removing structural indentation lets the text fit within an indented configuration while preserving indentation that belongs to the content itself.
+
+The full prefix `block` provides a descriptive spelling; `b` and `B` provide shorter spellings. The word `block` can use any combination of uppercase and lowercase ASCII letters, such as `block`, `BLOCK`, `Block`, or `bLoCk`. All spellings have identical behavior in both parsing modes. Capitalization of the prefix does not change the case of the content.
+
+Only the structural indentation is removed, measured in ordinary ASCII spaces (`U+0020`). Tabs, Unicode spaces, and ordinary spaces beyond that margin belong to the text. A general whitespace-trimming function such as `trimStart()` could silently remove meaningful content. YAML also [uses spaces for indentation](https://yaml.org/spec/1.2.2/#61-indentation-spaces), keeping indentation separate from literal block content.
+
+A line can look blank and still contain data. A tab or a Unicode space on such a line is preserved, and the line must have the same required ASCII-space margin as other content lines. It can also set that margin if it is the first line containing a non-space character. To include an empty line, leave it empty or use no more ASCII spaces than the structural margin.
+
+For example, after an earlier content line has set a margin of two ASCII spaces:
+
+| Source content line | Result after removing the margin |
+|---|---|
+| Two ASCII spaces followed by a tab | The tab is kept. |
+| A tab with no leading ASCII spaces | Invalid: the required two-space margin is missing. |
+| Four ASCII spaces | Two ASCII spaces are kept. |
+| Two ASCII spaces followed by a nonbreaking space (`U+00A0`) | The nonbreaking space is kept. |
+
+A practical example is a Makefile recipe, which normally starts with a tab. Removing that tab can change how the Makefile is read. Even a line containing only a tab can matter: in a rule, GNU make treats it as an empty recipe. See [GNU make's recipe syntax](https://www.gnu.org/software/make/manual/make.html#Recipe-Syntax). YINI preserves these characters so the application receives the content the author wrote.
+
+Tabs and line endings belong in multiline text. The other 29 ASCII control characters in the range `U+0000` through `U+001F` can be hard to spot in an editor. For example, a pasted NUL between `A` and `B` can look like plain `AB` even though the application receives an extra character. Rejecting these characters in both modes catches that mistake when the file is read. If you need the NUL, write `e"A\0B"` in an Escaped String so anyone reading the file can see it.
 
 Block Strings resemble YAML's [literal block scalar with strip chomping (`|-`)](https://yaml.org/spec/1.2.2/#8112-block-chomping-indicator) in that no final newline is added automatically. However, YINI preserves explicitly written trailing empty content lines, whereas YAML's `|-` removes trailing empty lines. In YINI, an empty content line before the closing delimiter includes a final LF.
 

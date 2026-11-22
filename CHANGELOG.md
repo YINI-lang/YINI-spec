@@ -8,6 +8,7 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 
 ## --Upcoming-- - 1.0.0-RC.7x/RC.8-WIP - 2026 FUTURE
 
+- **Changed:** Block Strings now reject literal control characters from `U+0000` through `U+001F` in both parsing modes, except for tab, LF, and CR.
 - **Changed:** Renamed Command Strings to Block Strings, with case-insensitive `block` and `b` prefixes for multiline text such as scripts and SQL queries. The former `command` prefix is no longer supported in either parsing mode. Updated the specification, rationale, ANTLR lexer and parser documentation, and grammar fixtures.
 
 ## 1.0.0-RC.7 - 2026 Nov
