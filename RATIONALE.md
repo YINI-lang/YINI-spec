@@ -235,7 +235,7 @@ This is useful for production configuration, CI validation, generated files, and
 
 ### 3.2. Whitespace and Indentation
 
-Indentation is visual rather than structural so that reformatting does not change the section hierarchy. Only SPACE (U+0020) and TAB (U+0009) are syntactic horizontal whitespace. They remain significant only where a rule needs them to separate tokens, such as between a numeric shorthand section marker and its section name.
+Section markers define the hierarchy, so authors can indent section headers and members for readability. Only SPACE (U+0020) and TAB (U+0009) are syntactic horizontal whitespace. For example, either can separate a numeric shorthand section marker from its name. Inside a Block String, leading ASCII spaces determine how much indentation to remove, as described in [§6.4, Block Strings](#64-block-strings).
 
 LF, CRLF, and CR are the only recognized logical line endings. Keeping this set explicit prevents Unicode layout characters or other host-language whitespace rules from changing how a YINI document is tokenized. In particular, U+2028 LINE SEPARATOR and U+2029 PARAGRAPH SEPARATOR are text characters, not YINI line endings. Appendix 16.7 is therefore informational rather than an extension of YINI's accepted whitespace.
 
@@ -517,7 +517,9 @@ Block Strings resemble YAML's [literal block scalar with strip chomping (`|-`)](
 
 Line breaks between content lines are kept, including blank lines. Each becomes LF (`\n`), whether the source file uses LF, CRLF, or CR. This gives the same text the same value across source line-ending forms. YAML also [normalizes line endings to LF](https://yaml.org/spec/1.2.2/#54-line-break-characters) in its literal blocks (`|`).
 
-The line breaks immediately after the opening delimiter and before the closing delimiter are left out. YINI adds no extra line breaks. This avoids an unexpected final newline becoming part of the text, such as a command or argument. Authors can include a final LF by writing an empty content line before the closing delimiter:
+A stray space or tab after the opening or closing quotes is easy to miss in an editor. Allowing it lets authors add or remove that whitespace without changing the string. On a content line, a trailing space or tab can belong to the text, so YINI keeps it after removing the structural margin.
+
+The line break ending the opening line and the line break before the closing line are left out. YINI adds no extra line breaks. This avoids an unexpected final newline becoming part of the text, such as a command or argument. Authors can include a final LF by writing an empty content line before the closing delimiter:
 
 ```yini
 cmd = b"""

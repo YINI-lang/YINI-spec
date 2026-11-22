@@ -347,10 +347,11 @@ fragment ESCAPED_SINGLE_OR_DOUBLE_STRING
 // Block Strings start with b or B, or block in any capitalization (ASCII letters).
 // All spellings produce STRING tokens; content keeps its original case.
 // The former command prefix is not recognized as a string prefix.
-// The host validator checks the complete closing line, indentation, and the
-// resulting value as specified in Section 6.4.
+// The token ends at the closing quotes. The host checks the rest of that source
+// line for anything other than ASCII spaces or tabs, and applies Section 6.4
+// when removing indentation and computing the value.
 fragment BLOCK_TRIPLE_QUOTED_STRING
-  : ([bB][lL][oO][cC][kK] | [bB]) '"""' BLOCK_LINE_BREAK
+  : ([bB][lL][oO][cC][kK] | [bB]) '"""' HSPACE* BLOCK_LINE_BREAK
     // A content line may contain tabs. LF and CR are handled by BLOCK_LINE_BREAK.
     ( ~[\u0000-\u0008\u000A-\u001F]* BLOCK_LINE_BREAK )*?
     [ ]* '"""'

@@ -1,0 +1,8 @@
+// The trailing spaces and tabs in this fixture are intentional.
+// Expected text in escape notation: "first \t\nsecond".
+^Strings
+text = b""" 	
+  first 	
+  second
+  """	 
+/END

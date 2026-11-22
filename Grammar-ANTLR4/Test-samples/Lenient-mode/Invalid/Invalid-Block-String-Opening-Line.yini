@@ -1,4 +1,4 @@
-// Rule: A Block String's opening delimiter must be followed immediately by a line break.
+// Rule: Only ASCII spaces and tabs may follow the opening quotes before the line break.
 // Primary failure: syntactic.
 script = b"""echo "hello"
 """

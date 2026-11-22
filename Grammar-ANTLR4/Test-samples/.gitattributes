@@ -1,0 +1,2 @@
+# The delimiter and content lines in these fixtures exercise trailing whitespace.
+Block-String-Delimiter-Whitespace.yini whitespace=-blank-at-eol

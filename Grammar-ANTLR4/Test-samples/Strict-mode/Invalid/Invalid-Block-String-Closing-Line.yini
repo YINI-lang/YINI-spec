@@ -1,4 +1,4 @@
-// Rule: A Block String's closing delimiter must be alone on its line, apart from leading spaces.
+// Rule: Only ASCII spaces and tabs may follow the closing quotes before the end of the line.
 // Primary failure: semantic; the host validator must reject this grammar-recognized token.
 ^Scripts
 script = BLOCK"""

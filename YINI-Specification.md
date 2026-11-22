@@ -485,16 +485,16 @@ key3 = "Peach"  # This is also an inline comment.
 ```
 
 ### 3.2. Whitespace and Indentation
-While YINI is not indentation-sensitive, at least one space or tab is required between a numeric shorthand section marker (such as `^7`) and the section name, so it becomes e.g. `^7 Section`.
+A numeric shorthand section marker such as `^7` requires at least one space or tab before the section name, as in `^7 Section`.
 
 The following whitespace `<WS>` behaviors are defined:
 - Newlines (`<NL>`) may be either Unix/Linux-style (`LF`, U+000A), Windows-style (`CRLF`, U+000D U+000A), or (`CR`, U+000D).
 - End-of-file (`EOF`) MAY terminate the final logical line without an `LF`, `CRLF`, or `CR`. A trailing line ending is not required in either lenient or strict mode, provided that the final line is otherwise complete and valid.
 - Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are generally insignificant outside string literals and backticked identifiers, except where this specification explicitly requires or forbids them, such as in numeric shorthand section headers and between distinct lexical tokens.
-- Indentation using whitespace is allowed purely for visual clarity — it has no effect on parsing or structure.
+- You can indent section headers and members for readability. Section markers determine nesting. Inside a Block String, leading ASCII spaces set the margin described in [§6.4, Block Strings](#64-block-strings).
 
 ### 3.3. Comments
-YINI supports three categories of comments, **using four comment syntaxes:**
+YINI supports the following comment forms. The positions in the table have one exception for Block Strings. A comment after the opening or closing quotes on the same line makes the block invalid (Section 6.4).
 
 | Syntax | Type | Valid position |
 |--------|------|----------------|
@@ -529,7 +529,7 @@ YINI supports two syntaxes for inline comments.
     key = true#This is also an inline comment.
     ```
 
-Outside string literals and backticked identifiers, the `#` character always begins a comment. Everything from `#` to the end of the line is ignored by the parser. No whitespace is required before or after `#`.
+Outside string literals and backticked identifiers, the `#` character begins a comment. Where the comment is allowed, the parser ignores the rest of that line. No whitespace is required before or after `#`.
 
 ✅ **Valid `#` comments:**
   - `# This is a comment`
@@ -1130,7 +1130,7 @@ This applies to both single-line quoted strings and ordinary Triple-Quoted Strin
 | Escaped String         | `E'...'` or `e"..."`      | ❌ No      | ✅ Yes  | ❌ No             | 1-line with escapes                  | C / JSON strings       |
 | Triple-Quoted (Raw)    | `"""..."""`              | ✅ Yes     | ❌ No   | ❌ No             | Multi-line raw text                  | Python raw triple-quote |
 | Escaped Triple-Quoted  | `E"""..."""` or `e"""..."""` | ✅ Yes | ✅ Yes  | ❌ No             | Multi-line with escapes              | Python triple-quote     |
-| Block String           | `b"""`, `B"""`, or `block"""` (any capitalization), followed by a line break | ✅ Required | ❌ No | ✅ Structural indentation only | Literal multiline text, such as scripts or SQL queries | YAML literal block scalar |
+| Block String           | `b"""`, `B"""`, or `block"""` (any capitalization), then optional ASCII spaces or tabs and a line break | ✅ Required | ❌ No | ✅ Structural indentation only | Literal multiline text, such as scripts or SQL queries | YAML literal block scalar |
 
 ### 6.1. Raw Strings (R-Strings)
 A raw string is enclosed in either single quotes (`'...'`) or double quotes (`"..."`).
@@ -1284,9 +1284,11 @@ Raw Triple-Quoted Strings keep backslashes literal. In Escaped Triple-Quoted Str
 
 A Block String holds multiline, line-oriented text, such as a script or SQL query, as an ordinary YINI string value. Its content is not executed.
 
-A Block String starts with `b`, `B`, or the word `block` in any capitalization, immediately followed by `"""` and a line break. For `block`, uppercase and lowercase ASCII letters can be mixed: `block`, `BLOCK`, `Block`, and `bLoCk` all work. All these spellings have identical behavior in both parsing modes. Changing the prefix's capitalization does not change the case of the string content.
+A Block String starts with `b`, `B`, or the word `block` in any capitalization, immediately followed by `"""`. The opening line MUST end with a line break. For `block`, uppercase and lowercase ASCII letters can be mixed: `block`, `BLOCK`, `Block`, and `bLoCk` all work. All these spellings have identical behavior in both parsing modes. Changing the prefix's capitalization does not change the case of the string content.
 
-The closing `"""` MUST appear on its own line, preceded only by optional spaces and followed only by a line break or end-of-file. Content after the opening or closing delimiter on the same line is invalid.
+The closing `"""` MUST appear on its own line. Only ASCII spaces may precede it. The closing line may end with a line break or at end-of-file.
+
+In both modes, any number of ASCII spaces (`U+0020`) and tabs (`U+0009`) may follow the opening or closing quotes on the same line. The parser MUST ignore these spaces and tabs. Any other character after the quotes on that line, including a comment marker, is an error. On content lines, trailing spaces and tabs are part of the value after the indentation rules below are applied.
 
 ```yini
 build = block"""
@@ -1309,7 +1311,7 @@ query = B"""
 """
 ```
 
-The line breaks immediately after the opening delimiter and before the closing delimiter are structural and are excluded from the value. Each remaining source line ending (`LF`, `CRLF`, or `CR`) MUST become one LF (`U+000A`) in the parsed value, in both parsing modes.
+The line break ending the opening line and the line break immediately before the closing line are structural and are excluded from the value. Each remaining source line ending (`LF`, `CRLF`, or `CR`) MUST become one LF (`U+000A`) in the parsed value, in both parsing modes.
 
 In both strict and lenient mode, a parser MUST reject a Block String containing a literal character from `U+0000` through `U+001F`, except for tab (`U+0009`), LF (`U+000A`), and CR (`U+000D`).
 
@@ -1324,13 +1326,24 @@ cmd = b"""
 
 The parsed value is `"npm i\n"`. Without the empty content line, it is `"npm i"`.
 
-Structural indentation is the number of leading spaces (U+0020) on the first content line that contains a non-space character. Every such line MUST have at least that many leading spaces; those spaces are removed, and any additional spaces are preserved. Tabs are content and are never expanded or removed as indentation. Unicode space characters are also content and MUST NOT be counted or removed as structural indentation.
+The first content line containing anything other than ASCII spaces (`U+0020`) sets the margin, also called the structural indentation. Count the ASCII spaces at the start of that line. Every such line MUST start with at least that many spaces. Remove exactly that many from each such line and keep any extra spaces. Tabs and Unicode spaces are content and MUST be preserved.
+
+**Invalid example.** The six spaces before `first` set the margin. The four spaces before `second` fall short of it.
+
+```yini
+fragment = b"""
+      first
+    second
+"""
+```
+
+If those leading spaces are part of the text you want to keep, use an ordinary raw triple-quoted string (`"""` without a prefix). It preserves the leading spaces on every line, even when the first line starts farther to the right than the next. See [§6.3, Triple-Quoted Strings](#63-triple-quoted-strings).
 
 A line containing a tab or a Unicode space character is not an empty or space-only line, even if it looks blank. It MUST satisfy the same structural indentation rule as any other line containing a non-space character. If it is the first such line, it sets the structural indentation. For example, when the structural indentation is two ASCII spaces, a line containing two ASCII spaces followed by a tab is valid and keeps the tab in the value. A line starting directly with a tab is invalid in that case.
 
 On a space-only content line, remove up to the structural indentation and preserve any extra spaces. A space-only line before the first nonempty line is invalid if it has more spaces than the structural indentation. If there are no nonempty content lines, use the greatest number of spaces on any content line as the structural indentation; all such lines become empty. Blank content lines and their intervening line breaks remain in the value.
 
-A `"""` sequence within a content line is literal unless it is the first non-space content on that line. In that position it begins the closing delimiter; any following characters make the Block String invalid. There is no escape for a closing delimiter.
+A `"""` sequence at the start of a line or after only ASCII spaces begins the closing delimiter. A `"""` sequence anywhere else on a content line is literal. There is no escape for a closing delimiter.
 
 Backslashes and quotes are literal; YINI escape sequences are not interpreted. Only `b`, `B`, and `block` in any capitalization select this form. `e"""..."""` and `E"""..."""` remain Escaped Triple-Quoted Strings. The Block String prefixes MUST NOT be used with single-line quoted strings: `block"..."`, `block'...'`, `b"..."`, and `b'...'` are invalid in any capitalization. The former `command` prefix is no longer supported and MUST be rejected in both parsing modes.
 
@@ -2527,7 +2540,7 @@ Implementations SHOULD report invalid concatenation with diagnostics that identi
 | Escaped String | `E` or `e`; `C`/`c` deprecated aliases | `e"..."` | Escape sequences are interpreted|
 | Triple-Quoted String   | _None_, `R`, or `r`       | `"""..."""`   | Multiline; keeps spaces, tabs, and line breaks; backslashes are literal; source line endings become LF |
 | Escaped Triple-Quoted String | `E` or `e`; `C`/`c` deprecated aliases | `E"""..."""` | Multiline; source line endings become LF before escape processing; escape results stay unchanged |
-| Block String | `b`, `B`, or `block` in any capitalization | `b"""`, `B"""`, or `block"""` followed by a line break | Multiline literal; keeps content line breaks as LF; removes structural indentation |
+| Block String | `b`, `B`, or `block` in any capitalization | `b"""`, `B"""`, or `block"""`, then optional ASCII spaces or tabs and a line break | Multiline literal; keeps content line breaks as LF; removes structural indentation |
 
 ### 13.9. Comments
 
@@ -2540,6 +2553,7 @@ In summary:
 - `;` begins a full-line comment only when it is the first non-whitespace character on a line.
 - Nested block comments are not supported.
 - Comments may appear only where whitespace is allowed and MUST NOT split tokens.
+- A parser MUST reject a comment after a Block String delimiter on the same line, even if spaces or tabs separate it from the quotes (Section 6.4).
 
 Implementations SHOULD remove or ignore comments during parsing before semantic interpretation, while preserving source-position information when useful for diagnostics.
 They MUST still account for line endings inside block comments when enforcing same-logical-line requirements.
@@ -3626,6 +3640,7 @@ v1.0.0-RC.7x/RC.8-WIP
 
 - **Changed:** Renamed Command Strings to Block Strings and replaced the `command` prefix with case-insensitive `block` and `b` prefixes. The `command` prefix is no longer supported in either parsing mode.
 - **Changed:** Both modes now reject literal control characters from `U+0000` through `U+001F` in Block Strings, except for tab, LF, and CR.
+- **Changed:** Both modes now allow trailing ASCII spaces and tabs after either Block String delimiter.
 
 v1.0.0 RC 7
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
