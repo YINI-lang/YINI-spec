@@ -11,7 +11,7 @@ In YINI:
   description = """This is a multi-line
   string in YINI format."""
   ```
-- **Key-Value** pairs are separated by an equals sign `=`.
+- Root-level and section-level **key-value** pairs canonically use `=`. See the [separator rules](../YINI-Specification.md#43-type-rules) for the lenient alternative.
   
 ## Links
 * **Specification:**

@@ -280,7 +280,7 @@ These terms are used throughout this specification to describe YINI's grammar, s
 | Lenient mode | The default parsing mode. It is more permissive than strict mode, while still preserving predictable parsing behavior. |
 | List | An ordered compound value enclosed in `[` and `]`, containing zero or more comma-separated values. In JSON and many programming languages, this structure is commonly called an *array*. |
 | Logical line | A line of YINI source terminated by a supported line ending (`LF`, `CRLF`, or `CR`) or, for the final line, by end-of-file (`EOF`). Some constructs require tokens to appear on the same logical line. |
-| Member | A **key-value** (pair) entry at root or section level, written as `key = <value>`. For example: `num = 100` or `str = "Hello"`. |
+| Member | A **key-value** (pair) entry at root or section level, canonically written as `key = <value>`. For example: `num = 100` or `str = "Hello"`. See Section 4.3 for separator rules. |
 | Mode declaration | An optional declaration in the YINI marker, such as `@yini strict` or `@yini lenient`, that states the document's expected parsing mode. |
 | Nested section | A section contained under another section, represented by a greater section depth. |
 | Null literal | The case-insensitive literals `null` and `None`, representing the null value. |
@@ -449,22 +449,20 @@ key = "value"
 
 #### Keys and Values (Members)
 
-The basic unit of YINI is a key-value pair, called a **member**. A key and its associated value are separated by an equal sign (`=`). Any number of spaces or tabs may appear before or after the `=`.
+The basic unit of YINI is a key-value pair, called a **member**. At root and section level, its canonical form uses an equal sign (`=`).
 
 **Example:**
 ```yini
 key = "value"
 ```
 
-Inside inline objects (`{ ... }`), object members use a colon (`:`) as the canonical separator. This distinction from `=` exists because the inline object as a whole, including its contents, is treated as the **value** of the surrounding member; the entries inside the inline object are therefore member definitions within that value. 
-
-This follows a familiar convention from languages and formats such as JavaScript, TypeScript, JSON, Python, YAML, Ruby, and Swift, where `:` is commonly used for inline object, map, dictionary, or hash members.
+Inside inline objects (`{ ... }`), the canonical form uses a colon (`:`).
 
 ```yini
 config = { enabled: true, retries: 3 }
 ```
 
-In **lenient mode only**, authors MAY also use `=` inside inline objects, and conforming lenient-mode parsers MUST accept it. Tools and formatters SHOULD normalize inline object members to `:`.
+Sections [4.3](#43-type-rules) and [9.2](#92-object-member-separators) define the lenient alternatives and strict-mode requirements.
 
 #### Comments
 
@@ -706,7 +704,7 @@ A **key** is an identifier used to reference a specific value in a member (a `ke
 
 - Keys MUST be valid identifiers — either a **simple form** or a **backticked identifier** (a backticked string). (See Section 3.4: Identifiers.)
 - Keys MUST be **unique** within the same section and nesting level. 
-- Keys are assigned values using the `=` operator.
+- Assignment separator rules are defined in Section 4.3.
   
 **Examples:**
 ```yini
@@ -735,13 +733,31 @@ A YINI _**value**_ can be of one of the following three groups of native/built-i
 Currently, YINI value types map 1-to-1 to native JSON types. Constructs such as date-time values **SHOULD currently be expressed as strings**. See more in 11.1.3, "Date-time Type".
 
 ### 4.3. Type Rules
-This section describes how values (on the right-hand side of `=`) are interpreted based on their syntax.
+This section defines assignment separators and how a value's syntax determines its type.
 
-**Note:** At root and section level, values are assigned using `=`. The colon (`:`) is not a general assignment operator and MUST NOT be used to define root-level or section-level members or lists.
+The canonical separator for root-level and section-level members is `=`. In lenient mode, authors MAY also use `:`, and conforming lenient-mode parsers MUST accept it. Both separators assign the same value and follow the same rules. They MAY be mixed across members of a document or section. In strict mode, section members MUST use `=`. Root-level orphan members are forbidden in strict mode (Section 12.2.1).
 
-Inside inline objects (`{ ... }`), `:` is the canonical member separator. In lenient mode only, authors MAY also use `=` as a compatibility convenience, and conforming lenient-mode parsers MUST accept it. In strict mode, inline object members MUST use `:`.
+Any number of spaces or tabs may appear before or after an assignment separator. The value MUST begin on the same logical line as the separator. For a list or object, this means that the opening `[` or `{` MUST appear on that line. A line ending before the value begins is a missing-value error, including a line ending inside a block comment.
 
-For compound values written after `=`, the opening `[` or `{` **MUST appear on the same logical line** as the `=`. If the logical line ends before a value begins, the member has no explicit value, even when the line ending occurs inside a block comment.
+Inside inline objects, the canonical separator is `:`. Section [9.2](#92-object-member-separators) defines their separator rules.
+
+Documentation and examples SHOULD teach and use the canonical spelling for each context, unless their purpose requires showing an alternative. Tools and formatters SHOULD normalize root-level and section-level separators to `=` and inline object separators to `:`.
+
+```yini
+// Canonical spelling.
+name = "Kim"
+items = [1, 2]
+config = { enabled: true }
+```
+
+```yini
+// Equivalent lenient-only spelling.
+name: "Kim"
+items: [1, 2]
+config: { enabled: true }
+```
+
+A list value always requires brackets. The lenient alternative does not allow `items: 1, 2` or a bare `items:` followed by values on later lines.
 
 For example, this document is invalid in both modes:
 
@@ -1787,6 +1803,14 @@ The `#` character is not a hexadecimal prefix in YINI. Outside string literals a
 
 In the `hex:` form, the value after `hex:` MUST contain hexadecimal digits and permitted digit separators only. The `0x` prefix is not used inside the `hex:` form.
 
+The `hex:` prefix applies only in a value position. Where a member key is expected and `:` is permitted as its separator, `hex:10` MUST be read as the key `hex` assigned decimal `10`. This includes root-level and section-level members in lenient mode and inline object members in both modes.
+
+```yini
+hex:10              // Lenient assignment to key hex, with decimal value 10.
+color = hex:10      // Hexadecimal value 10, equal to decimal 16.
+object = { hex:10 } // Object key hex, with decimal value 10.
+```
+
 ```
 color1 = hex:FFAA00     // ✅ valid
 color2 = 0xFFAA00       // ✅ valid
@@ -1866,7 +1890,7 @@ empty = { }
 
 #### Syntax rules
 
-There MUST be **no newline** between the `=` and the opening brace `{`. If a newline appears after `=` before a value begins, the member has no explicit value and MUST produce a missing-value error in both modes. The `{ ... }` block on the following line is not treated as the value of that member.
+The opening brace `{` MUST be on the same logical line as the assignment separator, as defined in Section 4.3. A brace on the next line leaves the member without a value and produces a missing-value error.
 
 Inside an **inline object**, the value of each object member MUST begin on the same logical line as the object member separator.
 
@@ -2001,26 +2025,16 @@ Inside inline objects, `:` is the canonical member separator. A newline MUST NOT
 obj = { a: 1, b: 2 }
 ```
 
-At root and section level, YINI uses `=` for ordinary members:
+The canonical root-level and section-level spelling is defined in Section 4.3.
 ```yini
 name = "Kim"
 ```
 
-Inside inline objects, `:` is used since the object itself is already the value of a surrounding member. The colon helps distinguish object member definitions from ordinary root-level or section-level assignments.
-
-In lenient mode only, authors MAY also use `=` as an object member separator, and conforming lenient-mode parsers MUST accept it:
-```yini
-obj = { a = 1, b = 2 }  // Lenient mode only
-```
-
-This exists as a compatibility and user-friendliness feature, especially for users who are accustomed to writing `key = "value"` throughout a configuration file.
-
 The following rules apply:
 - In lenient mode, authors MAY use either `:` or `=`, and conforming lenient-mode parsers MUST accept both separators.
-- In strict mode, inline object members MUST use `:`.
-- In strict mode, using `=` inside an inline object is invalid, whether mixed with `:` or used consistently.
+- In strict mode, inline object members MUST use `:`. Using `=` MUST produce an error, whether mixed with `:` or used consistently.
 - Within a single inline object, mixing `:` and `=` is valid but discouraged in lenient mode. Conforming lenient-mode parsers MUST accept mixed separators.
-- Tools and formatters SHOULD normalize inline object members to `:`.
+- In lenient mode, both separators MUST produce the same parsed member and value.
 
 ```yini
 // Canonical form, valid in lenient and strict mode.
@@ -2056,10 +2070,10 @@ Where `hspace` means spaces/tabs only, no newlines.
 ## 10. List Literals
 Lists in YINI correspond to *arrays* in JSON and many programming languages (e.g., in JavaScript).
 
-YINI defines lists using bracketed list notation with `=` and square brackets `[ ]`, similar to JSON.
+YINI defines lists using square brackets `[ ]`, similar to JSON.
 
 ### 10.1. Bracketed Lists (`[...]`)
-A list is assigned to a key using the equals sign `=`, followed by square brackets `[ ]` containing zero or more comma-separated values. The opening `[` MUST appear on the same logical line as `=`.
+A list contains zero or more comma-separated values. A root-level or section-level member canonically assigns it with `=`, as in `items = [1, 2]`. Section 4.3 defines the lenient `:` alternative and the same-logical-line requirement for the opening `[`.
 
 Whitespace (spaces, tabs, and newlines) is allowed within the brackets.
 
@@ -2161,7 +2175,7 @@ The following characters and character sequences are reserved by the YINI syntax
 |-----------|---------------|-------------|
 | `=` | Assignment / lenient object separator | Assigns values to keys at root/section level. In lenient mode only, MAY also separate keys and values inside inline objects. |
 | `^` | Section header | Used to denote section start |
-| `:` | Object member separator | Canonical separator between keys and values inside inline objects |
+| `:` | Object member separator / lenient assignment | Canonical separator inside inline objects. Also accepted for root-level and section-level assignments in lenient mode (Section 4.3). |
 | `,` | Item separator | Used in lists |
 | `+` | String concatenation / numeric sign | Joins concatenation operands; also used as a positive sign in numeric literals and exponents |
 | `§` | Section header (Unicode alternative) | Used to denote section start |
@@ -2257,7 +2271,7 @@ Parsers MUST check the file's original line endings before normalizing string va
 - Values MUST be one of the supported data types: **String**, **Number**, **Boolean**, **Null**, **List**, or **Object**.
 - Boolean values are **case-insensitive**: `True`, `On`, `Yes`, etc.
 - Null values: `null` and `None` in any casing are interpreted as the same null value.
-- Inline object members MUST use `:` in strict mode. In lenient mode, authors MAY use either `:` or `=`, and conforming lenient-mode parsers MUST accept both separators. The `:` separator remains canonical.
+- Member separators follow Sections 4.3 and 9.2.
 
 #### 12.2.5. Document Terminator
 **Note:** The authoritative syntax and placement rules for the document terminator are defined in Section 3.5, "Document Terminator". This section restates the validation requirements by mode.
@@ -2317,7 +2331,7 @@ Some YINI parsers may support multiple **validation modes**:
   - All typing rules still apply. For example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
   - Every assignment requires an explicit value. Missing values MUST produce an error (see Section 8.2).
   - A trailing comma after the last value/member inside a list or object is ignored.
-  - Inside inline objects, authors MAY use `=` as an alternative to `:` for object member separation. Conforming lenient-mode parsers MUST accept both separators, including when they are mixed within the same inline object. This is a lenient-mode compatibility feature only. The canonical form remains `key: "value"`.
+  - Both member separators are accepted, as defined in Sections 4.3 and 9.2.
   - In lenient (default) mode, an empty document is permitted. For this purpose, a document containing only whitespace, comments, and/or disabled lines (`--`) is considered empty. An implementation MUST NOT treat such a document as a parse failure solely because it is empty; however, it SHOULD report a warning diagnostic indicating that the document appears empty or contains no meaningful content.
 
 #### Strict Mode
@@ -2334,7 +2348,7 @@ Some YINI parsers may support multiple **validation modes**:
     **Note:** Requiring exactly one explicit top-level section and `/END` helps detect incomplete documents. A fragment without the required top-level section or terminator is invalid in strict mode. These checks do not guarantee detection of every truncation, split, or partial copy: a fragment containing a complete top-level section and `/END` may still form a structurally valid document.
 
   - Empty sections are valid with a recommended warning, as defined in Section 5.
-  - Inside inline objects, object members MUST use `:`. Using `=` inside an inline object MUST result in an error.
+  - Members use their canonical separators, as defined in Sections 4.3 and 9.2.
   - Files intended for strict-mode parsing MAY use the `.strict.yini` filename suffix as described in Section 2.2.1. This suffix is only a naming convention and does not select strict mode or replace strict-mode validation. An explicit `@yini strict` declaration MAY still be used when the document should declare its expected mode.
   - In strict mode, an empty document is invalid. For this purpose, a document containing only whitespace, comments, and/or disabled lines (`--`) is considered empty. Parsing such a document MUST result in an error.
 
@@ -2368,6 +2382,7 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | Exactly one explicit top-level section required | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
 | Top-level orphan members allowed      | ✅ | ❌ | In lenient mode they are mounted directly on the document root. |
 | `/END` required at end of document                       | ❌ | ✅ |   |
+| `:` for root-level or section-level assignments | ✅ | ❌ | See Section 4.3. Canonical assignment spelling uses `=`. |
 | `=` inside inline objects | ✅ | ❌ | Conforming lenient-mode parsers MUST accept `key = "value"` inside `{ ... }`; strict mode requires canonical `key: "value"`. |
 | Mixed `:` and `=` inside same inline object | ⚠️ Valid but discouraged | ❌ | Conforming lenient-mode parsers MUST accept mixed separators, but formatters SHOULD normalize all inline object members to `:`. |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient mode the comma is ignored, error in strict mode  |
@@ -2482,21 +2497,17 @@ Inline object members use `:` as the canonical separator:
 obj = { a: 1, b: 2 }
 ```
 
-In lenient mode only, authors MAY use `=` as an alternative object member separator, and conforming lenient-mode parsers MUST accept it:
+Section 9.2 defines the equivalent lenient forms shown below.
 
 ```yini
 obj = { a = 1, b = 2 }
 ```
 
-Implementations MUST treat this as equivalent to the canonical `:` form internally. Formatters SHOULD normalize object members to `:`.
-
-Mixing `:` and `=` within the same inline object is valid but discouraged in lenient mode because it reduces visual consistency and can make the object harder to read. Conforming lenient-mode parsers MUST accept mixed separators:
+Mixed object separators are also valid in lenient mode.
 
 ```yini
 obj = { a: 1, b = 2 }  // Discouraged in lenient mode; invalid in strict mode.
 ```
-
-In strict mode, `=` MUST NOT be accepted inside inline objects.
 
 Any empty slot inside `{ ... }`, for example:
 
@@ -2512,7 +2523,7 @@ parse result.
 ### 13.6. Lists
 
 The syntax for a list is:
-  **(a) Bracketed form (preferred):**
+  **Bracketed form:**
   ```yini
   items = ["a", "b", "c"]
   ```
@@ -2520,7 +2531,7 @@ The syntax for a list is:
   * In lenient mode, a trailing comma in `[ ]` is ignored.
   * In strict mode, a trailing comma in `[ ]` MUST result in an error.
 
-**Lists MUST NOT** have a newline between `=` and the opening bracket `[`. This leaves the member without a value and is an error in both modes:
+The opening `[` must follow the assignment separator on the same logical line (Section 4.3). Otherwise the member has no value, as in this invalid example:
   ```yini
   invalidList = // Error in both modes: Missing value.
   [1, 2, 3]     // Invalid standalone line; not the value of invalidList.
@@ -2756,7 +2767,7 @@ Conversely, a valid JSON object can be mapped into a YINI document, provided tha
 |---------------------|----------------------------------------------------|--------------------------------------|-----------------------------------------------------------------------------------|
 | Structure Mapping   | ✅ Yes (sections become objects)                   | ✅ Yes (objects, nested)              | Each YINI section is mapped to a JSON object.                                     |
 | Types Mapping       | ✅ Yes (direct type mapping)                       | ✅ Yes (direct type mapping)          | All core types (string, number, bool, null, object, list) are preserved.          |
-| Key/Value Syntax    | ✅ Root/section: `key = "value"`<br>Object: `key: "value"` canonical | ✅ Keys always quoted, `:` for objects | YINI uses `=` for root/section members and canonical `:` for object members. Conforming lenient-mode parsers MUST also accept `=` inside inline objects, but formatters SHOULD normalize it to `:`. |
+| Key/Value Syntax    | ✅ Root/section: `key = "value"`<br>Object: `key: "value"` canonical | ✅ Keys always quoted, `:` for objects | YINI's canonical separators depend on context. See Sections 4.3 and 9.2 for lenient alternatives. |
 | Identifiers (Keys)  | ✅ Unquoted, or backticked if needed               | ✅ Must always be quoted              | Backticks in YINI for special chars; JSON always quotes keys.                     |
 | Comments            | ✅ Supported (full-line, inline, or multi-line)                 | 🚫 Not supported (discarded)          | Comments are dropped when converting to JSON.                                     |
 | Terminator          | ✅ Supported in YINI (`/END`)                       | 🚫 Not supported in JSON            | YINI's document terminator has no JSON equivalent and is ignored when converting to JSON.                              |
@@ -3679,6 +3690,8 @@ Notes:
 
 v1.0.0-RC.7x/RC.8-WIP
 
+- **Added:** Lenient root-level and section-level assignments accept `:` as an alternative to canonical `=`. Strict section members require `=`. See Section 4.3.
+- **Clarified:** The `hex:` number prefix applies in value positions. In a permitted member position, `hex:10` assigns decimal `10` to the key `hex`.
 - **Changed:** Missing assignment values now produce an error in both modes, including comment-only values such as `color = #FF9900`. Existing lenient files must supply the intended value explicitly. See Section 8.2.
 - **Added:** Case-insensitive `None` as an alias for `null`. The canonical spelling remains `null`.
 - **Clarified:** Empty sections have neither members nor subsections. They are valid in both modes, but implementations SHOULD warn. See Section 5.
@@ -3823,7 +3836,8 @@ Trailing commas after values or members inside lists or objects never produce `N
 ✅ YINI Syntax Cheatsheet – Common Confusions
 | **Element**       | **Correct Syntax**              | **Common Mistake**              | **Clarification** |
 |-------------------|----------------------------------|----------------------------------|--------------------|
-| Root/section member / List | `name = "John"` / `items = ["a", "b", "c"]` | `name: "John"` / `items:` | `:` is not valid assignment syntax for root-level or section-level members; use `=` for ordinary members and lists. |
+| Root/section member | `name = "John"` | Non-canonical lenient form: `name: "John"` | See Section 4.3 for separator rules. Strict section members require `=`. |
+| List assignment | `items = ["a", "b", "c"]` | `items: "a", "b", "c"` or bare `items:` | A list requires brackets and must start on the separator's logical line, including with lenient `:` assignments. |
 | Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | The line break leaves `items` without a value, which is an error in both modes. The `[` on the next line is not its value. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
 | Comments | `# Comment`, `#Comment`, or `// Comment` | Assuming `#Comment` is not a comment | Outside string literals and backticked identifiers, `#` always begins a comment. No whitespace is required. |

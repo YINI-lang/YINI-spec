@@ -356,6 +356,10 @@ Native date, time, date-time, and other specialized types are desirable, but the
 
 ### 4.3. Type Rules
 
+Using `=` for root-level and section-level assignments and `:` inside objects gives each context a recognizable spelling. When editing by hand, authors may confuse the two. Lenient mode accepts either separator in both contexts so that this mistake does not stop the file from loading. The tradeoff is two spellings for the same data and a weaker visual distinction in lenient files. Documentation and examples teach the canonical forms, formatters prefer them, and strict mode requires them.
+
+Both lenient spellings are part of the language. Requiring all conforming lenient parsers to accept them, including mixtures, keeps acceptance predictable across implementations.
+
 Syntax determines a value's type. Quoting strings keeps text distinct from number and keyword literals. Requiring an opening bracket or brace on the assignment line distinguishes a compound value from a missing value followed by another line.
 
 Requiring quotes in both modes reduces the ambiguity behind YAML 1.1's "Norway problem". In YINI, `"NO"` is a string, unquoted `NO` is `false`, and unquoted `SE` is an error. Omitting the quotes can still produce an unintended boolean when the text matches a boolean word.
@@ -671,9 +675,7 @@ Inline objects express a small nested group as a value without opening a new sec
 
 ### 9.2. Object Member Separators
 
-The canonical `:` distinguishes entries inside an object value from ordinary `=` assignments and follows a familiar map syntax. Allowing `=` in lenient mode is convenient for authors who use assignment syntax throughout a file, but creates two spellings for the same object.
-
-Lenient mode defines both separators as standard syntax rather than leaving `=` as an implementation extension. Conforming parsers must therefore accept `:`, `=`, and mixtures of the two within one inline object. Mixed separators are discouraged because they reduce visual consistency, but rejecting them would reintroduce parser-dependent behavior. Strict mode accepts only `:`, and formatters should normalize lenient input to that canonical form so strict files and formatted files remain consistent.
+The canonical `:` follows familiar map syntax and marks entries within an object value. The reasons for lenient alternatives and canonical output are explained in [§4.3](#43-type-rules). Mixing separators inside one object is discouraged because it reduces visual consistency.
 
 ## [10. List Literals](./YINI-Specification.md#10-list-literals)
 
@@ -686,13 +688,7 @@ Brackets show exactly where a list begins and ends, including when it spans line
 
 Earlier drafts experimented with a colon-based list shorthand. Although it saved some punctuation, it added no expressive capability beyond bracketed lists and introduced another grammar path, more edge cases, and a second mental model for the same data.
 
-Keeping only bracketed lists establishes a uniform structure:
-
-- Values are assigned with `=`.
-- Lists are delimited by `[ ... ]`.
-- `:` is used for object members.
-
-This gives authors one recognizable list representation and keeps both the specification and parser implementations smaller and easier to maintain. A lenient trailing comma still helps hand editing; strict mode omits that optional punctuation for a more uniform list form.
+Keeping lists delimited by `[ ... ]` gives authors one recognizable list representation and keeps both the specification and parser implementations smaller and easier to maintain. The lenient assignment `items: [1, 2]` uses the same bracketed value. A lenient trailing comma still helps hand editing; strict mode omits that optional punctuation for a more uniform list form.
 
 **Similar behavior:** TypeScript and Python also allow a trailing comma after the last array or list element without creating another element. YINI permits this only in lenient mode. See [ECMAScript array initializers](https://tc39.es/ecma262/multipage/ecmascript-language-expressions.html#sec-array-initializer) and [Python list displays](https://docs.python.org/3/reference/expressions.html#list-displays).
 

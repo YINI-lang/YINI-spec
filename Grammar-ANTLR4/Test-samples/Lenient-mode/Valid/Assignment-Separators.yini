@@ -1,0 +1,13 @@
+// Rule: Lenient assignments accept : with the same meaning as =.
+// These cases target the updated specification, ahead of the ANTLR grammar.
+@yini lenient
+
+root: "value"
+hex:10
+color = hex:10
+
+^ Settings
+name = "api"
+enabled:true
+items: [1, 2]
+object: { hex:10, enabled: true }
