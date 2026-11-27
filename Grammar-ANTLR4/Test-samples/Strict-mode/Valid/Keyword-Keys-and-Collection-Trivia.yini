@@ -9,6 +9,10 @@
 on = true
 On = false
 null = null
+none = None
+None = NONE
+NONE = nOnE
+nOnE = null
 
 obj = {
     true: 1
@@ -16,6 +20,10 @@ obj = {
     ; Full-line comment inside an object.
     --unused: 99
     , NULL: 3
+    , none: 4
+    , None: 5
+    , NONE: 6
+    , nOnE: 7
 }
 
 items = [

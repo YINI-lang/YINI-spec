@@ -1,0 +1,7 @@
+/*
+  Primary failure: semantic.
+  Rule: strict concatenation requires string operands.
+*/
+^ Config
+value = "value-" + None
+/END

@@ -6,9 +6,9 @@
 	list1 = [ "Orange", "Banana", "Pear", "Peach" ]
 	list2 = []  // Empty list.
 
-	// Note: var1 and var2 are not lists, both values will be null.
+	// Both spellings represent a null value.
 	var1 = null
-	var2 = 
+	var2 = None
 
 	listOfLists = [
 		["stylesheet", "https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"],

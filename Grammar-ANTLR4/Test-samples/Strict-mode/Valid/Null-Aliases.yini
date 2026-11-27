@@ -1,0 +1,18 @@
+^ Config
+nullValue = null
+lower = none
+title = None
+upper = NONE
+mixed = nOnE
+none = 1
+None = 2
+NONE = 3
+nOnE = 4
+quoted = ["none", "None", "NONE", "nOnE"]
+items = [null, None, NONE, nOnE]
+object = { none: None, None: NONE, NONE: nOnE, nOnE: null }
+emptyString = ""
+emptySingleQuoted = ''
+emptyList = []
+emptyObject = {}
+/END

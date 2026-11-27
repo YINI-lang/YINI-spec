@@ -1,0 +1,10 @@
+/*
+  Empty leaf sections are valid with a recommended warning.
+  Parent contains subsections, so it is not empty.
+*/
+^ Parent
+^^ Empty
+// Comments and disabled lines do not count as content.
+--value = 1
+^^ Populated
+value = 1

@@ -1,8 +1,12 @@
 /*
-  Both NULL and missing value treated as null.
+  Null and None spellings represent the same null value.
 */
 
 ^ Nulls
 path = NULL
-empty =
+none = None
+NONE = nOnE
+empty = ""
+items = [null, None, NONE]
+object = { value: None }
 

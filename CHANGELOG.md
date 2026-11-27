@@ -8,11 +8,14 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 
 ## --Upcoming-- - 1.0.0-RC.7x/RC.8-WIP - 2026 FUTURE
 
+- **Changed:** Missing assignment values are errors in both modes. Lenient files that used an omitted value for null must now write it explicitly. Updated the specification, rationale, ANTLR grammar, examples, and fixtures.
+- **Changed:** Renamed Command Strings to Block Strings, with case-insensitive `block` and `b` prefixes for multiline text such as scripts and SQL queries. The former `command` prefix is no longer supported in either parsing mode. Updated the specification, rationale, ANTLR lexer and parser documentation, and grammar fixtures.
+- **Changed:** Block Strings now reject literal control characters from `U+0000` through `U+001F` in both parsing modes, except for tab, LF, and CR.
 - **Changed:** Block Strings accept `//` and `#` line comments after the closing quotes in both modes.
 - **Changed:** Block Strings now allow `+` for concatenation and `,` in lists and inline objects on the closing line. The usual operand and comma rules apply in each mode.
 - **Changed:** Block Strings allow trailing ASCII spaces and tabs after the opening and closing quotes in both modes. These characters are ignored on delimiter lines.
-- **Changed:** Block Strings now reject literal control characters from `U+0000` through `U+001F` in both parsing modes, except for tab, LF, and CR.
-- **Changed:** Renamed Command Strings to Block Strings, with case-insensitive `block` and `b` prefixes for multiline text such as scripts and SQL queries. The former `command` prefix is no longer supported in either parsing mode. Updated the specification, rationale, ANTLR lexer and parser documentation, and grammar fixtures.
+- **Added:** Case-insensitive `None` as a null alias. Lowercase `null` remains the canonical spelling.
+- **Clarified:** Empty sections contain neither members nor subsections. They are valid in both modes with a recommended warning.
 
 ## 1.0.0-RC.7 - 2026 Nov
 

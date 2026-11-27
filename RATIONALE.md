@@ -224,7 +224,7 @@ A mode declaration records the document's expected validation mode:
 
 **Declared lenient, parsed strictly:** A configuration written for lenient parsing may also satisfy every strict requirement. The application can validate that file strictly without requiring the author to change its declaration first. A warning makes the difference visible without rejecting otherwise valid input. Every strict validation requirement still applies.
 
-A file authored for lenient mode may contain trailing commas, `=` separators inside inline objects, or missing values. Strict mode rejects these constructs. Presenting the mode-mismatch warning before any resulting content errors helps users understand their common cause, instead of confronting them with several apparently unrelated failures. The warning explains the situation; it does not suppress strict validation errors.
+A file authored for lenient mode may contain trailing commas or `=` separators inside inline objects. Strict mode rejects these constructs. Presenting the mode-mismatch warning before any resulting content errors helps users understand their common cause, instead of confronting them with several apparently unrelated failures. The warning explains the situation; it does not suppress strict validation errors.
 
 This is useful for production configuration, CI validation, generated files, and shared project files where validation intent should be visible. The declaration remains optional so ordinary hand-edited files can stay lightweight and let the surrounding parser configuration decide.
 
@@ -365,6 +365,8 @@ Requiring quotes in both modes reduces the ambiguity behind YAML 1.1's "Norway p
 ### 5.1. Syntax
 
 A header makes a section boundary visible without relying on indentation. Optional spacing allows compact repeated-marker headers such as `^name`; adding a space can make the name easier to read. Numeric shorthand requires a space or tab to keep the depth number separate from the name.
+
+An empty section can reserve a named place in a configuration. A recommended warning helps authors notice an unfinished section while allowing that structure. A parent containing subsections already has content, so it does not qualify for this warning.
 
 ### 5.2. Section Markers (`^`, `§`, `>`, or `<`)
 
@@ -641,11 +643,23 @@ The `yes`/`no` and `on`/`off` aliases express familiar configuration choices, su
 
 ### 8.2. Null Literal
 
-Explicit `null` works in every mode and position. In lenient mode, a missing root-level or section-level value becomes `null` with a required warning. Missing values inside collections remain errors in both modes.
+YINI requires an explicit value so an omission cannot become null. This follows its preference for explicit, predictable configuration. The rule also catches this pitfall:
 
-The warning helps catch accidental omissions, including `color = #FF9900`, where `#` starts a comment. Write `null` explicitly to make the intent clear and avoid this warning.
+```yini
+color = #FF9900
+```
 
---TODO: Explain the choice to treat an empty member value as null rather than as an empty string.--
+The author may intend a colour, but `#` starts a comment and leaves the assignment without a value. Earlier lenient rules accepted this as null with a warning, so an application could receive null instead of the intended colour. That implicit conversion was removed. Both modes now reject the assignment.
+
+Write the intended value explicitly:
+
+```yini
+colourText = "#FF9900"
+colourNumber = 0xFF9900
+noColour = null
+```
+
+The case-insensitive `None` alias offers a familiar spelling, especially for Python users, while representing the same null value. Lowercase `null` remains the recommended spelling and the form used for JSON output and scalar-to-string conversion.
 
 ## [9. Object Literals](./YINI-Specification.md#9-object-literals)
 
@@ -781,7 +795,7 @@ Limiting escapes to explicitly marked Classic strings preserves the literal mean
 
 ### 12.3. Lenient vs. Strict Modes
 
-Lenient mode accommodates hand editing, including selected conveniences such as trailing commas and missing member values, while keeping their meaning defined. Strict mode removes those conveniences and requires a visible root section and terminator for stronger validation. 
+Lenient mode accommodates hand editing, including selected conveniences such as trailing commas, while keeping their meaning defined. Strict mode removes those conveniences and requires a visible root section and terminator for stronger validation.
 
 Two modes add rules that authors and implementers must track, but avoid forcing every small hand-edited file to carry the strict-mode structure.
 
@@ -822,7 +836,7 @@ Validation checks the original source line endings, so strict mode still rejects
 
 ### 13.3. Value and Null Handling
 
-Lenient missing values become `null` with a required warning. First-wins duplicate-key handling avoids silently replacing an earlier setting and also requires a warning. See §§8.2 and 12.2.1.
+Missing values are errors in both modes; see §8.2. First-wins duplicate-key handling in lenient mode avoids silently replacing an earlier setting and requires a warning. See §12.2.1.
 
 ### 13.4. Boolean Canonicalization
 
