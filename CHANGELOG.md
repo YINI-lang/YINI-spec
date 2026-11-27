@@ -8,11 +8,12 @@ More details of feedback, see section D.2, _â€œAcknowledgments & Special Thanksâ
 
 ## --Upcoming-- - 1.0.0-RC.7x/RC.8-WIP - 2026 FUTURE
 
+- **Changed:** Octal escapes validate the whole ASCII digit run after `\o`, and `\0` followed by an ASCII digit is an error. Write `E"\o12"` for LF or `E"\x0012"` for NUL (U+0000, the control character with numeric value zero) followed by `12`. The Escaped String `e"\0"` produces a string containing one NUL character.
 - **Added:** The specification accepts `:` for root-level and section-level assignments in lenient mode. Canonical spelling uses `=` for assignments and `:` inside inline objects, and strict mode enforces those spellings. Updated the rationale, examples, and grammar samples. Parser and executable ANTLR grammar support are deferred.
 - **Clarified:** `hex:10` in a permitted member position assigns decimal `10` to the key `hex`, while `hex:10` in a value position denotes decimal `16`.
 - **Changed:** Missing assignment values are errors in both modes. Lenient files that used an omitted value for null must now write it explicitly. Updated the specification, rationale, ANTLR grammar, examples, and fixtures.
 - **Changed:** Renamed Command Strings to Block Strings, with case-insensitive `block` and `b` prefixes for multiline text such as scripts and SQL queries. The former `command` prefix is no longer supported in either parsing mode. Updated the specification, rationale, ANTLR lexer and parser documentation, and grammar fixtures.
-- **Changed:** Block Strings now reject literal control characters from `U+0000` through `U+001F` in both parsing modes, except for tab, LF, and CR.
+- **Changed:** The specification now defines literal control characters for all string forms and backticked identifiers in one table. Raw and Escaped strings reject literal NUL, including in triple quotes. String values preserve literal DEL and C1 characters.
 - **Changed:** Block Strings accept `//` and `#` line comments after the closing quotes in both modes.
 - **Changed:** Block Strings now allow `+` for concatenation and `,` in lists and inline objects on the closing line. The usual operand and comma rules apply in each mode.
 - **Changed:** Block Strings allow trailing ASCII spaces and tabs after the opening and closing quotes in both modes. These characters are ignored on delimiter lines.

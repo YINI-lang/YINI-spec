@@ -313,9 +313,9 @@ YINI documents MUST be encoded in UTF-8.
 
 - **BOM Policy:** A UTF-8 byte order mark (BOM) SHOULD NOT be used. However, implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
 
-- **Character Set:** YINI documents use Unicode. Control characters and other non-printable characters SHOULD be avoided except where explicitly allowed, such as tabs, spaces, and line endings, or when represented through valid string literal forms. Other special characters may be included using escape sequences, or by placing them inside Raw or Triple-Quoted Strings.
+- **Character Set:** YINI documents use Unicode. Authors SHOULD avoid non-printable characters except where the syntax permits them. The [literal control character table](#literal-control-characters) defines which controls may appear in string content and backticked identifiers.
 
-For details about whitespace and control characters, see Section 3.2, "Whitespace and Indentation". Section 6.4 defines which control characters may appear directly in Block Strings.
+See §3.2 for the whitespace that separates tokens.
 
 ### 2.2. File Extension
 YINI files SHOULD use the `.yini` file extension. This extension makes it easier to identify the file type and ensures proper handling by tools and parsers designed for the YINI format.
@@ -491,6 +491,21 @@ The following whitespace `<WS>` behaviors are defined:
 - Tabs (`<TAB>`, U+0009) and spaces (`<SPACE>`, U+0020) are generally insignificant outside string literals and backticked identifiers, except where this specification explicitly requires or forbids them, such as in numeric shorthand section headers and between distinct lexical tokens.
 - You can indent section headers and members for readability. Section markers determine nesting. Inside a Block String, leading ASCII spaces set the margin described in [§6.4, Block Strings](#64-block-strings).
 
+#### Literal control characters
+
+In both modes, parsers MUST accept or reject literal control characters in source text as shown below. “Other C0” covers the rest of U+0000–U+001F after tab (U+0009), LF (U+000A), and CR (U+000D).
+
+NUL is the Unicode control character U+0000, whose numeric value is zero. The Escaped String `e"\0"` produces a string containing one NUL character. In that spelling, `\0` consists of a backslash and a digit zero in the source. A literal NUL is a U+0000 character embedded directly in the source file.
+
+| Source context | Tab | Line ending (LF, CRLF, CR) | Other C0 | DEL and C1 (U+007F–U+009F) |
+| --- | --- | --- | --- | --- |
+| Single-line Raw or Escaped String | Accept | Reject | Reject | Accept |
+| Raw or Escaped Triple-Quoted String | Accept | Accept | Reject | Accept |
+| Block String content | Accept | Accept | Reject | Accept |
+| Backticked identifier | Reject | Reject | Reject | Reject |
+
+Accepted tabs, DEL, and C1 characters retain their code points in string values. Each source line ending kept in multiline content becomes one LF, including in Raw strings. Escaped Strings can represent any of these controls with the escapes in §6.2.1. Parsers MUST normalize source line endings before decoding those escapes. For example, the two escapes in `E"\r\n"` produce CR followed by LF. See §6.4 for the placement of Block String delimiters and the treatment of structural indentation and line breaks.
+
 ### 3.3. Comments
 YINI supports the following comment forms. On a Block String delimiter line, the opening quotes may be followed only by ASCII spaces or tabs before the line break. The closing quotes may be followed by a `//` or `#` line comment. Section 6.4 gives examples.
 
@@ -593,7 +608,7 @@ An _**identifier**_ can be written in one of the following forms:
 
 - **Form 2: Backticked Identifier:**
   - The identifier MUST start and end with a backtick <code>`</code>.
-  - A backticked identifier MUST be written on a single logical line. It MUST NOT contain raw control characters in the ranges U+0000–U+001F or U+007F–U+009F, including tabs and line endings. YINI defines no control-character escape sequences for backticked identifiers.
+  - A backticked identifier MUST follow the [literal control character table](#literal-control-characters). YINI defines no control-character escapes for identifiers.
   - Ordinary spaces are allowed.
   - A backtick-quoted identifier MAY be empty (<code>``</code>).
     This permits representing an identifier equivalent to the JSON empty key <code>""</code>.
@@ -1112,7 +1127,7 @@ Combining these gives Raw Strings, Escaped Strings, Raw Triple-Quoted Strings, a
 
 Block Strings are a separate triple-quoted form that removes structural indentation and keeps content line breaks as LF. See Section 6.4.
 
-In both parsing modes, source line endings (`LF`, `CRLF`, or `CR`) become LF in all multiline string values. This also applies to Raw strings: Raw means that escape sequences are not interpreted. See Sections 6.3 and 6.4.
+The [literal control character table](#literal-control-characters) applies to each string form below.
 
 String literals in YINI **MUST be enclosed** in either single quotes `'` or double quotes `"`, or optionally in triple double quotes `"""` — even in lenient mode. You MAY use whichever is preferred or most appropriate for the context.
 
@@ -1200,7 +1215,7 @@ An Escaped String is a string literal prefixed with `E` or `e`. Escaped Strings 
 
 **Deprecated aliases:** *Classic String* is the deprecated name for an Escaped String. The `C`/`c` prefixes remain supported as deprecated aliases for `E`/`e`, with identical escape rules and resulting string values in both parsing modes, including Triple-Quoted forms. New documents SHOULD use `E`/`e`, and documentation SHOULD use the name *Escaped String*.
 
-Escaped Strings support all common escape sequences, including those for newlines, tabs, form feeds, and more. Thus, all special control characters (U+0000–U+001F), except for space and tab, MUST be written using escape sequences — they cannot appear directly in Escaped Strings.
+For a control character forbidden in the source, use an escape from §6.2.1.
 
 Single-line quoted Escaped Strings MUST begin and end on the same logical line.
 
@@ -1230,7 +1245,7 @@ The following escape sequences are case-sensitive:
 - `\"` — Double quotation mark.
 - `` \` `` — Backtick.
 - `\/` — Normal/forward slash (yields a plain `/`).
-- `\0` — Null byte.
+- `\0` — NUL (U+0000), null byte (0x00) in UTF-8. An ASCII digit (`0`–`9`) immediately after this escape MUST cause a parse error.
 - `\?` — Literal question mark, provided for C/C++ compatibility.
 - `\a` — Alert/bell (ASCII 7).
 - `\b` — Backspace (ASCII 8).
@@ -1242,9 +1257,7 @@ The following escape sequences are case-sensitive:
 - `\xhh` — Short Unicode escape, using exactly 2 hexadecimal digits. Denotes the Unicode code point U+00hh; never a raw byte, since YINI has no byte-string literal type.
 - `\uhhhh` — Unicode code point in the range U+0000 to U+FFFF, using exactly 4 hexadecimal digits.
 - `\Uhhhhhhhh` — Unicode code point in the range U+00000000 to U+10FFFF, using exactly 8 hexadecimal digits.
-- `\oOOO` — Octal value (up to 3 digits, valid range `\o0` to `\o377`):
-  * Equivalent in value to `\OOO` in C/C++.
-  * `\o0` has the same effect as `\0`.
+- `\oOOO` — Octal Unicode character escape. Read the entire run of consecutive ASCII digits (`0`–`9`) immediately after `\o`. It MUST contain one to three digits, all in `0`–`7`, and its value MUST be at most octal `377` (U+00FF). An empty run or a run that fails any of these checks MUST cause a parse error in both modes.
 
 Where:
 - `h` = Hexadecimal digit: `0-9`, `a-f`, or `A-F`.
@@ -1252,8 +1265,9 @@ Where:
 
 **Invalid escapes**
 
-Invalid escape sequences, such as `\z` or `\o378`, MUST result in an error
-diagnostic in both lenient and strict mode.
+Invalid escape sequences MUST produce an error diagnostic in both modes. Examples include the following errors:
+- `E"\o378"` contains a non-octal digit, `E"\o400"` exceeds the maximum value, and `E"\o3770"` has four digits. To append a digit, write `E"\o377" + "0"`.
+- `E"\012"` is invalid. Use `E"\o12"` for LF or `E"\x0012"` for NUL followed by the characters `1` and `2`.
 
 **Additional recommendation:** Implementations SHOULD explain unsupported
 escape forms and suggest the valid YINI spelling. For example, C/C++-style octal
@@ -1368,7 +1382,7 @@ query = B"""
 
 The line break ending the opening line and the line break immediately before the closing line are structural and are excluded from the value. Each remaining source line ending (`LF`, `CRLF`, or `CR`) MUST become one LF (`U+000A`) in the parsed value, in both parsing modes.
 
-In both strict and lenient mode, a parser MUST reject a Block String containing a literal character from `U+0000` through `U+001F`, except for tab (`U+0009`), LF (`U+000A`), and CR (`U+000D`).
+The [literal control character table](#literal-control-characters) applies to Block String content.
 
 To include a final LF in the value, leave an empty content line immediately before the closing delimiter:
 
@@ -3690,13 +3704,14 @@ Notes:
 
 v1.0.0-RC.7x/RC.8-WIP
 
+- **Changed:** In Escaped Strings, `\o` consumes the entire following ASCII digit run and `\0` rejects a following ASCII digit. See §6.2.1.
 - **Added:** Lenient root-level and section-level assignments accept `:` as an alternative to canonical `=`. Strict section members require `=`. See Section 4.3.
 - **Clarified:** The `hex:` number prefix applies in value positions. In a permitted member position, `hex:10` assigns decimal `10` to the key `hex`.
 - **Changed:** Missing assignment values now produce an error in both modes, including comment-only values such as `color = #FF9900`. Existing lenient files must supply the intended value explicitly. See Section 8.2.
 - **Added:** Case-insensitive `None` as an alias for `null`. The canonical spelling remains `null`.
 - **Clarified:** Empty sections have neither members nor subsections. They are valid in both modes, but implementations SHOULD warn. See Section 5.
 - **Changed:** Renamed Command Strings to Block Strings and replaced the `command` prefix with case-insensitive `block` and `b` prefixes. The `command` prefix is no longer supported in either parsing mode.
-- **Changed:** Both modes now reject literal control characters from `U+0000` through `U+001F` in Block Strings, except for tab, LF, and CR.
+- **Changed:** §3.2 defines literal control characters for every string form and backticked identifiers. Both modes reject literal NUL in Raw and Escaped strings, including triple-quoted forms.
 - **Changed:** Both modes now allow trailing ASCII spaces and tabs after either Block String delimiter.
 - **Changed:** A Block String can be followed on its closing line by a concatenation operator or a comma allowed by the surrounding list or inline object.
 - **Changed:** Both modes accept `//` and `#` line comments directly after the closing quotes of a Block String.

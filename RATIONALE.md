@@ -309,7 +309,7 @@ Whitespace surrounding an identifier token is insignificant, but content inside 
 
 **Backticked identifiers are intended to remain names rather than become another form of string literal.**
 
-Raw control characters (U+0000–U+001F and U+007F–U+009F), including tabs and line endings, are prohibited so that identifiers remain visible, readable, and confined to one logical line. Escapes are limited to the two characters that require special handling: the backtick, which closes the identifier, and the backslash, which introduces an escape. This deliberately small escape model keeps parsing predictable and makes the rule straightforward to implement consistently across languages.
+Limiting escapes to the backtick and backslash keeps the end of a name easy to recognize. The reasons for restricting invisible characters in names are described in [§6](#6-string-literals).
 
 **Similar behavior:** C11 identifiers use the same basic ASCII form, but C11 also permits universal character names and implementation-defined characters and applies language-specific keyword and reserved-identifier rules. Kotlin uses backticks for identifiers that need characters outside its ordinary identifier form, including spaces. YINI's allowed characters and escapes differ. See the [C11 committee draft, Section 6.4.2.1](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf) and the [Kotlin language specification](https://kotlinlang.org/spec/syntax-and-grammar.html#identifiers).
 
@@ -419,6 +419,8 @@ Numeric shorthand prevents headers from growing into long runs of markers. Repea
 
 ## [6. String Literals](./YINI-Specification.md#6-string-literals)
 
+NUL (U+0000) is an invisible control character with numeric value zero. The Escaped String `e"\0"` produces a string containing one NUL character. A pasted NUL between `A` and `B` can look like `AB` in an editor even though the application receives three characters. Writing `E"A\0B"` makes the NUL visible. Literal tabs are useful in text, and source line breaks let authors lay out multiline values. Keeping DEL and C1 available lets a string carry text from an existing data source without changing it. Keys and section names have a different job. A hidden character can make a name impossible to find by typing what appears on screen. The [source character table](./YINI-Specification.md#literal-control-characters) gives the rules for each context.
+
 ### 6.1. Raw Strings (R-Strings)
 
 <a id="b26-string-type-motivations"></a>
@@ -428,7 +430,7 @@ Raw strings are the default because configuration often contains paths, URLs, pa
 
 Common examples include file paths, URLs, regular-expression-like fragments, shell commands, and snippets containing backslashes. Taking that text exactly as written avoids the familiar problem where `\n`, `\t`, or `\U` unexpectedly changes an ordinary configuration value.
 
-The trade-off is that an author must choose a different string form when the value needs an escaped quote or control character. The optional `R` prefix can make raw intent visible without changing the value. This balance is the main reason Raw strings became YINI's default string form.
+The trade-off is that an author must choose a different string form when the value needs an escaped quote or a control such as NUL that cannot appear literally. The optional `R` prefix can make raw intent visible without changing the value. This balance is the main reason Raw strings became YINI's default string form.
 
 **Similar behavior:** Rust and C# raw string literals also leave backslashes uninterpreted, although their delimiters and other rules differ from YINI's. See the [Rust Reference](https://doc.rust-lang.org/reference/tokens.html#raw-string-literals) and [C# language specification](https://learn.microsoft.com/en-us/dotnet/csharp/language-reference/language-specification/lexical-structure#6456-string-literals).
 
@@ -436,7 +438,7 @@ The trade-off is that an author must choose a different string form when the val
 
 <a id="b262-classic-strings"></a>
 
-An explicit `C` or `E` prefix opts into escape processing when a value needs an embedded newline or tab, a quote inside the quoted value, a control character, or a Unicode escape. Making this behavior the default would shorten some escaped values but make ordinary backslashes surprising. Requiring the prefix gives the author control at the cost of another string form to learn. The Escaped String name and `E`/`e` prefixes are preferred; the Classic String name and `C`/`c` prefixes remain supported but are deprecated.
+An explicit `C` or `E` prefix opts into escape processing when an author wants to write a newline, tab, quote, or other character as an escape. Making this behavior the default would shorten some escaped values but make ordinary backslashes surprising. Requiring the prefix gives the author control at the cost of another string form to learn. The Escaped String name and `E`/`e` prefixes are preferred; the Classic String name and `C`/`c` prefixes remain supported but are deprecated.
 
 --TODO: explain why C was chosen (Classic and the C language), and why E is also supported.--
 
@@ -445,7 +447,9 @@ An explicit `C` or `E` prefix opts into escape processing when a value needs an 
 <a id="b23-non-standard-octal-escape"></a>
 <a id="b210-escape-sequence-xhh-but-yini-strings-are-unicode"></a>
 
-The defined escape list makes decoding predictable across parsers. A traditional C-style octal escape such as `\123` is shorter, but does not show its number base; YINI uses `\o123` by analogy with `\u` and `\U`, making the octal base explicit and the escape more self-describing.
+The `o` in `\o123` tells the reader that the digits are octal. Checking the whole run catches a mistyped or extra digit at the point where it was written. Silently splitting `\o3770` would give the application two characters when the author may have meant one. A separate quoted digit makes that boundary visible.
+
+The short spelling `\0` is convenient for NUL. Someone familiar with C might read `\012` as a newline. Reporting an error lets the author choose between LF and NUL followed by the text `12`.
 
 The familiar `\xhh` spelling can suggest a raw byte, but YINI strings contain Unicode text rather than byte arrays. It therefore denotes Unicode code point U+00hh. For example, `\xFF` produces U+00FF, not an uninterpreted byte with value `0xFF`. This matches the resulting character for the corresponding two-digit escape in Python 3 and JavaScript. These choices retain familiar escape forms while giving each one a defined text-based interpretation.
 
@@ -516,8 +520,6 @@ For example, after an earlier content line has set a margin of two ASCII spaces:
 | Two ASCII spaces followed by a nonbreaking space (`U+00A0`) | The nonbreaking space is kept. |
 
 A practical example is a Makefile recipe, which normally starts with a tab. Removing that tab can change how the Makefile is read. Even a line containing only a tab can matter: in a rule, GNU make treats it as an empty recipe. See [GNU make's recipe syntax](https://www.gnu.org/software/make/manual/make.html#Recipe-Syntax). YINI preserves these characters so the application receives the content the author wrote.
-
-Tabs and line endings belong in multiline text. The other 29 ASCII control characters in the range `U+0000` through `U+001F` can be hard to spot in an editor. For example, a pasted NUL between `A` and `B` can look like plain `AB` even though the application receives an extra character. Rejecting these characters in both modes catches that mistake when the file is read. If you need the NUL, write `e"A\0B"` in an Escaped String so anyone reading the file can see it.
 
 Block Strings resemble YAML's [literal block scalar with strip chomping (`|-`)](https://yaml.org/spec/1.2.2/#8112-block-chomping-indicator) in that no final newline is added automatically. However, YINI preserves explicitly written trailing empty content lines, whereas YAML's `|-` removes trailing empty lines. In YINI, an empty content line before the closing delimiter includes a final LF.
 

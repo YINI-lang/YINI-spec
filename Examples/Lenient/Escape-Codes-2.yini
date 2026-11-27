@@ -9,8 +9,8 @@ unicodeChars = E"\u2603"            // Unicode snowman ☃
 // Unicode escape (8-digit): \UNNNNNNNN
 unicodeLongs = E"\U0001F984"        // Unicode unicorn 🦄
 
-// Octal escape: \oOOO (3-digit octal)
+// Octal escape: \o followed by 1 to 3 octal digits (maximum 377).
 octalChars = E"\o110\o145\o154\o154\o157" // "Hello"
 
-// \0 inserts a null byte (ASCII 0) into the string
+// \0 inserts NUL (U+0000) into the string.
 strWithNullByte = E"This string contains a null byte \0 in the middle."
