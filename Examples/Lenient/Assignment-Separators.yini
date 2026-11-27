@@ -1,0 +1,11 @@
+@yini lenient
+
+// This example demonstrates lenient assignment alternatives.
+// Prefer = for root and section members and : inside objects.
+title: "Example service"
+
+^ Service
+name = "api"
+port: 8080
+hosts: ["localhost", "example.test"]
+limits: { retries: 3, enabled: true }

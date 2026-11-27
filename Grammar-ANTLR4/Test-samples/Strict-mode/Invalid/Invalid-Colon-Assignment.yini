@@ -1,0 +1,10 @@
+/*
+  Primary failure: syntactic.
+  Rule: Strict section members must use =.
+*/
+@yini strict
+
+^ Settings
+key: "value"
+
+/END

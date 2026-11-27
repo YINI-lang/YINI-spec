@@ -11,5 +11,10 @@ Expected JSON outputs for a few small examples are provided in
 `Expected-JSON/`. These are intended as lightweight reference outputs for
 developers and parser authors.
 
+Examples use canonical separators by default. The
+`Lenient/Assignment-Separators.yini` example demonstrates the lenient `:`
+assignment alternative. Formatters should use `=` for those assignments and
+keep `:` inside objects.
+
 Technical edge cases and invalid parser fixtures live under
 `../Grammar-ANTLR4/Test-samples/`.

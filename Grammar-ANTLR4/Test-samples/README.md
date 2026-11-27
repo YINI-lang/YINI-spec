@@ -51,4 +51,9 @@ General escaped-string fixtures use `E`/`e`. The `Classic-Aliases.yini` fixtures
 explicitly cover the deprecated `C`/`c` aliases for both single-line and
 triple-quoted forms in each parsing mode.
 
+The lenient `Assignment-Separators.yini` fixture targets the updated specification's
+`:` assignment alternative. The executable ANTLR grammar still requires `=`
+for root-level and section-level assignments and awaits a separate update.
+The strict `Invalid-Colon-Assignment.yini` fixture checks strict rejection.
+
 User-facing examples live in `../../Examples/`.

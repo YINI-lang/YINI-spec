@@ -1,7 +1,7 @@
 /*
     Example 2 of a package yini - a more advanced version.
 
-    * Using short list notation using with the colon character :
+    * Uses bracketed lists for authors and excluded paths.
 */
 
 ^ myPackage
