@@ -8,6 +8,7 @@ More details of feedback, see section D.2, _“Acknowledgments & Special Thanks�
 
 ## --Upcoming-- - 1.0.0-RC.7x/RC.8-WIP - 2026 FUTURE
 
+- **Updated:** Some cleanup and reduced repetition in the specification and linked large examples, preserving all rules and section numbering. And kept the three most recent specification change groups in §16.4 and moved revisions/sub-sections into [Specification change history](./Docs/SPEC-HISTORY.md). Resulting in about 20% shorter spec based on line count.
 - **Changed:** Octal escapes validate the whole ASCII digit run after `\o`, and `\0` followed by an ASCII digit is an error. Write `E"\o12"` for LF or `E"\x0012"` for NUL (U+0000, the control character with numeric value zero) followed by `12`. The Escaped String `e"\0"` produces a string containing one NUL character.
 - **Added:** The specification accepts `:` for root-level and section-level assignments in lenient mode. Canonical spelling uses `=` for assignments and `:` inside inline objects, and strict mode enforces those spellings. Updated the rationale, examples, and grammar samples. Parser and executable ANTLR grammar support are deferred.
 - **Clarified:** `hex:10` in a permitted member position assigns decimal `10` to the key `hex`, while `hex:10` in a value position denotes decimal `16`.
@@ -64,7 +65,7 @@ Spec. changes:
 - **Clarified:** Strict-mode section and terminator requirements help detect incomplete documents but do not guarantee that every truncated or split fragment is invalid.
 - **Changed:** Removed the lenient-mode fallback that allowed implementations to retain or remap invalid key and section names. Parsers MUST report an error in both modes.
 - **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
-- And more clarifications in the spec, for the full specification change history, see [§16.4, Spec Changes](./YINI-Specification.md#164-spec-changes).
+- For more specification changes, see [§16.4, Spec Changes](./YINI-Specification.md#164-spec-changes) and [earlier specification changes](./Docs/SPEC-HISTORY.md).
 - **Fixed:** Corrected the strict-mode validation workflow to reference the existing `c-industrial-monitoring-and-automation-platform.strict.yini` example instead of a nonexistent `.smoke.yini` file.
 - **Clarified:** In the spec changed section name to `11. Reserved and Future Constructs` from `11. Advanced Constructs`.
 - **Clarified:** In the spec changed section name to `13. Implementation Rules` from `13. Implementation Notes`.

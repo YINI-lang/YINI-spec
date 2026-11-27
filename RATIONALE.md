@@ -1,6 +1,6 @@
 # YINI Rationale
 
-**Applies to:** YINI Specification v1.0.0-RC.7
+**Applies to:** YINI Specification v1.0.0-RC.7x
 **Author:** Marko K. Seppänen  
 **Project:** YINI-lang
 
@@ -998,6 +998,8 @@ See [Acknowledgments](#acknowledgments).
 ### 16.4. Spec Changes
 
 This section records changes to the specification rather than introducing additional design rationale.
+
+Archiving earlier entries in [Specification change history](./Docs/SPEC-HISTORY.md) keeps the specification shorter while preserving its history.
 
 ### 16.5. Formal Grammar
 

@@ -309,9 +309,9 @@ These terms are used throughout this specification to describe YINI's grammar, s
 A YINI file consists of an explicit document structure based on sections, members, and values. It may also contain comments, but indentation does not determine structure. The file structure determines how data is organized, encoded, and presented. Below are the key elements of the file structure.
 
 ### 2.1. File Encoding
-YINI documents MUST be encoded in UTF-8.
+YINI documents MUST be encoded in UTF-8. Files in other encodings, such as UTF-16 or Latin-1, are outside this specification and may not be portable.
 
-- **BOM Policy:** A UTF-8 byte order mark (BOM) SHOULD NOT be used. However, implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
+- **BOM Policy:** The canonical encoding is UTF-8 without a byte order mark (BOM). A UTF-8 BOM (`0xEF 0xBB 0xBF`) SHOULD NOT be used. Implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
 
 - **Character Set:** YINI documents use Unicode. Authors SHOULD avoid non-printable characters except where the syntax permits them. The [literal control character table](#literal-control-characters) defines which controls may appear in string content and backticked identifiers.
 
@@ -334,9 +334,9 @@ The `.strict.yini` suffix does not replace `@yini strict`, and it does not repla
 
 A shebang line MAY appear only as the first line of a YINI document.
 
-If a shebang is present, the shebang marker MUST be the first two non-BOM characters of the document: `#!`. An optional UTF-8 BOM MAY appear before it if the implementation supports BOM handling.
+If a shebang is present, the shebang marker `#!` MUST be the first two non-BOM characters of the document. An initial UTF-8 BOM may precede the marker if the implementation accepts it under [§2.1](#21-file-encoding).
 
-The shebang line is ignored by the YINI parser.
+The YINI parser MUST ignore a correctly placed shebang line.
 
 A `#!` sequence that appears after leading whitespace, after a blank line, or anywhere other than the first line MUST NOT be treated as a shebang.
 
@@ -1156,7 +1156,7 @@ This applies to both single-line quoted strings and ordinary Triple-Quoted Strin
 
 **Rules and Behavior for Strings:**
 - All string literals **MUST start and finish on the same line**, except for **Triple-Quoted Strings** (see Section 6.3), which can span multiple lines, and **Block Strings** (see Section 6.4), which must span multiple lines.
-- Multiple string literals can be **concatenated** to create longer strings (see Section 6.6, "String Concatenation").
+- Multiple string literals can be **concatenated** to create longer strings (see [Section 6.6, "String Concatenation"](#66-string-concatenation)).
 
 **String Overview**
 
@@ -1326,7 +1326,7 @@ The closing `"""` MUST start a new line. Only ASCII spaces may precede it on tha
 In both modes, the parser MUST ignore any ASCII spaces (`U+0020`) and tabs (`U+0009`) immediately after either delimiter. After those spaces and tabs, the opening line MUST end. The closing line may end with a line break or at end-of-file. The following forms are also allowed after the closing quotes, with or without a space or tab before them.
 
 - `//` or `#` starts a line comment. The parser ignores the rest of the line. The comment adds nothing to the string value.
-- `+` joins the Block String to the next operand under the concatenation rules in §6.6.
+- `+` joins the Block String to the next operand under the concatenation rules in [§6.6](#66-string-concatenation).
 - `,` may follow a Block String wherever a list or inline object permits a comma. A comma after the last item is valid only in lenient mode.
 
 Any other character in that position is an error. For example, `""" /* note */` is invalid. After a valid `+` or `,`, the usual comment rules apply, including `/* ... */` comments that span lines. Inside the block, comment markers are literal text. On content lines, trailing spaces and tabs are part of the value after the indentation rules below are applied.
@@ -1452,9 +1452,7 @@ For the full table of supported string forms, see the overview table at the begi
 
 ### 6.6. String Concatenation
 
-YINI supports explicit string **concatenation** using the plus sign (`+`).  
-
-Concatenation joins two or more operands into a single string value. The result of concatenation is always a string.
+String **concatenation** joins two or more operands with the plus sign (`+`) and produces a single string value. Implementations SHOULD treat concatenation as a value-level expression.
 
 **Example:**
 ```yini
@@ -1468,13 +1466,13 @@ greeting = "Hi, hello there"
 
 #### Concatenation Operands
 
-The `+` operator in YINI is exclusively a string concatenation operator. YINI does not define numeric addition. For readability, whitespace around `+` is recommended, but not required.
+Implementations MUST NOT evaluate `+` between operands as numeric addition. For readability, whitespace around `+` is recommended, but not required.
 
 Between concatenation operands, `+` MUST be interpreted as the operator, even without surrounding whitespace. A numeric operand MAY have its own leading `+` or `-` sign. Thus, `"a"+42` joins `"a"` and `42`, while `"a"++42` joins `"a"` and `+42`.
 
 **In strict mode**, all concatenation operands MUST be string literals. This includes Raw/R-prefixed strings, Escaped/E-prefixed strings (including deprecated `C`/`c` aliases), ordinary Triple-Quoted Strings, and Block Strings.
 
-**In lenient mode**, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. Numeric addition is not performed. Non-string scalar operands MUST first be converted to their parsed scalar canonical string representation before concatenation.
+**In lenient mode**, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. Non-string scalar operands MUST be converted to strings as defined in [§6.7](#67-scalar-conversion-in-lenient-concatenation) before concatenation.
 
 Lists and inline objects MUST NOT be operands in concatenation expressions.
 
@@ -1583,7 +1581,7 @@ In lenient mode, scalar operands are **converted to strings before concatenation
 - Booleans are converted to `true` or `false`.
 - Null is converted to `null`, whether written as `null` or `None` in any casing.
 - Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion. The `%` prefix is deprecated; see [Section 7.4](#74-number-formats).
-- Lists and inline objects MUST NOT be converted to strings and MUST NOT be used as operands in concatenation expressions.
+- Lists and inline objects MUST NOT be converted to strings. See [§6.6](#66-string-concatenation) for the permitted operands.
 
 Example:
 ```yini
@@ -1904,9 +1902,14 @@ empty = { }
 
 #### Syntax rules
 
-The opening brace `{` MUST be on the same logical line as the assignment separator, as defined in Section 4.3. A brace on the next line leaves the member without a value and produces a missing-value error.
+For the placement of the opening brace `{` in an assignment, see [§4.3](#43-type-rules).
 
-Inside an **inline object**, the value of each object member MUST begin on the same logical line as the object member separator.
+```yini
+object1 =
+{ a: 1, b: 2 }  // Invalid: `{` does not appear on the same line as `=`.
+```
+
+Each object member's value MUST begin on the same logical line as its separator. The object itself may span several lines.
 
 ✅ Valid:
 ```yini
@@ -1920,24 +1923,9 @@ object2 = {
 
 ❌ Invalid:
 ```yini
-object1 =
-{ a: 1, b: 2 }  // Invalid: `{` does not appear on the same line as `=`.
-
-// Not parsed as an object value for object2
-object2 =
-    {
-        a: 1,
-        b: 2
-    }
-```
-
-Inside inline objects, the value MUST begin on the same logical line as the object member separator.
-
-This is invalid (value does not start on the same line as the **object member separator** `:`):
-```yini
 obj = {
     a:
-        1  // Invalid: Value and object-member separator `:` not on the same line.
+        1  // Invalid: the value begins on the line after the separator.
 }
 ```
 
@@ -2033,7 +2021,7 @@ config = {
 
 ### 9.2. Object Member Separators
 
-Inside inline objects, `:` is the canonical member separator. A newline MUST NOT appear between the object member separator and the value.
+Inside inline objects, `:` is the canonical member separator. For the placement of the value, see [§9.1, Syntax rules](#syntax-rules).
 
 ```yini
 obj = { a: 1, b: 2 }
@@ -2261,9 +2249,7 @@ Note: In lenient mode, top-level members outside any section may be accepted. In
 - **In strict mode, an empty document is invalid.** A document that contains only whitespace, comments, and/or disabled lines (`--`) MUST result in an error.
 
 #### 12.2.2. Character Encoding
-YINI documents (files) **MUST** be encoded as **UTF-8**.  
-
-A UTF-8 byte order mark (BOM) SHOULD NOT be used. Implementations MAY accept and ignore an initial UTF-8 BOM for compatibility.
+See [§2.1, File Encoding](#21-file-encoding) for the UTF-8 requirement and the handling of an initial byte order mark.
 
 #### 12.2.3. Line Endings
 
@@ -2403,8 +2389,8 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | Missing value | ❌ Error | ❌ Error | Every assignment requires an explicit value. See Section 8.2. |
 | Empty value before comma | ❌ Error | ❌ Error | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Both modes MUST report an error; recovery does not make the document valid. |
 | Invalid escape sequences | ❌ Error | ❌ Error | Both modes MUST report an error. Continuing to collect diagnostics does not make the document valid. |
-| String concatenation with scalar operands | ✅ | ❌ | In lenient mode, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. |
-| Multi-line concatenation after `+` | ✅ | ✅ | A line break MAY occur after `+`, but MUST NOT occur before `+`. |
+| String concatenation with non-string scalar operands | ✅ | ❌ | The first operand must be a string literal. See [§6.6](#66-string-concatenation). |
+| Multi-line concatenation after `+` | ✅ | ✅ | See [§6.6](#66-string-concatenation) for operator placement. |
 
 ⚠️ Strict mode enforces a stricter contract suitable for automated validation and reproducible builds. Lenient mode favors user-friendliness and flexibility for human editing.
 
@@ -2553,43 +2539,7 @@ The opening `[` must follow the assignment separator on the same logical line (S
 
 ### 13.7. String Concatenation
 
-Implementations SHOULD treat string concatenation as a value-level expression formed by two or more operands separated by the plus sign (`+`).
-
-The `+` token is not a general arithmetic operator in YINI. Implementations MUST NOT evaluate numeric operands using numeric addition. When a `+` expression is accepted as concatenation, all operands are evaluated as concatenation operands and the final result is a string.
-
-A line break MAY occur after the `+` operator, allowing long string values to be split across multiple source lines. A line break MUST NOT occur before the `+` operator.
-
-Lists and inline objects MUST NOT be used as concatenation operands.
-
-In strict mode, validation is simple: every operand in a concatenation expression MUST be a string literal. If any operand is a number, boolean, null, list, or inline object, the implementation MUST reject the expression.
-
-In lenient mode, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. The whole `+` expression MUST be treated as string concatenation.
-
-```yini
-value = 1 + 2 + "3"  // Invalid!
-```
-
-This expression is evaluated as neither `"123"` nor `"33"`. It MUST result in an error because the first operand is not a string literal.
-
-The correct way to do this:
-```yini
-value1 = "1" + 2 + 3     // Valid, result: "123"
-value2 = "1" + 2 + "3"   // Valid, result: "123"
-value3 = "" + 1 + 2 + 3  // Valid, result: "123"
-```
-
-The result of concatenation is always a single string value.
-
-It MUST NOT be evaluated as numeric addition followed by string conversion.
-
-If a lenient-mode `+` expression does not begin with a string literal, the expression MUST be rejected. For example:
-
-```yini
-invalid1 = 100 + 99      // Invalid: YINI does not define numeric addition.
-invalid2 = 1 + 2 + "3"   // Invalid: concatenation must begin with a string literal.
-```
-
-The first expression is invalid because YINI does not define numeric addition. The second expression is invalid because a concatenation expression must begin with a string literal.
+See [§6.6](#66-string-concatenation) for the concatenation rules and [§6.7](#67-scalar-conversion-in-lenient-concatenation) for scalar conversion in lenient mode.
 
 Implementations SHOULD report invalid concatenation with diagnostics that identify the reason, such as:
 - Non-string operand in strict mode.
@@ -2723,22 +2673,13 @@ Before the final `1.0.0` release, staged labels such as Beta and RC indicate tha
 
 ### 14.3. Encoding Notes
 #### 14.3.1 Required Encoding
-YINI documents MUST be encoded in UTF-8.
-
-- The canonical and recommended encoding is UTF-8 without BOM.
-- Use of other encodings (such as UTF-16 or Latin-1) is not supported by this specification and is not guaranteed to be portable.
+See [§2.1, File Encoding](#21-file-encoding) for the required encoding.
 
 #### 14.3.2 Byte Order Mark (BOM)
-- A UTF-8 BOM (`0xEF 0xBB 0xBF`) SHOULD NOT be used.
-- If present, for compatibility implementations MAY accept and ignore an initial UTF-8 BOM without failing.
+See the BOM policy in [§2.1](#21-file-encoding).
 
 #### 14.3.3 Shebang Line (Optional)
-A shebang line may be used at the very top of the file:
-```
-#!/usr/bin/env yini
-```
-
-This line is ignored by YINI parsers but may affect script execution in Unix environments. It MUST be ignored as a shebang line when it appears as the first line of the document.
+A shebang line may affect script execution in Unix environments. See [§2.3](#23-optional-shebang-) for its placement and how YINI parsers handle it.
 
 ### 14.4. JSON Compatibility
 
@@ -3040,636 +2981,22 @@ hosts = ["alpha.local", "beta.local", "gamma.local"]
 
 This is a lenient-mode example. It has multiple top-level sections and no `/END`.
 
-```yini
-@YINI
-
-// Example A: Corporate SaaS Platform.
-/*
-  Covers:
-  - Sections & deep nesting
-  - Real-world domain structure
-  - Objects in arrays
-  - Arrays of objects
-  - Scalars of every type
-  - Complex policy logic
-  - Auth & security modeling
-  - Unicode in strings.
-  - Strings in double quotes.
-  - Large but readable
- */
-
-^ App
-name = "Acme Platform"      // Example Platform
-description = "The word “Acme” has been used for over 100 years in technical and business examples."
-meaning = "It comes from Greek akmḗ (ἀκμή), meaning “the highest point” or “best”."
-version = "2.3.1"
-debug = OFF
-environment = "production"
-maintainers = ["ops@acme.com", "dev@acme.com"]
-
-    ^^ Features
-    enableSearch = true
-    enablePayments = true
-    enableAnalytics = false
-    experimental = ["new-ui", "streaming-api"]
-
-    ^^ Limits
-    maxUsers = 50000
-    requestTimeoutMs = 3500
-    retryPolicy = { maxRetries: 5, backoff: "exponential" }
-
-    ^^ Database
-    engine = "postgres"
-    host = "db.internal.acme.com"
-    port = 5432
-    ssl = true
-    pool = { min: 5, max: 50 }
-
-        ^^^ Credentials
-        username = "app_user"
-        password = "****"
-        rotateEveryDays = 90
-
-    ^^ API
-    baseUrl = "https://api.acme.com"
-    publicEndpoints = ["/health", "/status"]
-    internalEndpoints = ["/admin", "/metrics"]
-
-        ^^^ Auth
-        provider = "oauth2"
-        tokenTTLSeconds = 3600
-        scopes = ["read", "write", "admin"]
-
-                ^^^^ Clients
-                web = { clientId: "web-123", redirectUri: "https://acme.com/callback" }
-                mobile = { clientId: "mob-456", redirectUri: "acme://auth" }
-
-^ Logging
-level = "info"
-format = "json"
-outputs = ["stdout", "file"]
-
-    ^^ File
-    path = "/var/log/acme/app.log"
-    maxSizeMB = 100
-    rotate = true
-    keepFiles = 10
-
-    ^^ Metrics
-    enabled = true
-    endpoint = "/metrics"
-    sampleRate = 0.25
-
-^ Services
-enabled = true
-
-    ^^ Email
-    provider = "smtp"
-    host = "smtp.acme.com"
-    port = 587
-    secure = false
-    from = "no-reply@acme.com"
-
-        ^^^ Credentials
-        user = "mailer"
-        pass = "mailer-secret"
-
-    ^^ Cache
-    type = "redis"
-    host = "cache.internal.acme.com"
-    port = 6379
-    ttlSeconds = 600
-
-        ^^^ Cluster
-        nodes = [
-          { host: "cache-1.internal", port: 6379 },
-          { host: "cache-2.internal", port: 6379 },
-          { host: "cache-3.internal", port: 6379 }
-        ]
-
-^ Observability
-tracing = true
-tracingProvider = "opentelemetry"
-traceSampleRate = 0.1
-
-    ^^ Exporters
-    jaeger = { enabled: true, endpoint: "http://jaeger:14268/api/traces" }
-    prometheus = { enabled: true, endpoint: "http://prom:9090" }
-
-^ Security
-allowedIPs = ["10.0.0.0/8", "192.168.0.0/16"]
-blockedCountries = ["KP", "SD"]
-
-    ^^ Policies
-    passwordMinLength = 14
-    require2FA = true
-    sessionTTLMinutes = 120
-
-        ^^^ Lockout
-        maxAttempts = 5
-        lockoutMinutes = 30
-```
+- [YINI configuration](./Examples/Large-Scale%20Real-World%20Configuration%20Examples/a-corporate-saas-platform.yini)
+- [JSON equivalent](./Examples/Large-Scale%20Real-World%20Configuration%20Examples/a-corporate-saas-platform.json)
 
 ### 15.6. Large-Scale Real-World Configuration Example B: High-Security Distributed Control System
 
 This is a lenient-mode example. It has multiple top-level sections and no `/END`.
 
-```yini
-@YINI
-
-// Example B: High-Security Distributed Control System.
-/*
-  Covers:
-  - Nested arrays inside inline objects.
-  - Sections & deep nesting.
-  - Real-world domain structure.
-  - Objects in arrays.
-  - Arrays of objects.
-  - Scalars of every type.
-  - Complex policy logic.
-  - Auth & security modeling.
-  - Unicode in strings.
-  - Strings in single quotes.
-  - Large but readable.
- */
-
-^ App
-name = 'Nebula Control Suite'
-description = 'A distributed operations platform for autonomous systems and edge analytics.'
-meaning = 'Nebula comes from Latin "nebula" meaning mist or cloud.'
-version = '5.0.0-rc.4'
-debug = ON
-environment = 'staging'
-maintainers = ['infra@nebula.io', 'platform@nebula.io', 'secops@nebula.io']
-
-    ^^ Features
-    enableSearch = false
-    enablePayments = false
-    enableAnalytics = true
-    experimental = ['vector-engine', 'adaptive-ui', 'ai-routing']
-
-    ^^ Limits
-    maxUsers = 120000
-    requestTimeoutMs = 7200
-    retryPolicy = {
-        maxRetries: 9,
-        backoff: 'fibonacci',
-        retryOn: ['timeout', '5xx', 'throttle'],
-        schedule: [
-            { attempt: 1, delayMs: 80 },
-            { attempt: 2, delayMs: 160 },
-            { attempt: 3, delayMs: 320 },
-            { attempt: 4, delayMs: 640 },
-            { attempt: 5, delayMs: 1280 }
-        ]
-    }
-
-    ^^ Database
-    engine = 'cockroachdb'
-    host = 'cluster.db.nebula.io'
-    port = 26257
-    ssl = true
-    pool = {
-        min: 12,
-        max: 120,
-        warmup: {
-            enabled: true,
-            strategy: 'aggressive',
-            steps: [10, 25, 50, 75, 100],
-            healthChecks: [
-                { name: 'connectivity', timeoutMs: 300 },
-                { name: 'replication', maxLagMs: 200 },
-                { name: 'quorum', minNodes: 3 }
-            ]
-        }
-    }
-
-        ^^^ Credentials
-        username = 'nebula_app'
-        password = '****'
-        rotateEveryDays = 45
-        history = [
-            { rotatedAt: '2025-05-10', reason: 'scheduled' },
-            { rotatedAt: '2025-03-02', reason: 'key-compromise' },
-            { rotatedAt: '2024-12-15', reason: 'policy-change' }
-        ]
-
-    ^^ API
-    baseUrl = 'https://api.nebula.io'
-    publicEndpoints = ['/health', '/status', '/version']
-    internalEndpoints = ['/admin', '/metrics', '/orchestrator', '/scheduler']
-
-        ^^^ Auth
-        provider = 'oidc'
-        tokenTTLSeconds = 5400
-        scopes = ['read', 'write', 'deploy', 'audit']
-
-            ^^^^ Clients
-            web = {
-                clientId: 'nebula-web-prod',
-                redirectUri: 'https://nebula.io/auth/callback',
-                allowedOrigins: ['https://nebula.io', 'https://console.nebula.io'],
-                secrets: [
-                    { id: 'alpha', value: 'QX7faP9', active: true },
-                    { id: 'beta', value: 'LM8KdW2', active: true },
-                    { id: 'legacy', value: 'OLD-KEY-DO-NOT-USE', active: false }
-                ]
-            }
-
-            mobile = {
-                clientId: 'nebula-mobile',
-                redirectUri: 'nebula://auth',
-                platforms: [
-                    { name: 'ios', minVersion: '15.2', enabled: true },
-                    { name: 'android', minVersion: '11', enabled: true },
-                    { name: 'harmonyos', minVersion: '4', enabled: false }
-                ],
-                refreshPolicy: {
-                    enabled: true,
-                    limits: { perHour: 60, perDay: 600 },
-                    audit: [
-                        { event: 'refresh', severity: 'info' },
-                        { event: 'suspicious-location', severity: 'warning' },
-                        { event: 'credential-stuffing', severity: 'critical' }
-                    ]
-                }
-            }
-
-^ Logging
-level = 'debug'
-format = 'ndjson'
-outputs = ['stdout', 'file', 'syslog']
-
-    ^^ File
-    path = '/srv/log/nebula/nebula.log'
-    maxSizeMB = 250
-    rotate = true
-    keepFiles = 30
-
-    ^^ Metrics
-    enabled = true
-    endpoint = '/internal/metrics'
-    sampleRate = 0.75
-
-^ Services
-enabled = true
-
-    ^^ Email
-    provider = 'ses'
-    host = 'email.nebula.io'
-    port = 465
-    secure = true
-    from = 'system@nebula.io'
-
-        ^^^ Credentials
-        user = 'mailer-nebula'
-        pass = 'MAIL-SEC-9921'
-
-    ^^ Cache
-    type = 'keydb'
-    host = 'cache.nebula.internal'
-    port = 6380
-    ttlSeconds = 1800
-
-        ^^^ Cluster
-        nodes = [
-            { host: 'cache-a.nebula', port: 6380, role: 'primary', zones: ['eu-north-1a'] },
-            { host: 'cache-b.nebula', port: 6380, role: 'replica', zones: ['eu-north-1b'] },
-            { host: 'cache-c.nebula', port: 6380, role: 'replica', zones: ['eu-north-1c'] },
-            { host: 'cache-d.nebula', port: 6380, role: 'observer', zones: ['eu-north-1a'] }
-        ]
-
-        ^^^ Failover
-        strategy = {
-            mode: 'predictive',
-            thresholds: { errorRate: 0.08, latencyMs: 180 },
-            actions: [
-                { step: 'drain-traffic', timeoutMs: 1500 },
-                { step: 'promote-replica', timeoutMs: 2000 },
-                { step: 'resync', propagate: true },
-                { step: 'notify', channels: ['pagerduty', 'slack', 'email'] }
-            ]
-        }
-
-^ Observability
-tracing = true
-tracingProvider = 'tempo'
-traceSampleRate = 0.35
-
-    ^^ Exporters
-    jaeger = {
-        enabled: false,
-        endpoint: 'http://jaeger.internal/api/traces',
-        tags: {
-            region: 'eu-north',
-            environment: 'staging',
-            build: { version: '5.0.0-rc.4', commit: 'c8f91d2', dirty: true }
-        }
-    }
-
-    prometheus = {
-        enabled: true,
-        endpoint: 'http://prometheus.nebula:9090',
-        scrapeIntervals: [2, 5, 10, 30],
-        retention: { days: 90, maxSeries: 3500000 }
-    }
-
-^ Security
-allowedIPs = ['172.16.0.0/12', '100.64.0.0/10']
-blockedCountries = ['KP', 'NG', 'BY']
-
-    ^^ Policies
-    passwordMinLength = 18
-    require2FA = true
-    sessionTTLMinutes = 45
-
-        ^^^ Lockout
-        maxAttempts = 4
-        lockoutMinutes = 60
-        escalation = {
-            enabled: true,
-            notify: ['security@nebula.io', 'ciso@nebula.io'],
-            rules: [
-                { attempts: 3, action: 'captcha' },
-                { attempts: 4, action: 'temporary-block', minutes: 120 },
-                { attempts: 6, action: 'account-freeze' },
-                { attempts: 9, action: 'permanent-block' }
-            ]
-        }
-```
+- [YINI configuration](./Examples/Large-Scale%20Real-World%20Configuration%20Examples/b-high-security-distributed-control-system.yini)
+- [JSON equivalent](./Examples/Large-Scale%20Real-World%20Configuration%20Examples/b-high-security-distributed-control-system.json)
 
 ### 15.7. Large-Scale Real-World Configuration Example C: Industrial Monitoring & Automation Platform  
 
 This example is valid when parsed in strict mode.
 
-```yini
-@yini strict
-
-// Example C: Industrial Monitoring & Automation Platform.
-/*
-  Covers:
-  - Strict-mode-compatible single top-level section.
-  - Deep section nesting.
-  - Realistic industrial / factory domain modeling.
-  - Inline objects and nested inline objects.
-  - Arrays of scalars and arrays of objects.
-  - Strings, numbers, booleans, null.
-  - Scheduling, alerts, telemetry, maintenance, and safety rules.
-  - File paths, endpoints, and policy-style configuration.
-*/
-
-^ PlantOps
-systemName = 'Orion Manufacturing Grid'
-description = 'Central control and monitoring platform for production lines, machine telemetry, maintenance, and operator safety.'
-siteCode = 'SE-GOT-PLANT-07'
-environment = 'production'
-debug = false
-timezone = 'Europe/Stockholm'
-contacts = ['ops@orion-industries.io', 'maintenance@orion-industries.io', 'safety@orion-industries.io']
-
-    ^^ Identity
-    tenant = 'orion-industries'
-    region = 'eu-north-1'
-    cluster = 'plantops-main'
-    build = {
-        version: '3.2.1',
-        releaseChannel: 'stable',
-        commit: 'f7d23aa',
-        signed: true
-    }
-
-    ^^ Telemetry
-    enabled = true
-    ingestionMode = 'streaming'
-    retentionDays = 120
-    sampleIntervalsSeconds = [1, 5, 15, 60]
-    normalizeUnits = true
-    deadband = {
-        temperature: 0.2,
-        pressure: 0.05,
-        vibration: 0.01,
-        power: 0.5
-    }
-
-        ^^^ Buffers
-        memoryQueueSize = 50000
-        diskSpool = {
-            enabled: true,
-            path: '/srv/plantops/spool',
-            maxSizeGB: 120,
-            compression: 'zstd'
-        }
-        flushPolicy = {
-            maxBatchSize: 1000,
-            maxWaitMs: 750,
-            retry: {
-                maxRetries: 12,
-                backoffMs: [100, 250, 500, 1000, 2000]
-            }
-        }
-
-        ^^^ Sensors
-        sources = [
-            { id: 'temp-line-a', type: 'temperature', unit: 'C', enabled: true },
-            { id: 'press-line-a', type: 'pressure', unit: 'bar', enabled: true },
-            { id: 'vib-motor-12', type: 'vibration', unit: 'mm/s', enabled: true },
-            { id: 'power-feed-1', type: 'power', unit: 'kW', enabled: true },
-            { id: 'humidity-zone-3', type: 'humidity', unit: '%', enabled: false }
-        ]
-        qualityRules = {
-            rejectNegative: ['pressure', 'power', 'humidity'],
-            clamp: [
-                { metric: 'temperature', min: -40, max: 180 },
-                { metric: 'pressure', min: 0, max: 25 },
-                { metric: 'humidity', min: 0, max: 100 }
-            ]
-        }
-
-    ^^ Production
-    shifts = [
-        { name: 'morning', start: '06:00', end: '14:00' },
-        { name: 'evening', start: '14:00', end: '22:00' },
-        { name: 'night', start: '22:00', end: '06:00' }
-    ]
-    lines = [
-        { code: 'LINE-A', enabled: true, cells: 8 },
-        { code: 'LINE-B', enabled: true, cells: 6 },
-        { code: 'LINE-C', enabled: false, cells: 4 }
-    ]
-    scheduling = {
-        autoDispatch: true,
-        planningWindowHours: 48,
-        constraints: {
-            maxConcurrentChangeovers: 2,
-            requireQualifiedOperator: true,
-            pauseDuringMaintenance: true
-        }
-    }
-
-        ^^^ Recipes
-        defaultRecipe = 'steel-frame-v4'
-        available = [
-            { id: 'steel-frame-v4', revision: 12, active: true },
-            { id: 'aluminium-housing-v2', revision: 7, active: true },
-            { id: 'test-batch-calibration', revision: 3, active: false }
-        ]
-        validation = {
-            requireSignedRecipe: true,
-            checksumAlgorithm: 'sha256',
-            allowDowngrade: false
-        }
-
-        ^^^ Traceability
-        enabled = true
-        batchIdFormat = 'ORD-{date}-{line}-{seq}'
-        retainBatchHistoryDays = 3650
-        tags = {
-            useQr: true,
-            useRfid: true,
-            fallbackManualEntry: false
-        }
-
-    ^^ Maintenance
-    enabled = true
-    workOrderSystem = 'cmms'
-    defaultPriority = 'normal'
-    planners = ['planner-a', 'planner-b']
-    rules = {
-        createOnThresholdBreach: true,
-        requireApprovalForShutdown: true,
-        autoAssignByArea: true
-    }
-
-        ^^^ Preventive
-        windows = [
-            { assetGroup: 'motors', intervalHours: 500, durationMinutes: 90 },
-            { assetGroup: 'compressors', intervalHours: 1000, durationMinutes: 180 },
-            { assetGroup: 'conveyors', intervalHours: 750, durationMinutes: 120 }
-        ]
-        reminders = {
-            notifyBeforeHours: [72, 24, 4],
-            channels: ['email', 'dashboard']
-        }
-
-        ^^^ Predictive
-        enabled = true
-        models = [
-            { name: 'bearing-wear', minConfidence: 0.86, action: 'inspect' },
-            { name: 'seal-leakage', minConfidence: 0.81, action: 'schedule-service' },
-            { name: 'motor-overload', minConfidence: 0.90, action: 'slowdown-line' }
-        ]
-        suppression = {
-            cooldownMinutes: 180,
-            ignoreDuringManualService: true
-        }
-
-    ^^ Alerts
-    enabled = true
-    defaultSeverity = 'warning'
-    channels = ['dashboard', 'email', 'sms']
-    deduplicationWindowSeconds = 600
-    templates = {
-        subjectPrefix: '[PlantOps]',
-        includeAssetContext: true,
-        includeRunbookLink: true
-    }
-
-        ^^^ Routing
-        rules = [
-            { event: 'temperature-high', severity: 'warning', target: 'ops-team' },
-            { event: 'pressure-drop', severity: 'critical', target: 'maintenance-team' },
-            { event: 'guard-door-open', severity: 'critical', target: 'safety-team' },
-            { event: 'network-loss', severity: 'critical', target: 'infra-team' }
-        ]
-        escalation = {
-            enabled: true,
-            afterMinutes: [5, 15, 30],
-            steps: [
-                { level: 1, notify: ['shift-lead'] },
-                { level: 2, notify: ['plant-manager'] },
-                { level: 3, notify: ['regional-director'] }
-            ]
-        }
-
-        ^^^ QuietHours
-        enabled = true
-        start = '23:00'
-        end = '05:30'
-        suppressSeverities = ['info']
-        exceptions = ['critical', 'safety']
-
-    ^^ Safety
-    enabled = true
-    lockoutTagoutRequired = true
-    incidentWebhook = 'https://safety.orion-industries.io/hooks/incidents'
-    restrictedZones = ['robot-cell-4', 'robot-cell-5', 'laser-area-2']
-
-        ^^^ AccessControl
-        badgeRequired = true
-        biometricRequired = false
-        visitorsAllowed = false
-        roles = [
-            { role: 'operator', canAcknowledge: true, canOverride: false },
-            { role: 'supervisor', canAcknowledge: true, canOverride: true },
-            { role: 'auditor', canAcknowledge: false, canOverride: false }
-        ]
-
-        ^^^ Interlocks
-        active = true
-        checks = [
-            { name: 'guard-door', failMode: 'stop-line' },
-            { name: 'e-stop-circuit', failMode: 'shutdown-cell' },
-            { name: 'light-curtain', failMode: 'halt-motion' }
-        ]
-        overridePolicy = {
-            allowed: false,
-            emergencyContact: null
-        }
-
-    ^^ Integrations
-    erp = {
-        enabled: true,
-        endpoint: 'https://erp.orion-industries.io/api',
-        syncIntervalMinutes: 10
-    }
-    mes = {
-        enabled: true,
-        endpoint: 'https://mes.orion-industries.io/api',
-        timeoutMs: 5000
-    }
-    historian = {
-        enabled: true,
-        endpoint: 'opc.tcp://historian.orion.internal:4840',
-        namespace: 'urn:orion:plantops'
-    }
-
-    ^^ Logging
-    level = 'info'
-    format = 'json'
-    outputs = ['stdout', 'file']
-    file = {
-        path: '/srv/plantops/log/plantops.log',
-        rotateDaily: true,
-        keepDays: 21
-    }
-
-    ^^ Security
-    requireTls = true
-    minimumTlsVersion = '1.3'
-    apiKeys = [
-        { name: 'telemetry-writer', active: true, scope: 'ingest' },
-        { name: 'maintenance-sync', active: true, scope: 'workorders' },
-        { name: 'legacy-debug-client', active: false, scope: 'readonly' }
-    ]
-    audit = {
-        enabled: true,
-        retainDays: 730,
-        recordConfigChanges: true,
-        recordOperatorActions: true
-    }
-
-/END
-```
+- [YINI configuration](./Examples/Large-Scale%20Real-World%20Configuration%20Examples/c-industrial-monitoring-and-automation-platform.strict.yini)
+- [JSON equivalent](./Examples/Large-Scale%20Real-World%20Configuration%20Examples/c-industrial-monitoring-and-automation-platform.json)
 
 ## 16. Appendices and Reserved Areas
 ### 16.1. License
@@ -3696,13 +3023,15 @@ He studied **Computer Science & Technology** and **Master's in Software Developm
 Professionally, he has **decades of experience in software development and engineering**, particularly in **TypeScript, JavaScript, Python, PHP,** and **full-stack web development**, as well as **tooling and both user- and developer-focused systems**.
 
 ### 16.4. Spec Changes
-A running log of changes and updates **to this YINI specification**.
+Recent changes and updates **to this YINI specification**.
+
+This section keeps the three most recent version groups. See [earlier specification changes](./Docs/SPEC-HISTORY.md) for older entries.
 
 Notes:
 - More details of the feedback, see section D.2, _“Acknowledgments & Special Thanks”_, in the [Rationale](./RATIONALE.md) document.
 - All dates in international format, YYYY-MM-DD.
 
-v1.0.0-RC.7x/RC.8-WIP
+#### v1.0.0-RC.7x/RC.8-WIP
 
 - **Changed:** In Escaped Strings, `\o` consumes the entire following ASCII digit run and `\0` rejects a following ASCII digit. See §6.2.1.
 - **Added:** Lenient root-level and section-level assignments accept `:` as an alternative to canonical `=`. Strict section members require `=`. See Section 4.3.
@@ -3716,7 +3045,7 @@ v1.0.0-RC.7x/RC.8-WIP
 - **Changed:** A Block String can be followed on its closing line by a concatenation operator or a comma allowed by the surrounding list or inline object.
 - **Changed:** Both modes accept `//` and `#` line comments directly after the closing quotes of a Block String.
 
-v1.0.0 RC 7
+#### v1.0.0 RC 7
 - **Deprecated:** The Classic String name and `C`/`c` prefixes. Use Escaped String and `E`/`e` for new documents; `C`/`c` remain valid with identical behavior in both parsing modes, including Triple-Quoted strings.
 - **Deprecated:** The `%` binary prefix in favor of `0b`. It remains valid in both parsing modes; implementations SHOULD issue a deprecation warning recommending `0b`.
 - **Changed:** Duplicate sections under the same parent now produce an error and invalidate the document in both modes. Lenient first-wins handling for duplicate keys is unchanged.
@@ -3756,7 +3085,7 @@ v1.0.0 RC 7
 - **Clarified:** End-of-file (`EOF`) may terminate an otherwise complete final logical line in both lenient and strict mode. A lenient document may end immediately after its final assignment, and a strict document may end immediately after `/END`, without a trailing line ending.
 - **Clarified:** YINI-to-JSON conversion preserves structure, value types, and identifier names when the converter can represent numeric values without loss. YINI-specific syntax, including comments and the document terminator, is not preserved.
 
-v1.0.0 RC 6, 2026-05-30
+#### v1.0.0 RC 6, 2026-05-30
 - **Changed:** The `#` character now always begins a comment outside string literals. No whitespace is required before or after `#`.
 - **Changed:** Increased the maximum repeated section marker depth from 6 to 9 because section marker separators (`_`) may now be used to make headers easier to read. Repeated marker headers may now express levels 1–9 directly, while numeric shorthand remains required for levels 10 and deeper.
 - **Added:** Added the explicit hexadecimal notation `hex:` as an alternative to `0x...`. The `hex:` prefix is case-insensitive and MUST be followed immediately by hexadecimal digits or an allowed digit separator.
@@ -3774,30 +3103,6 @@ v1.0.0 RC 6, 2026-05-30
 - **Added:** Added optional mode declarations to the YINI marker using `@yini strict` and `@yini lenient`. These declarations state the document's expected parser mode but MUST NOT automatically switch the active parser mode. If `@yini strict` is parsed in lenient mode, the parser MUST emit a mode-mismatch error. If `@yini lenient` is parsed in strict mode, the parser MUST emit a mode-mismatch warning.
 - **Clarified:** Defined empty-document handling by mode. In lenient mode, a document containing only whitespace, comments, and/or disabled lines is permitted but SHOULD produce a warning. In strict mode, such a document is invalid and MUST result in an error.
 - **Changed:** Re-added `>` as a supported ASCII section marker based on feedback. It is now documented as a quote-like ASCII fallback marker, with a portability caveat because some email clients, forum renderers, and Markdown-like environments may treat it as a quote prefix.
-
-v1.0.0 RC 5, 2026-04-09
-- **Changed:** The document terminator (`/END`) is now required in strict mode and remains optional in lenient mode.
-- **Clarified:** Updated the specification text, validation rules, and strict/lenient mode table to reflect that strict mode requires `/END` at the end of the document.
-- **Clarified:** Clarified whitespace rules for section headers: repeated/basic section headers do not require a space before the section name, while numeric shorthand headers (such as `^7`) do.
-- **Clarified:** Defined top-level structure rules for lenient and strict mode. In RC5, lenient-mode orphan members could be exposed at the root or under an implicit base section; strict mode required exactly one explicit top-level section. The implementation-dependent lenient mapping was superseded by the standardized document-root mapping in RC6.
-- **Updated:** Added a third large real-world configuration example (C) for parsing in strict mode.
-  - See Section **15.7**.
-  - The full YINI and JSON versions of these examples are also included under  
-    [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
-
-v1.0.0 RC 4, 2026-03-29
-- **Removed:** Support for colon-based list syntax (`key: value1, value2` and multi-line `key:` list form).
-- **Clarified:** Lists in YINI are defined only with `=` and square brackets `[ ... ]`.
-- **Rationale:** The colon-list syntax added convenience but did not add core expressive power, and its removal improves clarity, predictability, and grammar simplicity.
-- **Changed:** Removed support for the additional alternative section marker `€`, due to no clear practical benefit compared to the existing markers.
-- **Clarified:** The supported section markers are now explicitly `^` (primary), `§`, and `<`.
-- **Fixed:** Corrected an error in Example 15.1.
-- **Updated:** Added two large real-world configuration examples (A and B), featuring nested inline objects, lists, and complex structures.
-  - See Sections **15.5** and **15.6**.
-  - The full YINI and JSON versions of these examples are also included under  
-    [Large-Scale Real-World Configuration Examples](./Examples/Large-Scale%20Real-World%20Configuration%20Examples).
-- **Clarified:** Added clarifying bullets to Sections 1.2 and 1.4.
-- **Fixed:** Fixed a few typos and made various minor wording and consistency improvements.
 
 ---
 
@@ -3863,8 +3168,8 @@ Trailing commas after values or members inside lists or objects never produce `N
 | Inline object member separator | `obj = { a: 1, b: 2 }` | Non-canonical lenient form: `obj = { a = 1, b = 2 }` | `:` is the canonical separator inside inline objects. The `=` form is valid in lenient mode and conforming lenient-mode parsers MUST accept it, but formatters SHOULD normalize it to `:`. In strict mode, `=` inside inline objects is invalid. |
 | Mixed object separators | `obj = { a: 1, b: 2 }` | `obj = { a: 1, b = 2 }` | Mixing `:` and `=` inside the same inline object is discouraged in lenient mode and invalid in strict mode. |
 | Quote characters | `text = "hello"` or `text = 'hello'` | Using curly quotes as delimiters (start/end characters): `text = “hello”` | String delimiters MUST be plain ASCII quotes: `'` U+0027 or `"` U+0022. Curly quotes may appear inside strings as ordinary text, but they do not delimit strings. |
-| String concatenation start | `text = "value: " + 123` | `text = 123 + " value"` | A concatenation expression MUST begin with a string literal. In lenient mode, later scalar operands may be numbers, booleans, or null. |
-| Multi-line concatenation | `text = "hello " +`<br>`       "world"` | Placing `+` at the start of the next line | A line break is allowed after `+`, but not before `+`. |
+| String concatenation start | `text = "value: " + 123` | `text = 123 + " value"` | The first example uses a number as a later operand in lenient mode. See [§6.6](#66-string-concatenation). |
+| Multi-line concatenation | `text = "hello " +`<br>`       "world"` | Placing `+` at the start of the next line | See the line-break rule in [§6.6](#66-string-concatenation). |
 
 ---
 
