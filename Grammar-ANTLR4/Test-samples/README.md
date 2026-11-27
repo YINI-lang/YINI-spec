@@ -41,6 +41,12 @@ The lexer recognizes the multiline token. The host performs the value and
 closing-line checks.
 The numeric-boundary and recovery fixtures cover both lenient and strict mode.
 
+Null literals accept `null` and `None` in any casing. Every assignment needs
+an explicit value in both modes. The null fixtures cover aliases, quoted
+strings, keyword-shaped keys, and missing or comment-only values.
+Empty leaf sections are valid in both modes. The host validator checks
+whether to emit the recommended warning.
+
 General escaped-string fixtures use `E`/`e`. The `Classic-Aliases.yini` fixtures
 explicitly cover the deprecated `C`/`c` aliases for both single-line and
 triple-quoted forms in each parsing mode.

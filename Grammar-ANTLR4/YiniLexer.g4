@@ -266,7 +266,7 @@ BOOLEAN_TRUE options { caseInsensitive = true; }
   ;
 
 NULL options { caseInsensitive = true; }
-  : 'null'
+  : 'null' | 'none'
   ;
 
 EMPTY_OBJECT

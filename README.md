@@ -175,7 +175,7 @@ YINI is designed to prioritize **readability, clarity, and explicit structure**.
 - ✔️ **Number formats** include decimal, binary, octal, duodecimal (base 12), hexadecimal, and exponent notation.
 - ✔️ **Visible value types** — strings are quoted, lists use `[]`, and inline objects use `{}`.
 - ✔️ **String forms** include Raw Strings, Escaped Strings (`E`/`e`), Triple-Quoted Strings, and Block Strings (`b`, `B`, or `block` in any capitalization).
-- ✔️ **Supports the `null` value type.**
+- ✔️ **Supports null values**, written as `null` or `None` in any casing.
 - ✔️ **Explicit string concatenation** using `+`; concatenation expressions must begin with a string literal.
 - ✔️ **Optional mode declarations** — `@yini strict` and `@yini lenient` state which mode the file is intended for. They do not switch the parser mode by themselves; the parser or tool chooses the actual mode.
 

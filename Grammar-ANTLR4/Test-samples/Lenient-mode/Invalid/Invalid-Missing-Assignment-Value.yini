@@ -1,0 +1,7 @@
+/*
+  Primary failure: syntactic.
+  Rule: every assignment requires an explicit value in both modes.
+*/
+
+^ Config
+value =

@@ -1,6 +1,6 @@
 ^ SettingsWithNulls
 
 AppMode = NULL
-Language =
+Language = None  // An explicit null value.
 Timeout = 30
 MaxConnections = 100

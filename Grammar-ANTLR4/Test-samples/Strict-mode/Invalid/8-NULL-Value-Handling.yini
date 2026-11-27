@@ -1,6 +1,6 @@
 /*
-  Primary failure: semantic.
-  Rule: strict mode requires explicit `null`; missing values are invalid.
+  Primary failure: syntactic.
+  Rule: missing assignment values are invalid in both modes.
 */
 
 ^ Nulls

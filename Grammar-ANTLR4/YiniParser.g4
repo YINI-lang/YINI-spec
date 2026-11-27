@@ -153,12 +153,6 @@ assignment
   : member line_end
   ;
 
-/*
- * Previous wording: KEY, EQ, and the first value token MUST be on the same logical line.
- * @note The identifier, EQ, and the first value token MUST be on the same logical line.
- * A concatenation expression may continue onto following lines only when
- * the previous line ends with PLUS.
- */
 // Boolean and null spellings are also valid names in identifier positions.
 // Preserve the token's original text: identifiers remain case-sensitive.
 identifier
@@ -168,9 +162,15 @@ identifier
   | NULL
   ;
 
+/*
+ * Previous wording: KEY, EQ, and the first value token MUST be on the same logical line.
+ * @note The identifier, EQ, and the first value token MUST be on the same logical line.
+ * A concatenation expression may continue onto following lines only when
+ * the previous line ends with PLUS.
+ * The host must also check line endings inside skipped block comments.
+ */
 member
-  // : KEY EQ value? // Missing value is validated by mode in host code.
-  : identifier EQ value? // Missing value is validated by mode in host code.
+  : identifier EQ value // An explicit value is required in both modes.
   ;
 
 /* ------------------------------------------------------------------
@@ -328,7 +328,7 @@ number_literal
   ;
 
 null_literal
-  : NULL // NOTE: NULL is case-insensitive.
+  : NULL // Recognizes null and None in any casing.
   ;
 
 boolean_literal

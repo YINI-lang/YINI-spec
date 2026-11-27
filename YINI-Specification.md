@@ -283,7 +283,7 @@ These terms are used throughout this specification to describe YINI's grammar, s
 | Member | A **key-value** (pair) entry at root or section level, written as `key = <value>`. For example: `num = 100` or `str = "Hello"`. |
 | Mode declaration | An optional declaration in the YINI marker, such as `@yini strict` or `@yini lenient`, that states the document's expected parsing mode. |
 | Nested section | A section contained under another section, represented by a greater section depth. |
-| Null literal | The case-insensitive literal `null`, representing the null value. |
+| Null literal | The case-insensitive literals `null` and `None`, representing the null value. |
 | Number literal | A numeric value written using decimal notation or one of the supported base-prefixed forms. |
 | Object member | A key-value entry **inside an inline object**, normally written as `key: <value>`. For example: `num: 100` or `str: "Hello"`. In lenient mode only, it may also be written as `key = <value>`; conforming lenient-mode parsers MUST accept both separators. |
 | Orphan member | A root-level member not contained in an explicit section. |
@@ -752,7 +752,7 @@ x = /*
 /END
 ```
 
-The line ending inside the comment leaves `x` without an explicit value: it becomes `null` with a warning in lenient mode and is a missing-value error in strict mode. The `[1]` on the next logical line is not a valid standalone statement, so the document is invalid in both modes.
+The line ending inside the comment leaves `x` without an explicit value, which is a missing-value error in both modes. The `[1]` on the next logical line is not a valid standalone statement, so the document is invalid in both modes.
 
 #### Strings
 If the value is meant to be a string, it MUST be quoted — either with single quotes (``` ' ```), double quotes (`"`), or triple quotes (`"""`) — even in lenient mode.
@@ -771,7 +771,7 @@ If the value matches any of the following keywords `true`, `false`, `on`, `off`,
 If the value is a bracketed sequence (`[ ... ]`) of values, separated by commas, the entire value is treated as a List. List items MAY be any supported YINI value type: string, number, boolean, null, list, or inline object.
 
 #### Null
-The keyword `null` (case-insensitive) represents **Null**. In lenient mode, a root-level or section-level member with no value after `=` also becomes `null` and MUST produce a warning diagnostic. See Section 8.2.
+The keywords `null` and `None` (case-insensitive) represent **Null**. Missing values are errors in both modes. See Section 8.2.
 
 Missing values inside lists or objects are not treated as `Null`. A trailing comma inside a list or object is permitted only in lenient mode and is ignored; in strict mode it is an error.
 
@@ -783,9 +783,9 @@ Missing values inside lists or objects are not treated as `Null`. A trailing com
 | `123` | **Number** (integer) |
 | `3.1415` | **Number** (float) |
 | `true`, `FALSE`, `On`, `off`, `YES`, `No` _(any casing)_| **Boolean** |
-| `null` _(any casing)_ | **Null** |
-| _(blank root-level or section-level value)_ | **Null with a warning in lenient mode; error in strict mode** |
-| _(Any value such as unquoted words that are not booleans, numbers, or null)_ | **ERROR** |
+| `null` or `None` _(any casing)_ | **Null** |
+| _(missing value)_ | **ERROR in both modes** |
+| _(Any value such as unquoted words that are not booleans, numbers, or null literals)_ | **ERROR** |
 
 **Example:**
 ```txt
@@ -796,13 +796,18 @@ e = 2.718                      // Number
 isActive = True                // Boolean
 nightMode = OFF                // Boolean
 nothing = Null                 // Null
-alsoNothing =                  // Null with a warning in lenient mode; error in strict mode.
+alsoNothing = None             // Null
+missing =                      // Error in both modes: Missing value.
 scores = [1, 2, 3]             // List
 mixed = ["Arial", 12, true]    // List (mixed types)
 ```
 
 ## 5. Section Headers
 Sections in YINI are used to organize related members (key-value pairs) into logical groups. This allows for improved readability, structure, and modularity within configuration files.
+
+An **empty section** contains neither members nor subsections. Whitespace, comments, and disabled lines do not count as content. Empty sections are valid in both modes, but implementations SHOULD report a warning diagnostic for each empty section. A section containing subsections is not empty.
+
+An explicit section header counts as meaningful document content, even when the section is empty. See Section 12.2.1 for empty-document rules.
 
 ### 5.1. Syntax
 A section header is a line that:
@@ -1546,7 +1551,7 @@ In lenient mode, scalar operands are **converted to strings before concatenation
   * `-0` remains `-0`.
   * `0xFF` becomes `255`.
 - Booleans are converted to `true` or `false`.
-- Null is converted to `null`.
+- Null is converted to `null`, whether written as `null` or `None` in any casing.
 - Base prefixes such as `0x`, `0b`, `%`, `0o`, `0z`, and `hex:` are not preserved during scalar-to-string conversion. The `%` prefix is deprecated; see [Section 7.4](#74-number-formats).
 - Lists and inline objects MUST NOT be converted to strings and MUST NOT be used as operands in concatenation expressions.
 
@@ -1806,43 +1811,36 @@ Boolean literals in a YINI document **are case-insensitive** and may be written 
 The engine MUST convert the literal value to the corresponding Boolean value in the host language.
 
 ### 8.2. Null Literal
-The null literal (value) is `null`, case-insensitive.
-
-- In lenient mode, a root-level or section-level member with no value after `=` is interpreted as `null` and MUST produce a warning diagnostic.
-- In strict mode, such a member is invalid, null values MUST be written explicitly as `null`.
-
-The warning is required even when only whitespace or comments follow `=`. Writing `null` explicitly avoids this missing-value warning. For example, `color = #FF9900` has no value because `#FF9900` is a comment: it becomes `null` with a warning in lenient mode and is invalid in strict mode.
+The keywords `null` and `None` are case-insensitive spellings of the same null value. Both are valid wherever a null literal is allowed, in either mode. The recommended canonical spelling is `null`.
 
 ```yini
-key = null
+^ Settings
+first = null
+second = None
+third = nOnE
+items = [null, NONE]
+object = { value: None }
 ```
 
-Missing values inside lists or inline objects are never interpreted as `null`.
+Quoted forms such as `"None"` are strings. In identifier positions, these spellings are ordinary case-sensitive names. For example, `None = NONE` defines a key named `None` with a null value, and `none` is a different key.
 
-Invalid in both lenient and strict mode:
+Every assignment MUST have an explicit value. If the logical line ends or reaches EOF before a value begins, the assignment MUST produce an error in both modes. This includes assignments followed only by whitespace or comments. Missing list items and missing inline object values are also errors. Recovery MUST NOT accept the document by inserting null or dropping the incomplete member.
+
 ```yini
-^ Section1
-key = { a: }    // ❌ Missing value within object.
-
-^ Section2
-key = { a: , }  // ❌ Comma without preceding value.
+^ Settings
+missing =              // Error in both modes: Missing value.
+color = #FF9900         // Error in both modes: The intended value is a comment.
+object = { value: }     // Error in both modes: Missing object value.
+items = [1, , 2]        // Error in both modes: Missing list item.
 ```
 
-Trailing commas inside lists and objects do not create `null` values. In lenient mode, a trailing comma is ignored. In strict mode, a trailing comma is invalid and MUST emit an error.
+An explicit empty string (`""` or `''`), list (`[]`), or object (`{}`) is a value and is valid in both modes.
 
-Examples:
+Trailing commas do not create null values. A trailing comma is ignored in lenient mode and MUST produce an error in strict mode:
+
 ```yini
-^ Section1
-// In lenient mode:
-key1 =                  // ⚠️ Null with a required warning.
-key2 = [1, 2, ]         // ✅ Valid, same as: [1, 2]
-key3 = { a: 1, b: 2, }  // ✅ Valid, same as: {a: 1, b: 2}
-
-^ Section2
-// In Strict mode:
-key1 =                  // ❌ Error: Missing value.
-key2 = [1, 2, ]         // ❌ Error: Stray trailing comma.
-key3 = { a: 1, b: 2, }  // ❌ Error: Stray trailing comma.
+items = [1, 2, ]        // Lenient mode: [1, 2]. Strict mode: Error.
+object = { value: 1, }  // Lenient mode: { value: 1 }. Strict mode: Error.
 ```
 
 ## 9. Object Literals
@@ -1868,7 +1866,7 @@ empty = { }
 
 #### Syntax rules
 
-There MUST be **no newline** between the `=` and the opening brace `{`. If a newline appears after `=`, the member is treated as having no explicit value: in lenient mode this becomes `null` with a warning; in strict mode it is a missing-value error. The `{ ... }` block on the following line is not treated as the value of that member.
+There MUST be **no newline** between the `=` and the opening brace `{`. If a newline appears after `=` before a value begins, the member has no explicit value and MUST produce a missing-value error in both modes. The `{ ... }` block on the following line is not treated as the value of that member.
 
 Inside an **inline object**, the value of each object member MUST begin on the same logical line as the object member separator.
 
@@ -2258,7 +2256,7 @@ Parsers MUST check the file's original line endings before normalizing string va
 #### 12.2.4. Valid Value Types
 - Values MUST be one of the supported data types: **String**, **Number**, **Boolean**, **Null**, **List**, or **Object**.
 - Boolean values are **case-insensitive**: `True`, `On`, `Yes`, etc.
-- Null values: `null`, `NULL`, `Null` are all interpreted as `null`.
+- Null values: `null` and `None` in any casing are interpreted as the same null value.
 - Inline object members MUST use `:` in strict mode. In lenient mode, authors MAY use either `:` or `=`, and conforming lenient-mode parsers MUST accept both separators. The `:` separator remains canonical.
 
 #### 12.2.5. Document Terminator
@@ -2295,7 +2293,7 @@ Parsers MUST check the file's original line endings before normalizing string va
     ^T
     /END
     ```
-    **Note:** This document contains a single explicit top-level section named T and the required document terminator.
+    **Note:** This document contains a single explicit top-level section named T and the required document terminator. The section is empty, so implementations SHOULD report a warning (see Section 5).
 
 - **Invalid short documents:**
   - ❌  Invalid: no title section present in strict mode:
@@ -2317,9 +2315,8 @@ Some YINI parsers may support multiple **validation modes**:
   - Root-level orphan members are permitted and MUST be accepted. In the abstract YINI data model, they are mounted directly on the document root alongside explicitly defined top-level sections.
   - The document terminator (`/END`) is optional in lenient mode and MAY be omitted entirely. If present, it marks the end of the YINI document. Any non-comment, non-whitespace content appearing after it MUST result in an error.
   - All typing rules still apply. For example, string literals MUST be quoted: if a value is not quoted, it is not a string — no exceptions.
-  - Empty values are allowed ONLY for root-level or section-level members in lenient mode:
-    - A missing/empty value (ONLY outside lists and objects) is treated as `Null` and MUST produce a warning diagnostic.
-    - A trailing comma after the last value/member inside a list or object is ignored ONLY in lenient mode. In strict mode, it is a parse error.
+  - Every assignment requires an explicit value. Missing values MUST produce an error (see Section 8.2).
+  - A trailing comma after the last value/member inside a list or object is ignored.
   - Inside inline objects, authors MAY use `=` as an alternative to `:` for object member separation. Conforming lenient-mode parsers MUST accept both separators, including when they are mixed within the same inline object. This is a lenient-mode compatibility feature only. The canonical form remains `key: "value"`.
   - In lenient (default) mode, an empty document is permitted. For this purpose, a document containing only whitespace, comments, and/or disabled lines (`--`) is considered empty. An implementation MUST NOT treat such a document as a parse failure solely because it is empty; however, it SHOULD report a warning diagnostic indicating that the document appears empty or contains no meaningful content.
 
@@ -2328,7 +2325,7 @@ Some YINI parsers may support multiple **validation modes**:
 - **Strict mode** is an optional mode with stricter rules.
   - Intended for production and tool-chain use.
   - Enforces full well-formedness.
-  - Empty values are not allowed; they MUST always be written explicitly as `null`, `Null`, or `NULL`.
+  - Every assignment requires an explicit value, as in lenient mode (see Section 8.2).
   - Stray trailing commas after the last value/member inside lists and objects are not permitted.
   - Strict mode requires exactly one explicit top-level section. Any additional sections MUST appear only as subsections nested within that section. Top-level orphan members are not allowed in strict mode. Otherwise, an error MUST be reported.
   - A document declaring `@yini lenient` MUST produce a mode-mismatch warning in strict mode and MUST still satisfy all strict-mode content and structural requirements. See Section 2.4.1. Strict mode MAY also be used when the declaration is absent.
@@ -2336,7 +2333,7 @@ Some YINI parsers may support multiple **validation modes**:
 
     **Note:** Requiring exactly one explicit top-level section and `/END` helps detect incomplete documents. A fragment without the required top-level section or terminator is invalid in strict mode. These checks do not guarantee detection of every truncation, split, or partial copy: a fragment containing a complete top-level section and `/END` may still form a structurally valid document.
 
-  - Empty sections (with no members) are still allowed.
+  - Empty sections are valid with a recommended warning, as defined in Section 5.
   - Inside inline objects, object members MUST use `:`. Using `=` inside an inline object MUST result in an error.
   - Files intended for strict-mode parsing MAY use the `.strict.yini` filename suffix as described in Section 2.2.1. This suffix is only a naming convention and does not select strict mode or replace strict-mode validation. An explicit `@yini strict` declaration MAY still be used when the document should declare its expected mode.
   - In strict mode, an empty document is invalid. For this purpose, a document containing only whitespace, comments, and/or disabled lines (`--`) is considered empty. Parsing such a document MUST result in an error.
@@ -2365,7 +2362,7 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | Feature                 | Lenient Mode (Default) | Strict Mode | Notes |
 |-------------------------|:----------------------:|:-----------:|-------|
 | Explicit string quoting               | ✅ | ✅ | All strings MUST be enclosed with `"` or `'` — no ambiguity over strings.|
-| Empty sections allowed                | ✅ | ✅ | Sections may contain no members (e.g., `^ Config`). |
+| Empty sections allowed                | ✅ | ✅ | Implementations SHOULD warn when a section has neither members nor subsections. See Section 5. |
 | Duplicate keys | ⚠️ First wins | ❌ Error | Later duplicate keys are ignored in lenient mode and MUST produce a warning diagnostic. |
 | Duplicate sections under the same parent | ❌ Error | ❌ Error | A duplicate section makes the document invalid in both modes. Implementations MUST NOT merge or overwrite sections. |
 | Exactly one explicit top-level section required | ❌ | ✅ | In strict mode, all other sections MUST be nested within it.  |
@@ -2374,7 +2371,7 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 | `=` inside inline objects | ✅ | ❌ | Conforming lenient-mode parsers MUST accept `key = "value"` inside `{ ... }`; strict mode requires canonical `key: "value"`. |
 | Mixed `:` and `=` inside same inline object | ⚠️ Valid but discouraged | ❌ | Conforming lenient-mode parsers MUST accept mixed separators, but formatters SHOULD normalize all inline object members to `:`. |
 | Trailing commas after value (inside lists/objects)| ✅ | ❌ | In lenient mode the comma is ignored, error in strict mode  |
-| Missing (empty) value (only at root or section level) | ⚠️ Null + warning | ❌ Error | Lenient mode MUST report a warning; see Section 8.2. |
+| Missing value | ❌ Error | ❌ Error | Every assignment requires an explicit value. See Section 8.2. |
 | Empty value before comma | ❌ Error | ❌ Error | Applies to cases such as `key = ,`, `[1, , 2]`, or `{ a: , b: 2 }`. Both modes MUST report an error; recovery does not make the document valid. |
 | Invalid escape sequences | ❌ Error | ❌ Error | Both modes MUST report an error. Continuing to collect diagnostics does not make the document valid. |
 | String concatenation with scalar operands | ✅ | ❌ | In lenient mode, a concatenation expression MUST begin with a string literal. Additional operands MAY be string literals, number literals, boolean literals, or null literals. |
@@ -2385,7 +2382,7 @@ object6 = { a: 1, b: 2 }        // ✅ OK
 Example:
 ```yini
 // Lenient:
-key1 =         // ⚠️ Null with a required warning.
+key1 =         // ❌ Error: Missing value.
 key2 = ,       // ❌ error: unexpected comma
 
 // Strict:
@@ -2463,11 +2460,7 @@ Otherwise, an error MUST be reported.
 
 ### 13.3. Value and Null Handling
 
-* If a root-level or section-level member is assigned without a value (lenient mode only):
-  ```yini
-  key =          // Null with a required warning.
-  ```
-  it MUST be interpreted as `null` and MUST produce a warning diagnostic, even when a comment follows `=`. See Section 8.2.
+* Missing values MUST produce an error in both modes. See Section 8.2.
 * Key uniqueness:
   - Keys MUST be unique within the same section and nesting level.
   - In **lenient mode**, later duplicate keys MUST be ignored, and the implementation MUST report the duplicate as a warning diagnostic.
@@ -2527,9 +2520,9 @@ The syntax for a list is:
   * In lenient mode, a trailing comma in `[ ]` is ignored.
   * In strict mode, a trailing comma in `[ ]` MUST result in an error.
 
-**Lists MUST NOT** have a newline between `=` and the opening bracket `[` (otherwise, the member has no explicit value: `null` with a warning in lenient mode, a missing-value error in strict mode):
+**Lists MUST NOT** have a newline between `=` and the opening bracket `[`. This leaves the member without a value and is an error in both modes:
   ```yini
-  invalidList = // No value: null with a warning in lenient mode; error in strict mode.
+  invalidList = // Error in both modes: Missing value.
   [1, 2, 3]     // Invalid standalone line; not the value of invalidList.
   ```
 
@@ -2666,9 +2659,9 @@ successful, conforming YINI parse result.
 
 Warning diagnostics for constructs explicitly permitted by the active mode do
 not, by themselves, make a document invalid. For example, first-wins duplicate
-key handling and missing root-level or section-level values are valid in lenient
-mode and require warnings. Duplicate sections, empty collection slots, and
-unsupported escapes are invalid in both modes and require errors.
+key handling is valid in lenient mode and requires a warning. Missing values,
+duplicate sections, empty collection slots, and unsupported escapes are invalid
+in both modes and require errors.
 
 For example, both assignments below are invalid in both modes:
 
@@ -2935,14 +2928,14 @@ hosts = ['server1.example.com', 'server2.example.com']
 
 #### 15.3.4. Nulls and Booleans to JSON
 
-**Note:** Null and boolean literals (e.g., `Null`, `True`, `On`, `Yes`) in YINI are **case-insensitive**, while keys are **case-sensitive**.
+**Note:** Null and boolean literals (e.g., `Null`, `None`, `True`, `On`, `Yes`) in YINI are **case-insensitive**, while keys are **case-sensitive**.
 
 **YINI:**
 ```yini
 ^ Flags
 enabled = On
 archived = Off
-description = Null
+description = None
 ```
 
 **JSON Equivalent:**
@@ -3686,6 +3679,9 @@ Notes:
 
 v1.0.0-RC.7x/RC.8-WIP
 
+- **Changed:** Missing assignment values now produce an error in both modes, including comment-only values such as `color = #FF9900`. Existing lenient files must supply the intended value explicitly. See Section 8.2.
+- **Added:** Case-insensitive `None` as an alias for `null`. The canonical spelling remains `null`.
+- **Clarified:** Empty sections have neither members nor subsections. They are valid in both modes, but implementations SHOULD warn. See Section 5.
 - **Changed:** Renamed Command Strings to Block Strings and replaced the `command` prefix with case-insensitive `block` and `b` prefixes. The `command` prefix is no longer supported in either parsing mode.
 - **Changed:** Both modes now reject literal control characters from `U+0000` through `U+001F` in Block Strings, except for tab, LF, and CR.
 - **Changed:** Both modes now allow trailing ASCII spaces and tabs after either Block String delimiter.
@@ -3828,10 +3824,10 @@ Trailing commas after values or members inside lists or objects never produce `N
 | **Element**       | **Correct Syntax**              | **Common Mistake**              | **Clarification** |
 |-------------------|----------------------------------|----------------------------------|--------------------|
 | Root/section member / List | `name = "John"` / `items = ["a", "b", "c"]` | `name: "John"` / `items:` | `:` is not valid assignment syntax for root-level or section-level members; use `=` for ordinary members and lists. |
-| Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | The line break leaves `items` without a value (`null` with a warning in lenient mode; error in strict mode). The `[` on the next line is not its value. |
+| Inline List        | `items = ["a", "b", "c"]`       | `items =` followed by newline and `[` on next line | The line break leaves `items` without a value, which is an error in both modes. The `[` on the next line is not its value. |
 | Trailing comma (inline) | `list = ["a", "b", "c",]`   | Empty value assumed to be null           | The comma is ignored, and does NOT add any `null` item at the end of the list. The result is same as: `list = ["a", "b", "c"]` |
 | Comments | `# Comment`, `#Comment`, or `// Comment` | Assuming `#Comment` is not a comment | Outside string literals and backticked identifiers, `#` always begins a comment. No whitespace is required. |
-| Hex values | `color = 0xFF0033` or `color = hex:FF0033` | `color = #FF0033` | `#FF0033` is a comment, leaving `color` without a value: `null` with a warning in lenient mode; error in strict mode. |
+| Hex values | `color = 0xFF0033` or `color = hex:FF0033` | `color = #FF0033` | `#FF0033` is a comment, leaving `color` without a value. This is an error in both modes. |
 | Disable line       | `--key = "something"`           | Treated like a comment          | Entire line is ignored, including valid config syntax. |
 | List nesting       | `list = [[1, 2], [3, 4]]`       | Using inner lists without brackets | All nested lists MUST be bracketed explicitly. |
 | Section skipping   | `^^ Section`, `^^^ Subsection`  | Jumping directly to `^^^`       | ❌ Invalid — cannot skip intermediate nesting levels. |
